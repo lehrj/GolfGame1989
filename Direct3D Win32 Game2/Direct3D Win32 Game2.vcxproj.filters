@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>b6e9c65e-2b41-4ac9-b7ae-6c2511591717</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dds;dlg;fbx;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="Golf.h" />
+    <ClInclude Include="GolfBag.h" />
+    <ClInclude Include="GolfSwing.h" />
+    <ClInclude Include="GolfBall.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="Vector4d.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Golf.cpp" />
+    <ClCompile Include="GolfBag.cpp" />
+    <ClCompile Include="GolfSwing.cpp" />
+    <ClCompile Include="GolfBall.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="Vector4d.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="directx.ico">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="settings.manifest">
+      <Filter>Assets</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
