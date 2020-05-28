@@ -16,7 +16,9 @@ public:
     double ComputeBetaDotDot(void);
     const double GetArmLength() { return m_armLength; };
     const double GetBackSwingPercentage() { return m_backSwingPercentage; };
+    const double GetClubAngle() { return m_club.angle; };
     const double GetClubLength() { return m_club.length; };
+    const double GetClubMass() { return m_club.mass; };
     const double GetLaunchAngle() { return m_launchAngle; };
     const double GetLaunchVelocity() { return m_launchVelocity; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };

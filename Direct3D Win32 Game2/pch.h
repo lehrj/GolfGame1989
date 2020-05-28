@@ -60,6 +60,9 @@
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 #include "WICTextureLoader.h"
+
+#include <locale> // WLJ for ASCII text draw
+#include <codecvt> // WLJ for ASCII text draw
 // end
 
 namespace DX

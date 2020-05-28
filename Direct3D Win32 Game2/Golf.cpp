@@ -13,6 +13,8 @@ Golf::Golf()
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
     BuildVector();
+    BuildUIdata();
+    BuildUIstrings();
 }
 
 Golf::~Golf()
@@ -20,6 +22,7 @@ Golf::~Golf()
     delete pBall;
     delete pSwing;
     delete pEnvironment;
+
 }
 
 void Golf::BuildVector()
@@ -28,6 +31,36 @@ void Golf::BuildVector()
     InputData();
     NormalizeData();
 }
+
+
+void Golf::BuildUIdata()
+{
+    m_uiData.push_back(pEnvironment->GetAirDensity());
+    m_uiData.push_back(pEnvironment->GetWindZ());
+    m_uiData.push_back(pSwing->GetClubAngle());
+    m_uiData.push_back(pSwing->GetClubLength());
+    m_uiData.push_back(pSwing->GetClubMass());
+    m_uiData.push_back(pSwing->GetLaunchAngle());
+    m_uiData.push_back(pSwing->GetLaunchVelocity());
+    m_uiData.push_back(69);
+    m_uiData.push_back(69);
+}
+
+
+void Golf::BuildUIstrings()
+{
+    m_uiStrings.clear();
+    m_uiStrings.push_back("Air Density = " + std::to_string(pEnvironment->GetAirDensity()) + " kg/m^3");
+    m_uiStrings.push_back("Wind Z = " + std::to_string(pEnvironment->GetWindZ()) + " m/s");
+    m_uiStrings.push_back("Club Angle = " + std::to_string(pSwing->GetClubAngle()) + " degrees");
+    m_uiStrings.push_back("Club Length = " + std::to_string(pSwing->GetClubLength()) + " meters");
+    m_uiStrings.push_back("Club Mass = " + std::to_string(pSwing->GetClubMass()) + " meters");
+    m_uiStrings.push_back("Launch Angle = " + std::to_string(pSwing->GetLaunchAngle()) + " degrees");
+    m_uiStrings.push_back("Launch Velocity = " + std::to_string(pSwing->GetLaunchVelocity()) + " m/s");
+    m_uiStrings.push_back("Travel Distance = xx.x meters");
+    m_uiStrings.push_back("Max Height = xx.x meters");
+}
+
 
 void Golf::CalculateData()
 {

@@ -45,5 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="myfile.spritefont" />
   </ItemGroup>
 </Project>

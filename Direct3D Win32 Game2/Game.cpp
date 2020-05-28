@@ -50,9 +50,9 @@ void Game::Initialize(HWND window, int width, int height)
 void Game::Tick()
 {
     m_timer.Tick([&]()
-    {
-        Update(m_timer);
-    });
+        {
+            Update(m_timer);
+        });
 
     Render();
 }
@@ -61,7 +61,7 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
-    
+
     // TODO: Add your game logic here.
     // world start
     m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
@@ -80,6 +80,63 @@ void Game::Render()
     }
 
     Clear();
+    
+    std::vector<double> uiData = pGolf->GetUIdata();
+    std::vector<std::string> uiString = pGolf->GetUIstrings();
+
+    // Drawing text using a font
+    /*
+    m_spriteBatch->Begin();
+    const wchar_t* output = L"Hello World";
+    const wchar_t*
+    Vector2 originText = m_font->MeasureString(output) / 2.f;
+    m_font->DrawString(m_spriteBatch.get(), output,
+        m_fontPos, Colors::White, 0.f, originText);
+    m_spriteBatch->End();
+    */
+    // text end
+
+    // Using std::wstring for text
+    //std::wstring output = std::wstring(L"Hello") + std::wstring(L" World");
+    //std::string output = std::string("Hello") + std::string(" World");
+    std::string output = uiString[0];
+    std::string line1 = std::string(uiString[0]) + std::to_string(uiData[0]);
+    
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+
+    m_spriteBatch->Begin();
+
+    for (int i = 0; i < 9; ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
+        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
+
+    /*
+    Vector2 originText = m_font->MeasureString(output.c_str()) / 2.f;
+    Vector2 origin1 = m_font->MeasureString(line1.c_str()) / 2.f;
+
+    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos2, Colors::White, 0.f, originText);
+    //m_fontPos.y = m_fontPos.y + 30.f;
+    m_fontPos.y = m_outputHeight - 40.f;
+    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+    m_fontPos.y = m_fontPos.y - 40.f;
+    */
+    m_spriteBatch->End();
+    // wsting end
+    
+    /* Game::CreateResources()
+    const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+    swapChainDesc.Width = backBufferWidth;
+    m_fontPos.x = backBufferWidth / 2.f;
+    m_fontPos.y = backBufferHeight / 2.f;
+    */
 
     // TODO: Add your rendering code here.
     // WLJ start
@@ -102,11 +159,11 @@ void Game::Render()
     VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
     VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Yellow);
     */
-       
+
     VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Red);
     VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
     VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Green);
-    
+
     /*
     Vector3 point1(0.5f, 0.5f, 0.5f);
     Vector3 point2(0.5f, -0.5f, 0.5f);
@@ -118,21 +175,19 @@ void Game::Render()
     Vector3 point2(-0.9f, -0.9f, 0.5f);
     Vector3 point3(-0.5f, 0.5f, 0.5f);
     Vector3 point4(-0.5f, -0.5f, 0.5f);
-
     VertexPositionColor v4(point1, Colors::White);
     VertexPositionColor v5(point2, Colors::White);
     VertexPositionColor v6(point3, Colors::White);
     VertexPositionColor v7(point4, Colors::White);
-    
-    
+
+
     m_batch->DrawLine(v4, v5);
     m_batch->DrawLine(v5, v6);
     m_batch->DrawLine(v6, v4);
     m_batch->DrawLine(v6, v7);
     m_batch->DrawLine(v7, v5);
-    
-    m_batch->DrawTriangle(v1, v2, v3);
 
+    m_batch->DrawTriangle(v1, v2, v3);
     /////////********* Start swing draw
     //double armLength = pGolf->p
     Vector4d launchData = pGolf->GetLaunchVector();
@@ -140,15 +195,13 @@ void Game::Render()
     double clubLength = launchData.GetSecond();
     double launchAngle = launchData.GetThird();
     double launchVelocity = launchData.GetForth();
-
     std::vector<Vector4d> swingAngles;
     swingAngles.resize(pGolf->GetSwingStepIncCount());
     swingAngles = pGolf->GetSwingData();
-    
+
     Vector3 origin(0.0f, 0.0f, 0.0f);
     Vector3 armPivot(0.0f, armLength, 0.0f);
     Vector3 clubHead(clubLength, armLength, 0.0f);
-
     VertexPositionColor vert1(origin, Colors::Red);
     VertexPositionColor vert2(armPivot, Colors::Red);
     VertexPositionColor vert3(clubHead, Colors::Red);
@@ -156,7 +209,7 @@ void Game::Render()
     m_batch->DrawLine(vert2, vert3);
     */
     /////////********* Start projectile draw
-    
+
     std::vector<double> xVec = pGolf->GetVect(0);
     std::vector<double> yVec = pGolf->GetVect(1);
     std::vector<double> zVec = pGolf->GetVect(2);
@@ -239,7 +292,7 @@ void Game::Render()
 
     //int frameCount = timeCount % stepCount;
     //int frameCount = stepCount % timeCount;
-    
+
     if (arcCount >= stepCount)
     {
         arcCount = 0;
@@ -262,7 +315,7 @@ void Game::Render()
         prevY = yVec[i];
         prevZ = zVec[i];
     }
-    
+
     ///// Landing explosion
     if (arcCount == stepCount - 1)
     {
@@ -276,7 +329,7 @@ void Game::Render()
         Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
         Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
         Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        
+
         VertexPositionColor ft1(f1, Colors::Red);
         VertexPositionColor ft2(f2, Colors::Red);
         VertexPositionColor ft3(f3, Colors::Red);
@@ -297,9 +350,11 @@ void Game::Render()
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
     }
-    
+
 
     m_batch->End();
+
+
     // end
     Present();
 }
@@ -387,7 +442,7 @@ void Game::CreateDevice()
     creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-    static const D3D_FEATURE_LEVEL featureLevels [] =
+    static const D3D_FEATURE_LEVEL featureLevels[] =
     {
         // TODO: Modify for supported Direct3D feature levels
         D3D_FEATURE_LEVEL_11_1,
@@ -413,7 +468,7 @@ void Game::CreateDevice()
         device.ReleaseAndGetAddressOf(),    // returns the Direct3D device created
         &m_featureLevel,                    // returns feature level of device created
         context.ReleaseAndGetAddressOf()    // returns the device immediate context
-        ));
+    ));
 
 #ifndef NDEBUG
     ComPtr<ID3D11Debug> d3dDebug;
@@ -426,7 +481,7 @@ void Game::CreateDevice()
             d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
             d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
 #endif
-            D3D11_MESSAGE_ID hide [] =
+            D3D11_MESSAGE_ID hide[] =
             {
                 D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
                 // TODO: Add more message IDs here as needed.
@@ -473,6 +528,11 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc,
         m_raster.ReleaseAndGetAddressOf()));
     // world end
+
+
+    m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
+    m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
+
     // end
 }
 
@@ -480,7 +540,7 @@ void Game::CreateDevice()
 void Game::CreateResources()
 {
     // Clear the previous window size specific context.
-    ID3D11RenderTargetView* nullViews [] = { nullptr };
+    ID3D11RenderTargetView* nullViews[] = { nullptr };
     m_d3dContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
     m_renderTargetView.Reset();
     m_depthStencilView.Reset();
@@ -546,7 +606,7 @@ void Game::CreateResources()
             &fsSwapChainDesc,
             nullptr,
             m_swapChain.ReleaseAndGetAddressOf()
-            ));
+        ));
 
         // This template does not support exclusive fullscreen mode and prevents DXGI from responding to the ALT+ENTER shortcut.
         DX::ThrowIfFailed(dxgiFactory->MakeWindowAssociation(m_window, DXGI_MWA_NO_ALT_ENTER));
@@ -570,16 +630,20 @@ void Game::CreateResources()
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
-    
+
     ////********* WLJ world start ----- deactivate to turn off world spin
-    m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f),
-        Vector3::Zero, Vector3::UnitY);
-    m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
-        float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+    m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
+    m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
     // world end
+
+    m_fontPos.x = backBufferWidth / 2.f;
+    m_fontPos.y = backBufferHeight / 2.f;
+    m_fontPos2.x = backBufferWidth / 5.f;
+    m_fontPos2.y = backBufferHeight / 30.f;
+
 }
 
 void Game::OnDeviceLost()
@@ -590,6 +654,9 @@ void Game::OnDeviceLost()
     m_effect.reset();
     m_batch.reset();
     m_inputLayout.Reset();
+
+    m_font.reset();
+    m_spriteBatch.reset();
     // end
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();

@@ -15,9 +15,15 @@ public:
     ~Golf();
 
     void BuildVector();
+    void BuildUIdata();
+    void BuildUIstrings();
+    void BuildUI();
+
     Vector4d GetLaunchVector();
     std::vector<Vector4d> GetSwingData();
     const int GetSwingStepIncCount() { return pSwing->GetSwingStepIncrementCount(); };
+    std::vector<double> GetUIdata() { return m_uiData; };
+    std::vector<std::string> GetUIstrings() { return m_uiStrings; };
 
     void CalculateData();
     void SetMaxX();
@@ -50,6 +56,9 @@ private:
     std::vector<double> m_xVals;
     std::vector<double> m_yVals;
     std::vector<double> m_zVals;
+
+    std::vector<double> m_uiData;
+    std::vector<std::string> m_uiStrings;
 
 };
 
