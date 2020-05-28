@@ -81,62 +81,6 @@ void Game::Render()
 
     Clear();
     
-    std::vector<double> uiData = pGolf->GetUIdata();
-    std::vector<std::string> uiString = pGolf->GetUIstrings();
-
-    // Drawing text using a font
-    /*
-    m_spriteBatch->Begin();
-    const wchar_t* output = L"Hello World";
-    const wchar_t*
-    Vector2 originText = m_font->MeasureString(output) / 2.f;
-    m_font->DrawString(m_spriteBatch.get(), output,
-        m_fontPos, Colors::White, 0.f, originText);
-    m_spriteBatch->End();
-    */
-    // text end
-
-    // Using std::wstring for text
-    //std::wstring output = std::wstring(L"Hello") + std::wstring(L" World");
-    //std::string output = std::string("Hello") + std::string(" World");
-    std::string output = uiString[0];
-    std::string line1 = std::string(uiString[0]) + std::to_string(uiData[0]);
-    
-    float fontOriginPosX = m_fontPos2.x;
-    float fontOriginPosY = m_fontPos2.y;
-
-    m_spriteBatch->Begin();
-
-    for (int i = 0; i < 9; ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
-        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-    }
-    m_fontPos2.y = fontOriginPosY;
-
-    /*
-    Vector2 originText = m_font->MeasureString(output.c_str()) / 2.f;
-    Vector2 origin1 = m_font->MeasureString(line1.c_str()) / 2.f;
-
-    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos2, Colors::White, 0.f, originText);
-    //m_fontPos.y = m_fontPos.y + 30.f;
-    m_fontPos.y = m_outputHeight - 40.f;
-    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-    m_fontPos.y = m_fontPos.y - 40.f;
-    */
-    m_spriteBatch->End();
-    // wsting end
-    
-    /* Game::CreateResources()
-    const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-    swapChainDesc.Width = backBufferWidth;
-    m_fontPos.x = backBufferWidth / 2.f;
-    m_fontPos.y = backBufferHeight / 2.f;
-    */
 
     // TODO: Add your rendering code here.
     // WLJ start
@@ -153,43 +97,8 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-
-    /*
-    VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Yellow);
-    VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
-    VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Yellow);
-    */
-
-    VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Red);
-    VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
-    VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Green);
-
-    /*
-    Vector3 point1(0.5f, 0.5f, 0.5f);
-    Vector3 point2(0.5f, -0.5f, 0.5f);
-    Vector3 point3(-0.5f, 0.5f, 0.5f);
-    Vector3 point4(-0.5f, -0.5f, 0.5f);
-    */
-    /*
-    Vector3 point1(0.9f, 0.9f, 0.5f);
-    Vector3 point2(-0.9f, -0.9f, 0.5f);
-    Vector3 point3(-0.5f, 0.5f, 0.5f);
-    Vector3 point4(-0.5f, -0.5f, 0.5f);
-    VertexPositionColor v4(point1, Colors::White);
-    VertexPositionColor v5(point2, Colors::White);
-    VertexPositionColor v6(point3, Colors::White);
-    VertexPositionColor v7(point4, Colors::White);
-
-
-    m_batch->DrawLine(v4, v5);
-    m_batch->DrawLine(v5, v6);
-    m_batch->DrawLine(v6, v4);
-    m_batch->DrawLine(v6, v7);
-    m_batch->DrawLine(v7, v5);
-
-    m_batch->DrawTriangle(v1, v2, v3);
     /////////********* Start swing draw
-    //double armLength = pGolf->p
+    /*
     Vector4d launchData = pGolf->GetLaunchVector();
     double armLength = launchData.GetFirst();
     double clubLength = launchData.GetSecond();
@@ -208,16 +117,14 @@ void Game::Render()
     m_batch->DrawLine(vert1, vert2);
     m_batch->DrawLine(vert2, vert3);
     */
-    /////////********* Start projectile draw
+    // end swing draw
 
+    /////////********* Start projectile draw
     std::vector<double> xVec = pGolf->GetVect(0);
     std::vector<double> yVec = pGolf->GetVect(1);
     std::vector<double> zVec = pGolf->GetVect(2);
 
     double groundLevel = yVec[0];
-
-    //Vector3 xaxis(2.f, 0.f, 0.f);
-    //Vector3 yaxis(0.f, 0.f, 2.f);
 
     Vector3 xaxis(2.f, 0.f, 0.f);
     Vector3 yaxis(0.f, 0.f, 2.f);
@@ -235,8 +142,6 @@ void Game::Render()
 
         VertexPositionColor v1(scale - yaxis, Colors::Green);
         VertexPositionColor v2(scale + yaxis, Colors::Green);
-        //v1.position.y = groundLevel;
-        //v2.position.y = groundLevel;
         m_batch->DrawLine(v1, v2);
     }
 
@@ -256,13 +161,10 @@ void Game::Render()
     //draw tee box
     double originX = xVec[0];
     double originZ = zVec[0];
-
     Vector3 t1(originX - .05, 0.0f, -0.1f);
     Vector3 t2(originX + .05, 0.0f, -0.1f);
     Vector3 t3(originX - 0.05, 0.0f, 0.1f);
     Vector3 t4(originX + .05, 0.0f, 0.1f);
-
-
     VertexPositionColor vt1(t1, Colors::White);
     VertexPositionColor vt2(t2, Colors::White);
     VertexPositionColor vt3(t3, Colors::White);
@@ -271,13 +173,9 @@ void Game::Render()
     m_batch->DrawLine(vt1, vt3);
     m_batch->DrawLine(vt3, vt4);
     m_batch->DrawLine(vt4, vt2);
-
+    // end tee box draw
 
     int stepCount = xVec.size();
-    //m_timer.GetFrameCount()
-    //timer.GetTotalSeconds()
-    //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-    float test = m_timer.GetTotalSeconds();
 
     int timeCount = m_timer.GetElapsedSeconds();
 
@@ -303,7 +201,7 @@ void Game::Render()
     double prevX = xVec[0];
     double prevY = yVec[0];
     double prevZ = zVec[0];
-    //for (int i = 0; i < xVec.size(); ++i)
+
     for (int i = 0; i < arcCount; ++i)
     {
         Vector3 p1(prevX, prevY, prevZ);
@@ -350,12 +248,69 @@ void Game::Render()
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
     }
-
+    // end landing explosion
 
     m_batch->End();
 
+    // start UI draw
+    std::vector<double> uiData = pGolf->GetUIdata();
+    std::vector<std::string> uiString = pGolf->GetUIstrings();
 
-    // end
+    // Drawing text using a font
+    /*
+    m_spriteBatch->Begin();
+    const wchar_t* output = L"Hello World";
+    const wchar_t*
+    Vector2 originText = m_font->MeasureString(output) / 2.f;
+    m_font->DrawString(m_spriteBatch.get(), output,
+        m_fontPos, Colors::White, 0.f, originText);
+    m_spriteBatch->End();
+    */
+    // text end
+
+    // Using std::wstring for text
+    //std::wstring output = std::wstring(L"Hello") + std::wstring(L" World");
+    //std::string output = std::string("Hello") + std::string(" World");
+    std::string output = uiString[0];
+    std::string line1 = std::string(uiString[0]) + std::to_string(uiData[0]);
+
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+
+    m_spriteBatch->Begin();
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
+
+    /*
+    Vector2 originText = m_font->MeasureString(output.c_str()) / 2.f;
+    Vector2 origin1 = m_font->MeasureString(line1.c_str()) / 2.f;
+
+    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos2, Colors::White, 0.f, originText);
+    //m_fontPos.y = m_fontPos.y + 30.f;
+    m_fontPos.y = m_outputHeight - 40.f;
+    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+    m_fontPos.y = m_fontPos.y - 40.f;
+    */
+    m_spriteBatch->End();
+    // wsting end
+    /* Game::CreateResources()
+    const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+    swapChainDesc.Width = backBufferWidth;
+    m_fontPos.x = backBufferWidth / 2.f;
+    m_fontPos.y = backBufferHeight / 2.f;
+    */
+    // end UI draw
+
     Present();
 }
 
@@ -641,7 +596,8 @@ void Game::CreateResources()
 
     m_fontPos.x = backBufferWidth / 2.f;
     m_fontPos.y = backBufferHeight / 2.f;
-    m_fontPos2.x = backBufferWidth / 5.f;
+    //m_fontPos2.x = backBufferWidth / 5.f;
+    m_fontPos2.x = backBufferWidth;
     m_fontPos2.y = backBufferHeight / 30.f;
 
 }

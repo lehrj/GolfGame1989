@@ -40,6 +40,7 @@ void GolfBall::LaunchProjectile()
     double dt = m_timeStep;
     double maxHeight = m_ball.launchHeight;
     double time = 0.0;
+    SetInitialSpinRate(m_ball.omega);
     double x = m_ball.q[1];
     double y = m_ball.q[3];
     bool isBallAscending = true;
@@ -79,6 +80,9 @@ void GolfBall::LaunchProjectile()
         double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
         ProjectileRungeKutta4(&m_ball, -rollBackTime);
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
+        SetLandingSpinRate(m_ball.omega);
+        SetMaxHeight(maxHeight);
         PrintLandingData(flightData, maxHeight);
     }
 }
@@ -300,6 +304,15 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.windVz = pEnviron->GetWindZ();
 }
 
+void GolfBall::SetLandingCordinates(const double aX, const double aY, const double aZ)
+{
+    m_landingCordinates.SetW(0.0);
+    m_landingCordinates.SetX(aX);
+    m_landingCordinates.SetY(aY);
+    m_landingCordinates.SetZ(aZ);
+}
+
+
 void GolfBall::UpdateSpinRate(double aTimeDelta)
 {
     m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
@@ -388,4 +401,15 @@ double GolfBall::GetIndexZ(const int aIndex)
     {
         return m_zVals[aIndex];
     }
+}
+
+const double GolfBall::GetShotDistance()
+{
+    Vector4d origin = m_shotOrigin;
+    Vector4d landingPos = GetLandingCordinates();
+    double distance = sqrt(((landingPos.GetX() - origin.GetX()) * (landingPos.GetX() - origin.GetX())) + ((landingPos.GetY() - origin.GetY()) 
+        * (landingPos.GetY() - origin.GetY()) + ((landingPos.GetZ() - origin.GetZ()) * (landingPos.GetZ() - origin.GetZ()))));
+    return distance;
+
+
 }

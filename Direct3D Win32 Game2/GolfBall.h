@@ -47,7 +47,11 @@ public:
     double GetIndexX(const int aIndex);
     double GetIndexY(const int aIndex);
     double GetIndexZ(const int aIndex);
-
+    const Vector4d GetLandingCordinates() { return m_landingCordinates; };
+    const double GetMaxHeight() { return m_maxHeight; };
+    const double GetShotDistance();
+    const double GetInitialSpinRate() { return m_initialSpinRate; };
+    const double GetLandingSpinRate() { return m_landingSpinRate; };
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
     void LandProjectile(Environment* pEnviron);
@@ -60,6 +64,10 @@ public:
         double qScale, double* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void SetDefaultBallValues(Environment* pEnviron);
+    void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
+    void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
+    void SetLandingCordinates(const double aX, const double aY, const double aZ);
+    void SetMaxHeight(const double aMaxHeight) { m_maxHeight = aMaxHeight; };
     void UpdateSpinRate(double aTimeDelta);
 
 private:
@@ -72,4 +80,12 @@ private:
     std::vector<double> m_xVals;
     std::vector<double> m_yVals;
     std::vector<double> m_zVals;
+    
+    double m_initialSpinRate;
+    double m_landingSpinRate;
+    Vector4d m_landingCordinates;
+    double m_maxHeight;
+    Vector4d m_shotOrigin;
+
+
 };
