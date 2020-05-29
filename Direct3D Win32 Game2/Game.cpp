@@ -597,8 +597,9 @@ void Game::CreateResources()
     m_fontPos.x = backBufferWidth / 2.f;
     m_fontPos.y = backBufferHeight / 2.f;
     //m_fontPos2.x = backBufferWidth / 5.f;
-    m_fontPos2.x = backBufferWidth;
-    m_fontPos2.y = backBufferHeight / 30.f;
+    m_fontPos2.x = backBufferWidth - 5;
+    //m_fontPos2.y = backBufferHeight / 30.f;
+    m_fontPos2.y = 35;
 
 }
 
