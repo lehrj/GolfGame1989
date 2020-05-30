@@ -33,6 +33,7 @@ public:
     void PrintSwingInputData();
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
     void ReadInSwingValues();
+    void ResetAlphaBeta();
     void SetArmLength(double aLength);
     void SetBackSwingPercentage(double aPercentage);
     void SetBallPlacementAngle(double aAngle);

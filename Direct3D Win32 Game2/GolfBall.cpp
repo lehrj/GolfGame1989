@@ -374,6 +374,9 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
 
 void GolfBall::ResetBallData()
 {
+    m_xVals.clear();
+    m_yVals.clear();
+    m_zVals.clear();
     m_timeStep = 0.1f;
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;

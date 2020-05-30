@@ -19,7 +19,7 @@ void GolfBag::BuildBag()
     // Club data modeled off of Ping G400 series driver and woods, G irons, and Karsten TR B60 putter, along with best guesses to fill in data gaps
     int i = 0;
 
-    
+    /*
     m_bag[i].clubName = "1 Default";
     m_bag[i].angle = 25.0;
     m_bag[i].balancePoint = 0.75;
@@ -159,8 +159,9 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
     ++i;
+    */
+
     
-    /*
     m_bag[i].clubName = "Driver";
     m_bag[i].angle = 10.0;
     m_bag[i].balancePoint = 0.75;
@@ -290,8 +291,16 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
     ++i;
-    */
-
+    
+    m_bag[i].clubName = "Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
     /*
     m_bag[i].clubName = "Putter";
     m_bag[i].angle = 3.0;
@@ -304,16 +313,8 @@ void GolfBag::BuildBag()
     ++i;
     */
     
-    /*
-    m_bag[i].clubName = "Default";
-    m_bag[i].angle = 25.0;
-    m_bag[i].balancePoint = 0.75;
-    m_bag[i].coefficiantOfRestitution = 0.78;
-    m_bag[i].length = 1.1;
-    m_bag[i].mass = 0.4;
-    m_bag[i].massMoI = 0.08;
-    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
-    */
+    
+    
 }
 
 void GolfBag::PrintClubList()

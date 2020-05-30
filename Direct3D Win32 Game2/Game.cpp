@@ -307,10 +307,11 @@ void Game::Render()
     {
         int test = 0;
         ++test;
-        pGolf->SelectNextClub();
         xVec.clear();
         yVec.clear();
         zVec.clear();
+        pGolf->SelectNextClub();
+
     }
 }
 

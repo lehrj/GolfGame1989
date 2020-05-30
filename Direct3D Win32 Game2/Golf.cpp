@@ -38,6 +38,7 @@ void Golf::SelectNextClub()
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     pBall->ResetBallData();
     pSwing->CycleClub();
+    pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildVector();
 
@@ -101,11 +102,13 @@ void Golf::InputData()
     CopyZvec(pBall->OutputZvals());
 }
 
+/*
 Vector4d Golf::GetLaunchVector()
 {
     Vector4d launchVector(pSwing->GetArmLength(), pSwing->GetClubLength(), pSwing->GetLaunchAngle(), pSwing->GetLaunchVelocity());
     return launchVector;
 }
+*/
 
 std::vector<Vector4d> Golf::GetSwingData()
 {
