@@ -44,6 +44,11 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+
+    // WLJ add for mouse and keybord interface
+    m_keyboard = std::make_unique<Keyboard>();
+    m_mouse = std::make_unique<Mouse>();
+    m_mouse->SetWindow(window);
 }
 
 // Executes the basic game loop.
@@ -66,6 +71,14 @@ void Game::Update(DX::StepTimer const& timer)
     // world start
     m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
     // world end
+
+    // WLJ add for mouse and keybord interface
+    auto kb = m_keyboard->GetState();
+    if (kb.Escape)
+    {
+        ExitGame();
+    }
+    auto mouse = m_mouse->GetState();
 
     elapsedTime;
 }
@@ -206,6 +219,8 @@ void Game::Render()
     {
         Vector3 p1(prevX, prevY, prevZ);
         Vector3 p2(xVec[i], yVec[i], zVec[i]);
+
+
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
         m_batch->DrawLine(aV, bV);
@@ -214,8 +229,9 @@ void Game::Render()
         prevZ = zVec[i];
     }
 
+    bool toggleGetNextClub = 0;
     ///// Landing explosion
-    if (arcCount == stepCount - 1)
+    if (arcCount == stepCount)
     {
         Vector3 f1(prevX, prevY, prevZ);
         Vector3 f2(prevX, prevY + 0.2f, prevZ);
@@ -247,33 +263,24 @@ void Game::Render()
         m_batch->DrawLine(ft1, ft8);
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
+
+        /*
+        pGolf->SelectNextClub();
+        xVec.clear();
+        yVec.clear();
+        zVec.clear();
+        */
+        toggleGetNextClub = 1;
     }
     // end landing explosion
 
     m_batch->End();
 
     // start UI draw
-    std::vector<double> uiData = pGolf->GetUIdata();
     std::vector<std::string> uiString = pGolf->GetUIstrings();
 
-    // Drawing text using a font
-    /*
-    m_spriteBatch->Begin();
-    const wchar_t* output = L"Hello World";
-    const wchar_t*
-    Vector2 originText = m_font->MeasureString(output) / 2.f;
-    m_font->DrawString(m_spriteBatch.get(), output,
-        m_fontPos, Colors::White, 0.f, originText);
-    m_spriteBatch->End();
-    */
-    // text end
-
-    // Using std::wstring for text
-    //std::wstring output = std::wstring(L"Hello") + std::wstring(L" World");
-    //std::string output = std::string("Hello") + std::string(" World");
     std::string output = uiString[0];
-    std::string line1 = std::string(uiString[0]) + std::to_string(uiData[0]);
-
+    
     float fontOriginPosX = m_fontPos2.x;
     float fontOriginPosY = m_fontPos2.y;
 
@@ -290,28 +297,21 @@ void Game::Render()
     }
     m_fontPos2.y = fontOriginPosY;
 
-    /*
-    Vector2 originText = m_font->MeasureString(output.c_str()) / 2.f;
-    Vector2 origin1 = m_font->MeasureString(line1.c_str()) / 2.f;
-
-    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos2, Colors::White, 0.f, originText);
-    //m_fontPos.y = m_fontPos.y + 30.f;
-    m_fontPos.y = m_outputHeight - 40.f;
-    m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-    m_fontPos.y = m_fontPos.y - 40.f;
-    */
     m_spriteBatch->End();
     // wsting end
-    /* Game::CreateResources()
-    const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-    DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-    swapChainDesc.Width = backBufferWidth;
-    m_fontPos.x = backBufferWidth / 2.f;
-    m_fontPos.y = backBufferHeight / 2.f;
-    */
     // end UI draw
 
     Present();
+
+    if (toggleGetNextClub == 1)
+    {
+        int test = 0;
+        ++test;
+        pGolf->SelectNextClub();
+        xVec.clear();
+        yVec.clear();
+        zVec.clear();
+    }
 }
 
 // Helper method to clear the back buffers.

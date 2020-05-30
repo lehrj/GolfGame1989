@@ -20,7 +20,7 @@ void GolfBall::FireProjectile(Vector4d aSwingInput, Environment* pEnviron)
 {
     PrepProjectileLaunch(aSwingInput);
     LaunchProjectile();
-    LandProjectile(pEnviron);
+    //LandProjectile(pEnviron);
 }
 
 void GolfBall::LandProjectile(Environment* pEnviron)
@@ -35,6 +35,12 @@ void GolfBall::LandProjectile(Environment* pEnviron)
 
 void GolfBall::LaunchProjectile()
 {
+    int sizeX = m_xVals.size();
+    if (sizeX > 73)
+    {
+        int err = 0;
+        ++err;
+    }
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
     double dt = m_timeStep;
@@ -43,27 +49,95 @@ void GolfBall::LaunchProjectile()
     SetInitialSpinRate(m_ball.omega);
     double x = m_ball.q[1];
     double y = m_ball.q[3];
+
+    sizeX = m_xVals.size();
+    if (sizeX > 73)
+    {
+        int err = 0;
+        ++err;
+    }
+
     bool isBallAscending = true;
     while (isBallAscending == true)
     {
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
+        }
+
         ProjectileRungeKutta4(&m_ball, dt);
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
+        }
+
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
-        PrintFlightData();
+
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
+        }
+
+        //PrintFlightData();
+        PushFlightData();
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
+        }
+
         if (m_ball.q[2] < 0.0)
         {
+            sizeX = m_xVals.size();
+            if (sizeX > 73)
+            {
+                int err = 0;
+                ++err;
+            }
+
             maxHeight = m_ball.q[3];
             isBallAscending = false;
+
+            sizeX = m_xVals.size();
+            if (sizeX > 73)
+            {
+                int err = 0;
+                ++err;
+            }
+        }
+
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
         }
     }
     // Check to verify landing area height can be reached. If it cannot the shot is treated as if it is out of play so x = 0.0;
+    /*
     if (maxHeight + m_ball.launchHeight < m_ball.landingHeight)
     {
         printf("Ball has landed out of play, ball does not reach height of landing area!\n");
         flightData.SetX(0.0);
         x = 0.0;
     }
-    else
+    */
+    //else
+    //{
+    sizeX = m_xVals.size();
+    if (sizeX > 73)
     {
+        int err = 0;
+        ++err;
+    }
+
         double previousY = flightData.GetY();
         double previousTime = flightData.GetW();
         //  Calculate ball decent path until it reaches landing area height
@@ -73,19 +147,31 @@ void GolfBall::LaunchProjectile()
             previousTime = flightData.GetW();
             ProjectileRungeKutta4(&m_ball, dt);
             flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
-            PrintFlightData();
+            //PrintFlightData();
+            PushFlightData();
             time = m_ball.flightTime;
             y = m_ball.q[3];
         }
-        double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
-        ProjectileRungeKutta4(&m_ball, -rollBackTime);
+
+        sizeX = m_xVals.size();
+        if (sizeX > 73)
+        {
+            int err = 0;
+            ++err;
+        }
+
+        //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
+        //ProjectileRungeKutta4(&m_ball, -rollBackTime);
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
         SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
         SetLandingSpinRate(m_ball.omega);
         SetMaxHeight(maxHeight);
-        PrintLandingData(flightData, maxHeight);
+
+
+
+        //PrintLandingData(flightData, maxHeight);
     }
-}
+//}
 
 void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
 {
@@ -138,6 +224,16 @@ void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
     m_ball.q[0] = vx0;   //  vx 
     m_ball.q[2] = vy0;   //  vy 
     m_ball.q[4] = vz0;   //  vz 
+}
+
+void GolfBall::PushFlightData()
+{
+    if (m_ball.q[3] > m_ball.landingHeight)
+    {
+        m_xVals.push_back(m_ball.q[1]);
+        m_yVals.push_back(m_ball.q[3]);
+        m_zVals.push_back(m_ball.q[5]);
+    }
 }
 
 void GolfBall::PrintFlightData()
@@ -276,6 +372,19 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
     UpdateSpinRate(aTimeDelta);
 }
 
+void GolfBall::ResetBallData()
+{
+    m_timeStep = 0.1f;
+    m_ball.flightTime = 0.0;
+    m_ball.omega = 0.0;
+    m_ball.q[0] = 0.0;   //  vx = 0.0
+    m_ball.q[1] = 0.0;   //  x  = 0.0
+    m_ball.q[4] = 0.0;   //  vz = 0.0
+    m_ball.q[5] = 0.0;   //  z  = 0.0
+    m_ball.q[2] = 0.0;   //  vy = 0.0
+    m_ball.q[3] = 0.0;   //  y  = 0.0
+}
+
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
     m_timeStep = 0.1f;
@@ -321,6 +430,7 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
 
 void GolfBall::OutputPosition()
 {
+    /*
     printf("X Vals ================ \n");
 
     for (int i = 0; i < m_xVals.size(); ++i)
@@ -335,6 +445,7 @@ void GolfBall::OutputPosition()
     {
         std::cout << m_yVals[i] << std::endl;
     }
+    */
 }
 
 std::vector<double> GolfBall::OutputXvals()
@@ -350,21 +461,6 @@ std::vector<double> GolfBall::OutputYvals()
 std::vector<double> GolfBall::OutputZvals()
 {
     return m_zVals;
-}
-
-int GolfBall::GetXvecSize()
-{
-    return m_xVals.size();
-}
-
-int GolfBall::GetYvecSize()
-{
-    return m_yVals.size();
-}
-
-int GolfBall::GetZvecSize()
-{
-    return m_zVals.size();
 }
 
 double GolfBall::GetIndexX(const int aIndex)

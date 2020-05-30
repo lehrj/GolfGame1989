@@ -18,6 +18,149 @@ void GolfBag::BuildBag()
     m_bag.resize(m_bagSize);
     // Club data modeled off of Ping G400 series driver and woods, G irons, and Karsten TR B60 putter, along with best guesses to fill in data gaps
     int i = 0;
+
+    
+    m_bag[i].clubName = "1 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "2 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "3 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "4 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "5 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "6 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "7 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "8 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "9 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "10 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "11 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "12 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "13 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+
+    m_bag[i].clubName = "14 Default";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].length = 1.1;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
+    ++i;
+    
+    /*
     m_bag[i].clubName = "Driver";
     m_bag[i].angle = 10.0;
     m_bag[i].balancePoint = 0.75;
@@ -147,6 +290,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
     ++i;
+    */
 
     /*
     m_bag[i].clubName = "Putter";
@@ -156,10 +300,11 @@ void GolfBag::BuildBag()
     m_bag[i].length = 0.889;
     m_bag[i].mass = 0.345;
     m_bag[i].massMoI = 0.08;
-    m_bag[i].firstMoment = m_bag[i].clubMass * m_bag[i].clubLength * m_bag[i].balancePoint;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
     ++i;
     */
-
+    
+    /*
     m_bag[i].clubName = "Default";
     m_bag[i].angle = 25.0;
     m_bag[i].balancePoint = 0.75;
@@ -168,7 +313,7 @@ void GolfBag::BuildBag()
     m_bag[i].mass = 0.4;
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
-
+    */
 }
 
 void GolfBag::PrintClubList()

@@ -20,6 +20,10 @@ GolfSwing::~GolfSwing()
 
 Vector4d GolfSwing::CalculateLaunchVector(void)
 {
+    m_alphaBetaThetaVec.clear();
+    m_launchAngle = 0.0;
+    m_launchVelocity = 0.0;
+
     double Vc = 0.0;
     double time = 0.0;
     double dt = 0.0025; // Time delta between frames in seconds
@@ -102,6 +106,8 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
                 velocityCapture = Vc;
                 isVcFound = true;
                 launchAngle = m_club.angle - Utility::ToDegrees(phi);
+                double test;
+                test = launchAngle;
             }
         }
     }
@@ -111,7 +117,9 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
 
     std::cout << "Capture velocity = " << velocityCapture << "\nLaunch angle = " << launchAngle << std::endl;
 
-    Vector4d launchVector{ velocityCapture, launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
+    //Vector4d launchVector{ velocityCapture, launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
+    Vector4d launchVector{ m_launchVelocity, m_launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
+
     return launchVector;
 }
 
@@ -135,6 +143,19 @@ double GolfSwing::ComputeBetaDotDot(void)
     double G = m_Qbeta - m_alpha_dot * m_alpha_dot * m_armLength * m_club.firstMoment * sin(m_beta) - m_club.firstMoment
         * (m_gravity * sin(m_theta + m_beta) - m_shoulderHorizAccel * cos(m_theta + m_beta));
     return (G - C * m_alpha_dotdot) / D;
+}
+
+void GolfSwing::CycleClub()
+{
+    ++m_clubIndex;
+    if(m_clubIndex >= m_pBag->GetClubCount())
+    {
+        m_clubIndex = 0;
+    }
+    m_club = m_pBag->GetClub(m_clubIndex);
+    UpdateClubData();
+    UpdateGolfSwingValues();
+    CalculateLaunchVector();
 }
 
 void GolfSwing::InputSwingValuesBasic()
@@ -640,6 +661,7 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_club.length = 1.1; // length of club in m
     m_club.mass = 0.4;
     m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
+    m_club.clubName = "Custom";
     m_Qalpha = 100; // Torque applied at the shoulder to the arm rod in N m
     m_Qbeta = -10; // Torque applied at the wrist joint to the club rod in N m
 

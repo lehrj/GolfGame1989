@@ -41,9 +41,9 @@ public:
     std::vector<double> OutputXvals();
     std::vector<double> OutputYvals();
     std::vector<double> OutputZvals();
-    int GetXvecSize();
-    int GetYvecSize();
-    int GetZvecSize();
+    const int GetXvecSize() { return m_xVals.size(); };
+    const int GetYvecSize() { return m_yVals.size(); };
+    const int GetZvecSize() { return m_zVals.size(); };
     double GetIndexX(const int aIndex);
     double GetIndexY(const int aIndex);
     double GetIndexZ(const int aIndex);
@@ -56,13 +56,17 @@ public:
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
     void LandProjectile(Environment* pEnviron);
     void LaunchProjectile();
+    void PrepProjectileLaunch(Vector4d aSwingInput);
+    
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);
-    void PrepProjectileLaunch(Vector4d aSwingInput);
+    
     void ProjectileRightHandSide(struct SpinProjectile* projectile,
         double* q, double* deltaQ, double ds,
         double qScale, double* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
+    void PushFlightData();
+    void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };

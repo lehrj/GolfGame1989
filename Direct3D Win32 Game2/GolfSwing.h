@@ -14,6 +14,7 @@ public:
     Vector4d CalculateLaunchVector(void);
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);
+    void CycleClub();
     const double GetArmLength() { return m_armLength; };
     const double GetBackSwingPercentage() { return m_backSwingPercentage; };
     const double GetClubAngle() { return m_club.angle; };
@@ -23,9 +24,6 @@ public:
     const double GetLaunchAngle() { return m_launchAngle; };
     const double GetLaunchVelocity() { return m_launchVelocity; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
-
-
-
 
     void InputSwingValuesBasic();
     void InputSwingValuesVerbose();
@@ -55,6 +53,7 @@ public:
 private:
     GolfBag* m_pBag;
     GolfClub m_club;
+    int m_clubIndex = 0;
     std::vector<Vector4d> m_alphaBetaThetaVec;
     double m_launchVelocity;
     double m_launchAngle;

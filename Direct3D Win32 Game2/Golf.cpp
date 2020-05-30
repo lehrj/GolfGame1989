@@ -9,11 +9,12 @@ Golf::Golf()
     pEnvironment->SetDefaultEnvironment();
     pSwing = new GolfSwing();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
     BuildVector();
-    BuildUIdata();
+
     BuildUIstrings();
 }
 
@@ -32,18 +33,15 @@ void Golf::BuildVector()
     NormalizeData();
 }
 
-
-void Golf::BuildUIdata()
+void Golf::SelectNextClub()
 {
-    m_uiData.push_back(pEnvironment->GetAirDensity());
-    m_uiData.push_back(pEnvironment->GetWindZ());
-    m_uiData.push_back(pSwing->GetClubAngle());
-    m_uiData.push_back(pSwing->GetClubLength());
-    m_uiData.push_back(pSwing->GetClubMass());
-    m_uiData.push_back(pSwing->GetLaunchAngle());
-    m_uiData.push_back(pSwing->GetLaunchVelocity());
-    m_uiData.push_back(69);
-    m_uiData.push_back(69);
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pBall->ResetBallData();
+    pSwing->CycleClub();
+    pSwing->UpdateGolfSwingValues();
+    BuildVector();
+
+    BuildUIstrings();
 }
 
 void Golf::BuildUIstrings()
@@ -92,58 +90,15 @@ std::vector<double> Golf::GetVect(const int aInput)
 
 void Golf::InputData()
 {
-    /*
-    m_xVals = pBall->OutputXvals();
-    m_yVals = pBall->OutputYvals();
-    */
-    /*
-    int xSize = pBall->GetXvecSize();
-    for (int i = 0; i < xSize; ++i)
-    {
-        m_xVals.push_back(pBall->GetIndexX(i));
-    }
-
-    int ySize = pBall->GetYvecSize();
-    for (int i = 0; i < ySize; ++i)
-    {
-        m_yVals.push_back(pBall->GetIndexY(i));
-    }
-    */
-
+    
+    m_xVals.clear();
+    m_yVals.clear();
+    m_zVals.clear();
+    
+    
     CopyXvec(pBall->OutputXvals());
     CopyYvec(pBall->OutputYvals());
     CopyZvec(pBall->OutputZvals());
-    int temp;
-    /*
-    int zSize = pBall->GetZvecSize();
-    for (int i = 0; i < zSize; ++i)
-    {
-        m_zVals.push_back(pBall->GetIndexZ(i));
-    }
-    */
-    /*
-    double input;
-    std::ifstream inFileX("xVals.txt");
-    if (inFileX.is_open())
-    {
-        //while(std::getline(inFile, input))
-        while(inFileX >> input)
-        {
-            m_xVals.push_back(input);
-        }
-    }
-    inFileX.close();
-
-    std::ifstream inFileY("yVals.txt");
-    if (inFileY.is_open())
-    {
-        while (inFileY >> input)
-        {
-            m_yVals.push_back(input);
-        }
-    }
-    inFileY.close();
-    */
 }
 
 Vector4d Golf::GetLaunchVector()
@@ -169,32 +124,37 @@ void Golf::NormalizeData()
     m_yWindow = m_maxY + 10;
     m_zWindow = m_maxZ + 10;
 
-    m_xNorm.resize(m_xVals.size());
+
+    //m_xNorm.resize(m_xVals.size());
+    m_xNorm.clear();
     for (int i = 0; i < m_xVals.size(); ++i)
     {
         double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
         //double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
         //double val = (((m_xVals[i] / m_xWindow))-1);
-        m_xNorm[i] = val;
+        //m_xNorm[i] = val;
+        m_xNorm.push_back(val);
     }
 
-    m_yNorm.resize(m_yVals.size());
+    //m_yNorm.resize(m_yVals.size());
+    m_yNorm.clear();
     for (int i = 0; i < m_yVals.size(); ++i)
     {
         //double val = (((m_yVals[i] / m_yWindow) * 2) - 1);
         double val = (((m_yVals[i] / m_yWindow)));
-        m_yNorm[i] = val;
+        //m_yNorm[i] = val;
+        m_yNorm.push_back(val);
     }
 
-    m_zNorm.resize(m_zVals.size());
+    //m_zNorm.resize(m_zVals.size());
+    m_zNorm.clear();
     for (int i = 0; i < m_zVals.size(); ++i)
     {
         double val = (((m_zVals[i] / m_zWindow)));
         //double val = m_zVals[i];
-        m_zNorm[i] = val;
+        //m_zNorm[i] = val;
+        m_zNorm.push_back(val);
     }
-   
-    int test;
 
 }
 
@@ -237,14 +197,15 @@ void Golf::SetMaxZ()
     m_maxZ = maxZ;
 }
 
-
 void Golf::CopyXvec(std::vector<double> aVec)
 {
+    
     std::vector<double> temp(aVec);
     for (int i = 0; i < temp.size(); ++i)
     {
         m_xVals.push_back(temp[i]);
     }
+    
 }
 
 void Golf::CopyYvec(std::vector<double> aVec)

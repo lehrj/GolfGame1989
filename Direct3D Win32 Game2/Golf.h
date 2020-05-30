@@ -18,21 +18,21 @@ public:
     void BuildUIdata();
     void BuildUIstrings();
     void BuildUI();
-
+    void CalculateData();
     Vector4d GetLaunchVector();
     std::vector<Vector4d> GetSwingData();
     const int GetSwingStepIncCount() { return pSwing->GetSwingStepIncrementCount(); };
-    std::vector<double> GetUIdata() { return m_uiData; };
+    //std::vector<double> GetUIdata() { return m_uiData; };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-
-    void CalculateData();
-    void SetMaxX();
-    void SetMaxY();
-    void SetMaxZ();
-
     std::vector<double> GetVect(const int aInput);
     void InputData();
     void NormalizeData();
+    
+    void SelectNextClub();
+
+    void SetMaxX();
+    void SetMaxY();
+    void SetMaxZ();
 
 private:
     Environment* pEnvironment;
@@ -57,7 +57,7 @@ private:
     std::vector<double> m_yVals;
     std::vector<double> m_zVals;
 
-    std::vector<double> m_uiData;
+    //std::vector<double> m_uiData;
     std::vector<std::string> m_uiStrings;
 
 };
