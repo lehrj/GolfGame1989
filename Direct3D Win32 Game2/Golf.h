@@ -29,7 +29,7 @@ public:
     void NormalizeData();
     void ScaleCordinates();
     void SelectNextClub();
-
+    void TransformCordinates();
     void SetMaxX();
     void SetMaxY();
     void SetMaxZ();

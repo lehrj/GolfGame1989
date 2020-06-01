@@ -30,7 +30,8 @@ void Golf::BuildVector()
 {
     CalculateData();
     InputData();
-    NormalizeData();
+    //NormalizeData();
+    ScaleCordinates();
 }
 
 void Golf::SelectNextClub()
@@ -115,11 +116,11 @@ std::vector<Vector4d> Golf::GetSwingData()
     return pSwing->OutputSwingData();
 }
 
-void Golf::ScaleCordinates()
+void Golf::TransformCordinates()
 {
-    m_xNorm.clear();
-    m_yNorm.clear();
-    m_zNorm.clear();
+    //m_xNorm.clear();
+    //m_yNorm.clear();
+    //m_zNorm.clear();
     DirectX::SimpleMath::Vector4 oldVec;
     DirectX::SimpleMath::Vector4 newVec;
     double sX;
@@ -127,10 +128,79 @@ void Golf::ScaleCordinates()
     double sZ;
 
     //DirectX::SimpleMath::Matrix scaleMatrix = 
-    for (int i = 0; i < m_xVals.size(); ++i)
+    DirectX::SimpleMath::Matrix transMatrix = DirectX::SimpleMath::Matrix::Identity;
+    transMatrix._14 = 2.0f;
+    transMatrix._24 = 2.0f;
+    transMatrix._34 = 2.0f;
+    for (int i = 0; i < m_xNorm.size(); ++i)
     {
+        /*
+        oldVec.x = m_xNorm[i];
+        oldVec.y = m_yNorm[i];
+        oldVec.z = m_zNorm[i];
+        oldVec.w = 1;
+
+        //oldVec *= transMatrix;
+        //newVec = oldVec * transMatrix;
+
+        //DirectX::SimpleMath::Vector4 aTestVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
+        newVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
+        m_xNorm[i] = newVec.x;
+        m_yNorm[i] = newVec.y;
+        m_zNorm[i] = newVec.z;
+        //m_xNorm.push_back(newVec.x);
+        //m_yNorm.push_back(newVec.y);
+        //m_zNorm.push_back(newVec.z);
+        */
+        m_xNorm[i] -= 2;
     }
 }
+
+void Golf::ScaleCordinates()
+{
+    m_xNorm.clear();
+    m_yNorm.clear();
+    m_zNorm.clear();
+    DirectX::SimpleMath::Vector4 oldVec;
+    DirectX::SimpleMath::Vector4 newVec;
+    double scaleFactor = .02;
+    double sX = scaleFactor;
+    double sY = scaleFactor;
+    double sZ = scaleFactor;
+
+    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
+    /*
+    scaleMatrix._11 = sX;
+    scaleMatrix._22 = sY;
+    scaleMatrix._33 = sZ;
+    */
+    scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
+
+
+    for (int i = 0; i < m_xVals.size(); ++i)
+    {
+        oldVec.x = m_xVals[i];
+        oldVec.y = m_yVals[i];
+        oldVec.z = m_zVals[i];
+        oldVec.w = 1;
+
+        //oldVec *= transMatrix;
+        //newVec = oldVec * transMatrix;
+
+        //DirectX::SimpleMath::Vector4 aTestVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
+        newVec = DirectX::SimpleMath::Vector4::Transform(oldVec, scaleMatrix);
+        //m_xNorm[i] = newVec.x;
+        //m_yNorm[i] = newVec.y;
+        //m_zNorm[i] = newVec.z;
+        m_xNorm.push_back(newVec.x);
+        m_yNorm.push_back(newVec.y);
+        m_zNorm.push_back(newVec.z);
+    }
+    int testint = 0;
+    testint++;
+    TransformCordinates();
+}
+
 
 void Golf::NormalizeData()
 {
@@ -177,7 +247,7 @@ void Golf::NormalizeData()
         m_zNorm.push_back(val);
     }
     
-
+    //ScaleCordinates();
     //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
 //m_yWindow = m_maxY + 10;
 

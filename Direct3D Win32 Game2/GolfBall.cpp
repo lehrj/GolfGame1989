@@ -35,8 +35,13 @@ void GolfBall::LandProjectile(Environment* pEnviron)
 
 void GolfBall::LaunchProjectile()
 {
+    double shotOrigin = 0.0;
+    m_xVals.push_back(shotOrigin);
+    m_yVals.push_back(shotOrigin);
+    m_zVals.push_back(shotOrigin);
+    int checkValue = 74;
     int sizeX = m_xVals.size();
-    if (sizeX > 73)
+    if (sizeX > checkValue)
     {
         int err = 0;
         ++err;
@@ -51,7 +56,7 @@ void GolfBall::LaunchProjectile()
     double y = m_ball.q[3];
 
     sizeX = m_xVals.size();
-    if (sizeX > 73)
+    if (sizeX > checkValue)
     {
         int err = 0;
         ++err;
@@ -61,7 +66,7 @@ void GolfBall::LaunchProjectile()
     while (isBallAscending == true)
     {
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
@@ -69,7 +74,7 @@ void GolfBall::LaunchProjectile()
 
         ProjectileRungeKutta4(&m_ball, dt);
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
@@ -78,7 +83,7 @@ void GolfBall::LaunchProjectile()
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
 
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
@@ -87,7 +92,7 @@ void GolfBall::LaunchProjectile()
         //PrintFlightData();
         PushFlightData();
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
@@ -96,7 +101,7 @@ void GolfBall::LaunchProjectile()
         if (m_ball.q[2] < 0.0)
         {
             sizeX = m_xVals.size();
-            if (sizeX > 73)
+            if (sizeX > checkValue)
             {
                 int err = 0;
                 ++err;
@@ -106,7 +111,7 @@ void GolfBall::LaunchProjectile()
             isBallAscending = false;
 
             sizeX = m_xVals.size();
-            if (sizeX > 73)
+            if (sizeX > checkValue)
             {
                 int err = 0;
                 ++err;
@@ -114,7 +119,7 @@ void GolfBall::LaunchProjectile()
         }
 
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
@@ -132,7 +137,7 @@ void GolfBall::LaunchProjectile()
     //else
     //{
     sizeX = m_xVals.size();
-    if (sizeX > 73)
+    if (sizeX > checkValue)
     {
         int err = 0;
         ++err;
@@ -154,7 +159,7 @@ void GolfBall::LaunchProjectile()
         }
 
         sizeX = m_xVals.size();
-        if (sizeX > 73)
+        if (sizeX > checkValue)
         {
             int err = 0;
             ++err;
