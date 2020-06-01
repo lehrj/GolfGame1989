@@ -27,7 +27,7 @@ public:
     std::vector<double> GetVect(const int aInput);
     void InputData();
     void NormalizeData();
-    
+    void ScaleCordinates();
     void SelectNextClub();
 
     void SetMaxX();

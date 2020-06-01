@@ -143,6 +143,7 @@ void Game::Render()
     Vector3 yaxis(0.f, 0.f, 2.f);
 
     Vector3 origin = Vector3::Zero;
+    
 
     size_t divisions = 20;
 
@@ -153,9 +154,19 @@ void Game::Render()
 
         Vector3 scale = xaxis * fPercent + origin;
 
-        VertexPositionColor v1(scale - yaxis, Colors::Green);
-        VertexPositionColor v2(scale + yaxis, Colors::Green);
-        m_batch->DrawLine(v1, v2);
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Red);
+            VertexPositionColor v2(scale + yaxis, Colors::Red);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Green);
+            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        
     }
 
 
@@ -166,9 +177,19 @@ void Game::Render()
 
         Vector3 scale = yaxis * fPercent + origin;
 
-        VertexPositionColor v1(scale - xaxis, Colors::Green);
-        VertexPositionColor v2(scale + xaxis, Colors::Green);
-        m_batch->DrawLine(v1, v2);
+        if(scale.z == 0.0f)
+        {
+            VertexPositionColor v1(scale - xaxis, Colors::Red);
+            VertexPositionColor v2(scale + xaxis, Colors::Red);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xaxis, Colors::Green);
+            VertexPositionColor v2(scale + xaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+
     }
 
     //draw tee box
@@ -228,6 +249,7 @@ void Game::Render()
         prevY = yVec[i];
         prevZ = zVec[i];
     }
+    
 
     bool toggleGetNextClub = 0;
     ///// Landing explosion
@@ -263,7 +285,7 @@ void Game::Render()
         m_batch->DrawLine(ft1, ft8);
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
-
+        
         /*
         pGolf->SelectNextClub();
         xVec.clear();

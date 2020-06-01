@@ -115,6 +115,23 @@ std::vector<Vector4d> Golf::GetSwingData()
     return pSwing->OutputSwingData();
 }
 
+void Golf::ScaleCordinates()
+{
+    m_xNorm.clear();
+    m_yNorm.clear();
+    m_zNorm.clear();
+    DirectX::SimpleMath::Vector4 oldVec;
+    DirectX::SimpleMath::Vector4 newVec;
+    double sX;
+    double sY;
+    double sZ;
+
+    //DirectX::SimpleMath::Matrix scaleMatrix = 
+    for (int i = 0; i < m_xVals.size(); ++i)
+    {
+    }
+}
+
 void Golf::NormalizeData()
 {
     SetMaxX();
@@ -123,16 +140,17 @@ void Golf::NormalizeData()
     //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
     //m_yWindow = m_maxY + 10;
 
+    
     m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
     m_yWindow = m_maxY + 10;
     m_zWindow = m_maxZ + 10;
-
-
+    
     //m_xNorm.resize(m_xVals.size());
     m_xNorm.clear();
     for (int i = 0; i < m_xVals.size(); ++i)
     {
-        double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
+        double val = (((m_xVals[i] / m_xWindow)));
+        //double val = (((m_xVals[i] / m_xWindow) * 2) - 1.5);
         //double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
         //double val = (((m_xVals[i] / m_xWindow))-1);
         //m_xNorm[i] = val;
@@ -158,7 +176,54 @@ void Golf::NormalizeData()
         //m_zNorm[i] = val;
         m_zNorm.push_back(val);
     }
+    
 
+    //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
+//m_yWindow = m_maxY + 10;
+
+    /*
+        SetMaxX();
+    SetMaxY();
+    SetMaxZ();
+    //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
+    //m_yWindow = m_maxY + 10;
+
+    
+    m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
+    m_yWindow = m_maxY + 10;
+    m_zWindow = m_maxZ + 10;
+    
+    //m_xNorm.resize(m_xVals.size());
+    m_xNorm.clear();
+    for (int i = 0; i < m_xVals.size(); ++i)
+    {
+        double val = (((m_xVals[i] / m_xWindow) * 2) - 1.5);
+        //double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
+        //double val = (((m_xVals[i] / m_xWindow))-1);
+        //m_xNorm[i] = val;
+        m_xNorm.push_back(val);
+    }
+
+    //m_yNorm.resize(m_yVals.size());
+    m_yNorm.clear();
+    for (int i = 0; i < m_yVals.size(); ++i)
+    {
+        //double val = (((m_yVals[i] / m_yWindow) * 2) - 1);
+        double val = (((m_yVals[i] / m_yWindow)));
+        //m_yNorm[i] = val;
+        m_yNorm.push_back(val);
+    }
+
+    //m_zNorm.resize(m_zVals.size());
+    m_zNorm.clear();
+    for (int i = 0; i < m_zVals.size(); ++i)
+    {
+        double val = (((m_zVals[i] / m_zWindow)));
+        //double val = m_zVals[i];
+        //m_zNorm[i] = val;
+        m_zNorm.push_back(val);
+    }
+    */
 }
 
 void Golf::SetMaxX()
