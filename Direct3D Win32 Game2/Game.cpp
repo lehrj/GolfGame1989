@@ -69,7 +69,7 @@ void Game::Update(DX::StepTimer const& timer)
 
     // TODO: Add your game logic here.
     // world start
-    m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+    //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
     // world end
 
     // WLJ add for mouse and keybord interface
@@ -102,15 +102,54 @@ void Game::Render()
     //m_d3dContext->RSSetState(m_states->CullNone());
 
     //world start
-    m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing
-    m_effect->SetWorld(m_world);
+    //m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing
+    //m_effect->SetWorld(m_world);
     //world end
     m_effect->Apply(m_d3dContext.Get());
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
+
+
     /////////********* Start swing draw
+    /*
+    std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
+    std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
+    std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
+    int swingStepCount = alphaVec.size();
+    
+    if (arcCount >= swingStepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+
+    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+    Vector3 swingTop(0.0f, 1.0f, 0.0f);
+    VertexPositionColor feet(swingOrigin, Colors::Yellow);
+    VertexPositionColor shoulder(swingTop, Colors::White);
+    for (int i = 0; i < arcCount; ++i)
+    {
+        //Vector3 hand = thetaVec[i];
+        Vector3 hand = alphaVec[i];
+        hand += swingTop;
+        Vector3 clubHead = betaVec[i];
+        //clubHead -= hand;
+        VertexPositionColor body(swingOrigin, Colors::Red);
+        VertexPositionColor arm(hand, Colors::Green);
+        VertexPositionColor shaft(clubHead, Colors::Blue);
+        //m_batch->DrawLine(feet, shoulder);
+        //m_batch->DrawLine(shoulder, arm);
+        //m_batch->DrawLine(arm, shaft);
+        //m_batch->DrawLine(vert3, vert1);
+
+        m_batch->DrawLine(feet, arm);
+        m_batch->DrawLine(feet, shoulder);
+        m_batch->DrawLine(feet, shaft);
+    }
+    */
+
     /*
     Vector4d launchData = pGolf->GetLaunchVector();
     double armLength = launchData.GetFirst();
@@ -121,17 +160,46 @@ void Game::Render()
     swingAngles.resize(pGolf->GetSwingStepIncCount());
     swingAngles = pGolf->GetSwingData();
 
-    Vector3 origin(0.0f, 0.0f, 0.0f);
+    //Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
     Vector3 armPivot(0.0f, armLength, 0.0f);
     Vector3 clubHead(clubLength, armLength, 0.0f);
-    VertexPositionColor vert1(origin, Colors::Red);
+    VertexPositionColor vert1(swingOrigin, Colors::Red);
     VertexPositionColor vert2(armPivot, Colors::Red);
     VertexPositionColor vert3(clubHead, Colors::Red);
     m_batch->DrawLine(vert1, vert2);
     m_batch->DrawLine(vert2, vert3);
     */
-    // end swing draw
 
+
+    // end swing draw
+    /*
+        if (arcCount >= stepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+    //double prevX = 0.0;
+    //double prevY = 0.0;
+    double prevX = xVec[0];
+    double prevY = yVec[0];
+    double prevZ = zVec[0];
+
+    for (int i = 0; i < arcCount; ++i)
+    {
+        Vector3 p1(prevX, prevY, prevZ);
+        Vector3 p2(xVec[i], yVec[i], zVec[i]);
+
+
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+        m_batch->DrawLine(aV, bV);
+        prevX = xVec[i];
+        prevY = yVec[i];
+        prevZ = zVec[i];
+    }
+    */
+    
+    
     /////////********* Start projectile draw
     std::vector<double> xVec = pGolf->GetVect(0);
     std::vector<double> yVec = pGolf->GetVect(1);
@@ -168,7 +236,6 @@ void Game::Render()
         }
         
     }
-
 
     for (size_t i = 0; i <= divisions; i++)
     {
@@ -222,9 +289,6 @@ void Game::Render()
 
     }
 
-    //int frameCount = timeCount % stepCount;
-    //int frameCount = stepCount % timeCount;
-
     if (arcCount >= stepCount)
     {
         arcCount = 0;
@@ -249,7 +313,6 @@ void Game::Render()
         prevY = yVec[i];
         prevZ = zVec[i];
     }
-    
 
     bool toggleGetNextClub = 0;
     ///// Landing explosion
@@ -286,15 +349,10 @@ void Game::Render()
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
         
-        /*
-        pGolf->SelectNextClub();
-        xVec.clear();
-        yVec.clear();
-        zVec.clear();
-        */
         toggleGetNextClub = 1;
     }
     // end landing explosion
+    
 
     m_batch->End();
 
@@ -325,6 +383,8 @@ void Game::Render()
 
     Present();
 
+    /*
+    // Switch to next club in the bag after impact of previous shot
     if (toggleGetNextClub == 1)
     {
         int test = 0;
@@ -333,8 +393,8 @@ void Game::Render()
         yVec.clear();
         zVec.clear();
         pGolf->SelectNextClub();
-
     }
+    */
 }
 
 // Helper method to clear the back buffers.
@@ -610,11 +670,13 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here.
 
     ////********* WLJ world start ----- deactivate to turn off world spin
+    
     m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
     m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
+    
     // world end
 
     m_fontPos.x = backBufferWidth / 2.f;

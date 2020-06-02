@@ -18,6 +18,111 @@ GolfSwing::~GolfSwing()
     delete m_pBag;
 }
 
+void GolfSwing::CalculateSwingCordinates()
+{
+    DirectX::SimpleMath::Vector3 alpha;
+    DirectX::SimpleMath::Vector3 prevAlpha;
+    double alphaAngle = m_alphaBetaThetaVec[0].GetX();
+    DirectX::SimpleMath::Vector3 beta;
+    DirectX::SimpleMath::Vector3 prevBeta;
+    double betaAngle = m_alphaBetaThetaVec[0].GetY();;
+    DirectX::SimpleMath::Vector3 theta;
+    DirectX::SimpleMath::Vector3 prevTheta;
+    double thetaAngle = m_alphaBetaThetaVec[0].GetZ();
+    std::vector< DirectX::SimpleMath::Vector3> alphaVec;
+    std::vector< DirectX::SimpleMath::Vector3> betaVec;
+    std::vector< DirectX::SimpleMath::Vector3> thetaVec;
+    double armNorm = 1.0;
+    double clubNorm = 1.0;
+    DirectX::SimpleMath::Vector3 body(0.0, 1.0, 0.0);
+    DirectX::SimpleMath::Vector3 arm;
+    DirectX::SimpleMath::Vector4 arm4(0.0, 1.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 club;
+    DirectX::SimpleMath::Vector4 testV4(0.0, 1.0, 0.0, 1.0);
+    DirectX::SimpleMath::Vector4 testV42(0.0, 1.0, 0.0, 1.0);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
+
+    DirectX::SimpleMath::Matrix testMat;
+    //testV4.Transform(DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle));
+    
+    //testV42 = DirectX::SimpleMath::Matrix::Ro
+    //club = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
+    DirectX::SimpleMath::Matrix rotMatTest = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
+    testV4.Transform(arm4, rotMatTest);
+    DirectX::SimpleMath::Vector4 a4Vec = DirectX::SimpleMath::Vector4::Transform(arm4, rotMatTest);
+    //DirectX::SimpleMath::Vector3 a4Vec = DirectX::SimpleMath::Vector3::Transform(arm, rotMatTest);
+    DirectX::SimpleMath::Vector4 a4Vec2 = a4Vec;
+    a4Vec2.Normalize();
+
+    int bStop = 0;
+    bStop++;
+
+    
+}
+
+std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetAlphaCords()
+{
+    m_alphaCord.clear();
+    double alphaAngle = m_alphaBetaThetaVec[0].GetX();
+    double prevAlphaAngle = m_alphaBetaThetaVec[0].GetX();
+    DirectX::SimpleMath::Vector3 alphaXYZ(0.0, 1.0, 0.0);
+    DirectX::SimpleMath::Vector3 arm(0.0, 1.0, 0.0);
+    m_alphaCord.push_back(alphaXYZ);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(alphaAngle);
+
+    for (int i = 0; i < m_alphaBetaThetaVec.size(); ++i)
+    {
+        alphaAngle = m_alphaBetaThetaVec[i].GetX();
+        rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(alphaAngle - prevAlphaAngle);
+        alphaXYZ = DirectX::SimpleMath::Vector3::Transform(alphaXYZ, rotMat);
+        m_alphaCord.push_back(alphaXYZ);
+        prevAlphaAngle = alphaAngle;
+    }
+    return m_alphaCord;
+}
+
+std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetBetaCords()
+{
+    m_betaCord.clear();
+    double betaAngle = m_alphaBetaThetaVec[0].GetY();
+    double prevBetaAngle = m_alphaBetaThetaVec[0].GetY();
+    DirectX::SimpleMath::Vector3 betaXYZ(0.0, 1.0, 0.0);
+    DirectX::SimpleMath::Vector3 club(0.0, 1.0, 0.0);
+    m_betaCord.push_back(betaXYZ);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(betaAngle);
+
+    for (int i = 0; i < m_alphaBetaThetaVec.size(); ++i)
+    {
+        betaAngle = m_alphaBetaThetaVec[i].GetY();
+        rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(betaAngle - prevBetaAngle);
+        betaXYZ = DirectX::SimpleMath::Vector3::Transform(betaXYZ, rotMat);
+        m_betaCord.push_back(betaXYZ);
+        prevBetaAngle = betaAngle;
+    }
+    return m_alphaCord;
+}
+
+std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetThetaCords()
+{
+    m_thetaCord.clear();
+    double thetaAngle = m_alphaBetaThetaVec[0].GetZ();
+    double prevThetaAngle = m_alphaBetaThetaVec[0].GetZ();
+    DirectX::SimpleMath::Vector3 thetaXYZ(0.0, 1.0, 0.0);
+    DirectX::SimpleMath::Vector3 body(0.0, 1.0, 0.0);
+    m_thetaCord.push_back(thetaXYZ);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
+
+    for (int i = 0; i < m_alphaBetaThetaVec.size(); ++i)
+    {
+        thetaAngle = m_alphaBetaThetaVec[i].GetZ();
+        rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle - prevThetaAngle);
+        thetaXYZ = DirectX::SimpleMath::Vector3::Transform(thetaXYZ, rotMat);
+        m_thetaCord.push_back(thetaXYZ);
+        prevThetaAngle = thetaAngle;
+    }
+    return m_thetaCord;
+}
+
 Vector4d GolfSwing::CalculateLaunchVector(void)
 {
     m_alphaBetaThetaVec.clear();
@@ -411,6 +516,7 @@ void GolfSwing::InputSwingValuesVerbose()
 
 std::vector<Vector4d> GolfSwing::OutputSwingData()
 {
+    CalculateSwingCordinates();
     return m_alphaBetaThetaVec;
 }
 

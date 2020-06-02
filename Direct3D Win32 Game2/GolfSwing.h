@@ -12,6 +12,7 @@ public:
     ~GolfSwing();
 
     Vector4d CalculateLaunchVector(void);
+    void CalculateSwingCordinates();
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);
     void CycleClub();
@@ -25,11 +26,15 @@ public:
     const double GetLaunchVelocity() { return m_launchVelocity; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
 
+    std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
+    std::vector<DirectX::SimpleMath::Vector3> GetBetaCords();
+    std::vector<DirectX::SimpleMath::Vector3> GetThetaCords();
+
     void InputSwingValuesBasic();
     void InputSwingValuesVerbose();
 
     std::vector<Vector4d> OutputSwingData();
-
+    
     void PrintSwingInputData();
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
     void ReadInSwingValues();
@@ -56,6 +61,11 @@ private:
     GolfClub m_club;
     int m_clubIndex = 0;
     std::vector<Vector4d> m_alphaBetaThetaVec;
+
+    std::vector<DirectX::SimpleMath::Vector3> m_alphaCord;
+    std::vector<DirectX::SimpleMath::Vector3> m_betaCord;
+    std::vector<DirectX::SimpleMath::Vector3> m_thetaCord;
+
     double m_launchVelocity;
     double m_launchAngle;
     const int m_swingStepIncrementCount = 200;

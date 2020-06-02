@@ -8,6 +8,7 @@ GolfBag::GolfBag()
     BuildBag();
 
 }
+
 GolfBag::~GolfBag()
 {
 }
