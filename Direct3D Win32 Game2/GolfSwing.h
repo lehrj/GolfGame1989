@@ -34,7 +34,7 @@ public:
     void InputSwingValuesVerbose();
 
     std::vector<Vector4d> OutputSwingData();
-    
+
     void PrintSwingInputData();
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
     void ReadInSwingValues();

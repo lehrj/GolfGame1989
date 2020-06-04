@@ -44,7 +44,7 @@ void GolfSwing::CalculateSwingCordinates()
 
     DirectX::SimpleMath::Matrix testMat;
     //testV4.Transform(DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle));
-    
+
     //testV42 = DirectX::SimpleMath::Matrix::Ro
     //club = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
     DirectX::SimpleMath::Matrix rotMatTest = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
@@ -57,7 +57,7 @@ void GolfSwing::CalculateSwingCordinates()
     int bStop = 0;
     bStop++;
 
-    
+
 }
 
 std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetAlphaCords()
@@ -144,7 +144,7 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
     bool isVcFound = false;
 
     //PrintSwingMechanics(Vc, time);
-    
+
     //for (int i = 0; i < 200; i++)
     for (int i = 0; i < m_swingStepIncrementCount; i++)
     {
@@ -197,7 +197,7 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
             - 2 * (m_club.length * m_club.length + m_armLength * m_club.length * cos(m_beta)) * m_alpha_dot * m_beta_dot;  // Jorgensen equation
 
         Vc = sqrt(Vc2);
-        
+
         Vector4d swingAngles(m_alpha, m_beta, m_theta, 0.0);
         m_alphaBetaThetaVec.push_back(swingAngles);
 
@@ -253,7 +253,7 @@ double GolfSwing::ComputeBetaDotDot(void)
 void GolfSwing::CycleClub()
 {
     ++m_clubIndex;
-    if(m_clubIndex >= m_pBag->GetClubCount())
+    if (m_clubIndex >= m_pBag->GetClubCount())
     {
         m_clubIndex = 0;
     }
@@ -848,4 +848,3 @@ void GolfSwing::UpdateGolfSwingValues()
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
 
 }
-

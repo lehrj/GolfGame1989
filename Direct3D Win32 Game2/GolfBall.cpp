@@ -143,39 +143,39 @@ void GolfBall::LaunchProjectile()
         ++err;
     }
 
-        double previousY = flightData.GetY();
-        double previousTime = flightData.GetW();
-        //  Calculate ball decent path until it reaches landing area height
-        while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
-        {
-            previousY = flightData.GetY();
-            previousTime = flightData.GetW();
-            ProjectileRungeKutta4(&m_ball, dt);
-            flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
-            //PrintFlightData();
-            PushFlightData();
-            time = m_ball.flightTime;
-            y = m_ball.q[3];
-        }
-
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
-        }
-
-        //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
-        //ProjectileRungeKutta4(&m_ball, -rollBackTime);
+    double previousY = flightData.GetY();
+    double previousTime = flightData.GetW();
+    //  Calculate ball decent path until it reaches landing area height
+    while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
+    {
+        previousY = flightData.GetY();
+        previousTime = flightData.GetW();
+        ProjectileRungeKutta4(&m_ball, dt);
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
-        SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
-        SetLandingSpinRate(m_ball.omega);
-        SetMaxHeight(maxHeight);
-
-
-
-        //PrintLandingData(flightData, maxHeight);
+        //PrintFlightData();
+        PushFlightData();
+        time = m_ball.flightTime;
+        y = m_ball.q[3];
     }
+
+    sizeX = m_xVals.size();
+    if (sizeX > checkValue)
+    {
+        int err = 0;
+        ++err;
+    }
+
+    //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
+    //ProjectileRungeKutta4(&m_ball, -rollBackTime);
+    flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+    SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
+    SetLandingSpinRate(m_ball.omega);
+    SetMaxHeight(maxHeight);
+
+
+
+    //PrintLandingData(flightData, maxHeight);
+}
 //}
 
 void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
@@ -440,15 +440,12 @@ void GolfBall::OutputPosition()
 {
     /*
     printf("X Vals ================ \n");
-
     for (int i = 0; i < m_xVals.size(); ++i)
     {
         std::cout << m_xVals[i] << std::endl;
     }
-
     printf("\n\n\n");
     printf("Y Vals ================ \n");
-
     for (int i = 0; i < m_yVals.size(); ++i)
     {
         std::cout << m_yVals[i] << std::endl;
@@ -511,7 +508,7 @@ const double GolfBall::GetShotDistance()
 {
     Vector4d origin = m_shotOrigin;
     Vector4d landingPos = GetLandingCordinates();
-    double distance = sqrt(((landingPos.GetX() - origin.GetX()) * (landingPos.GetX() - origin.GetX())) + ((landingPos.GetY() - origin.GetY()) 
+    double distance = sqrt(((landingPos.GetX() - origin.GetX()) * (landingPos.GetX() - origin.GetX())) + ((landingPos.GetY() - origin.GetY())
         * (landingPos.GetY() - origin.GetY()) + ((landingPos.GetZ() - origin.GetZ()) * (landingPos.GetZ() - origin.GetZ()))));
     return distance;
 
