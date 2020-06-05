@@ -6,7 +6,7 @@
 GolfBag::GolfBag()
 {
     BuildBag();
-
+    SetDiffcultyFactor();
 }
 
 GolfBag::~GolfBag()
@@ -327,3 +327,13 @@ void GolfBag::PrintClubList()
     }
     printf("============================================================================================\n");
 }
+
+void GolfBag::SetDiffcultyFactor()
+{
+    for (int i = 0; i < m_bagSize; ++i)
+    {
+        m_bag[i].difficultyFactor = 1;
+        // ToDo: Add equation and balance for multiplier for miss hits based on club angle, club shaft length, and club mass
+    }
+}
+

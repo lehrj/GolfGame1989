@@ -12,6 +12,7 @@ struct GolfClub
     double length; // length of club in m
     double mass; // mass in kg
     double massMoI; // Mass moment of inertia of the rod representing the club in kg m^2
+    float difficultyFactor;
 };
 
 class GolfBag
@@ -24,6 +25,7 @@ public:
     GolfClub GetClub(const int aClubIndex) { return m_bag[aClubIndex]; };
     int GetClubCount() { return m_bagSize; };
     void PrintClubList();
+    void SetDiffcultyFactor();
 
 private:
     std::vector<GolfClub> m_bag;
