@@ -78,6 +78,47 @@ void Game::Update(DX::StepTimer const& timer)
     {
         ExitGame();
     }
+    if (kb.D1)
+    {
+        pGolf->SelectInputClub(1);
+    }
+    if (kb.D2)
+    {
+        pGolf->SelectInputClub(2);
+    }
+    if (kb.D3)
+    {
+        pGolf->SelectInputClub(3);
+    }
+    if (kb.D4)
+    {
+        pGolf->SelectInputClub(4);
+    }
+    if (kb.D5)
+    {
+        pGolf->SelectInputClub(5);
+    }
+    if (kb.D6)
+    {
+        pGolf->SelectInputClub(6);
+    }
+    if (kb.D7)
+    {
+        pGolf->SelectInputClub(7);
+    }
+    if (kb.D8)
+    {
+        pGolf->SelectInputClub(8);
+    }
+    if (kb.D9)
+    {
+        pGolf->SelectInputClub(9);
+    }
+    if (kb.D0)
+    {
+        pGolf->SelectInputClub(10);
+    }
+
     auto mouse = m_mouse->GetState();
 
     elapsedTime;
@@ -381,12 +422,12 @@ void Game::Render()
     // Switch to next club in the bag after impact of previous shot
     if (toggleGetNextClub == 1)
     {
-        int test = 0;
-        ++test;
+        /*
         xVec.clear();
         yVec.clear();
         zVec.clear();
         pGolf->SelectNextClub();
+        */
     }
     
 }

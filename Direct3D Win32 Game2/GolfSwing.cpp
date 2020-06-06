@@ -263,6 +263,14 @@ void GolfSwing::CycleClub()
     CalculateLaunchVector();
 }
 
+void GolfSwing::CycleInputClub(int aInput)
+{
+    m_club = m_pBag->GetClub(aInput);
+    UpdateClubData();
+    UpdateGolfSwingValues();
+    CalculateLaunchVector();
+}
+
 void GolfSwing::InputSwingValuesBasic()
 {
     SelectClub();

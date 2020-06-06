@@ -16,6 +16,7 @@ public:
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);
     void CycleClub();
+    void CycleInputClub(int aInput);
     const double GetArmLength() { return m_armLength; };
     const double GetBackSwingPercentage() { return m_backSwingPercentage; };
     const double GetClubAngle() { return m_club.angle; };
@@ -39,6 +40,7 @@ public:
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
     void ReadInSwingValues();
     void ResetAlphaBeta();
+
     void SetArmLength(double aLength);
     void SetBackSwingPercentage(double aPercentage);
     void SetBallPlacementAngle(double aAngle);

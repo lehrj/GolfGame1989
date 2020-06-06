@@ -46,6 +46,18 @@ void Golf::SelectNextClub()
     BuildUIstrings();
 }
 
+void Golf::SelectInputClub(int aInput)
+{
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pBall->ResetBallData();
+    pSwing->CycleInputClub(aInput);
+    pSwing->ResetAlphaBeta();
+    pSwing->UpdateGolfSwingValues();
+    BuildVector();
+
+    BuildUIstrings();
+}
+
 void Golf::BuildUIstrings()
 {
     m_uiStrings.clear();

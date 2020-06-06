@@ -33,6 +33,7 @@ public:
     void NormalizeData();
     void ScaleCordinates();
     void SelectNextClub();
+    void SelectInputClub(int aInput);
     void TransformCordinates();
     void SetMaxX();
     void SetMaxY();
