@@ -295,6 +295,7 @@ void Game::Render()
     }
 
     //draw tee box
+    
     double originX = xVec[0];
     double originZ = zVec[0];
     Vector3 t1(originX - .05, 0.0f, -0.1f);
@@ -309,20 +310,10 @@ void Game::Render()
     m_batch->DrawLine(vt1, vt3);
     m_batch->DrawLine(vt3, vt4);
     m_batch->DrawLine(vt4, vt2);
+    
     // end tee box draw
 
     int stepCount = xVec.size();
-
-    int timeCount = m_timer.GetElapsedSeconds();
-
-    if (m_timer.GetTotalSeconds() < 1)
-    {
-        timeCount = 1;
-    }
-    else
-    {
-
-    }
 
     if (arcCount >= stepCount)
     {
@@ -388,37 +379,18 @@ void Game::Render()
     }
     // end landing explosion
 
+    
 
     m_batch->End();
 
-    // start UI draw
-    std::vector<std::string> uiString = pGolf->GetUIstrings();
-
-    std::string output = uiString[0];
-
-    float fontOriginPosX = m_fontPos2.x;
-    float fontOriginPosY = m_fontPos2.y;
-
     m_spriteBatch->Begin();
-
-    for (int i = 0; i < uiString.size(); ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-    }
-    m_fontPos2.y = fontOriginPosY;
-
+    TestPowerUp();
+    RenderUI();
     m_spriteBatch->End();
-    // wsting end
-    // end UI draw
+
 
     Present();
 
-    
     // Switch to next club in the bag after impact of previous shot
     if (toggleGetNextClub == 1)
     {
@@ -430,6 +402,27 @@ void Game::Render()
         */
     }
     
+}
+
+void Game::RenderUI()
+{
+    std::vector<std::string> uiString = pGolf->GetUIstrings();
+
+    std::string output = uiString[0];
+
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
 }
 
 // Helper method to clear the back buffers.
@@ -593,6 +586,7 @@ void Game::CreateDevice()
 
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
 
+
     // world start
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
@@ -730,6 +724,7 @@ void Game::OnDeviceLost()
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
+
     m_inputLayout.Reset();
 
     m_font.reset();
@@ -745,3 +740,71 @@ void Game::OnDeviceLost()
 
     CreateResources();
 }
+
+void Game::TestRender()
+{
+    double originX = 0.0;
+    double originZ = 0.0;
+    Vector3 t1(originX - .05, 0.0f, -0.1f);
+    Vector3 t2(originX + .05, 0.0f, -0.1f);
+    Vector3 t3(originX - 0.05, 0.0f, 0.1f);
+    Vector3 t4(originX + .05, 0.0f, 0.1f);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+}
+
+void Game::TestPowerUp()
+{
+    if (1 == 1)
+    {
+        
+        Vector3 powerBarTopLeft(-.8, -.6, 0.0);
+        Vector3 powerBarTopRight(.8, -.6, 0.0);
+        Vector3 powerBarBottomLeft(-.8, -.9, 0.0);
+        Vector3 powerBarBottomRight(.8, -.9, 0.0);
+        
+
+        VertexPositionColor vTopLeft(powerBarTopLeft, Colors::Red);
+        VertexPositionColor vTopRight(powerBarTopRight, Colors::Red);
+        VertexPositionColor vBottomLeft(powerBarBottomLeft, Colors::Red);
+        VertexPositionColor vBottomRight(powerBarBottomRight, Colors::Red);
+
+        std::string powerBarEnds = "I69";
+        Vector2 endCapSize = m_font->MeasureString(powerBarEnds.c_str());
+        Vector2 drawPos(0., 0.0);
+        m_font->DrawString(m_spriteBatch.get(), powerBarEnds.c_str(), drawPos, Colors::Yellow, 0.f, drawPos);
+        
+        /*
+        m_batch->DrawLine(vTopLeft, vTopRight);
+        m_batch->DrawLine(vTopRight, vBottomRight);
+        m_batch->DrawLine(vBottomRight, vBottomLeft);
+        m_batch->DrawLine(vBottomLeft, vTopLeft);
+        */
+    }
+
+    /*
+    std::vector<std::string> uiString = pGolf->GetUIstrings();
+    std::string output = uiString[0];
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
+    */
+}
+
+
+

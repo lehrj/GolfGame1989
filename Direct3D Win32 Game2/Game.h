@@ -13,8 +13,6 @@
 class Game
 {
 public:
-
-    
     Game() noexcept;
     ~Game() = default;
     
@@ -45,6 +43,11 @@ private:
 
     void Update(DX::StepTimer const& timer);
     void Render();
+    void RenderUI();
+
+    void TestRender();
+    void TestPowerUp();
+
 
     void Clear();
     void Present();
@@ -76,6 +79,7 @@ private:
     std::unique_ptr<DirectX::CommonStates> m_states;
     std::unique_ptr<DirectX::BasicEffect> m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
+    
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
 
     //std::unique_ptr<DX::TextConsole> m_console; // ????? WLJ add Text Console 
