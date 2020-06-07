@@ -45,7 +45,7 @@ private:
     void Render();
     void RenderUI();
 
-    void TestRender();
+    void RenderUITest();
     void TestPowerUp();
 
 
@@ -90,6 +90,7 @@ private:
     //world start
     
     DirectX::SimpleMath::Matrix m_world;
+    DirectX::SimpleMath::Matrix m_worldAntiRotation;
     DirectX::SimpleMath::Matrix m_view;
     DirectX::SimpleMath::Matrix m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
@@ -109,5 +110,14 @@ private:
     // WLJ add for mouse and keybord interface
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
     std::unique_ptr<DirectX::Mouse> m_mouse;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
+    DirectX::SimpleMath::Vector2 m_powerBarFramePos;
+    DirectX::SimpleMath::Vector2 m_powerBarMeterPos;
+    DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
+    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;
+
+    RECT m_powerMeterStretchRect;
 
 };

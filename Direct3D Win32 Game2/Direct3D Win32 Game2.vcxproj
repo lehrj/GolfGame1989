@@ -191,6 +191,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico" />
+    <Image Include="PowerbarFrame.png" />
+    <Image Include="PowerbarMeter.png" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest" />

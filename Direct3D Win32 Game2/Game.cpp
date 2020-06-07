@@ -70,6 +70,8 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
     // world start
     m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+    m_worldAntiRotation = m_world.Invert();
+
     // world end
 
     // WLJ add for mouse and keybord interface
@@ -380,11 +382,11 @@ void Game::Render()
     // end landing explosion
 
     
-
+    TestPowerUp();
     m_batch->End();
 
     m_spriteBatch->Begin();
-    TestPowerUp();
+    RenderUITest();
     RenderUI();
     m_spriteBatch->End();
 
@@ -394,12 +396,12 @@ void Game::Render()
     // Switch to next club in the bag after impact of previous shot
     if (toggleGetNextClub == 1)
     {
-        /*
+        
         xVec.clear();
         yVec.clear();
         zVec.clear();
         pGolf->SelectNextClub();
-        */
+        
     }
     
 }
@@ -423,6 +425,20 @@ void Game::RenderUI()
         m_fontPos2.y += 35;
     }
     m_fontPos2.y = fontOriginPosY;
+}
+
+void Game::RenderUITest()
+{
+    float time = float(m_timer.GetTotalSeconds());
+
+    //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerBarFramePos, nullptr, Colors::White, 0.f, m_powerBarFrameOrigin);
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin);
+    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin, cosf(time));
+    
+    m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
+    
+    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+
 }
 
 // Helper method to clear the back buffers.
@@ -567,6 +583,7 @@ void Game::CreateDevice()
     // WLJ start
     // world start
     m_world = Matrix::Identity;
+    m_worldAntiRotation = Matrix::Identity;
     // world end
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
 
@@ -599,8 +616,31 @@ void Game::CreateDevice()
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
-
     // end
+
+    // Start Texture
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", nullptr, m_powerFrameTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", nullptr, m_powerMeterTexture.ReleaseAndGetAddressOf()));
+
+    ComPtr<ID3D11Resource> resource;
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", resource.GetAddressOf(), m_powerFrameTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", resource.GetAddressOf(), m_powerMeterTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> PowerbarFrame;
+    ComPtr<ID3D11Texture2D> PowerbarMeter;
+    DX::ThrowIfFailed(resource.As(&PowerbarFrame));
+    DX::ThrowIfFailed(resource.As(&PowerbarMeter));
+
+    CD3D11_TEXTURE2D_DESC PowerbarFrameDesc;
+    PowerbarFrame->GetDesc(&PowerbarFrameDesc);
+    CD3D11_TEXTURE2D_DESC PowerbarMeterDesc;
+    PowerbarMeter->GetDesc(&PowerbarMeterDesc);
+
+    m_powerBarFrameOrigin.x = float(PowerbarFrameDesc.Width / 2);
+    m_powerBarFrameOrigin.y = float(PowerbarFrameDesc.Height / 2);
+    m_powerBarMeterOrigin.x = float(PowerbarMeterDesc.Width / 2);
+    m_powerBarMeterOrigin.y = float(PowerbarMeterDesc.Height / 2);
+
+    // End texture
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -715,6 +755,24 @@ void Game::CreateResources()
     //m_fontPos2.y = backBufferHeight / 30.f;
     m_fontPos2.y = 35;
 
+    // Start Texture
+    m_powerBarFramePos.x = backBufferWidth / 2.f;
+    m_powerBarFramePos.y = backBufferHeight / 1.08f;
+
+    m_powerBarMeterPos.x = backBufferWidth / 2.f;
+    m_powerBarMeterPos.y = backBufferHeight / 1.08f;
+
+    float powerBarHeight = m_powerBarMeterPos.y;
+    m_powerMeterStretchRect.left = backBufferWidth / 4;
+    //m_powerMeterStretchRect.top = m_powerBarMeterPos.y;
+    //m_powerMeterStretchRect.bottom = m_powerBarMeterPos.y;
+    //m_PowerFrameTexture
+    m_powerMeterStretchRect.top = backBufferHeight / 4;
+    m_powerMeterStretchRect.right = m_powerMeterStretchRect.left + backBufferWidth / 2;
+    m_powerMeterStretchRect.bottom = m_powerMeterStretchRect.top + backBufferHeight / 2;
+
+    
+    // End Texture
 }
 
 void Game::OnDeviceLost()
@@ -729,6 +787,8 @@ void Game::OnDeviceLost()
 
     m_font.reset();
     m_spriteBatch.reset();
+    m_powerFrameTexture.Reset();
+    m_powerMeterTexture.Reset();
     // end
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();
@@ -741,51 +801,49 @@ void Game::OnDeviceLost()
     CreateResources();
 }
 
-void Game::TestRender()
-{
-    double originX = 0.0;
-    double originZ = 0.0;
-    Vector3 t1(originX - .05, 0.0f, -0.1f);
-    Vector3 t2(originX + .05, 0.0f, -0.1f);
-    Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    Vector3 t4(originX + .05, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-}
-
 void Game::TestPowerUp()
 {
-    if (1 == 1)
+    if (1 == 0)
     {
-        
+        /*
         Vector3 powerBarTopLeft(-.8, -.6, 0.0);
         Vector3 powerBarTopRight(.8, -.6, 0.0);
         Vector3 powerBarBottomLeft(-.8, -.9, 0.0);
         Vector3 powerBarBottomRight(.8, -.9, 0.0);
+        */
+
+        Vector3 powerBarTopLeft(-.8, -.6, 0.0);
+        Vector3 powerBarTopRight(.8, -.6, 0.0);
+        Vector3 powerBarBottomLeft(-.8, -.9, 0.0);
+        Vector3 powerBarBottomRight(.8, -.9, 0.0);
+
+        Vector3 pBTL = Vector3::Transform(powerBarTopLeft, m_worldAntiRotation);
+        Vector3 pBTR = Vector3::Transform(powerBarTopRight, m_worldAntiRotation);
+        Vector3 pBBL = Vector3::Transform(powerBarBottomLeft, m_worldAntiRotation);
+        Vector3 pBBR = Vector3::Transform(powerBarBottomRight, m_worldAntiRotation);
         
+        VertexPositionColor vTopLeft(pBTL, Colors::Blue);      
+        VertexPositionColor vTopRight(pBTR, Colors::Red);      
+        VertexPositionColor vBottomLeft(pBBL, Colors::Yellow);        
+        VertexPositionColor vBottomRight(pBBR, Colors::White);
+        //VertexPositionColor vTopLeft(powerBarTopLeft, Colors::Red);
+        //VertexPositionColor vTopRight(powerBarTopRight, Colors::Red);
+        //VertexPositionColor vBottomLeft(powerBarBottomLeft, Colors::Red);
+        //VertexPositionColor vBottomRight(powerBarBottomRight, Colors::Red);
 
-        VertexPositionColor vTopLeft(powerBarTopLeft, Colors::Red);
-        VertexPositionColor vTopRight(powerBarTopRight, Colors::Red);
-        VertexPositionColor vBottomLeft(powerBarBottomLeft, Colors::Red);
-        VertexPositionColor vBottomRight(powerBarBottomRight, Colors::Red);
-
+        /*
         std::string powerBarEnds = "I69";
         Vector2 endCapSize = m_font->MeasureString(powerBarEnds.c_str());
         Vector2 drawPos(0., 0.0);
         m_font->DrawString(m_spriteBatch.get(), powerBarEnds.c_str(), drawPos, Colors::Yellow, 0.f, drawPos);
+        */
+
         
-        /*
         m_batch->DrawLine(vTopLeft, vTopRight);
         m_batch->DrawLine(vTopRight, vBottomRight);
         m_batch->DrawLine(vBottomRight, vBottomLeft);
         m_batch->DrawLine(vBottomLeft, vTopLeft);
-        */
+        
     }
 
     /*

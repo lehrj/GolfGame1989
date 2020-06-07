@@ -37,6 +37,12 @@
     <Image Include="directx.ico">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="PowerbarFrame.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="PowerbarMeter.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">
