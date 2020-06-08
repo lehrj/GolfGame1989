@@ -120,6 +120,22 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pGolf->SelectInputClub(10);
     }
+    if (kb.X)
+    {
+        IncreasePowerBarLeftX();
+    }
+    if (kb.Y)
+    {
+        IncreasePowerBarTopY();
+    }
+    if (kb.Z)
+    {
+        DecreasePowerBarLeftX();
+    }
+    if (kb.T)
+    {
+        DecreasePowerBarTopY();
+    }
 
     auto mouse = m_mouse->GetState();
 
@@ -432,12 +448,12 @@ void Game::RenderUITest()
     float time = float(m_timer.GetTotalSeconds());
 
     //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerBarFramePos, nullptr, Colors::White, 0.f, m_powerBarFrameOrigin);
-    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin);
+    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin);
     //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin, cosf(time));
     
-    m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
+    //m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
     
-    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
 
 }
 
@@ -763,15 +779,35 @@ void Game::CreateResources()
     m_powerBarMeterPos.y = backBufferHeight / 1.08f;
 
     float powerBarHeight = m_powerBarMeterPos.y;
+    float centerX = m_outputWidth / 2;
+    float centerY = m_outputHeight / 2;
+    
+    m_powerMeterStretchRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
+    m_powerMeterStretchRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
+    m_powerMeterStretchRect.left = m_outputWidth - m_powerBarMeterOrigin.x;
+    m_powerMeterStretchRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
+
+    /*
+    m_powerMeterStretchRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
+    m_powerMeterStretchRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
+    m_powerMeterStretchRect.left = m_outputWidth - m_powerBarMeterOrigin.x ;
+    m_powerMeterStretchRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
+    */
+
+    /*
+    float aTop, aLeft, aRight, aBottom;
     m_powerMeterStretchRect.left = backBufferWidth / 4;
     //m_powerMeterStretchRect.top = m_powerBarMeterPos.y;
     //m_powerMeterStretchRect.bottom = m_powerBarMeterPos.y;
-    //m_PowerFrameTexture
     m_powerMeterStretchRect.top = backBufferHeight / 4;
     m_powerMeterStretchRect.right = m_powerMeterStretchRect.left + backBufferWidth / 2;
     m_powerMeterStretchRect.bottom = m_powerMeterStretchRect.top + backBufferHeight / 2;
+    aLeft = m_powerMeterStretchRect.left;
+    aTop = m_powerMeterStretchRect.top;
+    aRight = m_powerMeterStretchRect.right;
+    aBottom = m_powerMeterStretchRect.bottom;
+    */
 
-    
     // End Texture
 }
 
@@ -865,4 +901,23 @@ void Game::TestPowerUp()
 }
 
 
+void Game::IncreasePowerBarLeftX()
+{
+    m_powerMeterStretchRect.left += 5;
+}
+
+void Game::IncreasePowerBarTopY()
+{
+    m_powerMeterStretchRect.top += 5;
+}
+
+void Game::DecreasePowerBarTopY()
+{
+    m_powerMeterStretchRect.top -= 5;
+}
+
+void Game::DecreasePowerBarLeftX()
+{
+    m_powerMeterStretchRect.left -= 5;
+}
 

@@ -17,6 +17,7 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
+    <ClInclude Include="GolfPlay.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Vector4d.cpp" />
+    <ClCompile Include="GolfPlay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

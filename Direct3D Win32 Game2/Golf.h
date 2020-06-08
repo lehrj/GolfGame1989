@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "GolfBag.h"
+#include "GolfPlay.h"
 #include "GolfSwing.h"
 #include "GolfBall.h"
 #include "Environment.h"
@@ -43,6 +44,7 @@ private:
     Environment* pEnvironment;
     GolfSwing* pSwing;
     GolfBall* pBall;
+    GolfPlay* pPlay;
 
     void CopyXvec(std::vector<double> aVec);
     void CopyYvec(std::vector<double> aVec);

@@ -120,4 +120,8 @@ private:
 
     RECT m_powerMeterStretchRect;
 
+    void IncreasePowerBarLeftX();
+    void IncreasePowerBarTopY();
+    void DecreasePowerBarTopY();
+    void DecreasePowerBarLeftX();
 };
