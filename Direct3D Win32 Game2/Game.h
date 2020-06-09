@@ -6,6 +6,9 @@
 
 #include "StepTimer.h"
 #include "Golf.h"
+//#include "GolfPlay.h"
+
+
 //#include "TextConsole.h"
 
 // A basic game implementation that creates a D3D11 device and
@@ -44,7 +47,7 @@ private:
     void Update(DX::StepTimer const& timer);
     void Render();
     void RenderUI();
-
+    void RenderDebugInfo();
     void RenderUITest();
     void TestPowerUp();
 
@@ -99,6 +102,7 @@ private:
 
     // WLJ added for drawing projectile and swing
     Golf* pGolf;
+    GolfPlay* pGolfPlay;
     int arcCount = 0;
 
     // WLJ added for displaying text

@@ -5,7 +5,6 @@
 #include "pch.h"
 #include "Game.h"
 
-
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
@@ -19,11 +18,14 @@ Game::Game() noexcept :
     m_featureLevel(D3D_FEATURE_LEVEL_9_1)
 {
     pGolf = new Golf;
+    pGolfPlay = new GolfPlay;
 }
+
 /*
 Game::~Game()
 {
-    //delete pGolf;
+    delete pGolf;
+    delete pGolfPlay;
 }
 */
 
@@ -403,7 +405,14 @@ void Game::Render()
 
     m_spriteBatch->Begin();
     RenderUITest();
-    RenderUI();
+    if (1 == 0)
+    {
+        RenderDebugInfo();
+    }
+    else
+    {
+        RenderUI();
+    }
     m_spriteBatch->End();
 
 
@@ -417,8 +426,26 @@ void Game::Render()
         yVec.clear();
         zVec.clear();
         pGolf->SelectNextClub();
-        
     }
+}
+
+void Game::RenderDebugInfo()
+{
+    
+    std::vector<std::string> uiString = pGolfPlay->GetDebugData();
+
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
     
 }
 

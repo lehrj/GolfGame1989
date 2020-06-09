@@ -13,8 +13,8 @@ Golf::Golf()
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
+    pPlay = new GolfPlay();
     BuildVector();
-
     BuildUIstrings();
 }
 
@@ -23,7 +23,7 @@ Golf::~Golf()
     delete pBall;
     delete pSwing;
     delete pEnvironment;
-
+    delete pPlay;
 }
 
 void Golf::BuildVector()

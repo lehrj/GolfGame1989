@@ -2,9 +2,14 @@
 class GolfPlay
 {
 public:
+    GolfPlay();
+    ~GolfPlay();
+    void BuildDebugData();
+    std::vector<std::string> GetDebugData();
+    void ResetPlayData();
 
 private:
-    bool isLeft = false;
+    bool isLefty = false;
     float m_chunkRate;
     float m_hookRate;
     float m_swingImpact;
@@ -17,5 +22,7 @@ private:
     const float m_swingPowerBunnyMax = 20.0;
     const float m_swingPowerTurtleMax = -20.0;
     const float m_swingPowerMax = 100.0;
+
+    std::vector<std::string> m_debugData;
 };
 
