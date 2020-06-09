@@ -1,5 +1,4 @@
 #include "pch.h"
-
 #include "GolfBag.h"
 #include <iostream>
 
@@ -313,9 +312,6 @@ void GolfBag::BuildBag()
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].length * m_bag[i].balancePoint;
     ++i;
     */
-    
-    
-    
 }
 
 void GolfBag::PrintClubList()

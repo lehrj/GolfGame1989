@@ -88,12 +88,10 @@ std::vector<double> Golf::GetVect(const int aInput)
 {
     if (aInput == 0)
     {
-        //return m_xVals;
         return m_xNorm;
     }
     if(aInput == 1)
     {
-        //return m_yVals;
         return m_yNorm;
     }
     if (aInput == 2)
@@ -104,24 +102,20 @@ std::vector<double> Golf::GetVect(const int aInput)
 
 void Golf::InputData()
 {
-    
     m_xVals.clear();
     m_yVals.clear();
     m_zVals.clear();
-    
     
     CopyXvec(pBall->OutputXvals());
     CopyYvec(pBall->OutputYvals());
     CopyZvec(pBall->OutputZvals());
 }
 
-
 Vector4d Golf::GetLaunchVector()
 {
     Vector4d launchVector(pSwing->GetArmLength(), pSwing->GetClubLength(), pSwing->GetLaunchAngle(), pSwing->GetLaunchVelocity());
     return launchVector;
 }
-
 
 std::vector<Vector4d> Golf::GetSwingData()
 {
@@ -188,7 +182,6 @@ void Golf::ScaleCordinates()
     */
     scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
 
-
     for (int i = 0; i < m_xVals.size(); ++i)
     {
         oldVec.x = m_xVals[i];
@@ -213,7 +206,6 @@ void Golf::ScaleCordinates()
     TransformCordinates();
 }
 
-
 void Golf::NormalizeData()
 {
     SetMaxX();
@@ -222,7 +214,6 @@ void Golf::NormalizeData()
     //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
     //m_yWindow = m_maxY + 10;
 
-    
     m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
     m_yWindow = m_maxY + 10;
     m_zWindow = m_maxZ + 10;

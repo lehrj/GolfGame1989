@@ -17,7 +17,8 @@ class Game
 {
 public:
     Game() noexcept;
-    ~Game() = default;
+    //~Game() = default;
+    ~Game();
     
 
     Game(Game&&) = default;

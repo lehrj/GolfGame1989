@@ -21,13 +21,11 @@ Game::Game() noexcept :
     pGolfPlay = new GolfPlay;
 }
 
-/*
 Game::~Game()
 {
     delete pGolf;
     delete pGolfPlay;
 }
-*/
 
 // Initialize the Direct3D resources required to run.
 void Game::Initialize(HWND window, int width, int height)
@@ -155,7 +153,6 @@ void Game::Render()
 
     Clear();
 
-
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -171,7 +168,6 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-
 
     /////////********* Start swing draw
     /*
@@ -228,7 +224,6 @@ void Game::Render()
     m_batch->DrawLine(vert2, vert3);
     */
 
-
     // end swing draw
     /*
         if (arcCount >= stepCount)
@@ -254,7 +249,6 @@ void Game::Render()
     }
     */
 
-
     /////////********* Start projectile draw
     std::vector<double> xVec = pGolf->GetVect(0);
     std::vector<double> yVec = pGolf->GetVect(1);
@@ -266,7 +260,6 @@ void Game::Render()
     Vector3 yaxis(0.f, 0.f, 2.f);
 
     Vector3 origin = Vector3::Zero;
-
 
     size_t divisions = 20;
 
@@ -398,14 +391,15 @@ void Game::Render()
         toggleGetNextClub = 1;
     }
     // end landing explosion
-
     
     TestPowerUp();
+
     m_batch->End();
 
     m_spriteBatch->Begin();
+
     RenderUITest();
-    if (1 == 0)
+    if (1 == 0) // toggle between debug and normal UI rendering
     {
         RenderDebugInfo();
     }
@@ -415,13 +409,11 @@ void Game::Render()
     }
     m_spriteBatch->End();
 
-
     Present();
 
     // Switch to next club in the bag after impact of previous shot
     if (toggleGetNextClub == 1)
     {
-        
         xVec.clear();
         yVec.clear();
         zVec.clear();
@@ -431,7 +423,6 @@ void Game::Render()
 
 void Game::RenderDebugInfo()
 {
-    
     std::vector<std::string> uiString = pGolfPlay->GetDebugData();
 
     float fontOriginPosX = m_fontPos2.x;
@@ -446,7 +437,6 @@ void Game::RenderDebugInfo()
         m_fontPos2.y += 35;
     }
     m_fontPos2.y = fontOriginPosY;
-    
 }
 
 void Game::RenderUI()
@@ -476,12 +466,10 @@ void Game::RenderUITest()
 
     //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerBarFramePos, nullptr, Colors::White, 0.f, m_powerBarFrameOrigin);
     //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin);
-    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin, cosf(time));
-    
+    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin, cosf(time));  
     //m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
     
     m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
-
 }
 
 // Helper method to clear the back buffers.
@@ -901,12 +889,10 @@ void Game::TestPowerUp()
         m_font->DrawString(m_spriteBatch.get(), powerBarEnds.c_str(), drawPos, Colors::Yellow, 0.f, drawPos);
         */
 
-        
         m_batch->DrawLine(vTopLeft, vTopRight);
         m_batch->DrawLine(vTopRight, vBottomRight);
         m_batch->DrawLine(vBottomRight, vBottomLeft);
         m_batch->DrawLine(vBottomLeft, vTopLeft);
-        
     }
 
     /*
@@ -926,7 +912,6 @@ void Game::TestPowerUp()
     m_fontPos2.y = fontOriginPosY;
     */
 }
-
 
 void Game::IncreasePowerBarLeftX()
 {

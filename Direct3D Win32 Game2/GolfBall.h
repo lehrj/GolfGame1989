@@ -90,6 +90,4 @@ private:
     Vector4d m_landingCordinates;
     double m_maxHeight;
     Vector4d m_shotOrigin;
-
-
 };

@@ -429,12 +429,10 @@ void GolfBall::SetLandingCordinates(const double aX, const double aY, const doub
     m_landingCordinates.SetZ(aZ);
 }
 
-
 void GolfBall::UpdateSpinRate(double aTimeDelta)
 {
     m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
-
 
 void GolfBall::OutputPosition()
 {
@@ -511,6 +509,4 @@ const double GolfBall::GetShotDistance()
     double distance = sqrt(((landingPos.GetX() - origin.GetX()) * (landingPos.GetX() - origin.GetX())) + ((landingPos.GetY() - origin.GetY())
         * (landingPos.GetY() - origin.GetY()) + ((landingPos.GetZ() - origin.GetZ()) * (landingPos.GetZ() - origin.GetZ()))));
     return distance;
-
-
 }
