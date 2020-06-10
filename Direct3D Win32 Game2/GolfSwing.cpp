@@ -854,5 +854,15 @@ void GolfSwing::UpdateGolfSwingValues()
     m_beta = m_beta * swingFactor;
     m_gamma = m_gamma * swingFactor;
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
+}
 
+void GolfSwing::UpdateImpact(float aSwingPower, float aImpact)
+{
+
+}
+
+void GolfSwing::UpdateBackSwing(float aPower)
+{
+    m_backSwingPercentage = aPower * 0.01;
+    UpdateGolfSwingValues();
 }

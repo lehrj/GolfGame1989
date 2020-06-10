@@ -54,9 +54,10 @@ public:
     void SetQbeta(double aQbeta);
     void SetShoulderAccel(double aShoulderAccel);
     void UpdateGolfSwingValues();
-
+    void UpdateImpact(float aSwingPower, float aImpact);
     void SelectClub();
     void UpdateClubData();
+    void UpdateBackSwing(float aPower);
 
 private:
     GolfBag* m_pBag;

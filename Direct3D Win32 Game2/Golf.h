@@ -39,6 +39,7 @@ public:
     void SetMaxX();
     void SetMaxY();
     void SetMaxZ();
+    void UpdateImpact(float aPower, float aImpact);
 
 private:
     Environment* pEnvironment;

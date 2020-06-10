@@ -103,7 +103,7 @@ private:
 
     // WLJ added for drawing projectile and swing
     Golf* pGolf;
-    GolfPlay* pGolfPlay;
+    GolfPlay* pPlay;
     int arcCount = 0;
 
     // WLJ added for displaying text
@@ -125,8 +125,4 @@ private:
 
     RECT m_powerMeterStretchRect;
 
-    void IncreasePowerBarLeftX();
-    void IncreasePowerBarTopY();
-    void DecreasePowerBarTopY();
-    void DecreasePowerBarLeftX();
 };

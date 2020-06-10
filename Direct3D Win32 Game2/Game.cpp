@@ -18,13 +18,13 @@ Game::Game() noexcept :
     m_featureLevel(D3D_FEATURE_LEVEL_9_1)
 {
     pGolf = new Golf;
-    pGolfPlay = new GolfPlay;
+    pPlay = new GolfPlay;
 }
 
 Game::~Game()
 {
     delete pGolf;
-    delete pGolfPlay;
+    delete pPlay;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -68,10 +68,16 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
+    pPlay->Swing();
+
+    if (pPlay->UpdateSwing() == true)
+    {
+        pGolf->UpdateImpact(pPlay->GetSwingPower(), pPlay->GetImpact());
+        pPlay->ResetPlayData();
+    }
     // world start
     m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
     m_worldAntiRotation = m_world.Invert();
-
     // world end
 
     // WLJ add for mouse and keybord interface
@@ -120,22 +126,24 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pGolf->SelectInputClub(10);
     }
-    if (kb.X)
-    {
-        IncreasePowerBarLeftX();
-    }
-    if (kb.Y)
-    {
-        IncreasePowerBarTopY();
-    }
     if (kb.Z)
     {
-        DecreasePowerBarLeftX();
+        pPlay->StartSwing();
     }
-    if (kb.T)
+    if (kb.X)
     {
-        DecreasePowerBarTopY();
+        pPlay->SetPower();
     }
+    if (kb.C)
+    {
+        pPlay->SetImpact();
+    }
+    if (kb.V)
+    {
+        pPlay->ResetPlayData();
+    }
+
+
 
     auto mouse = m_mouse->GetState();
 
@@ -344,7 +352,6 @@ void Game::Render()
         Vector3 p1(prevX, prevY, prevZ);
         Vector3 p2(xVec[i], yVec[i], zVec[i]);
 
-
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
         m_batch->DrawLine(aV, bV);
@@ -399,7 +406,7 @@ void Game::Render()
     m_spriteBatch->Begin();
 
     RenderUITest();
-    if (1 == 0) // toggle between debug and normal UI rendering
+    if (1 == 1) // toggle between debug and normal UI rendering
     {
         RenderDebugInfo();
     }
@@ -412,6 +419,7 @@ void Game::Render()
     Present();
 
     // Switch to next club in the bag after impact of previous shot
+    /*
     if (toggleGetNextClub == 1)
     {
         xVec.clear();
@@ -419,11 +427,12 @@ void Game::Render()
         zVec.clear();
         pGolf->SelectNextClub();
     }
+    */
 }
 
 void Game::RenderDebugInfo()
 {
-    std::vector<std::string> uiString = pGolfPlay->GetDebugData();
+    std::vector<std::string> uiString = pPlay->GetDebugData();
 
     float fontOriginPosX = m_fontPos2.x;
     float fontOriginPosY = m_fontPos2.y;
@@ -913,23 +922,4 @@ void Game::TestPowerUp()
     */
 }
 
-void Game::IncreasePowerBarLeftX()
-{
-    m_powerMeterStretchRect.left += 5;
-}
-
-void Game::IncreasePowerBarTopY()
-{
-    m_powerMeterStretchRect.top += 5;
-}
-
-void Game::DecreasePowerBarTopY()
-{
-    m_powerMeterStretchRect.top -= 5;
-}
-
-void Game::DecreasePowerBarLeftX()
-{
-    m_powerMeterStretchRect.left -= 5;
-}
 

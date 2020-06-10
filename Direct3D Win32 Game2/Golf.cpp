@@ -366,3 +366,10 @@ void Golf::CopyZvec(std::vector<double> aVec)
         m_zVals.push_back(temp[i]);
     }
 }
+
+void Golf::UpdateImpact(float aPower, float aImpact)
+{
+    pSwing->UpdateImpact(aPower, aImpact);
+    pSwing->UpdateBackSwing(aPower);
+    BuildVector();
+}
