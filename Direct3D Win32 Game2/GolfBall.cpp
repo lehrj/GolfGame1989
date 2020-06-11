@@ -108,15 +108,12 @@ DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, d
     DirectX::SimpleMath::Vector4 impactNormal = DirectX::SimpleMath::Vector4::Zero;
     impactNormal.x = cos(aFaceAngle);
     impactNormal.y = sin(aFaceAngle);
-    impactNormal.Normalize();
     impactNormal.w = 1.0;
+    impactNormal.Normalize();
+    //impactNormal.w = 1.0;
     aFaceRotation = Utility::ToRadians(-15.0);
-    
-    //DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aFaceRotation);
-    impactNormal.Transform(impactNormal,rotMat);
-    impactNormal = DirectX::SimpleMath::Vector4::Transform(impactNormal, rotMat);
 
+    impactNormal = DirectX::SimpleMath::Vector4::Transform(impactNormal, DirectX::SimpleMath::Matrix::CreateRotationY(aFaceRotation));
     return impactNormal;
 }
 
