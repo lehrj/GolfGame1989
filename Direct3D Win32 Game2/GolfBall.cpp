@@ -39,13 +39,7 @@ void GolfBall::LaunchProjectile()
     m_xVals.push_back(shotOrigin);
     m_yVals.push_back(shotOrigin);
     m_zVals.push_back(shotOrigin);
-    int checkValue = 74;
-    int sizeX = m_xVals.size();
-    if (sizeX > checkValue)
-    {
-        int err = 0;
-        ++err;
-    }
+
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
     double dt = m_timeStep;
@@ -55,74 +49,20 @@ void GolfBall::LaunchProjectile()
     double x = m_ball.q[1];
     double y = m_ball.q[3];
 
-    sizeX = m_xVals.size();
-    if (sizeX > checkValue)
-    {
-        int err = 0;
-        ++err;
-    }
-
     bool isBallAscending = true;
     while (isBallAscending == true)
     {
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
-        }
-
         ProjectileRungeKutta4(&m_ball, dt);
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
-        }
 
         flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
 
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
-        }
-
         //PrintFlightData();
         PushFlightData();
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
-        }
 
         if (m_ball.q[2] < 0.0)
         {
-            sizeX = m_xVals.size();
-            if (sizeX > checkValue)
-            {
-                int err = 0;
-                ++err;
-            }
-
             maxHeight = m_ball.q[3];
             isBallAscending = false;
-
-            sizeX = m_xVals.size();
-            if (sizeX > checkValue)
-            {
-                int err = 0;
-                ++err;
-            }
-        }
-
-        sizeX = m_xVals.size();
-        if (sizeX > checkValue)
-        {
-            int err = 0;
-            ++err;
         }
     }
     // Check to verify landing area height can be reached. If it cannot the shot is treated as if it is out of play so x = 0.0;
@@ -136,12 +76,6 @@ void GolfBall::LaunchProjectile()
     */
     //else
     //{
-    sizeX = m_xVals.size();
-    if (sizeX > checkValue)
-    {
-        int err = 0;
-        ++err;
-    }
 
     double previousY = flightData.GetY();
     double previousTime = flightData.GetW();
@@ -158,13 +92,6 @@ void GolfBall::LaunchProjectile()
         y = m_ball.q[3];
     }
 
-    sizeX = m_xVals.size();
-    if (sizeX > checkValue)
-    {
-        int err = 0;
-        ++err;
-    }
-
     //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
     //ProjectileRungeKutta4(&m_ball, -rollBackTime);
     flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
@@ -172,14 +99,31 @@ void GolfBall::LaunchProjectile()
     SetLandingSpinRate(m_ball.omega);
     SetMaxHeight(maxHeight);
 
-
-
     //PrintLandingData(flightData, maxHeight);
 }
-//}
+
+
+DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation)
+{
+    DirectX::SimpleMath::Vector4 impactNormal = DirectX::SimpleMath::Vector4::Zero;
+    impactNormal.x = cos(aFaceAngle);
+    impactNormal.y = sin(aFaceAngle);
+    impactNormal.Normalize();
+    impactNormal.w = 1.0;
+    aFaceRotation = Utility::ToRadians(-15.0);
+    
+    //DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aFaceRotation);
+    impactNormal.Transform(impactNormal,rotMat);
+    impactNormal = DirectX::SimpleMath::Vector4::Transform(impactNormal, rotMat);
+
+    return impactNormal;
+}
 
 void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
 {
+    DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
+
     //  Convert the loft angle from degrees to radians and
     //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aSwingInput.GetY());

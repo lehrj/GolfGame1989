@@ -29,7 +29,7 @@ private:
     float m_meterBar;
     float m_swingImpact;
     float m_swingImpactProcessed;
-    float m_swingIncrement = 0.1;
+    float m_swingIncrement = 5.0;
     float m_swingPower;
     float m_skullRate;
     float m_sliceRate;

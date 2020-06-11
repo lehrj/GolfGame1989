@@ -37,10 +37,9 @@ struct SpinProjectile
 class GolfBall
 {
 public:
-    void OutputPosition();
-    std::vector<double> OutputXvals();
-    std::vector<double> OutputYvals();
-    std::vector<double> OutputZvals();
+    double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
+    DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
+    void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
     const int GetXvecSize() { return m_xVals.size(); };
     const int GetYvecSize() { return m_yVals.size(); };
     const int GetZvecSize() { return m_zVals.size(); };
@@ -52,10 +51,13 @@ public:
     const double GetShotDistance();
     const double GetInitialSpinRate() { return m_initialSpinRate; };
     const double GetLandingSpinRate() { return m_landingSpinRate; };
-    double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
-    void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
+
     void LandProjectile(Environment* pEnviron);
     void LaunchProjectile();
+    void OutputPosition();
+    std::vector<double> OutputXvals();
+    std::vector<double> OutputYvals();
+    std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
     
     void PrintFlightData();

@@ -73,7 +73,7 @@ void Game::Update(DX::StepTimer const& timer)
     if (pPlay->UpdateSwing() == true)
     {
         pGolf->UpdateImpact(pPlay->GetSwingPower(), pPlay->GetImpact());
-        pPlay->ResetPlayData();
+        //pPlay->ResetPlayData();
     }
     // world start
     m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
@@ -142,8 +142,6 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pPlay->ResetPlayData();
     }
-
-
 
     auto mouse = m_mouse->GetState();
 
@@ -409,6 +407,7 @@ void Game::Render()
     if (1 == 1) // toggle between debug and normal UI rendering
     {
         RenderDebugInfo();
+        RenderUI();
     }
     else
     {
@@ -432,6 +431,22 @@ void Game::Render()
 
 void Game::RenderDebugInfo()
 {
+    //m_fontPosDebug
+    std::vector<std::string> uiString = pPlay->GetDebugData();
+
+    float fontOriginPosX = m_fontPosDebug.x;
+    float fontOriginPosY = m_fontPosDebug.y;
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
+        m_fontPosDebug.y += 35;
+    }
+    m_fontPosDebug.y = fontOriginPosY;
+    /*
     std::vector<std::string> uiString = pPlay->GetDebugData();
 
     float fontOriginPosX = m_fontPos2.x;
@@ -446,6 +461,7 @@ void Game::RenderDebugInfo()
         m_fontPos2.y += 35;
     }
     m_fontPos2.y = fontOriginPosY;
+    */
 }
 
 void Game::RenderUI()
@@ -794,6 +810,8 @@ void Game::CreateResources()
     m_fontPos2.x = backBufferWidth - 5;
     //m_fontPos2.y = backBufferHeight / 30.f;
     m_fontPos2.y = 35;
+    m_fontPosDebug.x = 480;
+    m_fontPosDebug.y = 35;
 
     // Start Texture
     m_powerBarFramePos.x = backBufferWidth / 2.f;

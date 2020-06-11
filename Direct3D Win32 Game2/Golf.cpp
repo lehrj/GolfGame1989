@@ -369,7 +369,17 @@ void Golf::CopyZvec(std::vector<double> aVec)
 
 void Golf::UpdateImpact(float aPower, float aImpact)
 {
+
     pSwing->UpdateImpact(aPower, aImpact);
     pSwing->UpdateBackSwing(aPower);
+    //BuildVector();
+
+    //pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pBall->ResetBallData();
+    //pSwing->CycleInputClub(aInput);
+    pSwing->ResetAlphaBeta();
+    pSwing->UpdateGolfSwingValues();
     BuildVector();
+
+    BuildUIstrings();
 }

@@ -110,6 +110,7 @@ private:
     std::unique_ptr<DirectX::SpriteFont> m_font;
     DirectX::SimpleMath::Vector2 m_fontPos;
     DirectX::SimpleMath::Vector2 m_fontPos2;
+    DirectX::SimpleMath::Vector2 m_fontPosDebug;
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
 
     // WLJ add for mouse and keybord interface

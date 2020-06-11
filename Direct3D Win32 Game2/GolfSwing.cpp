@@ -690,7 +690,7 @@ void GolfSwing::ResetAlphaBeta()
     //m_armLength = 0.62;
     //m_armMass = 7.3;
     //m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
-    m_backSwingPercentage = 100.0;
+    //m_backSwingPercentage = 100.0;
     m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
@@ -797,12 +797,12 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_armLength = 0.62;
     m_armMass = 7.3;
     m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
-    m_backSwingPercentage = 100.0;
+    m_backSwingPercentage = 69.0;
     m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
-    m_club.angle = 25.0;
+    m_club.angle = 45.0;
     m_club.balancePoint = 0.75;
     m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
     m_club.length = 1.1; // length of club in m
@@ -863,6 +863,9 @@ void GolfSwing::UpdateImpact(float aSwingPower, float aImpact)
 
 void GolfSwing::UpdateBackSwing(float aPower)
 {
-    m_backSwingPercentage = aPower * 0.01;
+    //m_backSwingPercentage = aPower * 0.01;
+    m_backSwingPercentage = aPower;
     UpdateGolfSwingValues();
+    CalculateLaunchVector();
 }
+
