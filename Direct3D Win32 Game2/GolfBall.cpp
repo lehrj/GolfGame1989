@@ -197,7 +197,7 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     DirectX::SimpleMath::Vector4 vFaceNormal = DirectX::SimpleMath::Vector4::Zero;
     vFaceNormal.x = cos(Utility::ToRadians(aSwingInput.GetY()));
     vFaceNormal.y = sin(Utility::ToRadians(aSwingInput.GetY()));
-    vFaceNormal.z = sin(Utility::ToRadians(0.1));
+    vFaceNormal.z = sin(Utility::ToRadians(10.1));
     vFaceNormal.Normalize();
     DirectX::SimpleMath::Vector4 vHeadNormal = (vHead.Dot(vFaceNormal)) * vFaceNormal;
     DirectX::SimpleMath::Vector4 vHeadParallel = vHead - vHeadNormal;
@@ -240,12 +240,15 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     absvHeadParallel.z = abs(absvHeadParallel.z);
     absvHeadParallel.w = abs(absvHeadParallel.w);
 
+    float absVhP = sqrt((vHeadParallel.x * vHeadParallel.x) + (vHeadParallel.y * vHeadParallel.y) + (vHeadParallel.z * vHeadParallel.z));
 
     //crossVheadvFace = unitVHead;
     //crossVheadvFace.Cross(unitFaceNormal);
 
     DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
-    omegaBall = ((5 * absvHeadParallel) / (7 * m_ball.radius)) * crossVheadvFace;
+    //omegaBall = ((5 * absvHeadParallel) / (7 * m_ball.radius)) * crossVheadvFace;
+    omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
+
 
     int test = 0;
     //DirectX::SimpleMath::Vector4 crossVheadvFace;// = DirectX::SimpleMath::Vector4::Cross(unitVHead, unitFaceNormal);
@@ -330,6 +333,7 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     m_ball.q[2] = vy0;   //  vy 
     m_ball.q[4] = vz0;   //  vz 
     */
+    SetSpinAxis(omegaBall);
     //m_ball.omega = omegaBall.x;
     m_ball.omega = omega;
     m_ball.q[0] = vBall.x;   //  vx 
@@ -537,7 +541,20 @@ void GolfBall::SetLandingCordinates(const double aX, const double aY, const doub
 
 void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis)
 {
-
+    float spinTotal = abs(aAxis.x) + abs(aAxis.y) + abs(aAxis.z);
+    const float tolerance = 0.000001;
+    if (spinTotal > tolerance)
+    {
+        m_ball.rx = aAxis.x / spinTotal;
+        m_ball.ry = aAxis.y / spinTotal;
+        m_ball.rz = aAxis.z / spinTotal;
+    }
+    else
+    {
+        m_ball.rx = 0.0;
+        m_ball.ry = 0.0;
+        m_ball.rz = 0.0;
+    }
 }
 
 void GolfBall::UpdateSpinRate(double aTimeDelta)
