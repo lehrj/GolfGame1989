@@ -12,6 +12,8 @@ public:
     ~GolfSwing();
 
     Vector4d CalculateLaunchVector(void);
+    DirectX::SimpleMath::Vector4 CalculateImpactFaceNormal();
+    DirectX::SimpleMath::Vector4 CalculateImpactClubNormal();
     void CalculateSwingCordinates();
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);

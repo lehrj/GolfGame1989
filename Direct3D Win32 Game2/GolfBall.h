@@ -59,7 +59,8 @@ public:
     std::vector<double> OutputYvals();
     std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
-    
+    void PrepProjectileLaunch2(Vector4d aSwingInput);
+
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);
     
@@ -74,6 +75,7 @@ public:
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
     void SetLandingCordinates(const double aX, const double aY, const double aZ);
     void SetMaxHeight(const double aMaxHeight) { m_maxHeight = aMaxHeight; };
+    void SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis);
     void UpdateSpinRate(double aTimeDelta);
 
 private:

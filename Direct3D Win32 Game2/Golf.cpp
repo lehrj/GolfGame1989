@@ -201,8 +201,6 @@ void Golf::ScaleCordinates()
         m_yNorm.push_back(newVec.y);
         m_zNorm.push_back(newVec.z);
     }
-    int testint = 0;
-    testint++;
     TransformCordinates();
 }
 
