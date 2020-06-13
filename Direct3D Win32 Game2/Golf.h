@@ -27,6 +27,7 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetAlpha() { return pSwing->GetAlphaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetBeta() { return pSwing->GetBetaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetTheta() { return pSwing->GetThetaCords(); };
+    
     //std::vector<double> GetUIdata() { return m_uiData; };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     std::vector<double> GetVect(const int aInput);

@@ -49,10 +49,14 @@ public:
     const Vector4d GetLandingCordinates() { return m_landingCordinates; };
     const double GetMaxHeight() { return m_maxHeight; };
     const double GetShotDistance();
+    //const DirectX::SimpleMath::Vector3 GetImpactAngle(DirectX::SimpleMath::Vector3 aPrevImpactPos, DirectX::SimpleMath::Vector3 aPostImpactPos);
+    const DirectX::SimpleMath::Vector3 GetImpactAngle();
+    const DirectX::SimpleMath::Plane GetImpactPlane();
     const double GetInitialSpinRate() { return m_initialSpinRate; };
     const double GetLandingSpinRate() { return m_landingSpinRate; };
 
-    void LandProjectile(Environment* pEnviron);
+    //void LandProjectile(Environment* pEnviron);
+    void LandProjectile();
     void LaunchProjectile();
     void OutputPosition();
     std::vector<double> OutputXvals();

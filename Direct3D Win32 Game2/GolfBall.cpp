@@ -24,11 +24,13 @@ void GolfBall::FireProjectile(Vector4d aSwingInput, Environment* pEnviron)
     //LandProjectile(pEnviron);
 }
 
-void GolfBall::LandProjectile(Environment* pEnviron)
+void GolfBall::LandProjectile()
 {
     printf("Warning: Landing bounce/roll functionality not fully implemented (WIP)\n");
 
-    Vector4d impactVector{ m_ball.q[0], m_ball.q[2],m_ball.q[4], 0.0 };
+    DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
+    Vector4d impactVector{ m_ball.q[0], m_ball.q[2],m_ball.q[4], 0.0 }; // vx, vy, vz
+
     double impactSpeed = impactVector.Magnitude3();
     printf("Impact Speed = %lf (m/s) \n", impactSpeed);
     impactVector.NormalizeVector(impactVector);
@@ -96,10 +98,21 @@ void GolfBall::LaunchProjectile()
     //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
     //ProjectileRungeKutta4(&m_ball, -rollBackTime);
     flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
-    SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
+
+    // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
+    //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
+        /*
+    q[0] = vx, velocity
+    q[1] = x position
+    q[2] = vy, velocity
+    q[3] = y position
+    q[4] = vz, velocity
+    q[5] = z position
+    */
+    SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
     SetLandingSpinRate(m_ball.omega);
     SetMaxHeight(maxHeight);
-
+    LandProjectile();
     //PrintLandingData(flightData, maxHeight);
 }
 
@@ -188,19 +201,22 @@ DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, d
 */
 void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
 {
-
     //Vector4d aSwingInput = { m_launchVelocity, m_launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
     DirectX::SimpleMath::Vector4 vHead = DirectX::SimpleMath::Vector4::Zero;
     vHead.x = aSwingInput.GetFirst();
+    
     //vHead.w = aSwingInput.GetFirst();
 
     DirectX::SimpleMath::Vector4 vFaceNormal = DirectX::SimpleMath::Vector4::Zero;
     vFaceNormal.x = cos(Utility::ToRadians(aSwingInput.GetY()));
     vFaceNormal.y = sin(Utility::ToRadians(aSwingInput.GetY()));
-    vFaceNormal.z = sin(Utility::ToRadians(10.1));
+    vFaceNormal.z = sin(Utility::ToRadians(0.1));
     vFaceNormal.Normalize();
+    
     DirectX::SimpleMath::Vector4 vHeadNormal = (vHead.Dot(vFaceNormal)) * vFaceNormal;
+    
     DirectX::SimpleMath::Vector4 vHeadParallel = vHead - vHeadNormal;
+    
 
     double ballMass = m_ball.mass;
     double clubMass = aSwingInput.GetZ();
@@ -248,9 +264,7 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
     //omegaBall = ((5 * absvHeadParallel) / (7 * m_ball.radius)) * crossVheadvFace;
     omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
-
-
-    int test = 0;
+    
     //DirectX::SimpleMath::Vector4 crossVheadvFace;// = DirectX::SimpleMath::Vector4::Cross(unitVHead, unitFaceNormal);
     //DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead;
     //crossVheadvFace.Cross(unitVHead, unitFaceNormal);
@@ -282,7 +296,7 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     */
 
     DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
-
+    
     //  Convert the loft angle from degrees to radians and
     //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aSwingInput.GetY());
@@ -335,6 +349,8 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     */
     SetSpinAxis(omegaBall);
     //m_ball.omega = omegaBall.x;
+    double omegaTest = Utility::ToDegrees(omegaBall.z);
+
     m_ball.omega = omega;
     m_ball.q[0] = vBall.x;   //  vx 
     m_ball.q[2] = vBall.y;   //  vy 
@@ -592,6 +608,66 @@ std::vector<double> GolfBall::OutputYvals()
 std::vector<double> GolfBall::OutputZvals()
 {
     return m_zVals;
+}
+
+const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
+{
+    DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
+    
+    DirectX::SimpleMath::Vector3 impactPoint;
+    impactPoint.x = m_landingCordinates.GetX();
+    impactPoint.y = m_landingCordinates.GetY();
+    impactPoint.z = m_landingCordinates.GetZ();
+    DirectX::SimpleMath::Vector3 impactMinus1;
+    impactMinus1.x = m_xVals[m_xVals.size() - 1];
+    impactMinus1.y = m_yVals[m_yVals.size() - 1];
+    impactMinus1.z = m_zVals[m_zVals.size() - 1];
+    DirectX::SimpleMath::Vector3 impactMinus2;
+    impactMinus2.x = m_xVals[m_xVals.size() - 2];
+    impactMinus2.y = m_yVals[m_yVals.size() - 2];
+    impactMinus2.z = m_zVals[m_zVals.size() - 2];
+    DirectX::SimpleMath::Vector3 impactAngle;
+    impactAngle.Zero;
+    impactAngle = impactMinus1 - impactPoint;
+    DirectX::SimpleMath::Vector3 impact2 = impactAngle;
+    impact2.Normalize();
+
+    DirectX::SimpleMath::Vector3 horizontalVec;
+    horizontalVec.Zero;
+    horizontalVec.x = impactAngle.x;
+    horizontalVec.z = impactAngle.z;
+
+    float aDotB = impactAngle.Dot(horizontalVec);
+    float c = (impactAngle.x * impactAngle.x) + (impactAngle.y * impactAngle.y) + (impactAngle.z * impactAngle.z);
+    float d = (horizontalVec.x * horizontalVec.x) + (horizontalVec.y * horizontalVec.y) + (horizontalVec.z * horizontalVec.z);
+    float e = aDotB / (sqrt(c) * sqrt(d));
+    float f = acos(e);
+    float g = Utility::ToDegrees(f);
+
+    int test = 8;
+    return impactAngle;
+}
+
+const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
+{
+    DirectX::SimpleMath::Vector3 a, b;
+    a.Zero;
+    b.Zero;
+    //a.y = m_landingCordinates.GetY();
+    a.y = -1.08899951;
+    b.y = a.y;
+    a.x = 1.0;
+    b.z = 1.0;
+
+    DirectX::SimpleMath::Vector3 c;
+    c.Zero;
+    //c.x = -1.0;
+
+    b.Cross(a, c);
+
+    DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(c, a);
+
+    return impactPlane;
 }
 
 double GolfBall::GetIndexX(const int aIndex)
