@@ -73,6 +73,7 @@ private:
 
     double m_launchVelocity;
     double m_launchAngle;
+    double m_launchImpact;
     const int m_swingStepIncrementCount = 200;
 
     double m_alpha; // Angle swept by arm rod from initial backswing position in radians

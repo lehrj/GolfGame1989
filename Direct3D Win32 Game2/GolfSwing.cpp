@@ -221,8 +221,7 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
     m_launchVelocity = velocityCapture;
 
     std::cout << "Capture velocity = " << velocityCapture << "\nLaunch angle = " << launchAngle << std::endl;
-
-    //Vector4d launchVector{ velocityCapture, launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
+    
     Vector4d launchVector{ m_launchVelocity, m_launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
 
     return launchVector;
@@ -858,7 +857,8 @@ void GolfSwing::UpdateGolfSwingValues()
 
 void GolfSwing::UpdateImpact(float aSwingPower, float aImpact)
 {
-
+    m_launchImpact = aImpact;
+    m_backSwingPercentage = aSwingPower;
 }
 
 void GolfSwing::UpdateBackSwing(float aPower)

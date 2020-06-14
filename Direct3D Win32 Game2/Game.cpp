@@ -73,12 +73,10 @@ void Game::Update(DX::StepTimer const& timer)
     if (pPlay->UpdateSwing() == true)
     {
         pGolf->UpdateImpact(pPlay->GetSwingPower(), pPlay->GetImpact());
-        //pPlay->ResetPlayData();
+        
     }
-    // world start
-    m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-    m_worldAntiRotation = m_world.Invert();
-    // world end
+    
+    UpdateCamera(timer);
 
     // WLJ add for mouse and keybord interface
     auto kb = m_keyboard->GetState();
@@ -142,10 +140,88 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pPlay->ResetPlayData();
     }
-
+    if (kb.A)
+    {
+        pPlay->UpdateSwingState();
+    }
+    if (kb.F1)
+    {
+        SetGameCamera(1);
+    }
+    if (kb.F2)
+    {
+        SetGameCamera(2);
+    }
+    if (kb.F3)
+    {
+        SetGameCamera(4);
+    }
+    if (kb.F4)
+    {
+        SetGameCamera(4);
+    }
+    if (kb.F5)
+    {
+        SetGameCamera(5);
+    }
+    if (kb.OemMinus)
+    {
+        m_cameraRotationX -= .01;
+    }
+    if (kb.OemPlus)
+    {
+        m_cameraRotationX += .01;
+    }
+    if (kb.OemOpenBrackets)
+    {
+        m_cameraRotationY -= .01;
+    }
+    if (kb.OemCloseBrackets)
+    {
+        m_cameraRotationY += .01;
+    }
     auto mouse = m_mouse->GetState();
 
     elapsedTime;
+}
+
+void Game::UpdateCamera(DX::StepTimer const& timer)
+{
+    // world start
+    if (m_gameCamera == 1)
+    {
+        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_worldAntiRotation = m_world.Invert();
+    }
+    if (m_gameCamera == 2)
+    {
+        m_world = Matrix::CreateRotationX(m_cameraRotationY);
+    }
+    if (m_gameCamera == 3)
+    {
+        m_world = Matrix::CreateRotationY(m_cameraRotationX);
+    }
+    if (m_gameCamera == 4)
+    {
+        m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f),
+            Vector3::Zero, Vector3::UnitY);
+
+        m_effect->SetView(m_view);
+    }
+    if (m_gameCamera == 5)
+    {
+        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+
+        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 6.f,
+            float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+        m_effect->SetProjection(m_proj);
+    }
+    else
+    {
+
+    }
+    // world end
 }
 
 // Draws the scene.
@@ -175,228 +251,8 @@ void Game::Render()
 
     m_batch->Begin();
 
-    /////////********* Start swing draw
-    /*
-    std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
-    std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
-    std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
-    int swingStepCount = alphaVec.size();
-
-    if (arcCount >= swingStepCount)
-    {
-        arcCount = 0;
-    }
-    ++arcCount;
-    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
-    Vector3 swingTop(0.0f, 1.0f, 0.0f);
-    VertexPositionColor feet(swingOrigin, Colors::Yellow);
-    VertexPositionColor shoulder(swingTop, Colors::White);
-    for (int i = 0; i < arcCount; ++i)
-    {
-        //Vector3 hand = thetaVec[i];
-        Vector3 hand = alphaVec[i];
-        hand += swingTop;
-        Vector3 clubHead = betaVec[i];
-        //clubHead -= hand;
-        VertexPositionColor body(swingOrigin, Colors::Red);
-        VertexPositionColor arm(hand, Colors::Green);
-        VertexPositionColor shaft(clubHead, Colors::Blue);
-        //m_batch->DrawLine(feet, shoulder);
-        //m_batch->DrawLine(shoulder, arm);
-        //m_batch->DrawLine(arm, shaft);
-        //m_batch->DrawLine(vert3, vert1);
-        m_batch->DrawLine(feet, arm);
-        m_batch->DrawLine(feet, shoulder);
-        m_batch->DrawLine(feet, shaft);
-    }
-    */
-
-    /*
-    Vector4d launchData = pGolf->GetLaunchVector();
-    double armLength = launchData.GetFirst();
-    double clubLength = launchData.GetSecond();
-    double launchAngle = launchData.GetThird();
-    double launchVelocity = launchData.GetForth();
-    std::vector<Vector4d> swingAngles;
-    swingAngles.resize(pGolf->GetSwingStepIncCount());
-    swingAngles = pGolf->GetSwingData();
-    //Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
-    Vector3 armPivot(0.0f, armLength, 0.0f);
-    Vector3 clubHead(clubLength, armLength, 0.0f);
-    VertexPositionColor vert1(swingOrigin, Colors::Red);
-    VertexPositionColor vert2(armPivot, Colors::Red);
-    VertexPositionColor vert3(clubHead, Colors::Red);
-    m_batch->DrawLine(vert1, vert2);
-    m_batch->DrawLine(vert2, vert3);
-    */
-
-    // end swing draw
-    /*
-        if (arcCount >= stepCount)
-    {
-        arcCount = 0;
-    }
-    ++arcCount;
-    //double prevX = 0.0;
-    //double prevY = 0.0;
-    double prevX = xVec[0];
-    double prevY = yVec[0];
-    double prevZ = zVec[0];
-    for (int i = 0; i < arcCount; ++i)
-    {
-        Vector3 p1(prevX, prevY, prevZ);
-        Vector3 p2(xVec[i], yVec[i], zVec[i]);
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        m_batch->DrawLine(aV, bV);
-        prevX = xVec[i];
-        prevY = yVec[i];
-        prevZ = zVec[i];
-    }
-    */
-
-    /////////********* Start projectile draw
-    std::vector<double> xVec = pGolf->GetVect(0);
-    std::vector<double> yVec = pGolf->GetVect(1);
-    std::vector<double> zVec = pGolf->GetVect(2);
-
-    double groundLevel = yVec[0];
-
-    Vector3 xaxis(2.f, 0.f, 0.f);
-    Vector3 yaxis(0.f, 0.f, 2.f);
-
-    Vector3 origin = Vector3::Zero;
-
-    size_t divisions = 20;
-
-    for (size_t i = 0; i <= divisions; ++i)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-
-        Vector3 scale = xaxis * fPercent + origin;
-
-        if (scale.x == 0.0f)
-        {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-
-    }
-
-    for (size_t i = 0; i <= divisions; i++)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-
-        Vector3 scale = yaxis * fPercent + origin;
-
-        if (scale.z == 0.0f)
-        {
-            VertexPositionColor v1(scale - xaxis, Colors::LawnGreen);
-            VertexPositionColor v2(scale + xaxis, Colors::LawnGreen);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - xaxis, Colors::Green);
-            VertexPositionColor v2(scale + xaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-
-    }
-
-    //draw tee box
-    
-    double originX = xVec[0];
-    double originZ = zVec[0];
-    Vector3 t1(originX - .05, 0.0f, -0.1f);
-    Vector3 t2(originX + .05, 0.0f, -0.1f);
-    Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    Vector3 t4(originX + .05, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-    
-    // end tee box draw
-
-    int stepCount = xVec.size();
-
-    if (arcCount >= stepCount)
-    {
-        arcCount = 0;
-    }
-    ++arcCount;
-    //double prevX = 0.0;
-    //double prevY = 0.0;
-    double prevX = xVec[0];
-    double prevY = yVec[0];
-    double prevZ = zVec[0];
-
-    for (int i = 0; i < arcCount; ++i)
-    {
-        Vector3 p1(prevX, prevY, prevZ);
-        Vector3 p2(xVec[i], yVec[i], zVec[i]);
-
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        m_batch->DrawLine(aV, bV);
-        prevX = xVec[i];
-        prevY = yVec[i];
-        prevZ = zVec[i];
-    }
-
-    bool toggleGetNextClub = 0;
-    ///// Landing explosion
-    if (arcCount == stepCount)
-    {
-        Vector3 f1(prevX, prevY, prevZ);
-        Vector3 f2(prevX, prevY + 0.2f, prevZ);
-        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-
-        VertexPositionColor ft1(f1, Colors::Red);
-        VertexPositionColor ft2(f2, Colors::Red);
-        VertexPositionColor ft3(f3, Colors::Red);
-        VertexPositionColor ft4(f4, Colors::Red);
-        VertexPositionColor ft5(f5, Colors::Red);
-        VertexPositionColor ft6(f6, Colors::Red);
-        VertexPositionColor ft7(f7, Colors::Red);
-        VertexPositionColor ft8(f8, Colors::Red);
-        VertexPositionColor ft9(f9, Colors::Red);
-        VertexPositionColor ft10(f10, Colors::Red);
-        m_batch->DrawLine(ft1, ft2);
-        m_batch->DrawLine(ft1, ft3);
-        m_batch->DrawLine(ft1, ft4);
-        m_batch->DrawLine(ft1, ft5);
-        m_batch->DrawLine(ft1, ft6);
-        m_batch->DrawLine(ft1, ft7);
-        m_batch->DrawLine(ft1, ft8);
-        m_batch->DrawLine(ft1, ft9);
-        m_batch->DrawLine(ft1, ft10);
-
-        toggleGetNextClub = 1;
-    }
-    // end landing explosion
-    
+    DrawSwing();
+    DrawProjectile(); 
     TestPowerUp();
 
     m_batch->End();
@@ -495,6 +351,52 @@ void Game::RenderUITest()
     //m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
     
     m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+}
+
+void Game::SetGameCamera(int aCamera)
+{
+    if (aCamera == 1)
+    {
+        m_gameCamera = 1;
+    }
+    if (aCamera == 2)
+    {
+        m_gameCamera = 2; 
+    }
+    if (aCamera == 3)
+    {
+        m_gameCamera = 3;
+    }
+    if (aCamera == 4)
+    {
+        m_gameCamera = 4;
+    }
+    if (aCamera == 5)
+    {
+        m_gameCamera = 5;
+    }
+    /* scratch pad
+    game.h
+    std::unique_ptr<DirectX::CommonStates> m_states;
+    std::unique_ptr<DirectX::BasicEffect> m_effect;
+    DirectX::SimpleMath::Matrix m_world;
+    DirectX::SimpleMath::Matrix m_view;
+    DirectX::SimpleMath::Matrix m_proj;
+
+    CreateResources
+    m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f),
+    Vector3::Zero, Vector3::UnitY);
+    m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
+    float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+    m_effect->SetView(m_view);
+    m_effect->SetProjection(m_proj);
+
+    Render
+    m_effect->SetWorld(m_world);
+
+    Update
+    m_world = Matrix::CreateRotationY( cosf( static_cast<float>(timer.GetTotalSeconds())));
+    */
 }
 
 // Helper method to clear the back buffers.
@@ -851,6 +753,211 @@ void Game::CreateResources()
     */
 
     // End Texture
+}
+
+void Game::DrawProjectile()
+{
+    /////////********* Start projectile draw
+    std::vector<double> xVec = pGolf->GetVect(0);
+    std::vector<double> yVec = pGolf->GetVect(1);
+    std::vector<double> zVec = pGolf->GetVect(2);
+
+    double groundLevel = yVec[0];
+
+    Vector3 xaxis(2.f, 0.f, 0.f);
+    Vector3 yaxis(0.f, 0.f, 2.f);
+
+    Vector3 origin = Vector3::Zero;
+
+    size_t divisions = 20;
+
+    for (size_t i = 0; i <= divisions; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        Vector3 scale = xaxis * fPercent + origin;
+
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Green);
+            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Green);
+            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+
+    }
+
+    for (size_t i = 0; i <= divisions; i++)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        Vector3 scale = yaxis * fPercent + origin;
+
+        if (scale.z == 0.0f)
+        {
+            VertexPositionColor v1(scale - xaxis, Colors::LawnGreen);
+            VertexPositionColor v2(scale + xaxis, Colors::LawnGreen);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xaxis, Colors::Green);
+            VertexPositionColor v2(scale + xaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+
+    }
+
+    //draw tee box
+
+    double originX = xVec[0];
+    double originZ = zVec[0];
+    Vector3 t1(originX - .05, 0.0f, -0.1f);
+    Vector3 t2(originX + .05, 0.0f, -0.1f);
+    Vector3 t3(originX - 0.05, 0.0f, 0.1f);
+    Vector3 t4(originX + .05, 0.0f, 0.1f);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+
+    // end tee box draw
+
+    int stepCount = xVec.size();
+
+    if (arcCount >= stepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+    //double prevX = 0.0;
+    //double prevY = 0.0;
+    double prevX = xVec[0];
+    double prevY = yVec[0];
+    double prevZ = zVec[0];
+
+    for (int i = 0; i < arcCount; ++i)
+    {
+        Vector3 p1(prevX, prevY, prevZ);
+        Vector3 p2(xVec[i], yVec[i], zVec[i]);
+
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+        m_batch->DrawLine(aV, bV);
+        prevX = xVec[i];
+        prevY = yVec[i];
+        prevZ = zVec[i];
+    }
+
+    bool toggleGetNextClub = 0;
+    ///// Landing explosion
+    if (arcCount == stepCount)
+    {
+        Vector3 f1(prevX, prevY, prevZ);
+        Vector3 f2(prevX, prevY + 0.2f, prevZ);
+        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
+        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
+
+        VertexPositionColor ft1(f1, Colors::Red);
+        VertexPositionColor ft2(f2, Colors::Red);
+        VertexPositionColor ft3(f3, Colors::Red);
+        VertexPositionColor ft4(f4, Colors::Red);
+        VertexPositionColor ft5(f5, Colors::Red);
+        VertexPositionColor ft6(f6, Colors::Red);
+        VertexPositionColor ft7(f7, Colors::Red);
+        VertexPositionColor ft8(f8, Colors::Red);
+        VertexPositionColor ft9(f9, Colors::Red);
+        VertexPositionColor ft10(f10, Colors::Red);
+        m_batch->DrawLine(ft1, ft2);
+        m_batch->DrawLine(ft1, ft3);
+        m_batch->DrawLine(ft1, ft4);
+        m_batch->DrawLine(ft1, ft5);
+        m_batch->DrawLine(ft1, ft6);
+        m_batch->DrawLine(ft1, ft7);
+        m_batch->DrawLine(ft1, ft8);
+        m_batch->DrawLine(ft1, ft9);
+        m_batch->DrawLine(ft1, ft10);
+
+        toggleGetNextClub = 1;
+    }
+    // end landing explosion
+}
+
+void Game::DrawSwing()
+{
+    /////////********* Start swing draw
+/*
+std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
+std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
+std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
+int swingStepCount = alphaVec.size();
+
+if (arcCount >= swingStepCount)
+{
+    arcCount = 0;
+}
+++arcCount;
+Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+Vector3 swingTop(0.0f, 1.0f, 0.0f);
+VertexPositionColor feet(swingOrigin, Colors::Yellow);
+VertexPositionColor shoulder(swingTop, Colors::White);
+for (int i = 0; i < arcCount; ++i)
+{
+    //Vector3 hand = thetaVec[i];
+    Vector3 hand = alphaVec[i];
+    hand += swingTop;
+    Vector3 clubHead = betaVec[i];
+    //clubHead -= hand;
+    VertexPositionColor body(swingOrigin, Colors::Red);
+    VertexPositionColor arm(hand, Colors::Green);
+    VertexPositionColor shaft(clubHead, Colors::Blue);
+    //m_batch->DrawLine(feet, shoulder);
+    //m_batch->DrawLine(shoulder, arm);
+    //m_batch->DrawLine(arm, shaft);
+    //m_batch->DrawLine(vert3, vert1);
+    m_batch->DrawLine(feet, arm);
+    m_batch->DrawLine(feet, shoulder);
+    m_batch->DrawLine(feet, shaft);
+}
+*/
+
+/*
+Vector4d launchData = pGolf->GetLaunchVector();
+double armLength = launchData.GetFirst();
+double clubLength = launchData.GetSecond();
+double launchAngle = launchData.GetThird();
+double launchVelocity = launchData.GetForth();
+std::vector<Vector4d> swingAngles;
+swingAngles.resize(pGolf->GetSwingStepIncCount());
+swingAngles = pGolf->GetSwingData();
+//Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+Vector3 armPivot(0.0f, armLength, 0.0f);
+Vector3 clubHead(clubLength, armLength, 0.0f);
+VertexPositionColor vert1(swingOrigin, Colors::Red);
+VertexPositionColor vert2(armPivot, Colors::Red);
+VertexPositionColor vert3(clubHead, Colors::Red);
+m_batch->DrawLine(vert1, vert2);
+m_batch->DrawLine(vert2, vert3);
+*/
+
+// end swing draw
 }
 
 void Game::OnDeviceLost()

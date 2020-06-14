@@ -45,13 +45,16 @@ public:
 
 private:
 
+    void DrawSwing();
+    void DrawProjectile();
     void Update(DX::StepTimer const& timer);
+    void UpdateCamera(DX::StepTimer const& timer);
     void Render();
     void RenderUI();
     void RenderDebugInfo();
     void RenderUITest();
+    void SetGameCamera(int aCamera);
     void TestPowerUp();
-
 
     void Clear();
     void Present();
@@ -88,7 +91,6 @@ private:
 
     //std::unique_ptr<DX::TextConsole> m_console; // ????? WLJ add Text Console 
 
-
     // End
 
     //world start
@@ -99,6 +101,9 @@ private:
     DirectX::SimpleMath::Matrix m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
     
+    int m_gameCamera = 1;
+    float m_cameraRotationX = 0.0;
+    float m_cameraRotationY = 0.0;
     //world end
 
     // WLJ added for drawing projectile and swing

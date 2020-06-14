@@ -9,6 +9,7 @@ public:
     std::vector<std::string> GetDebugData();
     float GetImpact() { return m_swingImpactProcessed; };
     float GetSwingPower() { return m_swingPower; };
+    
     void ResetPlayData();
     void Swing();
     void StartSwing();
@@ -16,7 +17,7 @@ public:
     void SetPower();
     void UpdateSwingImpact(float aImpact);
     bool UpdateSwing();
-
+    void UpdateSwingState();
 private:
     bool m_isLefty = false;
     bool m_isSwingPowerSet;

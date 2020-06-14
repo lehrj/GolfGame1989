@@ -35,6 +35,25 @@ std::vector<std::string> GolfPlay::GetDebugData()
     return m_debugData; 
 };
 
+void GolfPlay::UpdateSwingState()
+{
+    if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)
+    {
+        this->StartSwing();
+    }
+    else if (m_isSwingStart == true && m_isSwingPowerSet == false && m_isOnDownSwing == false)
+    {
+        this->SetPower();
+    }
+    else if (m_isSwingStart == true && m_isSwingPowerSet == true && m_isOnDownSwing == false)
+    {
+        this->SetImpact();
+    }
+    else
+    {
+        //printf("error in GolfPlay::GetSwingState() \n");    
+    }
+}
 void GolfPlay::ResetPlayData()
 {
     m_isSwingPowerSet = false;
@@ -46,7 +65,7 @@ void GolfPlay::ResetPlayData()
     m_meterBar = 0.0;
     m_swingImpact = 0.0;
     m_swingImpactProcessed = 0.0;
-    m_swingIncrement = 0.1;
+    m_swingIncrement = 0.3;
     m_swingPower = 0.0;
     m_skullRate = 0.0;
     m_sliceRate = 0.0;
@@ -79,6 +98,7 @@ void GolfPlay::SetImpact()
 {
     if (m_isSwingStart == true && m_isOnDownSwing == true)
     {
+        m_swingImpactProcessed = m_meterBar;
         m_swingImpact = m_meterBar;
         m_isSwingStart = false;
         m_isSwingUpdateReady = true;

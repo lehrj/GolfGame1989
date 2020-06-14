@@ -19,11 +19,18 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
 void GolfBall::FireProjectile(Vector4d aSwingInput, Environment* pEnviron)
 {
     //PrepProjectileLaunch(aSwingInput);
-    PrepProjectileLaunch2(aSwingInput);
+    PrepProjectileLaunch2(aSwingInput, 0.0);
     LaunchProjectile();
     //LandProjectile(pEnviron);
 }
 
+void GolfBall::FireProjectile2(Vector4d aSwingInput, Environment* pEnviron, float aImpact)
+{
+    //PrepProjectileLaunch(aSwingInput);
+    PrepProjectileLaunch2(aSwingInput, aImpact);
+    LaunchProjectile();
+    //LandProjectile(pEnviron);
+}
 void GolfBall::LandProjectile()
 {
     printf("Warning: Landing bounce/roll functionality not fully implemented (WIP)\n");
@@ -199,7 +206,7 @@ DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, d
     return impactNormal;
 }
 */
-void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
+void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput, float aImpact)
 {
     //Vector4d aSwingInput = { m_launchVelocity, m_launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
     DirectX::SimpleMath::Vector4 vHead = DirectX::SimpleMath::Vector4::Zero;
@@ -210,7 +217,7 @@ void GolfBall::PrepProjectileLaunch2(Vector4d aSwingInput)
     DirectX::SimpleMath::Vector4 vFaceNormal = DirectX::SimpleMath::Vector4::Zero;
     vFaceNormal.x = cos(Utility::ToRadians(aSwingInput.GetY()));
     vFaceNormal.y = sin(Utility::ToRadians(aSwingInput.GetY()));
-    vFaceNormal.z = sin(Utility::ToRadians(0.1));
+    vFaceNormal.z = sin(Utility::ToRadians(aImpact));
     vFaceNormal.Normalize();
     
     DirectX::SimpleMath::Vector4 vHeadNormal = (vHead.Dot(vFaceNormal)) * vFaceNormal;
