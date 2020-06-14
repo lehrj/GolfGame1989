@@ -16,12 +16,11 @@ public:
     ~Golf();
 
     void BuildVector();
-    void BuildVector2();
     void BuildUIdata();
     void BuildUIstrings();
     void BuildUI();
     void CalculateData();
-    void CalculateData2();
+
     Vector4d GetLaunchVector();
     std::vector<Vector4d> GetSwingData();
     const int GetSwingStepIncCount() { return pSwing->GetSwingStepIncrementCount(); };

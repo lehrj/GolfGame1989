@@ -34,14 +34,6 @@ void Golf::BuildVector()
     ScaleCordinates();
 }
 
-void Golf::BuildVector2()
-{
-    CalculateData2();
-    InputData();
-    //NormalizeData();
-    ScaleCordinates();
-}
-
 void Golf::SelectNextClub()
 {
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
@@ -89,13 +81,7 @@ void Golf::BuildUIstrings()
 void Golf::CalculateData()
 {
     Vector4d swingVector = pSwing->CalculateLaunchVector();
-    pBall->FireProjectile2(swingVector, pEnvironment, 0.0);
-}
-
-void Golf::CalculateData2()
-{
-    Vector4d swingVector = pSwing->CalculateLaunchVector();
-    pBall->FireProjectile2(swingVector, pEnvironment, pPlay->GetImpact());
+    pBall->FireProjectile(swingVector, pEnvironment);
 }
 
 std::vector<double> Golf::GetVect(const int aInput)
@@ -391,7 +377,7 @@ void Golf::UpdateImpact(float aPower, float aImpact)
     //pSwing->CycleInputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
-    BuildVector2();
+    BuildVector();
 
     BuildUIstrings();
 }

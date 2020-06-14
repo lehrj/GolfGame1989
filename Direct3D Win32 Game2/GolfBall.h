@@ -40,7 +40,7 @@ public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
-    void FireProjectile2(Vector4d aSwingInput, Environment* pEnviron, float aImpact);
+
     const int GetXvecSize() { return m_xVals.size(); };
     const int GetYvecSize() { return m_yVals.size(); };
     const int GetZvecSize() { return m_zVals.size(); };
@@ -64,7 +64,7 @@ public:
     std::vector<double> OutputYvals();
     std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
-    void PrepProjectileLaunch2(Vector4d aSwingInput, float aImpact);
+    void PrepProjectileLaunch2(Vector4d aSwingInput);
 
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);
