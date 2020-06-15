@@ -7,10 +7,12 @@
 #include <vector>
 #include <string>
 
+
 GolfSwing::GolfSwing()
 {
     //this->SetDefaultSwingValues(9.8);
     m_pBag = new GolfBag();
+    Utility::ZeroImpactData(m_impactData);
 }
 
 GolfSwing::~GolfSwing()
@@ -223,8 +225,119 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
     std::cout << "Capture velocity = " << velocityCapture << "\nLaunch angle = " << launchAngle << std::endl;
     
     Vector4d launchVector{ m_launchVelocity, m_launchAngle, m_club.mass, m_club.coefficiantOfRestitution };
+    Utility::ImpactData launchImpact{};
+    Utility::ZeroImpactData(launchImpact);
+    launchImpact.velocity = m_launchVelocity;
+    launchImpact.angleY = m_launchAngle;
+    launchImpact.mass = m_club.mass;
+    launchImpact.cor = m_club.coefficiantOfRestitution;
 
     return launchVector;
+}
+
+Utility::ImpactData GolfSwing::CalculateLaunchVector2(Utility::ImpactData aImpact)
+{
+    m_impactData = aImpact;
+    m_alphaBetaThetaVec.clear();
+    m_launchAngle = 0.0;
+    m_launchVelocity = 0.0;
+
+    double Vc = 0.0;
+    double time = 0.0;
+    double dt = 0.0025; // Time delta between frames in seconds
+    double    a, at; // stores previous time steps results for alpha and its first derivative
+    double    b, bt; // stores previous time steps results for beta and its first derivative
+
+    double    phi; // stores value of theta + beta
+    double    Vc2; // square of club head velocity 
+    double  ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
+    double  bk1, bk2, bk3, bk4; // stores intermediate results of Runge-Kutta integration scheme
+    double velocityCapture = 0;
+    double launchAngle = 0.0;
+    bool isVcFound = false;
+
+    //PrintSwingMechanics(Vc, time);
+
+    //for (int i = 0; i < 200; i++)
+    for (int i = 0; i < m_swingStepIncrementCount; i++)
+    {
+        time += dt;
+        if (time >= 0.1)
+        {
+            m_Qbeta = 0;
+        }
+        // save results of previous time step
+        a = m_alpha;
+        b = m_beta;
+        at = m_alpha_dot;
+        bt = m_beta_dot;
+        // integrate alpha'' and beta''
+
+        // The K1 Step:
+        m_alpha_dotdot = ComputeAlphaDotDot();
+        m_beta_dotdot = ComputeBetaDotDot();
+        ak1 = m_alpha_dotdot * dt;
+        bk1 = m_beta_dotdot * dt;
+        m_alpha_dot = at + ak1 / 2;
+        m_beta_dot = bt + bk1 / 2;
+        // The K2 Step:
+        m_alpha_dotdot = ComputeAlphaDotDot();
+        m_beta_dotdot = ComputeBetaDotDot();
+        ak2 = m_alpha_dotdot * dt;
+        bk2 = m_beta_dotdot * dt;
+        m_alpha_dot = at + ak2 / 2;
+        m_beta_dot = bt + bk2 / 2;
+        // The K3 Step:
+        m_alpha_dotdot = ComputeAlphaDotDot();
+        m_beta_dotdot = ComputeBetaDotDot();
+        ak3 = m_alpha_dotdot * dt;
+        bk3 = m_beta_dotdot * dt;
+        m_alpha_dot = at + ak3;
+        m_beta_dot = bt + bk3;
+        // The K3 Step:
+        m_alpha_dotdot = ComputeAlphaDotDot();
+        m_beta_dotdot = ComputeBetaDotDot();
+        ak4 = m_alpha_dotdot * dt;
+        bk4 = m_beta_dotdot * dt;
+        m_alpha_dot = at + (ak1 + 2 * ak2 + 2 * ak3 + ak4) / 6;
+        m_beta_dot = bt + (bk1 + 2 * bk2 + 2 * bk3 + bk4) / 6;
+        m_alpha = a + m_alpha_dot * dt;
+        m_beta = b + m_beta_dot * dt;
+        m_theta = m_gamma - m_alpha;
+
+        Vc2 = (m_armLength * m_armLength + m_club.length * m_club.length + 2 * m_armLength * m_club.length * cos(m_beta))
+            * (m_alpha_dot * m_alpha_dot) + m_club.length * m_club.length * m_beta_dot * m_beta_dot
+            - 2 * (m_club.length * m_club.length + m_armLength * m_club.length * cos(m_beta)) * m_alpha_dot * m_beta_dot;  // Jorgensen equation
+
+        Vc = sqrt(Vc2);
+
+        Vector4d swingAngles(m_alpha, m_beta, m_theta, 0.0);
+        m_alphaBetaThetaVec.push_back(swingAngles);
+
+        phi = m_theta + m_beta;
+        if (Utility::ToDegrees(phi) < m_ballPlacementAngle)
+        {
+            if (isVcFound == false)
+            {
+                //PrintSwingMechanics(Vc, time);
+
+                velocityCapture = Vc;
+                isVcFound = true;
+                launchAngle = m_club.angle - Utility::ToDegrees(phi);
+
+            }
+        }
+    }
+
+    m_launchAngle = launchAngle;
+    m_impactData.angleY = launchAngle;
+    m_launchVelocity = velocityCapture;
+    m_impactData.velocity = velocityCapture;
+
+    m_impactData.mass = m_club.mass;
+    m_impactData.cor = m_club.coefficiantOfRestitution;
+
+    return m_impactData;
 }
 
 double GolfSwing::ComputeAlphaDotDot(void)
@@ -745,6 +858,7 @@ void GolfSwing::SetArmLength(double aLength)
 void GolfSwing::SetBackSwingPercentage(double aPercentage)
 {
     m_backSwingPercentage = aPercentage;
+    m_impactData.power = aPercentage;
 }
 
 void GolfSwing::SetBallPlacementAngle(double aAngle)
@@ -797,15 +911,19 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_armMass = 7.3;
     m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
     m_backSwingPercentage = 100.0;
+    m_impactData.power = 100.0;
     m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
     m_club.angle = 25.0;
+    m_impactData.angleX = 25.0;
     m_club.balancePoint = 0.75;
     m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
+    m_impactData.cor = 0.78;
     m_club.length = 1.1; // length of club in m
     m_club.mass = 0.4;
+    m_impactData.mass = 0.4;
     m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
     m_club.clubName = "Custom";
     m_Qalpha = 100; // Torque applied at the shoulder to the arm rod in N m
@@ -849,22 +967,36 @@ void GolfSwing::UpdateGolfSwingValues()
 {
     m_club.firstMoment = m_club.mass * m_club.length * m_club.balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
     m_armFirstMoment = m_armMass * m_armLength * m_armBalancePoint; // First moment of the arm rod about the shoulder axis kg m
-    double swingFactor = m_backSwingPercentage * 0.01;
+    //double swingFactor = m_backSwingPercentage * 0.01;
+    double swingFactor = m_impactData.power * 0.01;
     m_beta = m_beta * swingFactor;
     m_gamma = m_gamma * swingFactor;
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
 }
 
+/*
 void GolfSwing::UpdateImpact(float aSwingPower, float aImpact)
 {
+    
     m_launchImpact = aImpact;
     m_backSwingPercentage = aSwingPower;
 }
+*/
+
+void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
+{
+    m_launchImpact = aImpactData.impactMissOffSet;
+    m_backSwingPercentage = aImpactData.power;
+    UpdateGolfSwingValues();
+    CalculateLaunchVector();
+}
+
 
 void GolfSwing::UpdateBackSwing(float aPower)
 {
     //m_backSwingPercentage = aPower * 0.01;
     m_backSwingPercentage = aPower;
+    
     UpdateGolfSwingValues();
     CalculateLaunchVector();
 }

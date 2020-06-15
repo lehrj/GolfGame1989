@@ -54,8 +54,10 @@ void GolfPlay::UpdateSwingState()
         //printf("error in GolfPlay::GetSwingState() \n");    
     }
 }
+
 void GolfPlay::ResetPlayData()
 {
+    Utility::ZeroImpactData(m_impactData);
     m_isSwingPowerSet = false;
     m_isSwingStart = false;
     m_isOnDownSwing = false;
@@ -98,6 +100,7 @@ void GolfPlay::SetImpact()
 {
     if (m_isSwingStart == true && m_isOnDownSwing == true)
     {
+        m_impactData.impactMissOffSet = m_meterBar;
         m_swingImpactProcessed = m_meterBar;
         m_swingImpact = m_meterBar;
         m_isSwingStart = false;
@@ -109,6 +112,7 @@ void GolfPlay::SetPower()
 {
     if (m_isSwingStart == true && m_isOnDownSwing == false)
     {
+        m_impactData.velocity = m_meterBar;
         m_swingPower = m_meterBar;
         m_isOnDownSwing = true;
     }
@@ -126,7 +130,7 @@ bool GolfPlay::UpdateSwing()
 
 void GolfPlay::UpdateSwingImpact(float aImpact)
 {
-    
+   
 }
 
 

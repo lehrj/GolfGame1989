@@ -72,8 +72,7 @@ void Game::Update(DX::StepTimer const& timer)
 
     if (pPlay->UpdateSwing() == true)
     {
-        pGolf->UpdateImpact(pPlay->GetSwingPower(), pPlay->GetImpact());
-        
+        pGolf->UpdateImpact(pPlay->GetImpactData());
     }
     
     UpdateCamera(timer);

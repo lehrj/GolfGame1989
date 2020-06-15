@@ -24,6 +24,13 @@ void GolfBall::FireProjectile(Vector4d aSwingInput, Environment* pEnviron)
     //LandProjectile(pEnviron);
 }
 
+void GolfBall::FireProjectile2(Utility::ImpactData aImpactData, Environment* pEnviron)
+{
+    PrepProjectileLaunch2(aImpactData);
+    LaunchProjectile();
+    //LandProjectile(pEnviron);
+}
+
 void GolfBall::LandProjectile()
 {
     printf("Warning: Landing bounce/roll functionality not fully implemented (WIP)\n");
@@ -186,19 +193,60 @@ void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
     m_ball.q[4] = vz0;   //  vz 
 }
 
-/*
-DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation)
+void GolfBall::PrepProjectileLaunch2(Utility::ImpactData aImpactData)
 {
-    DirectX::SimpleMath::Vector4 impactNormal = DirectX::SimpleMath::Vector4::Zero;
-    impactNormal.x = cos(aFaceAngle);
-    impactNormal.y = sin(aFaceAngle);
-    impactNormal.w = 1.0;
-    impactNormal.Normalize();
-    aFaceRotation = Utility::ToRadians(-15.0);
-    impactNormal = DirectX::SimpleMath::Vector4::Transform(impactNormal, DirectX::SimpleMath::Matrix::CreateRotationY(aFaceRotation));
-    return impactNormal;
+    //DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
+
+    //  Convert the loft angle from degrees to radians and
+    //  assign values to some convenience variables.
+    double loft = Utility::ToRadians(aImpactData.angleY);
+    double cosL = cos(loft);
+    double sinL = sin(loft);
+
+    //  Calculate the pre-collision velocities normal
+    //  and parallel to the line of action.
+    double velocity = aImpactData.velocity;
+    double vcp = cosL * velocity;
+    double vcn = -sinL * velocity;
+
+    //  Compute the post-collision velocity of the ball
+    //  along the line of action.
+    double ballMass = m_ball.mass;
+    double clubMass = aImpactData.mass;
+    double e = aImpactData.cor; //  coefficient of restitution of club face striking the ball
+    double vbp = (1.0 + e) * clubMass * vcp / (clubMass + ballMass);
+
+    //  Compute the post-collision velocity of the ball
+    //  perpendicular to the line of action.
+    double vbn = (1.0 - m_faceRoll) * clubMass * vcn / (clubMass + ballMass);
+
+    //  Compute the initial spin rate assuming ball is
+    //  rolling without sliding.
+    double radius = m_ball.radius;
+    double omega = m_faceRoll * vcn / radius;
+
+    std::cout << "omega = " << omega << std::endl;
+    std::cout << "vcn = " << vcn << std::endl;
+    std::cout << "radius = " << radius << std::endl;
+    std::cout << "m_ball.radius = " << m_ball.radius << std::endl;
+
+    //  Rotate post-collision ball velocities back into 
+    //  standard Cartesian frame of reference. Because the
+    //  line-of-action was in the xy plane, the z-velocity
+    //  is zero.
+    double vx0 = cosL * vbp - sinL * vbn;
+    double vy0 = sinL * vbp + cosL * vbn;
+    double vz0 = 0.0;
+
+    printf("vx0=%lf  vy0=%lf  vz0=%lf  omega=%lf\n", vx0, vy0, vz0, omega);
+
+    //  Load the initial ball velocities into the 
+    //  SpinProjectile struct.
+    m_ball.omega = omega;
+    m_ball.q[0] = vx0;   //  vx 
+    m_ball.q[2] = vy0;   //  vy 
+    m_ball.q[4] = vz0;   //  vz 
 }
-*/
 
 void GolfBall::PushFlightData()
 {

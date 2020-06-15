@@ -3,6 +3,7 @@
 #include "Environment.h"
 #include "Utility.h"
 #include "Vector4d.h"
+#include "GolfSwing.h"
 
 struct SpinProjectile
 {
@@ -40,6 +41,7 @@ public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
+    void FireProjectile2(Utility::ImpactData aImpact, Environment* pEnviron);
 
     const int GetXvecSize() { return m_xVals.size(); };
     const int GetYvecSize() { return m_yVals.size(); };
@@ -64,7 +66,8 @@ public:
     std::vector<double> OutputYvals();
     std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
-    void PrepProjectileLaunch2(Vector4d aSwingInput);
+    void PrepProjectileLaunch2(Utility::ImpactData aImpactData);
+
 
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);

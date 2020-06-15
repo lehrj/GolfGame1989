@@ -24,7 +24,7 @@ public:
     void SetWindX(const double& aWindX);
     void SetWindY(const double& aWindY);
     void SetWindZ(const double& aWindZ);
-
+    
 private:
     
     double m_airDensity = 1.225;        // in kg/m^3

@@ -29,6 +29,8 @@ public:
     void SetZ(const double& aZ);
     void SetW(const double& aW);
 
+
+
 private:
     double x;
     double y;

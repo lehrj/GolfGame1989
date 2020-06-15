@@ -80,6 +80,7 @@ void Golf::BuildUIstrings()
 
 void Golf::CalculateData()
 {
+   
     Vector4d swingVector = pSwing->CalculateLaunchVector();
     pBall->FireProjectile(swingVector, pEnvironment);
 }
@@ -365,11 +366,11 @@ void Golf::CopyZvec(std::vector<double> aVec)
     }
 }
 
-void Golf::UpdateImpact(float aPower, float aImpact)
-{
 
-    pSwing->UpdateImpact(aPower, aImpact);
-    pSwing->UpdateBackSwing(aPower);
+void Golf::UpdateImpact(Utility::ImpactData aImpact)
+{
+    pSwing->UpdateImpactData(aImpact);
+    //pSwing->UpdateBackSwing(aImpact.power);
     //BuildVector();
 
     //pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());

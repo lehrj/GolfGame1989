@@ -41,14 +41,14 @@ public:
     void SetMaxX();
     void SetMaxY();
     void SetMaxZ();
-    void UpdateImpact(float aPower, float aImpact);
+    void UpdateImpact(Utility::ImpactData aImpact);
 
 private:
     Environment* pEnvironment;
     GolfSwing* pSwing;
     GolfBall* pBall;
     GolfPlay* pPlay;
-
+    Utility::ImpactData m_impactData;
     void CopyXvec(std::vector<double> aVec);
     void CopyYvec(std::vector<double> aVec);
     void CopyZvec(std::vector<double> aVec);

@@ -27,7 +27,7 @@ public:
     int GetClubCount() { return m_bagSize; };
     void PrintClubList();
     void SetDiffcultyFactor();
-
+    
 private:
     std::vector<GolfClub> m_bag;
     const int m_bagSize = 14;

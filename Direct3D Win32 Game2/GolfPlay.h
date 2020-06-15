@@ -1,4 +1,6 @@
 #pragma once
+#include "Utility.h"
+
 class GolfPlay
 {
 public:
@@ -7,6 +9,7 @@ public:
     void BuildDebugData();
     void CalculateImpact();
     std::vector<std::string> GetDebugData();
+    Utility::ImpactData GetImpactData() { return m_impactData; };
     float GetImpact() { return m_swingImpactProcessed; };
     float GetSwingPower() { return m_swingPower; };
     
@@ -18,7 +21,12 @@ public:
     void UpdateSwingImpact(float aImpact);
     bool UpdateSwing();
     void UpdateSwingState();
+
+    
+
 private:
+    Utility::ImpactData m_impactData;
+
     bool m_isLefty = false;
     bool m_isSwingPowerSet;
     bool m_isSwingStart; 

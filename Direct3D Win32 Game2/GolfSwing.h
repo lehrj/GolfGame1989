@@ -12,6 +12,7 @@ public:
     ~GolfSwing();
 
     Vector4d CalculateLaunchVector(void);
+    Utility::ImpactData CalculateLaunchVector2(Utility::ImpactData aImpact);
     DirectX::SimpleMath::Vector4 CalculateImpactFaceNormal();
     DirectX::SimpleMath::Vector4 CalculateImpactClubNormal();
     void CalculateSwingCordinates();
@@ -26,7 +27,8 @@ public:
     const double GetClubMass() { return m_club.mass; };
     const std::string GetClubName() { return m_club.clubName; };
     const double GetLaunchAngle() { return m_launchAngle; };
-    const double GetLaunchVelocity() { return m_launchVelocity; };
+    //const double GetLaunchVelocity() { return m_launchVelocity; };
+    const double GetLaunchVelocity() { return m_impactData.power; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
 
     std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
@@ -55,15 +57,20 @@ public:
     void SetQalpha(double aQalpha);
     void SetQbeta(double aQbeta);
     void SetShoulderAccel(double aShoulderAccel);
-    void UpdateGolfSwingValues();
-    void UpdateImpact(float aSwingPower, float aImpact);
     void SelectClub();
+    void UpdateGolfSwingValues();
+    //void UpdateImpact(float aSwingPower, float aImpact);
+    void UpdateImpactData(Utility::ImpactData aImpactData);
     void UpdateClubData();
     void UpdateBackSwing(float aPower);
+
+    
 
 private:
     GolfBag* m_pBag;
     GolfClub m_club;
+
+    Utility::ImpactData m_impactData;
     int m_clubIndex = 0;
     std::vector<Vector4d> m_alphaBetaThetaVec;
 
@@ -74,6 +81,7 @@ private:
     double m_launchVelocity;
     double m_launchAngle;
     double m_launchImpact;
+    
     const int m_swingStepIncrementCount = 200;
 
     double m_alpha; // Angle swept by arm rod from initial backswing position in radians
