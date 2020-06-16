@@ -23,7 +23,7 @@ public:
         double power;
     };
 
-    static inline void ZeroImpactData(ImpactData aImpact) {
+    static inline void ZeroImpactData(ImpactData& aImpact) {
         aImpact.velocity = 0.0;
         aImpact.angleX = 0.0;
         aImpact.angleY = 0.0;

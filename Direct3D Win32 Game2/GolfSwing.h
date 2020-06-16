@@ -12,7 +12,7 @@ public:
     ~GolfSwing();
 
     Vector4d CalculateLaunchVector(void);
-    Utility::ImpactData CalculateLaunchVector2(Utility::ImpactData aImpact);
+    Utility::ImpactData CalculateLaunchVector2();
     DirectX::SimpleMath::Vector4 CalculateImpactFaceNormal();
     DirectX::SimpleMath::Vector4 CalculateImpactClubNormal();
     void CalculateSwingCordinates();
@@ -21,14 +21,15 @@ public:
     void CycleClub();
     void CycleInputClub(int aInput);
     const double GetArmLength() { return m_armLength; };
-    const double GetBackSwingPercentage() { return m_backSwingPercentage; };
+    //const double GetBackSwingPercentage() { return m_backSwingPercentage; };
+    const double GetBackSwingPercentage() { return m_impactData.power; };
     const double GetClubAngle() { return m_club.angle; };
     const double GetClubLength() { return m_club.length; };
     const double GetClubMass() { return m_club.mass; };
     const std::string GetClubName() { return m_club.clubName; };
     const double GetLaunchAngle() { return m_launchAngle; };
     //const double GetLaunchVelocity() { return m_launchVelocity; };
-    const double GetLaunchVelocity() { return m_impactData.power; };
+    const double GetLaunchVelocity() { return m_impactData.velocity; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
 
     std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
@@ -62,9 +63,7 @@ public:
     //void UpdateImpact(float aSwingPower, float aImpact);
     void UpdateImpactData(Utility::ImpactData aImpactData);
     void UpdateClubData();
-    void UpdateBackSwing(float aPower);
 
-    
 
 private:
     GolfBag* m_pBag;

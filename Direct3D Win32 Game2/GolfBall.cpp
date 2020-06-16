@@ -7,6 +7,7 @@
 #include "Vector4d.h"
 #include <vector>
 
+
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2)
 {
     double m = (aHeight2 - aHeight1) / (aTime2 - aTime1);
@@ -84,11 +85,10 @@ void GolfBall::LaunchProjectile()
         x = 0.0;
     }
     */
-    //else
-    //{
 
     double previousY = flightData.GetY();
     double previousTime = flightData.GetW();
+
     //  Calculate ball decent path until it reaches landing area height
     while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
     {
@@ -119,7 +119,7 @@ void GolfBall::LaunchProjectile()
     SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
     SetLandingSpinRate(m_ball.omega);
     SetMaxHeight(maxHeight);
-    LandProjectile();
+    //LandProjectile();
     //PrintLandingData(flightData, maxHeight);
 }
 

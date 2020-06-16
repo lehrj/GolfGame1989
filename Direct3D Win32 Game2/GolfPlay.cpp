@@ -73,6 +73,11 @@ void GolfPlay::ResetPlayData()
     m_sliceRate = 0.0;
 }
 
+void GolfPlay::ResetSwingUpdateReady()
+{
+    m_isSwingUpdateReady = false;
+}
+
 void GolfPlay::Swing()
 {
     if (m_isSwingStart == true)
@@ -112,7 +117,7 @@ void GolfPlay::SetPower()
 {
     if (m_isSwingStart == true && m_isOnDownSwing == false)
     {
-        m_impactData.velocity = m_meterBar;
+        m_impactData.power = m_meterBar;
         m_swingPower = m_meterBar;
         m_isOnDownSwing = true;
     }
@@ -128,9 +133,5 @@ bool GolfPlay::UpdateSwing()
     return m_isSwingUpdateReady;
 }
 
-void GolfPlay::UpdateSwingImpact(float aImpact)
-{
-   
-}
 
 

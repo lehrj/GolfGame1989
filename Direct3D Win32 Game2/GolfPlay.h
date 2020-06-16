@@ -14,11 +14,12 @@ public:
     float GetSwingPower() { return m_swingPower; };
     
     void ResetPlayData();
+    void ResetSwingUpdateReady();
     void Swing();
     void StartSwing();
     void SetImpact();
     void SetPower();
-    void UpdateSwingImpact(float aImpact);
+    
     bool UpdateSwing();
     void UpdateSwingState();
 

@@ -38,6 +38,8 @@ struct SpinProjectile
 class GolfBall
 {
 public:
+
+
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);

@@ -12,7 +12,7 @@ GolfSwing::GolfSwing()
 {
     //this->SetDefaultSwingValues(9.8);
     m_pBag = new GolfBag();
-    Utility::ZeroImpactData(m_impactData);
+    //Utility::ZeroImpactData(m_impactData);
 }
 
 GolfSwing::~GolfSwing()
@@ -235,9 +235,8 @@ Vector4d GolfSwing::CalculateLaunchVector(void)
     return launchVector;
 }
 
-Utility::ImpactData GolfSwing::CalculateLaunchVector2(Utility::ImpactData aImpact)
+Utility::ImpactData GolfSwing::CalculateLaunchVector2()
 {
-    m_impactData = aImpact;
     m_alphaBetaThetaVec.clear();
     m_launchAngle = 0.0;
     m_launchVelocity = 0.0;
@@ -323,8 +322,8 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector2(Utility::ImpactData aImpac
 
                 velocityCapture = Vc;
                 isVcFound = true;
+                //launchAngle = m_club.angle - Utility::ToDegrees(phi);
                 launchAngle = m_club.angle - Utility::ToDegrees(phi);
-
             }
         }
     }
@@ -893,6 +892,7 @@ void GolfSwing::SetClubMass(double aMass)
 
 void GolfSwing::SetDefaultSwingValues(double aGravity)
 {
+    Utility::ZeroImpactData(m_impactData);
     if (aGravity < 0.0) // ensuring that we make gravity pointed down since golf doesn't work if its positive
     {
         m_gravity = -aGravity; // Gravity's acceleration inverted  because the downswing is working in gravity's direction m/s^2 
@@ -974,30 +974,13 @@ void GolfSwing::UpdateGolfSwingValues()
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
 }
 
-/*
-void GolfSwing::UpdateImpact(float aSwingPower, float aImpact)
-{
-    
-    m_launchImpact = aImpact;
-    m_backSwingPercentage = aSwingPower;
-}
-*/
-
 void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
 {
     m_launchImpact = aImpactData.impactMissOffSet;
+    m_impactData.impactMissOffSet = aImpactData.impactMissOffSet;
     m_backSwingPercentage = aImpactData.power;
+    m_impactData.power = aImpactData.power;
     UpdateGolfSwingValues();
-    CalculateLaunchVector();
-}
-
-
-void GolfSwing::UpdateBackSwing(float aPower)
-{
-    //m_backSwingPercentage = aPower * 0.01;
-    m_backSwingPercentage = aPower;
-    
-    UpdateGolfSwingValues();
-    CalculateLaunchVector();
+    //CalculateLaunchVector2();
 }
 

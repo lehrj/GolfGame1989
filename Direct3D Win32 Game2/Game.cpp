@@ -72,6 +72,7 @@ void Game::Update(DX::StepTimer const& timer)
 
     if (pPlay->UpdateSwing() == true)
     {
+        pPlay->ResetSwingUpdateReady();
         pGolf->UpdateImpact(pPlay->GetImpactData());
     }
     

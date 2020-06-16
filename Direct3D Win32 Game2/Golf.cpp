@@ -80,9 +80,10 @@ void Golf::BuildUIstrings()
 
 void Golf::CalculateData()
 {
-   
-    Vector4d swingVector = pSwing->CalculateLaunchVector();
-    pBall->FireProjectile(swingVector, pEnvironment);
+
+    //Vector4d swingVector = pSwing->CalculateLaunchVector();
+    //pBall->FireProjectile(swingVector, pEnvironment);
+    pBall->FireProjectile2(pSwing->CalculateLaunchVector2(), pEnvironment);
 }
 
 std::vector<double> Golf::GetVect(const int aInput)
