@@ -336,6 +336,15 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector2()
     m_impactData.mass = m_club.mass;
     m_impactData.cor = m_club.coefficiantOfRestitution;
 
+    // start work for switch to vector usage
+    m_impactData.vHead.x = velocityCapture;
+    m_impactData.vFaceNormal.x = cos(Utility::ToRadians(launchAngle));
+    m_impactData.vFaceNormal.y = sin(Utility::ToRadians(launchAngle));
+    m_impactData.vFaceNormal.z = 0.0; // WLJ ToDo: update with value from play mechanics
+    m_impactData.vFaceNormal.Normalize();
+
+    m_impactData.vHeadNormal = m_impactData.vHead.Dot(m_impactData.vFaceNormal) * m_impactData.vFaceNormal;
+    m_impactData.vHeadParallel = m_impactData.vHead - m_impactData.vHeadNormal;
     return m_impactData;
 }
 
@@ -802,7 +811,7 @@ void GolfSwing::ResetAlphaBeta()
     //m_armMass = 7.3;
     //m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
     //m_backSwingPercentage = 100.0;
-    m_ballPlacementAngle = 5.0;
+    //m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;

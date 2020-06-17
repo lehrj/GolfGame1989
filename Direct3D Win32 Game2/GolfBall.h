@@ -69,7 +69,7 @@ public:
     std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
     void PrepProjectileLaunch2(Utility::ImpactData aImpactData);
-
+    void PrepProjectileLaunch3(Utility::ImpactData aImpactData);
 
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);

@@ -27,7 +27,8 @@ void GolfBall::FireProjectile(Vector4d aSwingInput, Environment* pEnviron)
 
 void GolfBall::FireProjectile2(Utility::ImpactData aImpactData, Environment* pEnviron)
 {
-    PrepProjectileLaunch2(aImpactData);
+    //PrepProjectileLaunch2(aImpactData);
+    PrepProjectileLaunch3(aImpactData);
     LaunchProjectile();
     //LandProjectile(pEnviron);
 }
@@ -246,6 +247,96 @@ void GolfBall::PrepProjectileLaunch2(Utility::ImpactData aImpactData)
     m_ball.q[0] = vx0;   //  vx 
     m_ball.q[2] = vy0;   //  vy 
     m_ball.q[4] = vz0;   //  vz 
+}
+
+void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
+{
+    //DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
+    
+    
+//  Convert the loft angle from degrees to radians and
+//  assign values to some convenience variables.
+    double loft = Utility::ToRadians(aImpactData.angleY);
+    double cosL = cos(loft);
+    double sinL = sin(loft);
+
+    //  Calculate the pre-collision velocities normal
+    //  and parallel to the line of action.
+    double velocity = aImpactData.velocity;
+    double vcp = cosL * velocity;
+    double vcn = -sinL * velocity;
+
+    //  Compute the post-collision velocity of the ball
+    //  along the line of action.
+    double ballMass = m_ball.mass;
+    double clubMass = aImpactData.mass;
+    double e = aImpactData.cor; //  coefficient of restitution of club face striking the ball
+    double vbp = (1.0 + e) * clubMass * vcp / (clubMass + ballMass);
+
+    //  Compute the post-collision velocity of the ball
+    //  perpendicular to the line of action.
+    double vbn = (1.0 - m_faceRoll) * clubMass * vcn / (clubMass + ballMass);
+
+    //  Compute the initial spin rate assuming ball is
+    //  rolling without sliding.
+    double radius = m_ball.radius;
+    double omega = m_faceRoll * vcn / radius;
+
+
+    //  Rotate post-collision ball velocities back into 
+    //  standard Cartesian frame of reference. Because the
+    //  line-of-action was in the xy plane, the z-velocity
+    //  is zero.
+    double vx0 = cosL * vbp - sinL * vbn;
+    double vy0 = sinL * vbp + cosL * vbn;
+    double vz0 = 0.0;
+    /*
+    double velocity = aImpactData.velocity;
+    double ballMass = m_ball.mass;
+    double clubMass = aImpactData.mass;
+    double e = aImpactData.cor; //  coefficient of restitution of club face striking the ball
+    double radius = m_ball.radius;
+    */
+
+    double div1 = ((1.0 + e) * clubMass) / (clubMass + ballMass);
+    double div2 = (2 * clubMass) / (7 * (clubMass + ballMass));
+
+    //DirectX::SimpleMath::Vector4 vBall = ((((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vFaceNormal) 
+        + (((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
+
+    DirectX::SimpleMath::Vector4 vBall = ((((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vHeadNormal)
+        + (((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
+    DirectX::SimpleMath::Vector4 vBall1 = (((1.0 + e) * clubMass) / (clubMass + ballMass) * aImpactData.vHeadNormal);
+    DirectX::SimpleMath::Vector4 vBall2 = ((2 * clubMass) / (7 * (clubMass + ballMass)) * aImpactData.vHeadParallel);
+    DirectX::SimpleMath::Vector4 vBall3 = vBall1 + vBall2;
+
+
+    DirectX::SimpleMath::Vector3 unitVHead = aImpactData.vHead;
+    unitVHead.Normalize();
+    DirectX::SimpleMath::Vector3 unitFaceNormal = aImpactData.vFaceNormal;
+    unitFaceNormal.Normalize();
+
+    DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
+
+    DirectX::SimpleMath::Vector4 absvHeadParallel = aImpactData.vHeadParallel;
+    absvHeadParallel.x = abs(absvHeadParallel.x);
+    absvHeadParallel.y = abs(absvHeadParallel.y);
+    absvHeadParallel.z = abs(absvHeadParallel.z);
+    absvHeadParallel.w = abs(absvHeadParallel.w);
+
+    float absVhP = sqrt((aImpactData.vHeadParallel.x * aImpactData.vHeadParallel.x) 
+        + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
+        + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
+
+    DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
+    omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
+
+    SetSpinAxis(omegaBall);
+    m_ball.omega = omega;
+    //m_ball.omega = omegaBall.z;
+    m_ball.q[0] = vBall.x;   //  vx 
+    m_ball.q[2] = vBall.y;   //  vy 
+    m_ball.q[4] = vBall.z;   //  vz 
 }
 
 void GolfBall::PushFlightData()
@@ -535,7 +626,6 @@ const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
     float f = acos(e);
     float g = Utility::ToDegrees(f);
 
-    int test = 8;
     return impactAngle;
 }
 

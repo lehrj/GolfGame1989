@@ -21,9 +21,15 @@ public:
         double cor;
         double impactMissOffSet;
         double power;
+        DirectX::SimpleMath::Vector3 vHead;
+        DirectX::SimpleMath::Vector3 vHeadNormal;
+        DirectX::SimpleMath::Vector3 vHeadParallel;
+        DirectX::SimpleMath::Vector3 vFaceNormal;
+        
     };
 
-    static inline void ZeroImpactData(ImpactData& aImpact) {
+    static inline void ZeroImpactData(ImpactData& aImpact) 
+    {
         aImpact.velocity = 0.0;
         aImpact.angleX = 0.0;
         aImpact.angleY = 0.0;
@@ -31,7 +37,13 @@ public:
         aImpact.mass = 0.0;
         aImpact.impactMissOffSet = 0.0;
         aImpact.power = 0.0;
-        aImpact.cor = 0.0; };
+        aImpact.cor = 0.0; 
+        aImpact.vFaceNormal.Zero;
+        aImpact.vHead.Zero;
+        aImpact.vHeadNormal.Zero;
+        aImpact.vHeadParallel.Zero;
+
+     };
     
 
 
