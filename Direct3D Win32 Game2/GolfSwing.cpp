@@ -341,6 +341,10 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector2()
     m_impactData.vFaceNormal.x = cos(Utility::ToRadians(launchAngle));
     m_impactData.vFaceNormal.y = sin(Utility::ToRadians(launchAngle));
     m_impactData.vFaceNormal.z = 0.0; // WLJ ToDo: update with value from play mechanics
+
+    m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(m_impactData.impactMissOffSet)));
+    //m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(10.5)));
+
     m_impactData.vFaceNormal.Normalize();
 
     m_impactData.vHeadNormal = m_impactData.vHead.Dot(m_impactData.vFaceNormal) * m_impactData.vFaceNormal;

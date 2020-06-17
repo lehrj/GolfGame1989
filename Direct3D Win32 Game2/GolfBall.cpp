@@ -318,12 +318,13 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
 
     DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
 
+    /*
     DirectX::SimpleMath::Vector4 absvHeadParallel = aImpactData.vHeadParallel;
     absvHeadParallel.x = abs(absvHeadParallel.x);
     absvHeadParallel.y = abs(absvHeadParallel.y);
     absvHeadParallel.z = abs(absvHeadParallel.z);
     absvHeadParallel.w = abs(absvHeadParallel.w);
-
+    */
     float absVhP = sqrt((aImpactData.vHeadParallel.x * aImpactData.vHeadParallel.x) 
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
@@ -331,7 +332,21 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
     DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
     omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
 
+    float absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
+        + (omegaBall.y * omegaBall.y)
+        + (omegaBall.z * omegaBall.z));
+    float absvBall = sqrt((vBall.x * vBall.x)
+        + (vBall.y * vBall.y)
+        + (vBall.z * vBall.z));
+
+    double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
+    DirectX::SimpleMath::Vector3 fMangus;
+    fMangus.Zero;
+    fMangus = (.5 * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
+
+    
     SetSpinAxis(omegaBall);
+
     m_ball.omega = omega;
     //m_ball.omega = omegaBall.z;
     m_ball.q[0] = vBall.x;   //  vx 
