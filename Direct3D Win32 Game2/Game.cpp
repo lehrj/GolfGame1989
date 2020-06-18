@@ -139,6 +139,7 @@ void Game::Update(DX::StepTimer const& timer)
     if (kb.V)
     {
         pPlay->ResetPlayData();
+        ResetPowerMeter();
     }
     if (kb.A)
     {
@@ -364,10 +365,19 @@ void Game::RenderUITest()
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
     */
 
-    m_powerMeterFrameRect.left = m_powerMeterFrameRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
-    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
+    if (pPlay->GetMeterPower() >= 0.0)
+    {
+        //m_powerMeterBarRect.left = m_powerMeterBarRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
+        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
+    }
+    else
+    {
+        //m_powerMeterBarRect.right = m_powerMeterBarRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
+        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
+    }
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
 
-    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
+    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
 }
 
@@ -739,20 +749,14 @@ void Game::CreateResources()
     m_fontPosDebug.y = 35;
 
     // Start swing power bar
-    /*
-    m_powerMeterBarRect.left = (m_outputWidth / 2) - m_powerBarMeterOrigin.x;
-    m_powerMeterBarRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
-    m_powerMeterBarRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
-    m_powerMeterBarRect.bottom = (m_outputHeight / 2) + m_powerBarMeterOrigin.y;
-    */
-    m_powerMeterBarRect.left = (backBufferWidth / 2) - m_powerBarMeterOrigin.x;
-    m_powerMeterBarRect.right = (backBufferWidth / 2) + m_powerBarMeterOrigin.x;
-    m_powerMeterBarRect.top = (backBufferHeight / 1.08) - m_powerBarMeterOrigin.y;
-    m_powerMeterBarRect.bottom = (backBufferHeight / 1.08) + m_powerBarMeterOrigin.y;
+    m_powerMeterFrameRect.left = (backBufferWidth / 2) - m_powerBarFrameOrigin.x;
+    m_powerMeterFrameRect.right = (backBufferWidth / 2) + m_powerBarFrameOrigin.x;
+    m_powerMeterFrameRect.top = (backBufferHeight / 1.08) - m_powerBarFrameOrigin.y;
+    m_powerMeterFrameRect.bottom = (backBufferHeight / 1.08) + m_powerBarFrameOrigin.y;
+
     
-    m_powerMeterFrameRect = m_powerMeterBarRect;
     //float meterSize = m_powerMeterBarRect.right - m_powerMeterBarRect.left;
-    m_powerMeterSize = m_powerMeterBarRect.right - m_powerMeterBarRect.left;
+    m_powerMeterSize = m_powerMeterFrameRect.right - m_powerMeterFrameRect.left;
     //m_powerMeterFrameRect.left = m_powerMeterFrameRect.right - (meterSize * (pPlay->GetMeterPower() * 0.01));
     // m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
     //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
@@ -760,13 +764,19 @@ void Game::CreateResources()
     float powerMeterScale = pPlay->GetMeterLength();
     float impactPointScale = pPlay->GetMeterImpactPoint();
     impactPointScale = impactPointScale * (m_powerMeterSize / powerMeterScale);
-
-    m_powerMeterImpactRect.top = m_powerMeterBarRect.top;
-    m_powerMeterImpactRect.bottom = m_powerMeterBarRect.bottom;
+    m_powerMeterImpactPoint = m_powerMeterFrameRect.right - impactPointScale;
+    
+   
+    m_powerMeterImpactRect.top = m_powerMeterFrameRect.top;
+    m_powerMeterImpactRect.bottom = m_powerMeterFrameRect.bottom;
     //m_powerMeterImpactRect.right = m_powerMeterBarRect.right - 50;
     //m_powerMeterImpactRect.left = m_powerMeterBarRect.right - 100;
-    m_powerMeterImpactRect.right = m_powerMeterBarRect.right - impactPointScale + 20;
-    m_powerMeterImpactRect.left = m_powerMeterBarRect.right - impactPointScale - 20;
+    m_powerMeterImpactRect.right = m_powerMeterFrameRect.right - impactPointScale + 20;
+    m_powerMeterImpactRect.left = m_powerMeterFrameRect.right - impactPointScale - 20;
+
+    m_powerMeterBarRect = m_powerMeterFrameRect;
+    m_powerMeterBarRect.left = m_powerMeterFrameRect.right - impactPointScale;
+    m_powerMeterBarRect.right = m_powerMeterFrameRect.right - impactPointScale;
 
     //m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
     /*

@@ -30,6 +30,7 @@ public:
     // Initialization and management
     void Initialize(HWND window, int width, int height);
 
+    void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
     // Basic game loop
     void Tick();
 
@@ -136,4 +137,5 @@ private:
     RECT m_powerMeterImpactRect;
     
     float m_powerMeterSize;
+    float m_powerMeterImpactPoint;
 };
