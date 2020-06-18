@@ -14,6 +14,7 @@ public:
     float GetMeterPower() { return m_meterBar; };
     float GetSwingPower() { return m_swingPower; };
     float GetMeterLength() { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
+    float GetMeterImpactPoint() { return GetMeterLength() - m_swingPowerMax; };
     void ResetPlayData();
     void ResetSwingUpdateReady();
     void Swing();

@@ -343,7 +343,7 @@ void Game::RenderUI()
 
 void Game::RenderUITest()
 {
-    
+    /*
     m_powerMeterBarRect.left = (m_outputWidth/2) - m_powerBarMeterOrigin.x;
     m_powerMeterBarRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
     m_powerMeterBarRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
@@ -361,6 +361,13 @@ void Game::RenderUITest()
     m_powerMeterImpactRect.bottom = m_powerMeterBarRect.bottom;
     m_powerMeterImpactRect.right = m_powerMeterBarRect.right - 50;
     m_powerMeterImpactRect.left = m_powerMeterBarRect.right - 100;
+    m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
+    */
+
+    m_powerMeterFrameRect.left = m_powerMeterFrameRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
+
+    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
 }
 
@@ -715,13 +722,11 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here.
 
     ////********* WLJ world start ----- deactivate to turn off world spin
-
     m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
     m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
-
     // world end
 
     m_fontPos.x = backBufferWidth / 2.f;
@@ -733,7 +738,38 @@ void Game::CreateResources()
     m_fontPosDebug.x = 480;
     m_fontPosDebug.y = 35;
 
-    // Start Texture
+    // Start swing power bar
+    /*
+    m_powerMeterBarRect.left = (m_outputWidth / 2) - m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
+    m_powerMeterBarRect.bottom = (m_outputHeight / 2) + m_powerBarMeterOrigin.y;
+    */
+    m_powerMeterBarRect.left = (backBufferWidth / 2) - m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.right = (backBufferWidth / 2) + m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.top = (backBufferHeight / 1.08) - m_powerBarMeterOrigin.y;
+    m_powerMeterBarRect.bottom = (backBufferHeight / 1.08) + m_powerBarMeterOrigin.y;
+    
+    m_powerMeterFrameRect = m_powerMeterBarRect;
+    //float meterSize = m_powerMeterBarRect.right - m_powerMeterBarRect.left;
+    m_powerMeterSize = m_powerMeterBarRect.right - m_powerMeterBarRect.left;
+    //m_powerMeterFrameRect.left = m_powerMeterFrameRect.right - (meterSize * (pPlay->GetMeterPower() * 0.01));
+    // m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
+    //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
+
+    float powerMeterScale = pPlay->GetMeterLength();
+    float impactPointScale = pPlay->GetMeterImpactPoint();
+    impactPointScale = impactPointScale * (m_powerMeterSize / powerMeterScale);
+
+    m_powerMeterImpactRect.top = m_powerMeterBarRect.top;
+    m_powerMeterImpactRect.bottom = m_powerMeterBarRect.bottom;
+    //m_powerMeterImpactRect.right = m_powerMeterBarRect.right - 50;
+    //m_powerMeterImpactRect.left = m_powerMeterBarRect.right - 100;
+    m_powerMeterImpactRect.right = m_powerMeterBarRect.right - impactPointScale + 20;
+    m_powerMeterImpactRect.left = m_powerMeterBarRect.right - impactPointScale - 20;
+
+    //m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
+    /*
     m_powerBarFramePos.x = backBufferWidth / 2.f;
     m_powerBarFramePos.y = backBufferHeight / 1.08f;
 
@@ -743,7 +779,6 @@ void Game::CreateResources()
     float powerBarHeight = m_powerBarMeterPos.y;
     float centerX = m_outputWidth / 2;
     float centerY = m_outputHeight / 2;
-    
     
     m_powerMeterBarRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
     m_powerMeterBarRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
@@ -760,7 +795,7 @@ void Game::CreateResources()
     
     m_powerBarImpactPos.x = backBufferWidth / 2.f;
     m_powerBarImpactPos.y = backBufferHeight / 2.f;
-
+    */
     // End Texture
 }
 

@@ -134,4 +134,6 @@ private:
     RECT m_powerMeterBarRect;
     RECT m_powerMeterFrameRect;
     RECT m_powerMeterImpactRect;
+    
+    float m_powerMeterSize;
 };
