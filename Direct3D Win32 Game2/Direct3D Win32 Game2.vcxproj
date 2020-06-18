@@ -194,6 +194,7 @@
   <ItemGroup>
     <Image Include="directx.ico" />
     <Image Include="PowerbarFrame.png" />
+    <Image Include="PowerbarImpact.png" />
     <Image Include="PowerbarMeter.png" />
   </ItemGroup>
   <ItemGroup>

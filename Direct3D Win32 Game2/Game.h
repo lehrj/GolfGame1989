@@ -124,11 +124,14 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerImpactTexture;
     DirectX::SimpleMath::Vector2 m_powerBarFramePos;
     DirectX::SimpleMath::Vector2 m_powerBarMeterPos;
+    DirectX::SimpleMath::Vector2 m_powerBarImpactPos;
     DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
-    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;
-
+    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;   
+    DirectX::SimpleMath::Vector2 m_powerBarImpactOrigin;
     RECT m_powerMeterStretchRect;
-
+    RECT m_powerMeterTestRect;
+    RECT m_powerMeterImpactRect;
 };

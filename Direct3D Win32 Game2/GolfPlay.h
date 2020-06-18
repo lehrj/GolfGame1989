@@ -11,6 +11,7 @@ public:
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() { return m_impactData; };
     float GetImpact() { return m_swingImpactProcessed; };
+    float GetMeterPower() { return m_meterBar; };
     float GetSwingPower() { return m_swingPower; };
     
     void ResetPlayData();

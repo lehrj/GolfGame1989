@@ -344,13 +344,25 @@ void Game::RenderUI()
 void Game::RenderUITest()
 {
     float time = float(m_timer.GetTotalSeconds());
-
-    //m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerBarFramePos, nullptr, Colors::White, 0.f, m_powerBarFrameOrigin);
-    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin);
-    //m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerBarMeterPos, nullptr, Colors::White, 0.f, m_powerBarMeterOrigin, cosf(time));  
-    //m_powerMeterStretchRect.left = (cosf(time) * 102.0f);
     
-    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+    m_powerMeterStretchRect.left = (m_outputWidth/2) - m_powerBarMeterOrigin.x;
+    m_powerMeterStretchRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
+    m_powerMeterStretchRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
+    m_powerMeterStretchRect.bottom = (m_outputHeight / 2) + m_powerBarMeterOrigin.y;
+
+    m_powerMeterTestRect = m_powerMeterStretchRect;
+    float meterSize = m_powerMeterStretchRect.right - m_powerMeterStretchRect.left;
+
+    m_powerMeterTestRect.left = m_powerMeterTestRect.right - (meterSize * (pPlay->GetMeterPower() * 0.01));
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterTestRect, nullptr, Colors::White);
+    
+    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+    
+    m_powerMeterImpactRect.top = m_powerMeterStretchRect.top;
+    m_powerMeterImpactRect.bottom = m_powerMeterStretchRect.bottom;
+    m_powerMeterImpactRect.right = m_powerMeterStretchRect.right - 50;
+    m_powerMeterImpactRect.left = m_powerMeterStretchRect.right - 100;
+    m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
 }
 
 void Game::SetGameCamera(int aCamera)
@@ -579,24 +591,31 @@ void Game::CreateDevice()
     // Start Texture
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", nullptr, m_powerFrameTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", nullptr, m_powerMeterTexture.ReleaseAndGetAddressOf()));
-
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", nullptr, m_powerImpactTexture.ReleaseAndGetAddressOf()));
     ComPtr<ID3D11Resource> resource;
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", resource.GetAddressOf(), m_powerFrameTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", resource.GetAddressOf(), m_powerMeterTexture.ReleaseAndGetAddressOf()));
+    //DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", resource.GetAddressOf(), m_powerImpactTexture.ReleaseAndGetAddressOf()));
     ComPtr<ID3D11Texture2D> PowerbarFrame;
     ComPtr<ID3D11Texture2D> PowerbarMeter;
+    ComPtr<ID3D11Texture2D> PowerbarImpact;
     DX::ThrowIfFailed(resource.As(&PowerbarFrame));
     DX::ThrowIfFailed(resource.As(&PowerbarMeter));
+    DX::ThrowIfFailed(resource.As(&PowerbarImpact));
 
     CD3D11_TEXTURE2D_DESC PowerbarFrameDesc;
     PowerbarFrame->GetDesc(&PowerbarFrameDesc);
     CD3D11_TEXTURE2D_DESC PowerbarMeterDesc;
     PowerbarMeter->GetDesc(&PowerbarMeterDesc);
+    CD3D11_TEXTURE2D_DESC PowerbarImpactDesc;
+    PowerbarImpact->GetDesc(&PowerbarImpactDesc);
 
     m_powerBarFrameOrigin.x = float(PowerbarFrameDesc.Width / 2);
     m_powerBarFrameOrigin.y = float(PowerbarFrameDesc.Height / 2);
     m_powerBarMeterOrigin.x = float(PowerbarMeterDesc.Width / 2);
     m_powerBarMeterOrigin.y = float(PowerbarMeterDesc.Height / 2);
+    m_powerBarImpactOrigin.x = float(PowerbarImpactDesc.Width / 2);
+    m_powerBarImpactOrigin.y = float(PowerbarImpactDesc.Height / 2);
 
     // End texture
 }
@@ -726,31 +745,22 @@ void Game::CreateResources()
     float centerX = m_outputWidth / 2;
     float centerY = m_outputHeight / 2;
     
+    
     m_powerMeterStretchRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
     m_powerMeterStretchRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
     m_powerMeterStretchRect.left = m_outputWidth - m_powerBarMeterOrigin.x;
     m_powerMeterStretchRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
+    
+    float barHeight = m_powerMeterTestRect.top - m_powerMeterTestRect.bottom;
+    float barWidth = m_powerMeterTestRect.left - m_powerMeterTestRect.right;
 
-    /*
-    m_powerMeterStretchRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
-    m_powerMeterStretchRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
-    m_powerMeterStretchRect.left = m_outputWidth - m_powerBarMeterOrigin.x ;
-    m_powerMeterStretchRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
-    */
-
-    /*
-    float aTop, aLeft, aRight, aBottom;
-    m_powerMeterStretchRect.left = backBufferWidth / 4;
-    //m_powerMeterStretchRect.top = m_powerBarMeterPos.y;
-    //m_powerMeterStretchRect.bottom = m_powerBarMeterPos.y;
-    m_powerMeterStretchRect.top = backBufferHeight / 4;
-    m_powerMeterStretchRect.right = m_powerMeterStretchRect.left + backBufferWidth / 2;
-    m_powerMeterStretchRect.bottom = m_powerMeterStretchRect.top + backBufferHeight / 2;
-    aLeft = m_powerMeterStretchRect.left;
-    aTop = m_powerMeterStretchRect.top;
-    aRight = m_powerMeterStretchRect.right;
-    aBottom = m_powerMeterStretchRect.bottom;
-    */
+    m_powerMeterTestRect.top = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
+    m_powerMeterTestRect.bottom = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
+    m_powerMeterTestRect.left = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
+    m_powerMeterTestRect.right = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
+    
+    m_powerBarImpactPos.x = backBufferWidth / 2.f;
+    m_powerBarImpactPos.y = backBufferHeight / 2.f;
 
     // End Texture
 }
@@ -974,6 +984,7 @@ void Game::OnDeviceLost()
     m_spriteBatch.reset();
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();
+    m_powerImpactTexture.Reset();
     // end
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();
