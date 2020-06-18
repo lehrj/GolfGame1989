@@ -13,7 +13,7 @@ public:
     float GetImpact() { return m_swingImpactProcessed; };
     float GetMeterPower() { return m_meterBar; };
     float GetSwingPower() { return m_swingPower; };
-    
+    float GetMeterLength() { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     void ResetPlayData();
     void ResetSwingUpdateReady();
     void Swing();

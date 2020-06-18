@@ -343,25 +343,24 @@ void Game::RenderUI()
 
 void Game::RenderUITest()
 {
-    float time = float(m_timer.GetTotalSeconds());
     
-    m_powerMeterStretchRect.left = (m_outputWidth/2) - m_powerBarMeterOrigin.x;
-    m_powerMeterStretchRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
-    m_powerMeterStretchRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
-    m_powerMeterStretchRect.bottom = (m_outputHeight / 2) + m_powerBarMeterOrigin.y;
+    m_powerMeterBarRect.left = (m_outputWidth/2) - m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.right = (m_outputWidth / 2) + m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.top = (m_outputHeight / 2) - m_powerBarMeterOrigin.y;
+    m_powerMeterBarRect.bottom = (m_outputHeight / 2) + m_powerBarMeterOrigin.y;
 
-    m_powerMeterTestRect = m_powerMeterStretchRect;
-    float meterSize = m_powerMeterStretchRect.right - m_powerMeterStretchRect.left;
+    m_powerMeterFrameRect = m_powerMeterBarRect;
+    float meterSize = m_powerMeterBarRect.right - m_powerMeterBarRect.left;
 
-    m_powerMeterTestRect.left = m_powerMeterTestRect.right - (meterSize * (pPlay->GetMeterPower() * 0.01));
-    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterTestRect, nullptr, Colors::White);
+    m_powerMeterFrameRect.left = m_powerMeterFrameRect.right - (meterSize * (pPlay->GetMeterPower() * 0.01));
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
     
-    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterStretchRect, nullptr, Colors::White);
+    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
     
-    m_powerMeterImpactRect.top = m_powerMeterStretchRect.top;
-    m_powerMeterImpactRect.bottom = m_powerMeterStretchRect.bottom;
-    m_powerMeterImpactRect.right = m_powerMeterStretchRect.right - 50;
-    m_powerMeterImpactRect.left = m_powerMeterStretchRect.right - 100;
+    m_powerMeterImpactRect.top = m_powerMeterBarRect.top;
+    m_powerMeterImpactRect.bottom = m_powerMeterBarRect.bottom;
+    m_powerMeterImpactRect.right = m_powerMeterBarRect.right - 50;
+    m_powerMeterImpactRect.left = m_powerMeterBarRect.right - 100;
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
 }
 
@@ -746,18 +745,18 @@ void Game::CreateResources()
     float centerY = m_outputHeight / 2;
     
     
-    m_powerMeterStretchRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
-    m_powerMeterStretchRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
-    m_powerMeterStretchRect.left = m_outputWidth - m_powerBarMeterOrigin.x;
-    m_powerMeterStretchRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
+    m_powerMeterBarRect.top = m_outputHeight - m_powerBarMeterOrigin.y;
+    m_powerMeterBarRect.bottom = m_outputHeight - m_powerBarMeterOrigin.y * 2;
+    m_powerMeterBarRect.left = m_outputWidth - m_powerBarMeterOrigin.x;
+    m_powerMeterBarRect.right = m_outputWidth - m_powerBarMeterOrigin.x * 2;
     
-    float barHeight = m_powerMeterTestRect.top - m_powerMeterTestRect.bottom;
-    float barWidth = m_powerMeterTestRect.left - m_powerMeterTestRect.right;
+    float barHeight = m_powerMeterFrameRect.top - m_powerMeterFrameRect.bottom;
+    float barWidth = m_powerMeterFrameRect.left - m_powerMeterFrameRect.right;
 
-    m_powerMeterTestRect.top = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
-    m_powerMeterTestRect.bottom = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
-    m_powerMeterTestRect.left = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
-    m_powerMeterTestRect.right = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
+    m_powerMeterFrameRect.top = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
+    m_powerMeterFrameRect.bottom = (backBufferHeight / 2.f) + m_powerBarMeterOrigin.y;
+    m_powerMeterFrameRect.left = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
+    m_powerMeterFrameRect.right = (backBufferWidth / 2.f) + m_powerBarMeterOrigin.x;
     
     m_powerBarImpactPos.x = backBufferWidth / 2.f;
     m_powerBarImpactPos.y = backBufferHeight / 2.f;

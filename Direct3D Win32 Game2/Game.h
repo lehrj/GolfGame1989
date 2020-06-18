@@ -131,7 +131,7 @@ private:
     DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
     DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;   
     DirectX::SimpleMath::Vector2 m_powerBarImpactOrigin;
-    RECT m_powerMeterStretchRect;
-    RECT m_powerMeterTestRect;
+    RECT m_powerMeterBarRect;
+    RECT m_powerMeterFrameRect;
     RECT m_powerMeterImpactRect;
 };
