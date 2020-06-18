@@ -138,4 +138,5 @@ private:
     
     float m_powerMeterSize;
     float m_powerMeterImpactPoint;
+    float m_powerMeterBarScale;
 };
