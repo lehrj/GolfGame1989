@@ -48,6 +48,9 @@
     <Image Include="PowerbarImpact.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="PowerbarBackswing.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">

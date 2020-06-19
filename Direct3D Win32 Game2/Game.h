@@ -126,16 +126,21 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerImpactTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerBackswingTexture;
     DirectX::SimpleMath::Vector2 m_powerBarFramePos;
     DirectX::SimpleMath::Vector2 m_powerBarMeterPos;
     DirectX::SimpleMath::Vector2 m_powerBarImpactPos;
+    DirectX::SimpleMath::Vector2 m_powerBarBackswingPos;
     DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
     DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;   
     DirectX::SimpleMath::Vector2 m_powerBarImpactOrigin;
+    DirectX::SimpleMath::Vector2 m_powerBarBackswingOrigin;
+
     RECT m_powerMeterBarRect;
     RECT m_powerMeterFrameRect;
     RECT m_powerMeterImpactRect;
-    
+    RECT m_powerMeterBackswingRect;
+
     float m_powerMeterSize;
     float m_powerMeterImpactPoint;
     float m_powerMeterBarScale;

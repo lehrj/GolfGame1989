@@ -11,6 +11,8 @@ public:
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() { return m_impactData; };
     float GetImpact() { return m_swingImpactProcessed; };
+    float GetBackswingSet() { return m_impactData.power; };
+    bool GetIsBackswingSet() { return m_isOnDownSwing; };
     float GetMeterPower() { return m_meterBar; };
     float GetSwingPower() { return m_swingPower; };
     float GetMeterLength() { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
@@ -41,11 +43,12 @@ private:
     float m_meterBar;
     float m_swingImpact;
     float m_swingImpactProcessed;
-    float m_swingIncrement = 5.0;
+    float m_swingIncrement = m_defaultSwingIncrementSpeed;
     float m_swingPower;
     float m_skullRate;
     float m_sliceRate;
 
+    const float m_defaultSwingIncrementSpeed = 0.9;
     const float m_swingPerfectImpactPoint = 0.0;
     const float m_swingOverImpact = -40.0;
     const float m_swingPowerBunnyMax = 20.0;

@@ -67,7 +67,7 @@ void GolfPlay::ResetPlayData()
     m_meterBar = 0.0;
     m_swingImpact = 0.0;
     m_swingImpactProcessed = 0.0;
-    m_swingIncrement = 0.3;
+    m_swingIncrement = m_defaultSwingIncrementSpeed;
     m_swingPower = 0.0;
     m_skullRate = 0.0;
     m_sliceRate = 0.0;
@@ -93,6 +93,10 @@ void GolfPlay::Swing()
         else
         {
             m_meterBar -= m_swingIncrement;
+            if (m_isSwingPowerSet == false && m_meterBar <= 0.0)
+            {
+                ResetPlayData();
+            }
             if (m_meterBar <= m_swingOverImpact)
             {
                 SetImpact();
@@ -120,6 +124,7 @@ void GolfPlay::SetPower()
         m_impactData.power = m_meterBar;
         m_swingPower = m_meterBar;
         m_isOnDownSwing = true;
+        m_isSwingPowerSet = true;
     }
 }
 

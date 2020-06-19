@@ -193,6 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico" />
+    <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />
     <Image Include="PowerbarImpact.png" />
     <Image Include="PowerbarMeter.png" />
