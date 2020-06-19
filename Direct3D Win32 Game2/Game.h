@@ -3,14 +3,10 @@
 //
 
 #pragma once
-
 #include "StepTimer.h"
 #include "Golf.h"
 #include "Keyboard.h"
-//#include "GolfPlay.h"
 
-
-//#include "TextConsole.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -21,7 +17,6 @@ public:
     //~Game() = default;
     ~Game();
     
-
     Game(Game&&) = default;
     Game& operator= (Game&&) = default;
 
@@ -90,13 +85,9 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
     
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
-
-    //std::unique_ptr<DX::TextConsole> m_console; // ????? WLJ add Text Console 
-
     // End
 
-    //world start
-    
+    //world start 
     DirectX::SimpleMath::Matrix m_world;
     DirectX::SimpleMath::Matrix m_worldAntiRotation;
     DirectX::SimpleMath::Matrix m_view;

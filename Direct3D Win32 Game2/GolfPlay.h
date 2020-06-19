@@ -31,8 +31,6 @@ public:
     bool UpdateSwing();
     void UpdateSwingState();
 
-    
-
 private:
     Utility::ImpactData m_impactData;
     bool m_isGameplayButtonReady = false;

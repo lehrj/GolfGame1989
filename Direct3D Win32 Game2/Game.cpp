@@ -318,22 +318,6 @@ void Game::RenderDebugInfo()
         m_fontPosDebug.y += 35;
     }
     m_fontPosDebug.y = fontOriginPosY;
-    /*
-    std::vector<std::string> uiString = pPlay->GetDebugData();
-
-    float fontOriginPosX = m_fontPos2.x;
-    float fontOriginPosY = m_fontPos2.y;
-
-    for (int i = 0; i < uiString.size(); ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-    }
-    m_fontPos2.y = fontOriginPosY;
-    */
 }
 
 void Game::RenderUI()
@@ -366,7 +350,6 @@ void Game::RenderUITest()
         m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
 
         //m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.007));
-
     }
     else
     {
@@ -376,7 +359,6 @@ void Game::RenderUITest()
     }
     if (pPlay->GetIsBackswingSet() == false)
     {
-        
         m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
     }
     else
@@ -414,28 +396,6 @@ void Game::SetGameCamera(int aCamera)
     {
         m_gameCamera = 5;
     }
-    /* scratch pad
-    game.h
-    std::unique_ptr<DirectX::CommonStates> m_states;
-    std::unique_ptr<DirectX::BasicEffect> m_effect;
-    DirectX::SimpleMath::Matrix m_world;
-    DirectX::SimpleMath::Matrix m_view;
-    DirectX::SimpleMath::Matrix m_proj;
-
-    CreateResources
-    m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f),
-    Vector3::Zero, Vector3::UnitY);
-    m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
-    float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
-    m_effect->SetView(m_view);
-    m_effect->SetProjection(m_proj);
-
-    Render
-    m_effect->SetWorld(m_world);
-
-    Update
-    m_world = Matrix::CreateRotationY( cosf( static_cast<float>(timer.GetTotalSeconds())));
-    */
 }
 
 // Helper method to clear the back buffers.
@@ -1072,23 +1032,6 @@ void Game::TestPowerUp()
         m_batch->DrawLine(vBottomRight, vBottomLeft);
         m_batch->DrawLine(vBottomLeft, vTopLeft);
     }
-
-    /*
-    std::vector<std::string> uiString = pGolf->GetUIstrings();
-    std::string output = uiString[0];
-    float fontOriginPosX = m_fontPos2.x;
-    float fontOriginPosY = m_fontPos2.y;
-    for (int i = 0; i < uiString.size(); ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-    }
-    m_fontPos2.y = fontOriginPosY;
-    */
 }
 
 

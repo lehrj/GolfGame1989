@@ -575,23 +575,6 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
-void GolfBall::OutputPosition()
-{
-    /*
-    printf("X Vals ================ \n");
-    for (int i = 0; i < m_xVals.size(); ++i)
-    {
-        std::cout << m_xVals[i] << std::endl;
-    }
-    printf("\n\n\n");
-    printf("Y Vals ================ \n");
-    for (int i = 0; i < m_yVals.size(); ++i)
-    {
-        std::cout << m_yVals[i] << std::endl;
-    }
-    */
-}
-
 std::vector<double> GolfBall::OutputXvals()
 {
     return m_xVals;

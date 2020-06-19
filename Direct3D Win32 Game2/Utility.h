@@ -10,7 +10,6 @@ public:
     static inline double ToDegrees(double r) { return r * 180.0 / GetPi(); };
     static inline double ToRadians(double d) { return d / 180.0 * GetPi(); };
 
-
     struct ImpactData
     {
         double velocity;
@@ -25,7 +24,6 @@ public:
         DirectX::SimpleMath::Vector3 vHeadNormal;
         DirectX::SimpleMath::Vector3 vHeadParallel;
         DirectX::SimpleMath::Vector3 vFaceNormal;
-        
     };
 
     static inline void ZeroImpactData(ImpactData& aImpact) 
@@ -45,8 +43,6 @@ public:
 
      };
     
-
-
 private:
 
 };

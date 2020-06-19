@@ -80,7 +80,6 @@ void Golf::BuildUIstrings()
 
 void Golf::CalculateData()
 {
-
     //Vector4d swingVector = pSwing->CalculateLaunchVector();
     //pBall->FireProjectile(swingVector, pEnvironment);
     pBall->FireProjectile2(pSwing->CalculateLaunchVector2(), pEnvironment);
@@ -142,24 +141,6 @@ void Golf::TransformCordinates()
     transMatrix._34 = 2.0f;
     for (int i = 0; i < m_xNorm.size(); ++i)
     {
-        /*
-        oldVec.x = m_xNorm[i];
-        oldVec.y = m_yNorm[i];
-        oldVec.z = m_zNorm[i];
-        oldVec.w = 1;
-
-        //oldVec *= transMatrix;
-        //newVec = oldVec * transMatrix;
-
-        //DirectX::SimpleMath::Vector4 aTestVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
-        newVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
-        m_xNorm[i] = newVec.x;
-        m_yNorm[i] = newVec.y;
-        m_zNorm[i] = newVec.z;
-        //m_xNorm.push_back(newVec.x);
-        //m_yNorm.push_back(newVec.y);
-        //m_zNorm.push_back(newVec.z);
-        */
         m_xNorm[i] -= 2;
     }
 }
@@ -249,54 +230,6 @@ void Golf::NormalizeData()
         //m_zNorm[i] = val;
         m_zNorm.push_back(val);
     }
-    
-    //ScaleCordinates();
-    //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
-//m_yWindow = m_maxY + 10;
-
-    /*
-        SetMaxX();
-    SetMaxY();
-    SetMaxZ();
-    //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
-    //m_yWindow = m_maxY + 10;
-
-    
-    m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
-    m_yWindow = m_maxY + 10;
-    m_zWindow = m_maxZ + 10;
-    
-    //m_xNorm.resize(m_xVals.size());
-    m_xNorm.clear();
-    for (int i = 0; i < m_xVals.size(); ++i)
-    {
-        double val = (((m_xVals[i] / m_xWindow) * 2) - 1.5);
-        //double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
-        //double val = (((m_xVals[i] / m_xWindow))-1);
-        //m_xNorm[i] = val;
-        m_xNorm.push_back(val);
-    }
-
-    //m_yNorm.resize(m_yVals.size());
-    m_yNorm.clear();
-    for (int i = 0; i < m_yVals.size(); ++i)
-    {
-        //double val = (((m_yVals[i] / m_yWindow) * 2) - 1);
-        double val = (((m_yVals[i] / m_yWindow)));
-        //m_yNorm[i] = val;
-        m_yNorm.push_back(val);
-    }
-
-    //m_zNorm.resize(m_zVals.size());
-    m_zNorm.clear();
-    for (int i = 0; i < m_zVals.size(); ++i)
-    {
-        double val = (((m_zVals[i] / m_zWindow)));
-        //double val = m_zVals[i];
-        //m_zNorm[i] = val;
-        m_zNorm.push_back(val);
-    }
-    */
 }
 
 void Golf::SetMaxX()
@@ -366,7 +299,6 @@ void Golf::CopyZvec(std::vector<double> aVec)
         m_zVals.push_back(temp[i]);
     }
 }
-
 
 void Golf::UpdateImpact(Utility::ImpactData aImpact)
 {

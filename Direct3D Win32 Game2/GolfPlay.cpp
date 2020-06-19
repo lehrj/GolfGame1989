@@ -23,12 +23,6 @@ void GolfPlay::BuildDebugData()
     m_debugData.push_back("m_sliceRate = " + std::to_string(m_sliceRate));
 }
 
-void GolfPlay::CalculateImpact()
-{
-    
-
-}
-
 std::vector<std::string> GolfPlay::GetDebugData() 
 { 
     BuildDebugData();
@@ -54,9 +48,6 @@ void GolfPlay::UpdateSwingState()
         //printf("error in GolfPlay::GetSwingState() \n");    
     }
 }
-
-
-
 
 void GolfPlay::ResetPlayData()
 {
