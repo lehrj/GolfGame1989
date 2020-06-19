@@ -80,6 +80,7 @@ void Game::Update(DX::StepTimer const& timer)
 
     // WLJ add for mouse and keybord interface
     auto kb = m_keyboard->GetState();
+    //m_kbStateTracker.Update(kb);
     if (kb.Escape)
     {
         ExitGame();
@@ -143,8 +144,22 @@ void Game::Update(DX::StepTimer const& timer)
     }
     if (kb.A)
     {
-        pPlay->UpdateSwingState();
+        if (pPlay->GetIsGameplayButtonReady() == true)
+        {
+            pPlay->UpdateSwingState();
+            pPlay->SetGameplayButtonReadyFalse();
+        }
     }
+    if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
+    {
+        pPlay->ResetGamePlayButton();
+    }
+    /*
+    if (m_kbStateTracker.IsKeyReleased(DirectX::Keyboard::Keys::A))
+    {
+        pPlay->ResetGamePlayButton();
+    }
+    */
     if (kb.F1)
     {
         SetGameCamera(1);

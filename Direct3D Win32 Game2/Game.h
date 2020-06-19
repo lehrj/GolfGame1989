@@ -6,6 +6,7 @@
 
 #include "StepTimer.h"
 #include "Golf.h"
+#include "Keyboard.h"
 //#include "GolfPlay.h"
 
 
@@ -123,6 +124,9 @@ private:
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
     std::unique_ptr<DirectX::Mouse> m_mouse;
 
+    //Keyboard::KeyboardStateTracker m_kbStateTracker;
+
+    // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerImpactTexture;

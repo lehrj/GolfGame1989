@@ -13,14 +13,18 @@ public:
     float GetImpact() { return m_swingImpactProcessed; };
     float GetBackswingSet() { return m_impactData.power; };
     bool GetIsBackswingSet() { return m_isOnDownSwing; };
+    bool GetIsGameplayButtonReady() { return m_isGameplayButtonReady; };
     float GetMeterPower() { return m_meterBar; };
     float GetSwingPower() { return m_swingPower; };
     float GetMeterLength() { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     float GetMeterImpactPoint() { return GetMeterLength() - m_swingPowerMax; };
+    void ResetGamePlayButton() { m_isGameplayButtonReady = true; };
     void ResetPlayData();
     void ResetSwingUpdateReady();
+   
     void Swing();
     void StartSwing();
+    void SetGameplayButtonReadyFalse() { m_isGameplayButtonReady = false; };
     void SetImpact();
     void SetPower();
     
@@ -31,7 +35,7 @@ public:
 
 private:
     Utility::ImpactData m_impactData;
-
+    bool m_isGameplayButtonReady = false;
     bool m_isLefty = false;
     bool m_isSwingPowerSet;
     bool m_isSwingStart; 
