@@ -37,12 +37,149 @@ void GolfBall::LandProjectile()
 {
     printf("Warning: Landing bounce/roll functionality not fully implemented (WIP)\n");
 
-    DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
+    //DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
+    float impactAngle = GetImpactAngle();
+    float impactVelocity = GetImpactVelocity();
+    float vix = m_ball.q[0];
+    float viy = m_ball.q[2];
+    
     Vector4d impactVector{ m_ball.q[0], m_ball.q[2],m_ball.q[4], 0.0 }; // vx, vy, vz
 
     double impactSpeed = impactVector.Magnitude3();
-    printf("Impact Speed = %lf (m/s) \n", impactSpeed);
+    //printf("Impact Speed = %lf (m/s) \n", impactSpeed);
     impactVector.NormalizeVector(impactVector);
+
+    float phi = atan(abs(m_ball.q[0]/m_ball.q[2]));
+    //?c = 15.4?(vi / (impact speed))(? / (impact angle))
+    float thetaC = 15.4;
+    
+    float vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
+    float absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
+
+    float e;
+    if (absViyPrime <= 20.0)
+    {
+        e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
+    }
+    else
+    {
+        e = 0.120;
+    }
+    float mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
+    float muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
+
+    float vrxPrime, vryPrime, omegaR;
+
+    // If mu is less than the critical value muC the ball will slide throughout the impact
+    // If mu is great than muC the ball will roll out of the collision
+    if (mu < muC) 
+    {
+        vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
+        vryPrime = e * absViyPrime;
+        omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+    }
+    else
+    {
+        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
+        vryPrime = e * absViyPrime;
+        omegaR = -vrxPrime / m_ball.radius;
+    }
+
+    float vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
+    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
+
+    m_ball.q[0] = vrx;
+    m_ball.q[2] = vry;
+    m_ball.q[4] = 0.0;
+    m_ball.omega = omegaR;
+    
+    m_ball.q[3] = 0.01;
+    float minSpeed = 0.1;
+    if (m_ball.q[0] > minSpeed || m_ball.q[2] > minSpeed)
+    {
+        //LaunchProjectilePostImpact();
+    }
+}
+
+void GolfBall::LaunchProjectilePostImpact()
+{
+    /*
+    double shotOrigin = 0.0;
+    m_xVals.push_back(shotOrigin);
+    m_yVals.push_back(shotOrigin);
+    m_zVals.push_back(shotOrigin);
+    */
+    // Fly ball on an upward trajectory until it stops climbing
+    Vector4d flightData;
+    double dt = m_timeStep;
+    double maxHeight = m_ball.launchHeight;
+    //double time = 0.0;
+    double time = m_ball.flightTime;
+    SetInitialSpinRate(m_ball.omega);
+    double x = m_ball.q[1];
+    double y = m_ball.q[3];
+
+    bool isBallAscending = true;
+    while (isBallAscending == true)
+    {
+        ProjectileRungeKutta4(&m_ball, dt);
+
+        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+
+        //PrintFlightData();
+        PushFlightData();
+
+        if (m_ball.q[2] < 0.0)
+        {
+            maxHeight = m_ball.q[3];
+            isBallAscending = false;
+        }
+    }
+    // Check to verify landing area height can be reached. If it cannot the shot is treated as if it is out of play so x = 0.0;
+    /*
+    if (maxHeight + m_ball.launchHeight < m_ball.landingHeight)
+    {
+        printf("Ball has landed out of play, ball does not reach height of landing area!\n");
+        flightData.SetX(0.0);
+        x = 0.0;
+    }
+    */
+
+    double previousY = flightData.GetY();
+    double previousTime = flightData.GetW();
+
+    //  Calculate ball decent path until it reaches landing area height
+    while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
+    {
+        previousY = flightData.GetY();
+        previousTime = flightData.GetW();
+        ProjectileRungeKutta4(&m_ball, dt);
+        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        //PrintFlightData();
+        PushFlightData();
+        time = m_ball.flightTime;
+        y = m_ball.q[3];
+    }
+
+    //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
+    //ProjectileRungeKutta4(&m_ball, -rollBackTime);
+    flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+
+    // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
+    //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
+        /*
+    q[0] = vx, velocity
+    q[1] = x position
+    q[2] = vy, velocity
+    q[3] = y position
+    q[4] = vz, velocity
+    q[5] = z position
+    */
+    SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
+    SetLandingSpinRate(m_ball.omega);
+    SetMaxHeight(maxHeight);
+    LandProjectile();
+    //PrintLandingData(flightData, maxHeight);
 }
 
 void GolfBall::LaunchProjectile()
@@ -496,7 +633,7 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
     delete pQ2;
     delete pQ3;
     delete pQ4;
-
+    
     UpdateSpinRate(aTimeDelta);
 }
 
@@ -590,10 +727,15 @@ std::vector<double> GolfBall::OutputZvals()
     return m_zVals;
 }
 
-const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
+//const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
+const float GolfBall::GetImpactAngle()
 {
     DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
     
+    if (m_xVals.size() < 2)
+    {
+        std::cerr << "GolfBall::GetImpactAngle() error, m_xVals.size < 2, cannont process impact";
+    }
     DirectX::SimpleMath::Vector3 impactPoint;
     impactPoint.x = m_landingCordinates.GetX();
     impactPoint.y = m_landingCordinates.GetY();
@@ -602,10 +744,6 @@ const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
     impactMinus1.x = m_xVals[m_xVals.size() - 1];
     impactMinus1.y = m_yVals[m_yVals.size() - 1];
     impactMinus1.z = m_zVals[m_zVals.size() - 1];
-    DirectX::SimpleMath::Vector3 impactMinus2;
-    impactMinus2.x = m_xVals[m_xVals.size() - 2];
-    impactMinus2.y = m_yVals[m_yVals.size() - 2];
-    impactMinus2.z = m_zVals[m_zVals.size() - 2];
     DirectX::SimpleMath::Vector3 impactAngle;
     impactAngle.Zero;
     impactAngle = impactMinus1 - impactPoint;
@@ -624,7 +762,7 @@ const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
     float f = acos(e);
     float g = Utility::ToDegrees(f);
 
-    return impactAngle;
+    return g;
 }
 
 const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
@@ -647,6 +785,18 @@ const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
     DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(c, a);
 
     return impactPlane;
+}
+
+const float GolfBall::GetImpactVelocity()
+{
+    DirectX::SimpleMath::Vector3 impactPoint;
+    impactPoint.x = m_ball.q[0];
+    impactPoint.y = m_ball.q[2];
+    impactPoint.z = m_ball.q[4];
+
+    float velocity = impactPoint.Length();
+
+    return velocity;
 }
 
 double GolfBall::GetIndexX(const int aIndex)

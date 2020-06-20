@@ -35,7 +35,8 @@ void GolfPlay::UpdateSwingState()
     {
         this->StartSwing();
     }
-    else if (m_isSwingStart == true && m_isSwingPowerSet == false && m_isOnDownSwing == false)
+    //else if (m_isSwingStart == true && m_isSwingPowerSet == false && m_isOnDownSwing == false)
+    else if (m_isSwingStart == true && m_isSwingPowerSet == false)
     {
         this->SetPower();
     }
@@ -45,7 +46,7 @@ void GolfPlay::UpdateSwingState()
     }
     else
     {
-        //printf("error in GolfPlay::GetSwingState() \n");    
+        printf("error in GolfPlay::GetSwingState() \n");    
     }
 }
 
