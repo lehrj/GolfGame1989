@@ -45,6 +45,9 @@ public:
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
     void FireProjectile2(Utility::ImpactData aImpact, Environment* pEnviron);
 
+    int GetColorIndex() { return m_drawColorIndex; };
+    std::vector<int> GetColorVector() { return m_drawColorVector; };
+
     const int GetXvecSize() { return m_xVals.size(); };
     const int GetYvecSize() { return m_yVals.size(); };
     const int GetZvecSize() { return m_zVals.size(); };
@@ -65,6 +68,7 @@ public:
     //void LandProjectile(Environment* pEnviron);
     void LandProjectile();
     void LaunchProjectile();
+    void LaunchProjectile2();
     void LaunchProjectilePostImpact();
     void OutputPosition();
     std::vector<double> OutputXvals();
@@ -83,6 +87,11 @@ public:
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void PushFlightData();
     void ResetBallData();
+    void RollBall();
+    void RollRightHandSide(struct SpinProjectile* projectile,
+        double* q, double* deltaQ, double ds,
+        double qScale, double* dq);
+    void RollRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void SetDefaultBallValues(Environment* pEnviron);
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
@@ -96,7 +105,9 @@ private:
     const double m_faceRoll = 0.7142857142857143; // <== 5/7, represents the ball moving up the club face to impart spin
     const double m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
     float m_timeStep;
-
+    int m_drawColorIndex = 0;
+    //DirectX::SimpleMath::Vector4 m_drawColorVector;
+    std::vector<int> m_drawColorVector;
     // test variables for adding planned graphical display of golf shot arc
     std::vector<double> m_xVals;
     std::vector<double> m_yVals;

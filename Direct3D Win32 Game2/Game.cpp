@@ -180,6 +180,22 @@ void Game::Update(DX::StepTimer const& timer)
     {
         SetGameCamera(5);
     }
+    if (kb.F6)
+    {
+        SetGameCamera(6);
+    }
+    if (kb.F7)
+    {
+        SetGameCamera(7);
+    }
+    if (kb.F8)
+    {
+        SetGameCamera(8);
+    }
+    if (kb.F9)
+    {
+        SetGameCamera(9);
+    }
     if (kb.OemMinus)
     {
         m_cameraRotationX -= .01;
@@ -232,6 +248,29 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 6.f,
             float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
         m_effect->SetProjection(m_proj);
+    }
+    if (m_gameCamera == 6)
+    {
+        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+        m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
+        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+
+        m_effect->SetView(m_view);
+        m_effect->SetProjection(m_proj);
+    }
+    if (m_gameCamera == 7)
+    {
+        m_view = Matrix::CreateLookAt(Vector3(.0f, 0.0f, 7.0f), Vector3::Zero, Vector3::UnitY);
+        m_effect->SetView(m_view);
+    }
+    if (m_gameCamera == 8)
+    {
+
+    }
+    if (m_gameCamera == 9)
+    {
+
     }
     else
     {
@@ -854,8 +893,44 @@ void Game::DrawProjectile()
         Vector3 p1(prevX, prevY, prevZ);
         Vector3 p2(xVec[i], yVec[i], zVec[i]);
 
+        //VertexPositionColor aV(p1, Colors::White);
+        //VertexPositionColor bV(p2, Colors::White);
+
+
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
+        VertexPositionColor aVRed(p1, Colors::Red);
+        VertexPositionColor bVRed(p2, Colors::Red);
+        VertexPositionColor aVBlue(p1, Colors::Blue);
+        VertexPositionColor bVBlue(p2, Colors::Blue);
+        VertexPositionColor aVYellow(p1, Colors::Yellow);
+        VertexPositionColor bVYellow(p2, Colors::Yellow);
+        std::vector<int> colorVec = pGolf->GetDrawColorVector();
+        int vecIndex = pGolf->GetDrawColorIndex();
+        if (vecIndex > 0)
+        {
+            if (i > colorVec[0])
+            {
+                aV = aVRed;
+                bV = bVRed;
+            }
+        }
+        if (vecIndex > 1)
+        {
+            if (i > colorVec[1])
+            {
+                aV = aVBlue;
+                bV = bVBlue;
+            }
+        }
+        if (vecIndex > 2)
+        {
+            if (i > colorVec[2])
+            {
+                aV = aVYellow;
+                bV = bVYellow;
+            }
+        }
         m_batch->DrawLine(aV, bV);
         prevX = xVec[i];
         prevY = yVec[i];

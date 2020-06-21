@@ -21,7 +21,7 @@ public:
     void ResetGamePlayButton() { m_isGameplayButtonReady = true; };
     void ResetPlayData();
     void ResetSwingUpdateReady();
-   
+    
     void Swing();
     void StartSwing();
     void SetGameplayButtonReadyFalse() { m_isGameplayButtonReady = false; };
