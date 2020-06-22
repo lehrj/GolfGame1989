@@ -5,6 +5,14 @@
 #include "Vector4d.h"
 #include "GolfSwing.h"
 
+struct BallMotion
+{
+    DirectX::SimpleMath::Vector3 position;
+    DirectX::SimpleMath::Vector3 delta;
+    DirectX::SimpleMath::Vector3 rotation;
+    float time;
+};
+
 struct SpinProjectile
 {
     double airDensity;

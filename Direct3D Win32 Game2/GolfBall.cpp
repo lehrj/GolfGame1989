@@ -135,6 +135,7 @@ void GolfBall::LaunchProjectile2()
     m_yVals.push_back(shotOrigin);
     m_zVals.push_back(shotOrigin);
     
+   
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
     double dt = m_timeStep;
@@ -143,12 +144,12 @@ void GolfBall::LaunchProjectile2()
     SetInitialSpinRate(m_ball.omega);
     double x = m_ball.q[1];
     double y = m_ball.q[3];
-
-    int count = 0;
-    bool isBallMoving = true;
+    
+    //int count = 0;
+    //bool isBallMoving = true;
     //while (isBallMoving == true)
-    while (count < 30)
-    {
+    //while (count < 30)
+    //{
         bool isBallAscending = true;
         while (isBallAscending == true)
         {
@@ -208,22 +209,26 @@ void GolfBall::LaunchProjectile2()
         SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
         SetLandingSpinRate(m_ball.omega);
         SetMaxHeight(maxHeight);
-        LandProjectile();
         
+        //LandProjectile();
+        
+        /*
         float speedStopTolerance = 0.0001;
         if (m_ball.q[2] < speedStopTolerance)
         {
             isBallMoving = false;
         }
-        //PrintLandingData(flightData, maxHeight);
-        count++;
-    }
+        */
+        //count++;
+        
+    //}
 
+    /*
     bool isBallRolling = true;
     while (isBallRolling == true)
     {
         //RollBall();
-        float pg = 0.2;
+        float pg = 1.2;
         float g = m_ball.gravity;
         float a = -(5.0 / 7.0) * pg * g;
 
@@ -239,7 +244,7 @@ void GolfBall::LaunchProjectile2()
             isBallRolling = false;
         }
     }
-
+    */
     
 
     int pause = 0;
@@ -626,7 +631,7 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
     fMangus = (.5 * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
 
     
-    SetSpinAxis(omegaBall);
+    //SetSpinAxis(omegaBall);
 
     m_ball.omega = omega;
     //m_ball.omega = omegaBall.z;
