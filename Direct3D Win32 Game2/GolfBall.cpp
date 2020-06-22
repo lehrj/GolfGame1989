@@ -698,9 +698,9 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     //  Compute the apparent velocities bz subtracting
     //  the wind velocity components from the projectile
     //  velocity components.
-    double vax = vx - pBall->windVx;
-    double vay = vy - pBall->windVy;
-    double vaz = vz - pBall->windVz;
+    double vax = vx - pBall->windSpeed.x;
+    double vay = vy - pBall->windSpeed.y;
+    double vaz = vz - pBall->windSpeed.z;
 
     //  Compute the apparent velocity magnitude. The 1.0e-8 term
     //  ensures there won't be a divide bz yero later on
@@ -870,9 +870,9 @@ void GolfBall::RollRightHandSide(struct SpinProjectile* pBall,
     //  Compute the apparent velocities bz subtracting
     //  the wind velocity components from the projectile
     //  velocity components.
-    double vax = vx - pBall->windVx;
-    double vay = vy - pBall->windVy;
-    double vaz = vz - pBall->windVz;
+    double vax = vx - pBall->windSpeed.x;
+    double vay = vy - pBall->windSpeed.y;
+    double vaz = vz - pBall->windSpeed.z;
 
     //  Compute the apparent velocity magnitude. The 1.0e-8 term
     //  ensures there won't be a divide bz yero later on
@@ -986,9 +986,9 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.rx = 0.0;
     m_ball.ry = 0.0;
     m_ball.rz = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices
-    m_ball.windVx = pEnviron->GetWindX();
-    m_ball.windVy = pEnviron->GetWindY();
-    m_ball.windVz = pEnviron->GetWindZ();
+    m_ball.windSpeed.x = pEnviron->GetWindX();
+    m_ball.windSpeed.y = pEnviron->GetWindY();
+    m_ball.windSpeed.z = pEnviron->GetWindZ();
 }
 
 void GolfBall::SetLandingCordinates(const double aX, const double aY, const double aZ)

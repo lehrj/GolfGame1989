@@ -37,9 +37,10 @@ struct SpinProjectile
     double ry;     //  spin axis vector component
     double rz;     //  spin axis vector component
     double radius; //  sphere radius, m
-    double windVx;
-    double windVy;
-    double windVz;
+    DirectX::SimpleMath::Vector3 windSpeed;
+    //double windVx;
+    //double windVy;
+    //double windVz;
 };
 
 /*
