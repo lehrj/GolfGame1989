@@ -33,9 +33,10 @@ struct SpinProjectile
     q[4] = vz, velocity
     q[5] = z position
     */
-    double rx;     //  spin axis vector component
-    double ry;     //  spin axis vector component
-    double rz;     //  spin axis vector component
+    DirectX::SimpleMath::Vector3 rotationAxis;
+    //double rx;     //  spin axis vector component
+    //double ry;     //  spin axis vector component
+    //double rz;     //  spin axis vector component
     double radius; //  sphere radius, m
     DirectX::SimpleMath::Vector3 windSpeed;
     //double windVx;

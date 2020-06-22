@@ -719,9 +719,9 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     //  Evaluate the Magnus force terms.
     double Cl = -0.05 + sqrt(0.0025 + 0.36 * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
     double Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
-    double Fmx = (vz * pBall->ry - pBall->rz * vy) * Fm / v;
-    double Fmy = (vx * pBall->rz - pBall->rx * vz) * Fm / v;
-    double Fmz = -(vx * pBall->ry - pBall->rx * vy) * Fm / v;
+    double Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
+    double Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
+    double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
 
     //  Compute right-hand side values.
     dq->velocity.x = ds * (Fdx + Fmx) / pBall->mass;
@@ -891,9 +891,9 @@ void GolfBall::RollRightHandSide(struct SpinProjectile* pBall,
     //  Evaluate the Magnus force terms.
     double Cl = -0.05 + sqrt(0.0025 + 0.36 * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
     double Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
-    double Fmx = (vz * pBall->ry - pBall->rz * vy) * Fm / v;
-    double Fmy = (vx * pBall->rz - pBall->rx * vz) * Fm / v;
-    double Fmz = -(vx * pBall->ry - pBall->rx * vy) * Fm / v;
+    double Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
+    double Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
+    double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
 
     //  Compute right-hand side values.
     dq[0] = ds * (Fdx + Fmx) / pBall->mass;
@@ -983,9 +983,9 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.q.position.z = 0.0;   //  z  = 0.0
     m_ball.q.velocity.y = 0.0;   //  vy = 0.0
     m_ball.q.position.y = 0.0;   //  y  = 0.0
-    m_ball.rx = 0.0;
-    m_ball.ry = 0.0;
-    m_ball.rz = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices
+    m_ball.rotationAxis.x = 0.0;
+    m_ball.rotationAxis.y = 0.0;
+    m_ball.rotationAxis.z = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices
     m_ball.windSpeed.x = pEnviron->GetWindX();
     m_ball.windSpeed.y = pEnviron->GetWindY();
     m_ball.windSpeed.z = pEnviron->GetWindZ();
@@ -1005,15 +1005,15 @@ void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis)
     const float tolerance = 0.000001;
     if (spinTotal > tolerance)
     {
-        m_ball.rx = aAxis.x / spinTotal;
-        m_ball.ry = aAxis.y / spinTotal;
-        m_ball.rz = aAxis.z / spinTotal;
+        m_ball.rotationAxis.x = aAxis.x / spinTotal;
+        m_ball.rotationAxis.y = aAxis.y / spinTotal;
+        m_ball.rotationAxis.z = aAxis.z / spinTotal;
     }
     else
     {
-        m_ball.rx = 0.0;
-        m_ball.ry = 0.0;
-        m_ball.rz = 0.0;
+        m_ball.rotationAxis.x = 0.0;
+        m_ball.rotationAxis.y = 0.0;
+        m_ball.rotationAxis.z = 0.0;
     }
 }
 
