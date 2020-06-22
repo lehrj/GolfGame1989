@@ -57,16 +57,17 @@ void GolfBall::LandProjectile()
     //DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
     float impactAngle = GetImpactAngle();
     float impactVelocity = GetImpactVelocity();
-    float vix = m_ball.q[0];
-    float viy = m_ball.q[2];
+    //float vix = m_ball.q[0];
+    float vix = m_ball.q.velocity.x;
+    float viy = m_ball.q.velocity.y;
     
-    Vector4d impactVector{ m_ball.q[0], m_ball.q[2],m_ball.q[4], 0.0 }; // vx, vy, vz
+    Vector4d impactVector{ m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z, 0.0 }; // vx, vy, vz
 
     double impactSpeed = impactVector.Magnitude3();
     //printf("Impact Speed = %lf (m/s) \n", impactSpeed);
     impactVector.NormalizeVector(impactVector);
 
-    float phi = atan(abs(m_ball.q[0]/m_ball.q[2]));
+    float phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
     //?c = 15.4?(vi / (impact speed))(? / (impact angle))
     float thetaC = 15.4;
     
@@ -105,14 +106,14 @@ void GolfBall::LandProjectile()
     float vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
     float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
 
-    m_ball.q[0] = vrx;
-    m_ball.q[2] = vry;
-    m_ball.q[4] = 0.0;
+    m_ball.q.velocity.x = vrx;
+    m_ball.q.velocity.y = vry;
+    m_ball.q.velocity.z = 0.0;
     m_ball.omega = omegaR;
     
     //m_ball.q[3] = 0.01;
     float minSpeed = 0.001;
-    if (m_ball.q[0] > minSpeed || m_ball.q[2] > minSpeed)
+    if (m_ball.q.velocity.x > minSpeed || m_ball.q.velocity.y > minSpeed)
     {
         //LaunchProjectilePostImpact();
     }
@@ -124,26 +125,24 @@ void GolfBall::RollBall()
     float g = m_ball.gravity;
     float a = -(5.0 / 7.0) * pg * g;
 
-    m_ball.q[0] -= a;
+    m_ball.q.velocity.x -= a;
 }
 
 void GolfBall::LaunchProjectile2()
 {
-    
     double shotOrigin = 0.0;
     m_xVals.push_back(shotOrigin);
     m_yVals.push_back(shotOrigin);
     m_zVals.push_back(shotOrigin);
-    
-   
+     
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
     double dt = m_timeStep;
     double maxHeight = m_ball.launchHeight;
     double time = 0.0;
     SetInitialSpinRate(m_ball.omega);
-    double x = m_ball.q[1];
-    double y = m_ball.q[3];
+    double x = m_ball.q.position.x;
+    double y = m_ball.q.position.y;
     
     //int count = 0;
     //bool isBallMoving = true;
@@ -155,14 +154,14 @@ void GolfBall::LaunchProjectile2()
         {
             ProjectileRungeKutta4(&m_ball, dt);
 
-            flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+            flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
 
             //PrintFlightData();
             PushFlightData();
 
-            if (m_ball.q[2] < 0.0)
+            if (m_ball.q.velocity.y < 0.0)
             {
-                maxHeight = m_ball.q[3];
+                maxHeight = m_ball.q.position.y;
                 isBallAscending = false;
             }
         }
@@ -180,18 +179,18 @@ void GolfBall::LaunchProjectile2()
         double previousTime = flightData.GetW();
 
         //  Calculate ball decent path until it reaches landing area height
-        while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
+        while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
         {
             previousY = flightData.GetY();
             previousTime = flightData.GetW();
             ProjectileRungeKutta4(&m_ball, dt);
-            flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+            flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
             //PrintFlightData();
             PushFlightData();
             time = m_ball.flightTime;
-            y = m_ball.q[3];
+            y = m_ball.q.position.y;
         }
-        m_ball.q[3] = 0.0;
+        m_ball.q.position.y = 0.0;
         //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
         //ProjectileRungeKutta4(&m_ball, -rollBackTime);
         //flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
@@ -206,7 +205,7 @@ void GolfBall::LaunchProjectile2()
         q[4] = vz, velocity
         q[5] = z position
         */
-        SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
+        SetLandingCordinates(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.position.z);
         SetLandingSpinRate(m_ball.omega);
         SetMaxHeight(maxHeight);
         
@@ -265,22 +264,22 @@ void GolfBall::LaunchProjectilePostImpact()
     //double time = 0.0;
     double time = m_ball.flightTime;
     SetInitialSpinRate(m_ball.omega);
-    double x = m_ball.q[1];
-    double y = m_ball.q[3];
+    double x = m_ball.q.position.x;
+    double y = m_ball.q.position.y;
 
     bool isBallAscending = true;
     while (isBallAscending == true)
     {
         ProjectileRungeKutta4(&m_ball, dt);
 
-        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
 
         //PrintFlightData();
         PushFlightData();
 
-        if (m_ball.q[2] < 0.0)
+        if (m_ball.q.velocity.y < 0.0)
         {
-            maxHeight = m_ball.q[3];
+            maxHeight = m_ball.q.position.y;
             isBallAscending = false;
         }
     }
@@ -298,21 +297,21 @@ void GolfBall::LaunchProjectilePostImpact()
     double previousTime = flightData.GetW();
 
     //  Calculate ball decent path until it reaches landing area height
-    while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
+    while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
     {
         previousY = flightData.GetY();
         previousTime = flightData.GetW();
         ProjectileRungeKutta4(&m_ball, dt);
-        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
         //PrintFlightData();
         PushFlightData();
         time = m_ball.flightTime;
-        y = m_ball.q[3];
+        y = m_ball.q.position.y;
     }
 
     //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
     //ProjectileRungeKutta4(&m_ball, -rollBackTime);
-    flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+    flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
 
     // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
     //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
@@ -324,7 +323,7 @@ void GolfBall::LaunchProjectilePostImpact()
     q[4] = vz, velocity
     q[5] = z position
     */
-    SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
+    SetLandingCordinates(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.position.z);
     SetLandingSpinRate(m_ball.omega);
     SetMaxHeight(maxHeight);
     LandProjectile();
@@ -344,22 +343,22 @@ void GolfBall::LaunchProjectile()
     double maxHeight = m_ball.launchHeight;
     double time = 0.0;
     SetInitialSpinRate(m_ball.omega);
-    double x = m_ball.q[1];
-    double y = m_ball.q[3];
+    double x = m_ball.q.position.x;
+    double y = m_ball.q.position.y;
 
     bool isBallAscending = true;
     while (isBallAscending == true)
     {
         ProjectileRungeKutta4(&m_ball, dt);
 
-        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
 
         //PrintFlightData();
         PushFlightData();
 
-        if (m_ball.q[2] < 0.0)
+        if (m_ball.q.velocity.y < 0.0)
         {
-            maxHeight = m_ball.q[3];
+            maxHeight = m_ball.q.position.y;
             isBallAscending = false;
         }
     }
@@ -377,21 +376,21 @@ void GolfBall::LaunchProjectile()
     double previousTime = flightData.GetW();
 
     //  Calculate ball decent path until it reaches landing area height
-    while (m_ball.q[3] + m_ball.launchHeight >= m_ball.landingHeight)
+    while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
     {
         previousY = flightData.GetY();
         previousTime = flightData.GetW();
         ProjectileRungeKutta4(&m_ball, dt);
-        flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
         //PrintFlightData();
         PushFlightData();
         time = m_ball.flightTime;
-        y = m_ball.q[3];
+        y = m_ball.q.position.y;
     }
 
     //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
     //ProjectileRungeKutta4(&m_ball, -rollBackTime);
-    flightData.SetAll(m_ball.q[1], m_ball.q[3], m_ball.q[2], m_ball.flightTime);
+    flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
 
     // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
     //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
@@ -403,7 +402,7 @@ void GolfBall::LaunchProjectile()
     q[4] = vz, velocity
     q[5] = z position
     */
-    SetLandingCordinates(m_ball.q[1], m_ball.q[3], m_ball.q[5]);
+    SetLandingCordinates(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.position.z);
     SetLandingSpinRate(m_ball.omega);
     SetMaxHeight(maxHeight);
     //LandProjectile();
@@ -475,9 +474,9 @@ void GolfBall::PrepProjectileLaunch(Vector4d aSwingInput)
     //  Load the initial ball velocities into the 
     //  SpinProjectile struct.
     m_ball.omega = omega;
-    m_ball.q[0] = vx0;   //  vx 
-    m_ball.q[2] = vy0;   //  vy 
-    m_ball.q[4] = vz0;   //  vz 
+    m_ball.q.velocity.x = vx0;   //  vx 
+    m_ball.q.velocity.y = vy0;   //  vy 
+    m_ball.q.velocity.z = vz0;   //  vz 
 }
 
 void GolfBall::PrepProjectileLaunch2(Utility::ImpactData aImpactData)
@@ -530,9 +529,9 @@ void GolfBall::PrepProjectileLaunch2(Utility::ImpactData aImpactData)
     //  Load the initial ball velocities into the 
     //  SpinProjectile struct.
     m_ball.omega = omega;
-    m_ball.q[0] = vx0;   //  vx 
-    m_ball.q[2] = vy0;   //  vy 
-    m_ball.q[4] = vz0;   //  vz 
+    m_ball.q.velocity.x = vx0;   //  vx 
+    m_ball.q.velocity.y = vy0;   //  vy 
+    m_ball.q.velocity.z = vz0;   //  vz 
 }
 
 void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
@@ -635,9 +634,10 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
 
     m_ball.omega = omega;
     //m_ball.omega = omegaBall.z;
-    m_ball.q[0] = vBall.x;   //  vx 
-    m_ball.q[2] = vBall.y;   //  vy 
-    m_ball.q[4] = vBall.z;   //  vz 
+   
+    m_ball.q.velocity.x = vBall.x;   //  vx 
+    m_ball.q.velocity.y = vBall.y;   //  vy 
+    m_ball.q.velocity.z = vBall.z;   //  vz 
 }
 
 void GolfBall::PushFlightData()
@@ -650,55 +650,51 @@ void GolfBall::PushFlightData()
         m_zVals.push_back(m_ball.q[5]);
     }
     */
-    m_xVals.push_back(m_ball.q[1]);
-    m_yVals.push_back(m_ball.q[3]);
-    m_zVals.push_back(m_ball.q[5]);
+    m_xVals.push_back(m_ball.q.position.x);
+    m_yVals.push_back(m_ball.q.position.y);
+    m_zVals.push_back(m_ball.q.position.z);
 }
 
 void GolfBall::PrintFlightData()
 {
     printf("Time = %.1f sec, X = %f m, Y = %f m, Z = %f m, delta X = %f m/s, delta Y = %f m/s\n",
-        m_ball.flightTime, m_ball.q[1], m_ball.q[3], m_ball.q[5], m_ball.q[0], m_ball.q[2]);
+        m_ball.flightTime, m_ball.q.position.x, m_ball.q.position.y, m_ball.q.position.z, m_ball.q.velocity.x, m_ball.q.velocity.y);
 
-    m_xVals.push_back(m_ball.q[1]);
-    m_yVals.push_back(m_ball.q[3]);
-    m_zVals.push_back(m_ball.q[5]);
-}
-
-void GolfBall::PrintLandingData(Vector4d aLandingData, double aMaxY)
-{
-    double distanceXinYards = aLandingData.GetX() * 1.0936; // 1.0936 is the number of yards in a meter
-    printf("================================== Final Flight Results ====================================\n");
-    printf(" Flight Time                                       : %g (seconds) \n", aLandingData.GetW());
-    printf(" Carry Distance                                    : %g (meters) (%g yards) \n", aLandingData.GetX(), distanceXinYards);
-    printf(" Landing Height                                    : %g (meters) \n", aLandingData.GetY());
-    printf(" Max Height                                        : %g (meters) \n", aMaxY);
-    printf(" Landing Position z                                : %g (meters) \n", m_ball.q[5]);
-    printf(" Landing Velocity x                                : %g (m/s) \n", m_ball.q[0]);
-    printf(" Landing Velocity y                                : %g (m/s) \n", aLandingData.GetZ());
-    printf(" Landing Velocity z                                : %g (m/s) \n", m_ball.q[4]);
-    printf("============================================================================================\n");
+    m_xVals.push_back(m_ball.q.position.x);
+    m_yVals.push_back(m_ball.q.position.y);
+    m_zVals.push_back(m_ball.q.position.z);
 }
 
 //  This method loads the right-hand sides for the projectile ODEs
-void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall,
-    double* q, double* deltaQ, double ds,
-    double qScale, double* dq)
+//void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, double* q, double* deltaQ, double ds, double qScale, double* dq)
+void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq)
 {
     //  Compute the intermediate values of the 
     //  dependent variables.
+    BallMotion newQ;
+    newQ.position.x = q->position.x + qScale * deltaQ->position.x;
+    newQ.position.y = q->position.y + qScale * deltaQ->position.y;
+    newQ.position.z = q->position.z + qScale * deltaQ->position.z;
+    newQ.velocity.x = q->velocity.x + qScale * deltaQ->velocity.x;
+    newQ.velocity.y = q->velocity.y + qScale * deltaQ->velocity.y;
+    newQ.velocity.z = q->velocity.z + qScale * deltaQ->velocity.z;
+    /*
     double newQ[6]; // intermediate dependent variable values.
     for (int i = 0; i < 6; ++i)
     {
         newQ[i] = q[i] + qScale * deltaQ[i];
     }
-
+    */
     //  Declare some convenience variables representing
     //  the intermediate values of velocity.
+    double vx = newQ.velocity.x;
+    double vy = newQ.velocity.y;
+    double vz = newQ.velocity.z;
+    /*
     double vx = newQ[0];
     double vy = newQ[2];
     double vz = newQ[4];
-
+    */
     //  Compute the apparent velocities bz subtracting
     //  the wind velocity components from the projectile
     //  velocity components.
@@ -728,35 +724,65 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall,
     double Fmz = -(vx * pBall->ry - pBall->rx * vy) * Fm / v;
 
     //  Compute right-hand side values.
+    dq->velocity.x = ds * (Fdx + Fmx) / pBall->mass;
+    dq->position.x = ds * vx;
+    dq->velocity.y = ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass);
+    dq->position.y = ds * vy;
+    dq->velocity.z = ds * (Fdz + Fmz) / pBall->mass;
+    dq->position.z = ds * vz;
+    /*
     dq[0] = ds * (Fdx + Fmx) / pBall->mass;
     dq[1] = ds * vx;
     dq[2] = ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass);
     dq[3] = ds * vy;
     dq[4] = ds * (Fdz + Fmz) / pBall->mass;
     dq[5] = ds * vz;
+    */
 }
 
 void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
 {
     int numEqns = pBall->numEqns;
-    //  Allocate memory for the arrays.    
+    //  Allocate memory for the arrays.
+    /*
     std::vector<double> vecQ(numEqns);
     std::vector<double> vecDq1(numEqns);
     std::vector<double> vecDq2(numEqns);
     std::vector<double> vecDq3(numEqns);
     std::vector<double> vecDq4(numEqns);
+    */
+    BallMotion vecQ;
+    BallMotion vecDq1;
+    BallMotion vecDq2;
+    BallMotion vecDq3;
+    BallMotion vecDq4;
+    /*
     double* pQ = vecQ.data();
     double* pQ1 = vecDq1.data();
     double* pQ2 = vecDq2.data();
     double* pQ3 = vecDq3.data();
     double* pQ4 = vecDq4.data();
+    */
+    BallMotion* pQ = &vecQ;
+    BallMotion* pQ1 = &vecDq1;
+    BallMotion* pQ2 = &vecDq2;
+    BallMotion* pQ3 = &vecDq3;
+    BallMotion* pQ4 = &vecDq4;
 
     //  Retrieve the current values of the dependent
     //  and independent variables.
+    /*
     for (int i = 0; i < numEqns; ++i)
     {
         pQ[i] = pBall->q[i];
     }
+    */
+    pQ->position.x = pBall->q.position.x;
+    pQ->position.y = pBall->q.position.y;
+    pQ->position.z = pBall->q.position.z;
+    pQ->velocity.x = pBall->q.velocity.x;
+    pQ->velocity.y = pBall->q.velocity.y;
+    pQ->velocity.z = pBall->q.velocity.z;
 
     // Compute the four Runge-Kutta steps, The return 
     // value of projectileRightHandSide method is an array
@@ -770,12 +796,26 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
     //  at the new dependent variable location and store the
     //  values in the ODE object arrays.
     pBall->flightTime = pBall->flightTime + aTimeDelta;
+
+    pQ->position.x = pQ->position.x + (pQ1->position.x + 2.0 * pQ2->position.x + 2.0 * pQ3->position.x + pQ4->position.x) / numEqns;
+    pBall->q.position.x = pQ->position.x;
+    pQ->position.y = pQ->position.y + (pQ1->position.y + 2.0 * pQ2->position.y + 2.0 * pQ3->position.y + pQ4->position.y) / numEqns;
+    pBall->q.position.y = pQ->position.y;
+    pQ->position.z = pQ->position.z + (pQ1->position.z + 2.0 * pQ2->position.z + 2.0 * pQ3->position.z + pQ4->position.z) / numEqns;
+    pBall->q.position.z = pQ->position.z;
+    pQ->velocity.x = pQ->velocity.x + (pQ1->velocity.x + 2.0 * pQ2->velocity.x + 2.0 * pQ3->velocity.x + pQ4->velocity.x) / numEqns;
+    pBall->q.velocity.x = pQ->velocity.x;
+    pQ->velocity.y = pQ->velocity.y + (pQ1->velocity.y + 2.0 * pQ2->velocity.y + 2.0 * pQ3->velocity.y + pQ4->velocity.y) / numEqns;
+    pBall->q.velocity.y = pQ->velocity.y;
+    pQ->velocity.z = pQ->velocity.z + (pQ1->velocity.z + 2.0 * pQ2->velocity.z + 2.0 * pQ3->velocity.z + pQ4->velocity.z) / numEqns;
+    pBall->q.velocity.z = pQ->velocity.z;
+    /*
     for (int i = 0; i < numEqns; ++i)
     {
         pQ[i] = pQ[i] + (pQ1[i] + 2.0 * pQ2[i] + 2.0 * pQ3[i] + pQ4[i]) / numEqns;
         pBall->q[i] = pQ[i];
     }
-
+    */
     //  Free up memory   
     pQ = nullptr;
     pQ1 = nullptr;
@@ -801,12 +841,12 @@ void GolfBall::ResetBallData()
     m_timeStep = 0.1f;
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;
-    m_ball.q[0] = 0.0;   //  vx = 0.0
-    m_ball.q[1] = 0.0;   //  x  = 0.0
-    m_ball.q[4] = 0.0;   //  vz = 0.0
-    m_ball.q[5] = 0.0;   //  z  = 0.0
-    m_ball.q[2] = 0.0;   //  vy = 0.0
-    m_ball.q[3] = 0.0;   //  y  = 0.0
+    m_ball.q.velocity.x = 0.0;   //  vx = 0.0
+    m_ball.q.position.x = 0.0;   //  x  = 0.0
+    m_ball.q.velocity.z = 0.0;   //  vz = 0.0
+    m_ball.q.position.z = 0.0;   //  z  = 0.0
+    m_ball.q.velocity.y = 0.0;   //  vy = 0.0
+    m_ball.q.position.y = 0.0;   //  y  = 0.0
 }
 
 void GolfBall::RollRightHandSide(struct SpinProjectile* pBall,
@@ -865,6 +905,7 @@ void GolfBall::RollRightHandSide(struct SpinProjectile* pBall,
     dq[5] = ds * vz;
 }
 
+/*
 void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
 {
     int numEqns = pBall->numEqns;
@@ -919,6 +960,7 @@ void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
 
     //UpdateSpinRate(aTimeDelta);
 }
+*/
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
@@ -935,12 +977,12 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.mass = 0.0459;
     m_ball.numEqns = 6;
     m_ball.omega = 0.0;
-    m_ball.q[0] = 0.0;   //  vx = 0.0
-    m_ball.q[1] = 0.0;   //  x  = 0.0
-    m_ball.q[4] = 0.0;   //  vz = 0.0
-    m_ball.q[5] = 0.0;   //  z  = 0.0
-    m_ball.q[2] = 0.0;   //  vy = 0.0
-    m_ball.q[3] = 0.0;   //  y  = 0.0
+    m_ball.q.velocity.x = 0.0;   //  vx = 0.0
+    m_ball.q.position.x = 0.0;   //  x  = 0.0
+    m_ball.q.velocity.z = 0.0;   //  vz = 0.0
+    m_ball.q.position.z = 0.0;   //  z  = 0.0
+    m_ball.q.velocity.y = 0.0;   //  vy = 0.0
+    m_ball.q.position.y = 0.0;   //  y  = 0.0
     m_ball.rx = 0.0;
     m_ball.ry = 0.0;
     m_ball.rz = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices
@@ -1058,9 +1100,9 @@ const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
 const float GolfBall::GetImpactVelocity()
 {
     DirectX::SimpleMath::Vector3 impactPoint;
-    impactPoint.x = m_ball.q[0];
-    impactPoint.y = m_ball.q[2];
-    impactPoint.z = m_ball.q[4];
+    impactPoint.x = m_ball.q.velocity.x;
+    impactPoint.y = m_ball.q.velocity.y;
+    impactPoint.z = m_ball.q.velocity.z;
 
     float velocity = impactPoint.Length();
 

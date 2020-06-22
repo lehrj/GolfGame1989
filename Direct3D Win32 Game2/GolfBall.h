@@ -8,9 +8,7 @@
 struct BallMotion
 {
     DirectX::SimpleMath::Vector3 position;
-    DirectX::SimpleMath::Vector3 delta;
-    DirectX::SimpleMath::Vector3 rotation;
-    float time;
+    DirectX::SimpleMath::Vector3 velocity;
 };
 
 struct SpinProjectile
@@ -25,7 +23,8 @@ struct SpinProjectile
     double mass;
     int numEqns;  // number of equations to solve
     double omega;  //  angular velocity, m/s
-    double q[6];
+    //double q[6];
+    BallMotion q;
     /*
     q[0] = vx, velocity
     q[1] = x position
@@ -42,6 +41,38 @@ struct SpinProjectile
     double windVy;
     double windVz;
 };
+
+/*
+struct SpinProjectile
+{
+    double airDensity;
+    double area;
+    double dragCoefficient;
+    double flightTime;
+    double gravity;
+    double launchHeight;
+    double landingHeight;
+    double mass;
+    int numEqns;  // number of equations to solve
+    double omega;  //  angular velocity, m/s
+    double q[6];
+    
+    //q[0] = vx, velocity
+    //q[1] = x position
+    //q[2] = vy, velocity
+    //q[3] = y position
+    //q[4] = vz, velocity
+    //q[5] = z position
+   
+    double rx;     //  spin axis vector component
+    double ry;     //  spin axis vector component
+    double rz;     //  spin axis vector component
+    double radius; //  sphere radius, m
+    double windVx;
+    double windVy;
+    double windVz;
+};
+*/
 
 class GolfBall
 {
@@ -89,9 +120,8 @@ public:
     void PrintFlightData();
     void PrintLandingData(Vector4d aLandingData, double aMaxY);
     
-    void ProjectileRightHandSide(struct SpinProjectile* projectile,
-        double* q, double* deltaQ, double ds,
-        double qScale, double* dq);
+    //void ProjectileRightHandSide(struct SpinProjectile* projectile, double* q, double* deltaQ, double ds, double qScale, double* dq);
+    void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void PushFlightData();
     void ResetBallData();
