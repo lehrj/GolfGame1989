@@ -32,7 +32,8 @@ public:
     std::vector<int> GetDrawColorVector();
     //std::vector<double> GetUIdata() { return m_uiData; };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-    std::vector<double> GetVect(const int aInput);
+    //std::vector<double> GetVect(const int aInput);
+    std::vector<DirectX::SimpleMath::Vector3> GetShotPath() { return m_shotPathNorm; };
     void InputData();
     void NormalizeData();
     void ScaleCordinates();
@@ -43,16 +44,17 @@ public:
     void SetMaxY();
     void SetMaxZ();
     void UpdateImpact(Utility::ImpactData aImpact);
-
+    
 private:
     Environment* pEnvironment;
     GolfSwing* pSwing;
     GolfBall* pBall;
     GolfPlay* pPlay;
     Utility::ImpactData m_impactData;
-    void CopyXvec(std::vector<double> aVec);
-    void CopyYvec(std::vector<double> aVec);
-    void CopyZvec(std::vector<double> aVec);
+    //void CopyXvec(std::vector<double> aVec);
+    //void CopyYvec(std::vector<double> aVec);
+    //void CopyZvec(std::vector<double> aVec);
+    void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3> aPath);
     double m_maxX;
     double m_maxY;
     double m_maxZ;
@@ -60,13 +62,15 @@ private:
     double m_yWindow;
     double m_zWindow;
 
-    std::vector<double> m_xNorm;
-    std::vector<double> m_yNorm;
-    std::vector<double> m_zNorm;
+    std::vector<DirectX::SimpleMath::Vector3> m_shotPathNorm;
+    //std::vector<double> m_xNorm;
+    //std::vector<double> m_yNorm;
+    //std::vector<double> m_zNorm;
 
-    std::vector<double> m_xVals;
-    std::vector<double> m_yVals;
-    std::vector<double> m_zVals;
+    std::vector<DirectX::SimpleMath::Vector3> m_shotPathRaw;
+    //std::vector<double> m_xVals;
+    //std::vector<double> m_yVals;
+    //std::vector<double> m_zVals;
 
     //std::vector<double> m_uiData;
     std::vector<std::string> m_uiStrings;

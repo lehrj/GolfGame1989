@@ -799,12 +799,12 @@ void Game::CreateResources()
 void Game::DrawProjectile()
 {
     /////////********* Start projectile draw
-    std::vector<double> xVec = pGolf->GetVect(0);
-    std::vector<double> yVec = pGolf->GetVect(1);
-    std::vector<double> zVec = pGolf->GetVect(2);
-
-    double groundLevel = yVec[0];
-
+    //std::vector<double> xVec = pGolf->GetVect(0);
+    //std::vector<double> yVec = pGolf->GetVect(1);
+    //std::vector<double> zVec = pGolf->GetVect(2);
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+    double groundLevel = shotPath[0].y;
+    
     Vector3 xaxis(2.f, 0.f, 0.f);
     Vector3 yaxis(0.f, 0.f, 2.f);
 
@@ -858,8 +858,8 @@ void Game::DrawProjectile()
 
     //draw tee box
 
-    double originX = xVec[0];
-    double originZ = zVec[0];
+    double originX = shotPath[0].x;
+    double originZ = shotPath[0].z;
     Vector3 t1(originX - .05, 0.0f, -0.1f);
     Vector3 t2(originX + .05, 0.0f, -0.1f);
     Vector3 t3(originX - 0.05, 0.0f, 0.1f);
@@ -875,7 +875,7 @@ void Game::DrawProjectile()
 
     // end tee box draw
 
-    int stepCount = xVec.size();
+    int stepCount = shotPath.size();
 
     if (arcCount >= stepCount)
     {
@@ -884,15 +884,13 @@ void Game::DrawProjectile()
     ++arcCount;
     //double prevX = 0.0;
     //double prevY = 0.0;
-    double prevX = xVec[0];
-    double prevY = yVec[0];
-    double prevZ = zVec[0];
 
+    Vector3 prevPos = shotPath[0];
     for (int i = 0; i < arcCount; ++i)
     {
-        Vector3 p1(prevX, prevY, prevZ);
-        Vector3 p2(xVec[i], yVec[i], zVec[i]);
-
+        Vector3 p1(prevPos);
+        
+        Vector3 p2(shotPath[i]);
         //VertexPositionColor aV(p1, Colors::White);
         //VertexPositionColor bV(p2, Colors::White);
 
@@ -932,16 +930,16 @@ void Game::DrawProjectile()
             }
         }
         m_batch->DrawLine(aV, bV);
-        prevX = xVec[i];
-        prevY = yVec[i];
-        prevZ = zVec[i];
+        prevPos = shotPath[i];
+
     }
 
     bool toggleGetNextClub = 0;
     ///// Landing explosion
     if (arcCount == stepCount)
     {
-        Vector3 f1(prevX, prevY, prevZ);
+        /*
+        Vector3 f1(prevPos);
         Vector3 f2(prevX, prevY + 0.2f, prevZ);
         Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
         Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
@@ -971,7 +969,7 @@ void Game::DrawProjectile()
         m_batch->DrawLine(ft1, ft8);
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
-
+        */
         toggleGetNextClub = 1;
     }
     // end landing explosion

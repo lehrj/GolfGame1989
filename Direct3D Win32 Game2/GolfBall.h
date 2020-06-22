@@ -89,12 +89,10 @@ public:
     int GetColorIndex() { return m_drawColorIndex; };
     std::vector<int> GetColorVector() { return m_drawColorVector; };
 
-    const int GetXvecSize() { return m_xVals.size(); };
-    const int GetYvecSize() { return m_yVals.size(); };
-    const int GetZvecSize() { return m_zVals.size(); };
-    double GetIndexX(const int aIndex);
-    double GetIndexY(const int aIndex);
-    double GetIndexZ(const int aIndex);
+    const int GetXvecSize() { return m_shotPath.size(); };
+    const int GetYvecSize() { return m_shotPath.size(); };
+    const int GetZvecSize() { return m_shotPath.size(); };
+
     const Vector4d GetLandingCordinates() { return m_landingCordinates; };
     const double GetMaxHeight() { return m_maxHeight; };
     const double GetShotDistance();
@@ -112,9 +110,10 @@ public:
     void LaunchProjectile2();
     void LaunchProjectilePostImpact();
     void OutputPosition();
-    std::vector<double> OutputXvals();
-    std::vector<double> OutputYvals();
-    std::vector<double> OutputZvals();
+    std::vector<DirectX::SimpleMath::Vector3> OutputShotPath() { return m_shotPath; };
+    //std::vector<double> OutputXvals();
+    //std::vector<double> OutputYvals();
+    //std::vector<double> OutputZvals();
     void PrepProjectileLaunch(Vector4d aSwingInput);
     void PrepProjectileLaunch2(Utility::ImpactData aImpactData);
     void PrepProjectileLaunch3(Utility::ImpactData aImpactData);
@@ -149,10 +148,11 @@ private:
     //DirectX::SimpleMath::Vector4 m_drawColorVector;
     std::vector<int> m_drawColorVector;
     // test variables for adding planned graphical display of golf shot arc
-    std::vector<double> m_xVals;
-    std::vector<double> m_yVals;
-    std::vector<double> m_zVals;
-    
+    //std::vector<double> m_xVals;
+    //std::vector<double> m_yVals;
+    //std::vector<double> m_zVals;
+    std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
+
     double m_initialSpinRate;
     double m_landingSpinRate;
     Vector4d m_landingCordinates;

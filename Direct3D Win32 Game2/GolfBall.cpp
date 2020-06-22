@@ -39,19 +39,19 @@ void GolfBall::LandProjectile()
     printf("Warning: Landing bounce/roll functionality not fully implemented (WIP)\n");
     if (m_drawColorIndex == 0)
     {
-        m_drawColorVector.push_back(m_xVals.size());
+        m_drawColorVector.push_back(m_shotPath.size());
     }
     if (m_drawColorIndex == 1)
     {
-        m_drawColorVector.push_back(m_xVals.size());
+        m_drawColorVector.push_back(m_shotPath.size());
     }
     if (m_drawColorIndex == 2)
     {
-        m_drawColorVector.push_back(m_xVals.size());
+        m_drawColorVector.push_back(m_shotPath.size());
     }
     if (m_drawColorIndex == 3)
     {
-        m_drawColorVector.push_back(m_xVals.size());
+        m_drawColorVector.push_back(m_shotPath.size());
     }
     m_drawColorIndex++;
     //DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
@@ -130,10 +130,8 @@ void GolfBall::RollBall()
 
 void GolfBall::LaunchProjectile2()
 {
-    double shotOrigin = 0.0;
-    m_xVals.push_back(shotOrigin);
-    m_yVals.push_back(shotOrigin);
-    m_zVals.push_back(shotOrigin);
+    DirectX::SimpleMath::Vector3 shotOrigin(0.0, 0.0, 0.0);
+    m_shotPath.push_back(shotOrigin);
      
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
@@ -332,10 +330,8 @@ void GolfBall::LaunchProjectilePostImpact()
 
 void GolfBall::LaunchProjectile()
 {
-    double shotOrigin = 0.0;
-    m_xVals.push_back(shotOrigin);
-    m_yVals.push_back(shotOrigin);
-    m_zVals.push_back(shotOrigin);
+    DirectX::SimpleMath::Vector3 shotOrigin(0.0, 0.0, 0.0);
+    m_shotPath.push_back(shotOrigin);
 
     // Fly ball on an upward trajectory until it stops climbing
     Vector4d flightData;
@@ -538,9 +534,8 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
 {
     //DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
     
-    
-//  Convert the loft angle from degrees to radians and
-//  assign values to some convenience variables.
+    //  Convert the loft angle from degrees to radians and
+    //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aImpactData.angleY);
     double cosL = cos(loft);
     double sinL = sin(loft);
@@ -629,6 +624,12 @@ void GolfBall::PrepProjectileLaunch3(Utility::ImpactData aImpactData)
     fMangus.Zero;
     fMangus = (.5 * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
 
+    DirectX::SimpleMath::Vector3 normfManus = fMangus;
+    DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;
+
+    normfManus.Normalize();
+    normOmegaBall.Normalize();
+
     
     //SetSpinAxis(omegaBall);
 
@@ -650,9 +651,7 @@ void GolfBall::PushFlightData()
         m_zVals.push_back(m_ball.q[5]);
     }
     */
-    m_xVals.push_back(m_ball.q.position.x);
-    m_yVals.push_back(m_ball.q.position.y);
-    m_zVals.push_back(m_ball.q.position.z);
+    m_shotPath.push_back(m_ball.q.position);
 }
 
 void GolfBall::PrintFlightData()
@@ -660,9 +659,7 @@ void GolfBall::PrintFlightData()
     printf("Time = %.1f sec, X = %f m, Y = %f m, Z = %f m, delta X = %f m/s, delta Y = %f m/s\n",
         m_ball.flightTime, m_ball.q.position.x, m_ball.q.position.y, m_ball.q.position.z, m_ball.q.velocity.x, m_ball.q.velocity.y);
 
-    m_xVals.push_back(m_ball.q.position.x);
-    m_yVals.push_back(m_ball.q.position.y);
-    m_zVals.push_back(m_ball.q.position.z);
+    //m_shotPath.push_back(m_ball.q.position);
 }
 
 //  This method loads the right-hand sides for the projectile ODEs
@@ -835,9 +832,7 @@ void GolfBall::ResetBallData()
 {
     m_drawColorIndex = 0;
     m_drawColorVector.clear();
-    m_xVals.clear();
-    m_yVals.clear();
-    m_zVals.clear();
+    m_shotPath.clear();
     m_timeStep = 0.1f;
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;
@@ -1001,6 +996,7 @@ void GolfBall::SetLandingCordinates(const double aX, const double aY, const doub
 
 void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis)
 {
+    m_ball.rotationAxis.Normalize();
     float spinTotal = abs(aAxis.x) + abs(aAxis.y) + abs(aAxis.z);
     const float tolerance = 0.000001;
     if (spinTotal > tolerance)
@@ -1022,27 +1018,12 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
-std::vector<double> GolfBall::OutputXvals()
-{
-    return m_xVals;
-}
-
-std::vector<double> GolfBall::OutputYvals()
-{
-    return m_yVals;
-}
-
-std::vector<double> GolfBall::OutputZvals()
-{
-    return m_zVals;
-}
-
 //const DirectX::SimpleMath::Vector3 GolfBall::GetImpactAngle()
 const float GolfBall::GetImpactAngle()
 {
     DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
     
-    if (m_xVals.size() < 2)
+    if (m_shotPath.size() < 2)
     {
         std::cerr << "GolfBall::GetImpactAngle() error, m_xVals.size < 2, cannont process impact";
     }
@@ -1051,9 +1032,7 @@ const float GolfBall::GetImpactAngle()
     impactPoint.y = m_landingCordinates.GetY();
     impactPoint.z = m_landingCordinates.GetZ();
     DirectX::SimpleMath::Vector3 impactMinus1;
-    impactMinus1.x = m_xVals[m_xVals.size() - 1];
-    impactMinus1.y = m_yVals[m_yVals.size() - 1];
-    impactMinus1.z = m_zVals[m_zVals.size() - 1];
+    impactMinus1 = m_shotPath[m_shotPath.size() - 1];
     DirectX::SimpleMath::Vector3 impactAngle;
     impactAngle.Zero;
     impactAngle = impactMinus1 - impactPoint;
@@ -1107,42 +1086,6 @@ const float GolfBall::GetImpactVelocity()
     float velocity = impactPoint.Length();
 
     return velocity;
-}
-
-double GolfBall::GetIndexX(const int aIndex)
-{
-    if (aIndex > m_xVals.size())
-    {
-        std::cerr << "out of range error in GolfBall::GetIndex_ \n";
-    }
-    else
-    {
-        return m_xVals[aIndex];
-    }
-}
-
-double GolfBall::GetIndexY(const int aIndex)
-{
-    if (aIndex > m_yVals.size())
-    {
-        std::cerr << "out of range error in GolfBall::GetIndex_ \n";
-    }
-    else
-    {
-        return m_zVals[aIndex];
-    }
-}
-
-double GolfBall::GetIndexZ(const int aIndex)
-{
-    if (aIndex > m_zVals.size())
-    {
-        std::cerr << "out of range error in GolfBall::GetIndex_ \n";
-    }
-    else
-    {
-        return m_zVals[aIndex];
-    }
 }
 
 const double GolfBall::GetShotDistance()
