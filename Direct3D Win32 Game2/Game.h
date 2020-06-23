@@ -95,7 +95,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
     
     int m_gameCamera = 1;
-    float m_cameraRotationX = 0.0;
+    float m_cameraRotationX = 2.0;
     float m_cameraRotationY = 0.0;
     //world end
 

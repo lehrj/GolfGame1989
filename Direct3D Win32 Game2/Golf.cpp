@@ -77,6 +77,7 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Travel Distance = " + std::to_string(pBall->GetShotDistance()) + " meters");
     m_uiStrings.push_back("Max Height = " + std::to_string(pBall->GetMaxHeight()) + " meters");
     m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
+    m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
 }
 
 void Golf::CalculateData()

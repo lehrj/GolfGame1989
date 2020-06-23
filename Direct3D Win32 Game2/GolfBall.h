@@ -84,6 +84,7 @@ public:
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
     void FireProjectile2(Utility::ImpactData aImpact, Environment* pEnviron);
 
+    int GetBounceCount() { return m_bounceCount; };
     int GetColorIndex() { return m_drawColorIndex; };
     std::vector<int> GetColorVector() { return m_drawColorVector; };
 
@@ -93,6 +94,7 @@ public:
     //const DirectX::SimpleMath::Vector3 GetImpactAngle(DirectX::SimpleMath::Vector3 aPrevImpactPos, DirectX::SimpleMath::Vector3 aPostImpactPos);
     //const DirectX::SimpleMath::Vector3 GetImpactAngle();
     const float GetImpactAngle();
+    const float GetImpactDirection();
     const DirectX::SimpleMath::Plane GetImpactPlane();
     const float GetImpactVelocity();
     const double GetInitialSpinRate() { return m_initialSpinRate; };
@@ -127,7 +129,7 @@ public:
     void SetDefaultBallValues(Environment* pEnviron);
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
-    void SetLandingCordinates(const double aX, const double aY, const double aZ);
+    void SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord);
     void SetMaxHeight(const double aMaxHeight) { m_maxHeight = aMaxHeight; };
     void SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis);
     void UpdateSpinRate(double aTimeDelta);
@@ -145,4 +147,5 @@ private:
     DirectX::SimpleMath::Vector3 m_landingCordinates;
     double m_maxHeight;
     DirectX::SimpleMath::Vector3 m_shotOrigin;
+    int m_bounceCount = 0.0;
 };

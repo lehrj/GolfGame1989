@@ -222,7 +222,8 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     // world start
     if (m_gameCamera == 1)
     {
-        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
         m_worldAntiRotation = m_world.Invert();
     }
     if (m_gameCamera == 2)
@@ -805,20 +806,16 @@ void Game::DrawProjectile()
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
     double groundLevel = shotPath[0].y;
     
+    // draw world grid
     Vector3 xaxis(2.f, 0.f, 0.f);
     Vector3 yaxis(0.f, 0.f, 2.f);
-
     Vector3 origin = Vector3::Zero;
-
     size_t divisions = 20;
-
     for (size_t i = 0; i <= divisions; ++i)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
-
         Vector3 scale = xaxis * fPercent + origin;
-
         if (scale.x == 0.0f)
         {
             VertexPositionColor v1(scale - yaxis, Colors::Green);
@@ -831,9 +828,7 @@ void Game::DrawProjectile()
             VertexPositionColor v2(scale + yaxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
-
     }
-
     for (size_t i = 0; i <= divisions; i++)
     {
         float fPercent = float(i) / float(divisions);
@@ -843,9 +838,9 @@ void Game::DrawProjectile()
 
         if (scale.z == 0.0f)
         {
-            VertexPositionColor v1(scale - xaxis, Colors::LawnGreen);
-            VertexPositionColor v2(scale + xaxis, Colors::LawnGreen);
-            m_batch->DrawLine(v1, v2);
+            //VertexPositionColor v1(scale - xaxis, Colors::Red);
+            //VertexPositionColor v2(scale + xaxis, Colors::Red);
+            //m_batch->DrawLine(v1, v2);
         }
         else
         {
@@ -853,11 +848,9 @@ void Game::DrawProjectile()
             VertexPositionColor v2(scale + xaxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
-
     }
 
     //draw tee box
-
     double originX = shotPath[0].x;
     double originZ = shotPath[0].z;
     Vector3 t1(originX - .05, 0.0f, -0.1f);
@@ -894,7 +887,6 @@ void Game::DrawProjectile()
         //VertexPositionColor aV(p1, Colors::White);
         //VertexPositionColor bV(p2, Colors::White);
 
-
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
         VertexPositionColor aVRed(p1, Colors::Red);
@@ -905,6 +897,7 @@ void Game::DrawProjectile()
         VertexPositionColor bVYellow(p2, Colors::Yellow);
         std::vector<int> colorVec = pGolf->GetDrawColorVector();
         int vecIndex = pGolf->GetDrawColorIndex();
+        
         if (vecIndex > 0)
         {
             if (i > colorVec[0])
@@ -929,15 +922,16 @@ void Game::DrawProjectile()
                 bV = bVYellow;
             }
         }
+        
         m_batch->DrawLine(aV, bV);
         prevPos = shotPath[i];
 
     }
 
-    bool toggleGetNextClub = 0;
+    //bool toggleGetNextClub = 0;
     ///// Landing explosion
-    if (arcCount == stepCount)
-    {
+    //if (arcCount == stepCount)
+    //{
         /*
         Vector3 f1(prevPos);
         Vector3 f2(prevX, prevY + 0.2f, prevZ);
@@ -970,8 +964,8 @@ void Game::DrawProjectile()
         m_batch->DrawLine(ft1, ft9);
         m_batch->DrawLine(ft1, ft10);
         */
-        toggleGetNextClub = 1;
-    }
+        //toggleGetNextClub = 1;
+    //}
     // end landing explosion
 }
 
