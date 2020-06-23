@@ -79,8 +79,6 @@ struct SpinProjectile
 class GolfBall
 {
 public:
-
-
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
     void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
@@ -103,17 +101,15 @@ public:
     const float GetImpactVelocity();
     const double GetInitialSpinRate() { return m_initialSpinRate; };
     const double GetLandingSpinRate() { return m_landingSpinRate; };
-
+    const double GetLandingHeight();
     //void LandProjectile(Environment* pEnviron);
     void LandProjectile();
     void LaunchProjectile();
     void LaunchProjectile2();
     void LaunchProjectilePostImpact();
-    void OutputPosition();
+    
     std::vector<DirectX::SimpleMath::Vector3> OutputShotPath() { return m_shotPath; };
-    //std::vector<double> OutputXvals();
-    //std::vector<double> OutputYvals();
-    //std::vector<double> OutputZvals();
+
     void PrepProjectileLaunch(Vector4d aSwingInput);
     void PrepProjectileLaunch2(Utility::ImpactData aImpactData);
     void PrepProjectileLaunch3(Utility::ImpactData aImpactData);
@@ -124,6 +120,7 @@ public:
     //void ProjectileRightHandSide(struct SpinProjectile* projectile, double* q, double* deltaQ, double ds, double qScale, double* dq);
     void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
+    void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aDs);
     void PushFlightData();
     void ResetBallData();
     void RollBall();
