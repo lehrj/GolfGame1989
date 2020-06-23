@@ -87,11 +87,7 @@ public:
     int GetColorIndex() { return m_drawColorIndex; };
     std::vector<int> GetColorVector() { return m_drawColorVector; };
 
-    const int GetXvecSize() { return m_shotPath.size(); };
-    const int GetYvecSize() { return m_shotPath.size(); };
-    const int GetZvecSize() { return m_shotPath.size(); };
-
-    const Vector4d GetLandingCordinates() { return m_landingCordinates; };
+    DirectX::SimpleMath::Vector3 GetLandingCordinates() { return m_landingCordinates; };
     const double GetMaxHeight() { return m_maxHeight; };
     const double GetShotDistance();
     //const DirectX::SimpleMath::Vector3 GetImpactAngle(DirectX::SimpleMath::Vector3 aPrevImpactPos, DirectX::SimpleMath::Vector3 aPostImpactPos);
@@ -142,17 +138,11 @@ private:
     const double m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
     float m_timeStep;
     int m_drawColorIndex = 0;
-    //DirectX::SimpleMath::Vector4 m_drawColorVector;
     std::vector<int> m_drawColorVector;
-    // test variables for adding planned graphical display of golf shot arc
-    //std::vector<double> m_xVals;
-    //std::vector<double> m_yVals;
-    //std::vector<double> m_zVals;
     std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
-
     double m_initialSpinRate;
     double m_landingSpinRate;
-    Vector4d m_landingCordinates;
+    DirectX::SimpleMath::Vector3 m_landingCordinates;
     double m_maxHeight;
-    Vector4d m_shotOrigin;
+    DirectX::SimpleMath::Vector3 m_shotOrigin;
 };

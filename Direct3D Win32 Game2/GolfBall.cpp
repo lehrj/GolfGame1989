@@ -1017,10 +1017,9 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 
 void GolfBall::SetLandingCordinates(const double aX, const double aY, const double aZ)
 {
-    m_landingCordinates.SetW(0.0);
-    m_landingCordinates.SetX(aX);
-    m_landingCordinates.SetY(aY);
-    m_landingCordinates.SetZ(aZ);
+    m_landingCordinates.x = aX;
+    m_landingCordinates.y = aY;
+    m_landingCordinates.z = aZ;
 }
 
 void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis)
@@ -1057,9 +1056,7 @@ const float GolfBall::GetImpactAngle()
         std::cerr << "GolfBall::GetImpactAngle() error, m_xVals.size < 2, cannont process impact";
     }
     DirectX::SimpleMath::Vector3 impactPoint;
-    impactPoint.x = m_landingCordinates.GetX();
-    impactPoint.y = m_landingCordinates.GetY();
-    impactPoint.z = m_landingCordinates.GetZ();
+    impactPoint = m_landingCordinates;
     DirectX::SimpleMath::Vector3 impactMinus1;
     impactMinus1 = m_shotPath[m_shotPath.size() - 1];
     DirectX::SimpleMath::Vector3 impactAngle;
@@ -1119,10 +1116,12 @@ const float GolfBall::GetImpactVelocity()
 
 const double GolfBall::GetShotDistance()
 {
-    Vector4d origin = m_shotOrigin;
-    Vector4d landingPos = GetLandingCordinates();
-    double distance = sqrt(((landingPos.GetX() - origin.GetX()) * (landingPos.GetX() - origin.GetX())) + ((landingPos.GetY() - origin.GetY())
-        * (landingPos.GetY() - origin.GetY()) + ((landingPos.GetZ() - origin.GetZ()) * (landingPos.GetZ() - origin.GetZ()))));
+    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
+    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
+    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
+        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
+
+
     return distance;
 }
 
