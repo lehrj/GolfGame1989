@@ -44,14 +44,14 @@ private:
 
     void DrawSwing();
     void DrawProjectile();
+    void DrawWorld();
     void Update(DX::StepTimer const& timer);
     void UpdateCamera(DX::StepTimer const& timer);
     void Render();
     void RenderUI();
     void RenderDebugInfo();
-    void RenderUITest();
+    void RenderUIPowerBar();
     void SetGameCamera(int aCamera);
-    void TestPowerUp();
 
     void Clear();
     void Present();

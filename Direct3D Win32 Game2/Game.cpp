@@ -222,8 +222,8 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     // world start
     if (m_gameCamera == 1)
     {
-        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-        m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
+        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
         m_worldAntiRotation = m_world.Invert();
     }
     if (m_gameCamera == 2)
@@ -307,15 +307,15 @@ void Game::Render()
 
     m_batch->Begin();
 
-    DrawSwing();
+    //DrawSwing();
+    DrawWorld();
     DrawProjectile(); 
-    TestPowerUp();
 
     m_batch->End();
 
     m_spriteBatch->Begin();
 
-    RenderUITest();
+    RenderUIPowerBar();
     if (1 == 1) // toggle between debug and normal UI rendering
     {
         RenderDebugInfo();
@@ -381,7 +381,7 @@ void Game::RenderUI()
     m_fontPos2.y = fontOriginPosY;
 }
 
-void Game::RenderUITest()
+void Game::RenderUIPowerBar()
 {
     if (pPlay->GetMeterPower() >= 0.0)
     {
@@ -804,51 +804,7 @@ void Game::DrawProjectile()
     //std::vector<double> yVec = pGolf->GetVect(1);
     //std::vector<double> zVec = pGolf->GetVect(2);
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-    double groundLevel = shotPath[0].y;
-    
-    // draw world grid
-    Vector3 xaxis(2.f, 0.f, 0.f);
-    Vector3 yaxis(0.f, 0.f, 2.f);
-    Vector3 origin = Vector3::Zero;
-    size_t divisions = 20;
-    for (size_t i = 0; i <= divisions; ++i)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = xaxis * fPercent + origin;
-        if (scale.x == 0.0f)
-        {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-    for (size_t i = 0; i <= divisions; i++)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
 
-        Vector3 scale = yaxis * fPercent + origin;
-
-        if (scale.z == 0.0f)
-        {
-            //VertexPositionColor v1(scale - xaxis, Colors::Red);
-            //VertexPositionColor v2(scale + xaxis, Colors::Red);
-            //m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - xaxis, Colors::Green);
-            VertexPositionColor v2(scale + xaxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
 
     //draw tee box
     double originX = shotPath[0].x;
@@ -969,6 +925,53 @@ void Game::DrawProjectile()
     // end landing explosion
 }
 
+void Game::DrawWorld()
+{
+    // draw world grid
+    Vector3 xaxis(2.f, 0.f, 0.f);
+    Vector3 yaxis(0.f, 0.f, 2.f);
+    Vector3 origin = Vector3::Zero;
+    size_t divisions = 20;
+    for (size_t i = 0; i <= divisions; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        Vector3 scale = xaxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Green);
+            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - yaxis, Colors::Green);
+            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+    for (size_t i = 0; i <= divisions; i++)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        Vector3 scale = yaxis * fPercent + origin;
+
+        if (scale.z == 0.0f)
+        {
+            //VertexPositionColor v1(scale - xaxis, Colors::Red);
+            //VertexPositionColor v2(scale + xaxis, Colors::Red);
+            //m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xaxis, Colors::Green);
+            VertexPositionColor v2(scale + xaxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+}
+
 void Game::DrawSwing()
 {
     /////////********* Start swing draw
@@ -1057,48 +1060,6 @@ void Game::OnDeviceLost()
     CreateResources();
 }
 
-void Game::TestPowerUp()
-{
-    if (1 == 0)
-    {
-        /*
-        Vector3 powerBarTopLeft(-.8, -.6, 0.0);
-        Vector3 powerBarTopRight(.8, -.6, 0.0);
-        Vector3 powerBarBottomLeft(-.8, -.9, 0.0);
-        Vector3 powerBarBottomRight(.8, -.9, 0.0);
-        */
 
-        Vector3 powerBarTopLeft(-.8, -.6, 0.0);
-        Vector3 powerBarTopRight(.8, -.6, 0.0);
-        Vector3 powerBarBottomLeft(-.8, -.9, 0.0);
-        Vector3 powerBarBottomRight(.8, -.9, 0.0);
-
-        Vector3 pBTL = Vector3::Transform(powerBarTopLeft, m_worldAntiRotation);
-        Vector3 pBTR = Vector3::Transform(powerBarTopRight, m_worldAntiRotation);
-        Vector3 pBBL = Vector3::Transform(powerBarBottomLeft, m_worldAntiRotation);
-        Vector3 pBBR = Vector3::Transform(powerBarBottomRight, m_worldAntiRotation);
-        
-        VertexPositionColor vTopLeft(pBTL, Colors::Blue);      
-        VertexPositionColor vTopRight(pBTR, Colors::Red);      
-        VertexPositionColor vBottomLeft(pBBL, Colors::Yellow);        
-        VertexPositionColor vBottomRight(pBBR, Colors::White);
-        //VertexPositionColor vTopLeft(powerBarTopLeft, Colors::Red);
-        //VertexPositionColor vTopRight(powerBarTopRight, Colors::Red);
-        //VertexPositionColor vBottomLeft(powerBarBottomLeft, Colors::Red);
-        //VertexPositionColor vBottomRight(powerBarBottomRight, Colors::Red);
-
-        /*
-        std::string powerBarEnds = "I69";
-        Vector2 endCapSize = m_font->MeasureString(powerBarEnds.c_str());
-        Vector2 drawPos(0., 0.0);
-        m_font->DrawString(m_spriteBatch.get(), powerBarEnds.c_str(), drawPos, Colors::Yellow, 0.f, drawPos);
-        */
-
-        m_batch->DrawLine(vTopLeft, vTopRight);
-        m_batch->DrawLine(vTopRight, vBottomRight);
-        m_batch->DrawLine(vBottomRight, vBottomLeft);
-        m_batch->DrawLine(vBottomLeft, vTopLeft);
-    }
-}
 
 
