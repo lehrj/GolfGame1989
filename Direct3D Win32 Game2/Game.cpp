@@ -192,6 +192,11 @@ void Game::Update(DX::StepTimer const& timer)
     {
         SetGameCamera(8);
     }
+    if (kb.Q)
+    {
+        SetGameCamera(8);
+        //pPlay->StartSwing();
+    }
     if (kb.F9)
     {
         SetGameCamera(9);
@@ -224,7 +229,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
-        m_worldAntiRotation = m_world.Invert();
+        
     }
     if (m_gameCamera == 2)
     {
@@ -236,19 +241,19 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_gameCamera == 4)
     {
-        m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f),
-            Vector3::Zero, Vector3::UnitY);
-
+        m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
+        //m_world = Matrix::CreateRotationY(0.0);
+        m_world = Matrix::CreateRotationY(m_cameraRotationX);
         m_effect->SetView(m_view);
     }
     if (m_gameCamera == 5)
     {
-        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
-
-        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 6.f,
-            float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
-        m_effect->SetProjection(m_proj);
+        m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
+        //m_world = Matrix::CreateRotationY(0.0);
+        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_effect->SetView(m_view);
     }
     if (m_gameCamera == 6)
     {
@@ -267,11 +272,25 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_gameCamera == 8)
     {
-
+        m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
+        //m_world = Matrix::CreateRotationY(0.0);
+        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_effect->SetView(m_view);
+        
     }
     if (m_gameCamera == 9)
     {
+        m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f), Vector3::Zero, Vector3::UnitY);
 
+        m_effect->SetView(m_view);
+        /*
+        m_view = Matrix::CreateLookAt(Vector3(m_cameraRotationY, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
+        //m_world = Matrix::CreateRotationY(0.0);
+        m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_effect->SetView(m_view);
+        */
     }
     else
     {
@@ -580,7 +599,7 @@ void Game::CreateDevice()
     // WLJ start
     // world start
     m_world = Matrix::Identity;
-    m_worldAntiRotation = Matrix::Identity;
+    
     // world end
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
 
@@ -975,7 +994,7 @@ void Game::DrawWorld()
 void Game::DrawSwing()
 {
     /////////********* Start swing draw
-/*
+    /*
 std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
 std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
 std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
@@ -1010,7 +1029,7 @@ for (int i = 0; i < arcCount; ++i)
 }
 */
 
-/*
+    /*
 Vector4d launchData = pGolf->GetLaunchVector();
 double armLength = launchData.GetFirst();
 double clubLength = launchData.GetSecond();
@@ -1019,7 +1038,7 @@ double launchVelocity = launchData.GetForth();
 std::vector<Vector4d> swingAngles;
 swingAngles.resize(pGolf->GetSwingStepIncCount());
 swingAngles = pGolf->GetSwingData();
-//Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
 Vector3 armPivot(0.0f, armLength, 0.0f);
 Vector3 clubHead(clubLength, armLength, 0.0f);
 VertexPositionColor vert1(swingOrigin, Colors::Red);
@@ -1027,8 +1046,8 @@ VertexPositionColor vert2(armPivot, Colors::Red);
 VertexPositionColor vert3(clubHead, Colors::Red);
 m_batch->DrawLine(vert1, vert2);
 m_batch->DrawLine(vert2, vert3);
-*/
 
+*/
 // end swing draw
 }
 
