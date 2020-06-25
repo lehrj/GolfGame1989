@@ -13,8 +13,6 @@ public:
 
     Vector4d CalculateLaunchVector(void);
     Utility::ImpactData CalculateLaunchVector2();
-    DirectX::SimpleMath::Vector4 CalculateImpactFaceNormal();
-    DirectX::SimpleMath::Vector4 CalculateImpactClubNormal();
     void CalculateSwingCordinates();
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);
@@ -35,9 +33,6 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
     std::vector<DirectX::SimpleMath::Vector3> GetBetaCords();
     std::vector<DirectX::SimpleMath::Vector3> GetThetaCords();
-
-    void InputSwingValuesBasic();
-    void InputSwingValuesVerbose();
 
     std::vector<Vector4d> OutputSwingData();
 

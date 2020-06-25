@@ -16,9 +16,7 @@ public:
     ~Golf();
 
     void BuildVector();
-    void BuildUIdata();
     void BuildUIstrings();
-    void BuildUI();
     void CalculateData();
 
     Vector4d GetLaunchVector();
@@ -30,9 +28,7 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetTheta() { return pSwing->GetThetaCords(); };
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
-    //std::vector<double> GetUIdata() { return m_uiData; };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-    //std::vector<double> GetVect(const int aInput);
     std::vector<DirectX::SimpleMath::Vector3> GetShotPath() { return m_shotPathNorm; };
     void InputData();
     void NormalizeData();
@@ -40,9 +36,7 @@ public:
     void SelectNextClub();
     void SelectInputClub(int aInput);
     void TransformCordinates();
-    void SetMaxX();
-    void SetMaxY();
-    void SetMaxZ();
+    void SetShotCordMax();
     void UpdateImpact(Utility::ImpactData aImpact);
     
 private:
@@ -51,9 +45,7 @@ private:
     GolfBall* pBall;
     GolfPlay* pPlay;
     Utility::ImpactData m_impactData;
-    //void CopyXvec(std::vector<double> aVec);
-    //void CopyYvec(std::vector<double> aVec);
-    //void CopyZvec(std::vector<double> aVec);
+
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3> aPath);
     double m_maxX;
     double m_maxY;
@@ -63,16 +55,9 @@ private:
     double m_zWindow;
 
     std::vector<DirectX::SimpleMath::Vector3> m_shotPathNorm;
-    //std::vector<double> m_xNorm;
-    //std::vector<double> m_yNorm;
-    //std::vector<double> m_zNorm;
 
     std::vector<DirectX::SimpleMath::Vector3> m_shotPathRaw;
-    //std::vector<double> m_xVals;
-    //std::vector<double> m_yVals;
-    //std::vector<double> m_zVals;
-
-    //std::vector<double> m_uiData;
+    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_testShotPathsRaw;
+    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_testShotPathsNorm;
     std::vector<std::string> m_uiStrings;
-
 };

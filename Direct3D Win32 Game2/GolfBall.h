@@ -91,8 +91,6 @@ public:
     DirectX::SimpleMath::Vector3 GetLandingCordinates() { return m_landingCordinates; };
     const double GetMaxHeight() { return m_maxHeight; };
     const double GetShotDistance();
-    //const DirectX::SimpleMath::Vector3 GetImpactAngle(DirectX::SimpleMath::Vector3 aPrevImpactPos, DirectX::SimpleMath::Vector3 aPostImpactPos);
-    //const DirectX::SimpleMath::Vector3 GetImpactAngle();
     const float GetImpactAngle();
     const float GetImpactDirection();
     const DirectX::SimpleMath::Plane GetImpactPlane();
@@ -100,7 +98,6 @@ public:
     const double GetInitialSpinRate() { return m_initialSpinRate; };
     const double GetLandingSpinRate() { return m_landingSpinRate; };
     const double GetLandingHeight();
-    //void LandProjectile(Environment* pEnviron);
     void LandProjectile();
     void LaunchProjectile();
     void LaunchProjectile2();
@@ -113,9 +110,7 @@ public:
     void PrepProjectileLaunch3(Utility::ImpactData aImpactData);
 
     void PrintFlightData();
-    void PrintLandingData(Vector4d aLandingData, double aMaxY);
     
-    //void ProjectileRightHandSide(struct SpinProjectile* projectile, double* q, double* deltaQ, double ds, double qScale, double* dq);
     void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aDs);

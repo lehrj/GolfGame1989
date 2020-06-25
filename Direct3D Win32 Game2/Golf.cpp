@@ -87,42 +87,6 @@ void Golf::CalculateData()
     pBall->FireProjectile2(pSwing->CalculateLaunchVector2(), pEnvironment);
 }
 
-/*
-std::vector<double> Golf::GetVect(const int aInput)
-{
-    if (aInput == 0)
-    {
-        std::vector<double> xNorm;
-        xNorm.clear();
-        for (int i = 0; i < m_shotPathNorm.size(); ++i)
-        {
-            xNorm.push_back(m_shotPathNorm[i].x);
-        }
-        return xNorm;
-    }
-    if(aInput == 1)
-    {
-        std::vector<double> yNorm;
-        yNorm.clear();
-        for (int i = 0; i < m_shotPathNorm.size(); ++i)
-        {
-            yNorm.push_back(m_shotPathNorm[i].y);
-        }
-        return yNorm;
-    }
-    if (aInput == 2)
-    {
-        std::vector<double> zNorm;
-        zNorm.clear();
-        for (int i = 0; i < m_shotPathNorm.size(); ++i)
-        {
-            zNorm.push_back(m_shotPathNorm[i].z);
-        }
-        return zNorm;
-    }
-}
-*/
-
 void Golf::InputData()
 {
     m_shotPathRaw.clear();
@@ -151,16 +115,12 @@ std::vector<Vector4d> Golf::GetSwingData()
 
 void Golf::TransformCordinates()
 {
-    //m_xNorm.clear();
-    //m_yNorm.clear();
-    //m_zNorm.clear();
     DirectX::SimpleMath::Vector3 oldVec;
     DirectX::SimpleMath::Vector3 newVec;
     double sX;
     double sY;
     double sZ;
 
-    //DirectX::SimpleMath::Matrix scaleMatrix = 
     DirectX::SimpleMath::Matrix transMatrix = DirectX::SimpleMath::Matrix::Identity;
     transMatrix._14 = 2.0f;
     transMatrix._24 = 2.0f;
@@ -208,9 +168,7 @@ void Golf::ScaleCordinates()
 
 void Golf::NormalizeData()
 {
-    SetMaxX();
-    SetMaxY();
-    SetMaxZ();
+    SetShotCordMax();
     //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
     //m_yWindow = m_maxY + 10;
 
@@ -227,110 +185,32 @@ void Golf::NormalizeData()
         DirectX::SimpleMath::Vector3 val(valX, valY, valZ);
         m_shotPathNorm.push_back(val);
     }
-    /*
-    //m_xNorm.resize(m_xVals.size());
-    m_xNorm.clear();
-    for (int i = 0; i < m_xVals.size(); ++i)
-    {
-        double val = (((m_xVals[i] / m_xWindow)));
-        //double val = (((m_xVals[i] / m_xWindow) * 2) - 1.5);
-        //double val = (((m_xVals[i] / m_xWindow) * 2) - 1);
-        //double val = (((m_xVals[i] / m_xWindow))-1);
-        //m_xNorm[i] = val;
-        m_xNorm.push_back(val);
-    }
-
-    //m_yNorm.resize(m_yVals.size());
-    m_yNorm.clear();
-    for (int i = 0; i < m_yVals.size(); ++i)
-    {
-        //double val = (((m_yVals[i] / m_yWindow) * 2) - 1);
-        double val = (((m_yVals[i] / m_yWindow)));
-        //m_yNorm[i] = val;
-        m_yNorm.push_back(val);
-    }
-
-    //m_zNorm.resize(m_zVals.size());
-    m_zNorm.clear();
-    for (int i = 0; i < m_zVals.size(); ++i)
-    {
-        double val = (((m_zVals[i] / m_zWindow)));
-        //double val = m_zVals[i];
-        //m_zNorm[i] = val;
-        m_zNorm.push_back(val);
-    }
-    */
 }
 
-void Golf::SetMaxX()
+void Golf::SetShotCordMax()
 {
     double maxX = 0.0;
+    double maxY = 0.0;
+    double maxZ = 0.0;
     for (int i = 0; i < m_shotPathRaw.size(); ++i)
     {
         if (maxX < m_shotPathRaw[i].x)
         {
             maxX = m_shotPathRaw[i].x;
         }
-    }
-    m_maxX = maxX;
-}
-
-void Golf::SetMaxY()
-{
-    double maxY = 0.0;
-    for (int i = 0; i < m_shotPathRaw.size(); ++i)
-    {
         if (maxY < m_shotPathRaw[i].y)
         {
             maxY = m_shotPathRaw[i].y;
         }
-    }
-    m_maxY = maxY;
-}
-
-void Golf::SetMaxZ()
-{
-    double maxZ = 0.0;
-    for (int i = 0; i < m_shotPathRaw.size(); ++i)
-    {
         if (maxZ < m_shotPathRaw[i].z)
         {
             maxZ = m_shotPathRaw[i].z;
         }
     }
+    m_maxX = maxX;
+    m_maxY = maxY;
     m_maxZ = maxZ;
 }
-
-/*
-void Golf::CopyXvec(std::vector<double> aVec)
-{
-    
-    std::vector<double> temp(aVec);
-    for (int i = 0; i < temp.size(); ++i)
-    {
-        m_xVals.push_back(temp[i]);
-    }
-    
-}
-
-void Golf::CopyYvec(std::vector<double> aVec)
-{
-    std::vector<double> temp(aVec);
-    for (int i = 0; i < temp.size(); ++i)
-    {
-        m_yVals.push_back(temp[i]);
-    }
-}
-
-void Golf::CopyZvec(std::vector<double> aVec)
-{
-    std::vector<double> temp(aVec);
-    for (int i = 0; i < temp.size(); ++i)
-    {
-        m_zVals.push_back(temp[i]);
-    }
-}
-*/
 
 void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3> aPath)
 {
