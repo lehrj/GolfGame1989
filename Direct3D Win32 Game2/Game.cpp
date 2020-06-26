@@ -329,8 +329,8 @@ void Game::Render()
     m_batch->Begin();
 
     DrawSwing2();
-    //DrawWorld();
-    //DrawProjectile(); 
+    DrawWorld();
+    DrawProjectile(); 
 
     m_batch->End();
 
@@ -776,7 +776,7 @@ void Game::CreateResources()
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
-    SetGameCamera(2);
+    //SetGameCamera(2);
     // world end
 
     m_fontPos.x = backBufferWidth / 2.f;
@@ -996,6 +996,7 @@ void Game::DrawWorld()
 
 void Game::DrawSwing()
 {
+
     Vector3 top(0.0f, 1.0f, 0.0f);
     Vector3 bottom(0.0f, -1.0f, 0.0f);
     Vector3 left(-1.0f, 0.0f, 0.0f);
@@ -1077,11 +1078,13 @@ void Game::DrawSwing()
 
 void Game::DrawSwing2()
 {
+    float shoulderAccel = .98;
+
     std::vector<DirectX::SimpleMath::Vector3> angles;
     angles = pGolf->GetRawSwingAngles();
     Vector3 origin;
     origin.Zero;
-    
+
     Vector3 thetaOrigin;
     thetaOrigin.Zero;
     thetaOrigin.y = -1.0;
@@ -1101,8 +1104,8 @@ void Game::DrawSwing2()
     VertexPositionColor shoulder(origin, Colors::White);
     VertexPositionColor hand(armOrigin, Colors::White);
     VertexPositionColor clubHead(shaftOrigin, Colors::White);
-    m_batch->DrawLine(shoulder, hand);
-    m_batch->DrawLine(hand, clubHead);
+    //m_batch->DrawLine(shoulder, hand);
+    //m_batch->DrawLine(hand, clubHead);
     Vector3 arm = armOrigin;
     Vector3 shaft = shaftOrigin;
 
@@ -1113,25 +1116,30 @@ void Game::DrawSwing2()
     }
     ++arcCount;
 
+    int impactPoint = pGolf->GetImpactStep();
+
     for (int i = 0; i < arcCount; ++i)
     {
-        Vector3 theta = Vector3::Transform(thetaOrigin, Matrix::CreateRotationZ(-angles[i].z));
-        VertexPositionColor thetaColor(theta, Colors::Blue);
-        m_batch->DrawLine(shoulder, thetaColor);
-        Vector3 beta = Vector3::Transform(theta, Matrix::CreateRotationZ(-angles[i].y));
-        beta += theta;
-        VertexPositionColor betaColor(beta, Colors::Red);
-        m_batch->DrawLine(thetaColor, betaColor);
-        arm = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(angles[i].z));
-        //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(180.0)));
-        //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(-angles[i].y));
-        //shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
-        shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
-        //shaft += arm;
-        VertexPositionColor updateHand(arm, Colors::White);
-        VertexPositionColor updateClubHead(shaft, Colors::Red);
-        //m_batch->DrawLine(updateHand, shoulder);
-        //m_batch->DrawLine(thetaColor, updateClubHead);
+        if (i < impactPoint)
+        {
+            Vector3 theta = Vector3::Transform(thetaOrigin, Matrix::CreateRotationZ(-angles[i].z));
+            VertexPositionColor thetaColor(theta, Colors::Blue);
+            m_batch->DrawLine(shoulder, thetaColor);
+            Vector3 beta = Vector3::Transform(theta, Matrix::CreateRotationZ(-angles[i].y));
+            beta += theta;
+            VertexPositionColor betaColor(beta, Colors::Red);
+            m_batch->DrawLine(thetaColor, betaColor);
+            arm = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(angles[i].z));
+            //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(180.0)));
+            //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(-angles[i].y));
+            //shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
+            shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
+            //shaft += arm;
+            VertexPositionColor updateHand(arm, Colors::White);
+            VertexPositionColor updateClubHead(shaft, Colors::Red);
+            //m_batch->DrawLine(updateHand, shoulder);
+            //m_batch->DrawLine(thetaColor, updateClubHead);
+        }
     }
 
     /*

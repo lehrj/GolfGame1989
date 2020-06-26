@@ -674,7 +674,7 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
     m_backSwingPercentage = 100.0;
     m_impactData.power = 100.0;
-    m_ballPlacementAngle = 0.0;
+    m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
