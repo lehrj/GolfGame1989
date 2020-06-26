@@ -26,10 +26,13 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetAlpha() { return pSwing->GetAlphaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetBeta() { return pSwing->GetBetaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetTheta() { return pSwing->GetThetaCords(); };
+    std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
+
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     std::vector<DirectX::SimpleMath::Vector3> GetShotPath() { return m_shotPathNorm; };
+    const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
     void InputData();
     void NormalizeData();
     void ScaleCordinates();

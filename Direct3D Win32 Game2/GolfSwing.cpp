@@ -99,7 +99,8 @@ std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetBetaCords()
         m_betaCord.push_back(betaXYZ);
         prevBetaAngle = betaAngle;
     }
-    return m_alphaCord;
+    //return m_alphaCord;
+    return m_betaCord;
 }
 
 std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetThetaCords()
@@ -317,7 +318,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector2()
             if (isVcFound == false)
             {
                 //PrintSwingMechanics(Vc, time);
-
+                m_swingImpactStep = i;
                 velocityCapture = Vc;
                 isVcFound = true;
                 //launchAngle = m_club.angle - Utility::ToDegrees(phi);
@@ -395,6 +396,7 @@ void GolfSwing::CycleInputClub(int aInput)
 
 std::vector<Vector4d> GolfSwing::OutputSwingData()
 {
+
     CalculateSwingCordinates();
     return m_alphaBetaThetaVec;
 }
@@ -672,7 +674,7 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
     m_backSwingPercentage = 100.0;
     m_impactData.power = 100.0;
-    m_ballPlacementAngle = 5.0;
+    m_ballPlacementAngle = 0.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
@@ -742,5 +744,20 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     m_impactData.power = aImpactData.power;
     UpdateGolfSwingValues();
     //CalculateLaunchVector2();
+}
+
+std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetRawAlphaBetaTheta()
+{
+    std::vector<DirectX::SimpleMath::Vector3> vecList;
+
+    for (int i = 0; i < m_alphaBetaThetaVec.size(); ++i)
+    {
+        DirectX::SimpleMath::Vector3 aVec;
+        aVec.x = m_alphaBetaThetaVec[i].GetX();
+        aVec.y = m_alphaBetaThetaVec[i].GetY();
+        aVec.z = m_alphaBetaThetaVec[i].GetZ();
+        vecList.push_back(aVec);
+    }
+    return vecList;
 }
 

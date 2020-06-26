@@ -28,6 +28,8 @@ public:
     const double GetLaunchAngle() { return m_launchAngle; };
     //const double GetLaunchVelocity() { return m_launchVelocity; };
     const double GetLaunchVelocity() { return m_impactData.velocity; };
+    std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta();
+    const int GetSwingImpactStep() { return m_swingImpactStep; };
     const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
 
     std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
@@ -77,7 +79,7 @@ private:
     double m_launchImpact;
     
     const int m_swingStepIncrementCount = 200;
-
+    int m_swingImpactStep = 0;
     double m_alpha; // Angle swept by arm rod from initial backswing position in radians
     double m_alpha_dot;
     double m_alpha_dotdot;

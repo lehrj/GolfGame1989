@@ -43,6 +43,7 @@ public:
 private:
 
     void DrawSwing();
+    void DrawSwing2();
     void DrawProjectile();
     void DrawWorld();
     void Update(DX::StepTimer const& timer);

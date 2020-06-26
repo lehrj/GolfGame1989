@@ -233,7 +233,9 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_gameCamera == 2)
     {
-        m_world = Matrix::CreateRotationX(m_cameraRotationY);
+        m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
+        m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
+        m_effect->SetView(m_view);
     }
     if (m_gameCamera == 3)
     {
@@ -326,9 +328,9 @@ void Game::Render()
 
     m_batch->Begin();
 
-    //DrawSwing();
-    DrawWorld();
-    DrawProjectile(); 
+    DrawSwing2();
+    //DrawWorld();
+    //DrawProjectile(); 
 
     m_batch->End();
 
@@ -774,6 +776,7 @@ void Game::CreateResources()
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
+    SetGameCamera(2);
     // world end
 
     m_fontPos.x = backBufferWidth / 2.f;
@@ -993,62 +996,188 @@ void Game::DrawWorld()
 
 void Game::DrawSwing()
 {
+    Vector3 top(0.0f, 1.0f, 0.0f);
+    Vector3 bottom(0.0f, -1.0f, 0.0f);
+    Vector3 left(-1.0f, 0.0f, 0.0f);
+    Vector3 right(1.0f, 0.0f, 0.0f);
+    VertexPositionColor vTop(top, Colors::Red);
+    VertexPositionColor vBottom(bottom, Colors::Red);
+    VertexPositionColor vLeft(left, Colors::Red);
+    VertexPositionColor vRight(right, Colors::Red);
+    m_batch->DrawLine(vTop, vBottom);
+    m_batch->DrawLine(vLeft, vRight);
+
     /////////********* Start swing draw
+    int impactPoint = pGolf->GetImpactStep();
+    std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
+    std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
+    std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
+    int swingStepCount = alphaVec.size();
+
+    if (arcCount >= swingStepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+    Vector3 swingTop(0.0f, 1.0f, 0.0f);
+    VertexPositionColor feet(swingOrigin, Colors::Yellow);
+    VertexPositionColor shoulder(swingTop, Colors::White);
+    for (int i = 0; i < arcCount; ++i)
+    {
+        //Vector3 hand = thetaVec[i];
+        Vector3 hand = alphaVec[i];
+        hand += swingTop;
+        Vector3 clubHead = betaVec[i];
+        Vector3 thetaPoint = thetaVec[i];
+        clubHead -= hand;
+        VertexPositionColor body(swingOrigin, Colors::Red);
+        VertexPositionColor arm(hand, Colors::Green);
+        VertexPositionColor shaft(clubHead, Colors::Blue);
+        VertexPositionColor thetaVertex(thetaPoint, Colors::White);
+        //m_batch->DrawLine(feet, shoulder);
+        //m_batch->DrawLine(shoulder, arm);
+        //m_batch->DrawLine(arm, shaft);
+        //m_batch->DrawLine(vert3, vert1);
+
+        //m_batch->DrawLine(shoulder, arm);
+        //m_batch->DrawLine(arm, shaft);
+        //m_batch->DrawLine(shaft, arm);
+        m_batch->DrawLine(shoulder, arm);
+        //m_batch->DrawLine(thetaVertex, arm);
+        //m_batch->DrawLine(shaft, thetaVertex);
+        m_batch->DrawLine(shaft, arm);
+        
+    }
+
+
+
     /*
-std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
-std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
-std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
-int swingStepCount = alphaVec.size();
+    // Vector4d launchVector(pSwing->GetArmLength(), pSwing->GetClubLength(), pSwing->GetLaunchAngle(), pSwing->GetLaunchVelocity());
+    Vector4d launchData = pGolf->GetLaunchVector();
+    double armLength = launchData.GetFirst();
+    double clubLength = launchData.GetSecond();
+    double launchAngle = launchData.GetThird();
+    double launchVelocity = launchData.GetForth();
+    std::vector<Vector4d> swingAngles;
+    swingAngles.resize(pGolf->GetSwingStepIncCount());
+    swingAngles = pGolf->GetSwingData();
+    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+    Vector3 armPivot(0.0f, armLength, 0.0f);
+    Vector3 clubHead(clubLength, armLength, 0.0f);
+    VertexPositionColor vert1(swingOrigin, Colors::Red);
+    VertexPositionColor vert2(armPivot, Colors::Red);
+    VertexPositionColor vert3(clubHead, Colors::Red);
+    m_batch->DrawLine(vert1, vert2);
+    m_batch->DrawLine(vert2, vert3);
+    */
 
-if (arcCount >= swingStepCount)
-{
-    arcCount = 0;
-}
-++arcCount;
-Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
-Vector3 swingTop(0.0f, 1.0f, 0.0f);
-VertexPositionColor feet(swingOrigin, Colors::Yellow);
-VertexPositionColor shoulder(swingTop, Colors::White);
-for (int i = 0; i < arcCount; ++i)
-{
-    //Vector3 hand = thetaVec[i];
-    Vector3 hand = alphaVec[i];
-    hand += swingTop;
-    Vector3 clubHead = betaVec[i];
-    //clubHead -= hand;
-    VertexPositionColor body(swingOrigin, Colors::Red);
-    VertexPositionColor arm(hand, Colors::Green);
-    VertexPositionColor shaft(clubHead, Colors::Blue);
-    //m_batch->DrawLine(feet, shoulder);
-    //m_batch->DrawLine(shoulder, arm);
-    //m_batch->DrawLine(arm, shaft);
-    //m_batch->DrawLine(vert3, vert1);
-    m_batch->DrawLine(feet, arm);
-    m_batch->DrawLine(feet, shoulder);
-    m_batch->DrawLine(feet, shaft);
-}
-*/
-
-    /*
-Vector4d launchData = pGolf->GetLaunchVector();
-double armLength = launchData.GetFirst();
-double clubLength = launchData.GetSecond();
-double launchAngle = launchData.GetThird();
-double launchVelocity = launchData.GetForth();
-std::vector<Vector4d> swingAngles;
-swingAngles.resize(pGolf->GetSwingStepIncCount());
-swingAngles = pGolf->GetSwingData();
-Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
-Vector3 armPivot(0.0f, armLength, 0.0f);
-Vector3 clubHead(clubLength, armLength, 0.0f);
-VertexPositionColor vert1(swingOrigin, Colors::Red);
-VertexPositionColor vert2(armPivot, Colors::Red);
-VertexPositionColor vert3(clubHead, Colors::Red);
-m_batch->DrawLine(vert1, vert2);
-m_batch->DrawLine(vert2, vert3);
-
-*/
 // end swing draw
+}
+
+void Game::DrawSwing2()
+{
+    std::vector<DirectX::SimpleMath::Vector3> angles;
+    angles = pGolf->GetRawSwingAngles();
+    Vector3 origin;
+    origin.Zero;
+    
+    Vector3 thetaOrigin;
+    thetaOrigin.Zero;
+    thetaOrigin.y = -1.0;
+
+    Vector3 armOrigin;
+    armOrigin.Zero;
+    armOrigin.y = -1.0;
+    armOrigin = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(Utility::ToRadians(-135.0)));
+    Vector3 shaftOrigin;
+    shaftOrigin.Zero;
+    shaftOrigin.y = -1.0;
+    shaftOrigin = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(120.0)));
+    shaftOrigin += armOrigin;
+
+    
+
+    VertexPositionColor shoulder(origin, Colors::White);
+    VertexPositionColor hand(armOrigin, Colors::White);
+    VertexPositionColor clubHead(shaftOrigin, Colors::White);
+    m_batch->DrawLine(shoulder, hand);
+    m_batch->DrawLine(hand, clubHead);
+    Vector3 arm = armOrigin;
+    Vector3 shaft = shaftOrigin;
+
+    int swingStepCount = angles.size();
+    if (arcCount >= swingStepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+
+    for (int i = 0; i < arcCount; ++i)
+    {
+        Vector3 theta = Vector3::Transform(thetaOrigin, Matrix::CreateRotationZ(-angles[i].z));
+        VertexPositionColor thetaColor(theta, Colors::Blue);
+        m_batch->DrawLine(shoulder, thetaColor);
+        Vector3 beta = Vector3::Transform(theta, Matrix::CreateRotationZ(-angles[i].y));
+        beta += theta;
+        VertexPositionColor betaColor(beta, Colors::Red);
+        m_batch->DrawLine(thetaColor, betaColor);
+        arm = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(angles[i].z));
+        //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(180.0)));
+        //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(-angles[i].y));
+        //shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
+        shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
+        //shaft += arm;
+        VertexPositionColor updateHand(arm, Colors::White);
+        VertexPositionColor updateClubHead(shaft, Colors::Red);
+        //m_batch->DrawLine(updateHand, shoulder);
+        //m_batch->DrawLine(thetaColor, updateClubHead);
+    }
+
+    /*
+    Vector3 top(0.0f, 1.0f, 0.0f);
+    Vector3 bottom(0.0f, -1.0f, 0.0f);
+    Vector3 left(-1.0f, 0.0f, 0.0f);
+    Vector3 right(1.0f, 0.0f, 0.0f);
+    VertexPositionColor vTop(top, Colors::Red);
+    VertexPositionColor vBottom(bottom, Colors::Red);
+    VertexPositionColor vLeft(left, Colors::Red);
+    VertexPositionColor vRight(right, Colors::Red);
+    m_batch->DrawLine(vTop, vBottom);
+    m_batch->DrawLine(vLeft, vRight);
+
+    /////////********* Start swing draw
+    int impactPoint = pGolf->GetImpactStep();
+    std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
+    std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
+    std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
+    int swingStepCount = alphaVec.size();
+
+    if (arcCount >= swingStepCount)
+    {
+        arcCount = 0;
+    }
+    ++arcCount;
+    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
+    Vector3 swingTop(0.0f, 1.0f, 0.0f);
+    VertexPositionColor feet(swingOrigin, Colors::Yellow);
+    VertexPositionColor shoulder(swingTop, Colors::White);
+    for (int i = 0; i < arcCount; ++i)
+    {
+        //Vector3 hand = thetaVec[i];
+        Vector3 hand = alphaVec[i];
+        hand += swingTop;
+        Vector3 clubHead = betaVec[i];
+        Vector3 thetaPoint = thetaVec[i];
+        clubHead -= hand;
+        VertexPositionColor body(swingOrigin, Colors::Red);
+        VertexPositionColor arm(hand, Colors::Green);
+        VertexPositionColor shaft(clubHead, Colors::Blue);
+        VertexPositionColor thetaVertex(thetaPoint, Colors::White);
+
+        m_batch->DrawLine(shoulder,arm);
+    }
+    */
 }
 
 void Game::OnDeviceLost()
