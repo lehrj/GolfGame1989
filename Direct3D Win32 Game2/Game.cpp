@@ -75,7 +75,7 @@ void Game::Update(DX::StepTimer const& timer)
         pPlay->ResetSwingUpdateReady();
         pGolf->UpdateImpact(pPlay->GetImpactData());
     }
-    
+
     UpdateCamera(timer);
 
     // WLJ add for mouse and keybord interface
@@ -84,6 +84,34 @@ void Game::Update(DX::StepTimer const& timer)
     if (kb.Escape)
     {
         ExitGame();
+    }
+    if (kb.Enter)
+    {
+        if (m_gameState == 0)
+        {
+            m_gameState = 1;
+        }
+    }
+    if (kb.L)
+    {
+        if (m_gameState == 1)
+        {
+            m_gameState = 2;
+        }
+    }
+    if (kb.K)
+    {
+        if (m_gameState == 2)
+        {
+            m_gameState = 3;
+        }
+    }
+    if (kb.J)
+    {
+        if (m_gameState == 3)
+        {
+            m_gameState = 0;
+        }
     }
     if (kb.D1)
     {
@@ -229,7 +257,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
-        
+
     }
     if (m_gameCamera == 2)
     {
@@ -279,7 +307,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         //m_world = Matrix::CreateRotationY(0.0);
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         m_effect->SetView(m_view);
-        
+
     }
     if (m_gameCamera == 9)
     {
@@ -327,25 +355,30 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-
-    DrawSwing2();
-    DrawWorld();
-    DrawProjectile(); 
-
+    if (m_gameState == 1)
+    {
+        DrawSwing2();
+        DrawWorld();
+        DrawProjectile();
+    }
     m_batch->End();
 
     m_spriteBatch->Begin();
 
-    RenderUIPowerBar();
-    if (1 == 1) // toggle between debug and normal UI rendering
+    if (m_gameState == 1)
     {
-        RenderDebugInfo();
+        RenderUIPowerBar();
+    }
+    if (m_gameState == 1)
+    {
+        DrawSwingUI();
         RenderUI();
     }
-    else
+    if (m_gameState == 0)
     {
-        RenderUI();
+        DrawStartScreen();
     }
+
     m_spriteBatch->End();
 
     Present();
@@ -362,7 +395,7 @@ void Game::Render()
     */
 }
 
-void Game::RenderDebugInfo()
+void Game::DrawSwingUI()
 {
     //m_fontPosDebug
     std::vector<std::string> uiString = pPlay->GetDebugData();
@@ -443,7 +476,7 @@ void Game::SetGameCamera(int aCamera)
     }
     if (aCamera == 2)
     {
-        m_gameCamera = 2; 
+        m_gameCamera = 2;
     }
     if (aCamera == 3)
     {
@@ -601,7 +634,7 @@ void Game::CreateDevice()
     // WLJ start
     // world start
     m_world = Matrix::Identity;
-    
+
     // world end
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
 
@@ -633,6 +666,7 @@ void Game::CreateDevice()
 
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
+    m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
     // end
 
@@ -800,7 +834,7 @@ void Game::CreateResources()
     float impactPointScale = pPlay->GetMeterImpactPoint();
     impactPointScale = impactPointScale * (m_powerMeterSize / powerMeterScale);
     m_powerMeterImpactPoint = m_powerMeterFrameRect.right - impactPointScale;
-    
+
     m_powerMeterImpactRect.top = m_powerMeterFrameRect.top;
     m_powerMeterImpactRect.bottom = m_powerMeterFrameRect.bottom;
     m_powerMeterImpactRect.right = m_powerMeterFrameRect.right - impactPointScale + 20;
@@ -860,7 +894,7 @@ void Game::DrawProjectile()
     for (int i = 0; i < arcCount; ++i)
     {
         Vector3 p1(prevPos);
-        
+
         Vector3 p2(shotPath[i]);
         //VertexPositionColor aV(p1, Colors::White);
         //VertexPositionColor bV(p2, Colors::White);
@@ -875,7 +909,7 @@ void Game::DrawProjectile()
         VertexPositionColor bVYellow(p2, Colors::Yellow);
         std::vector<int> colorVec = pGolf->GetDrawColorVector();
         int vecIndex = pGolf->GetDrawColorIndex();
-        
+
         if (vecIndex > 0)
         {
             if (i > colorVec[0])
@@ -900,7 +934,7 @@ void Game::DrawProjectile()
                 bV = bVYellow;
             }
         }
-        
+
         m_batch->DrawLine(aV, bV);
         prevPos = shotPath[i];
 
@@ -921,7 +955,6 @@ void Game::DrawProjectile()
         Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
         Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
         Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-
         VertexPositionColor ft1(f1, Colors::Red);
         VertexPositionColor ft2(f2, Colors::Red);
         VertexPositionColor ft3(f3, Colors::Red);
@@ -994,6 +1027,29 @@ void Game::DrawWorld()
     }
 }
 
+void Game::DrawStartScreen()
+{
+    std::string title = "GolfGame1989";
+    std::string author = "By Lehr Jackson";
+    std::string startText = "Press Enter to Start";
+    float fontTitlePosX = m_fontPos.x;
+    float fontTitlePosY = m_fontPos.y / 2.f;
+    Vector2 titlePos(fontTitlePosX, fontTitlePosY);
+    float fontAuthorPosX = m_fontPos.x;
+    float fontAuthorPosY = m_fontPos.y;
+    Vector2 authorPos(fontAuthorPosX, fontAuthorPosY);
+    Vector2 startTextPos(m_fontPos.x, m_fontPos.y + fontTitlePosY);
+
+    Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
+    Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
+    Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
+
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+    m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
+    m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
+}
+
 void Game::DrawSwing()
 {
 
@@ -1048,7 +1104,7 @@ void Game::DrawSwing()
         //m_batch->DrawLine(thetaVertex, arm);
         //m_batch->DrawLine(shaft, thetaVertex);
         m_batch->DrawLine(shaft, arm);
-        
+
     }
 
 
@@ -1073,7 +1129,7 @@ void Game::DrawSwing()
     m_batch->DrawLine(vert2, vert3);
     */
 
-// end swing draw
+    // end swing draw
 }
 
 void Game::DrawSwing2()
@@ -1099,7 +1155,7 @@ void Game::DrawSwing2()
     shaftOrigin = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(120.0)));
     shaftOrigin += armOrigin;
 
-    
+
 
     VertexPositionColor shoulder(origin, Colors::White);
     VertexPositionColor hand(armOrigin, Colors::White);
@@ -1153,14 +1209,12 @@ void Game::DrawSwing2()
     VertexPositionColor vRight(right, Colors::Red);
     m_batch->DrawLine(vTop, vBottom);
     m_batch->DrawLine(vLeft, vRight);
-
     /////////********* Start swing draw
     int impactPoint = pGolf->GetImpactStep();
     std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
     std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
     std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
     int swingStepCount = alphaVec.size();
-
     if (arcCount >= swingStepCount)
     {
         arcCount = 0;
@@ -1182,7 +1236,6 @@ void Game::DrawSwing2()
         VertexPositionColor arm(hand, Colors::Green);
         VertexPositionColor shaft(clubHead, Colors::Blue);
         VertexPositionColor thetaVertex(thetaPoint, Colors::White);
-
         m_batch->DrawLine(shoulder,arm);
     }
     */
@@ -1199,6 +1252,7 @@ void Game::OnDeviceLost()
     m_inputLayout.Reset();
 
     m_font.reset();
+    m_titleFont.reset();
     m_spriteBatch.reset();
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();
@@ -1215,7 +1269,3 @@ void Game::OnDeviceLost()
 
     CreateResources();
 }
-
-
-
-

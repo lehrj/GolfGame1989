@@ -16,7 +16,7 @@ public:
     Game() noexcept;
     //~Game() = default;
     ~Game();
-    
+
     Game(Game&&) = default;
     Game& operator= (Game&&) = default;
 
@@ -38,7 +38,7 @@ public:
     void OnWindowSizeChanged(int width, int height);
 
     // Properties
-    void GetDefaultSize( int& width, int& height ) const noexcept;
+    void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
 
@@ -46,11 +46,12 @@ private:
     void DrawSwing2();
     void DrawProjectile();
     void DrawWorld();
+    void DrawStartScreen();
     void Update(DX::StepTimer const& timer);
     void UpdateCamera(DX::StepTimer const& timer);
     void Render();
     void RenderUI();
-    void RenderDebugInfo();
+    void DrawSwingUI();
     void RenderUIPowerBar();
     void SetGameCamera(int aCamera);
 
@@ -84,17 +85,17 @@ private:
     std::unique_ptr<DirectX::CommonStates> m_states;
     std::unique_ptr<DirectX::BasicEffect> m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
-    
+
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
     // End
 
     //world start 
     DirectX::SimpleMath::Matrix m_world;
-    
+
     DirectX::SimpleMath::Matrix m_view;
     DirectX::SimpleMath::Matrix m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
-    
+
     int m_gameCamera = 1;
     float m_cameraRotationX = 2.0;
     float m_cameraRotationY = 0.0;
@@ -107,6 +108,7 @@ private:
 
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont> m_font;
+    std::unique_ptr<DirectX::SpriteFont> m_titleFont;
     DirectX::SimpleMath::Vector2 m_fontPos;
     DirectX::SimpleMath::Vector2 m_fontPos2;
     DirectX::SimpleMath::Vector2 m_fontPosDebug;
@@ -128,7 +130,7 @@ private:
     DirectX::SimpleMath::Vector2 m_powerBarImpactPos;
     DirectX::SimpleMath::Vector2 m_powerBarBackswingPos;
     DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
-    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;   
+    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;
     DirectX::SimpleMath::Vector2 m_powerBarImpactOrigin;
     DirectX::SimpleMath::Vector2 m_powerBarBackswingOrigin;
 
@@ -140,4 +142,6 @@ private:
     float m_powerMeterSize;
     float m_powerMeterImpactPoint;
     float m_powerMeterBarScale;
+
+    int m_gameState = 0;
 };
