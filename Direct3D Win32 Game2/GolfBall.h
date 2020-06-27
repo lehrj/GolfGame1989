@@ -23,25 +23,10 @@ struct SpinProjectile
     double mass;
     int numEqns;  // number of equations to solve
     double omega;  //  angular velocity, m/s
-    //double q[6];
     BallMotion q;
-    /*
-    q[0] = vx, velocity
-    q[1] = x position
-    q[2] = vy, velocity
-    q[3] = y position
-    q[4] = vz, velocity
-    q[5] = z position
-    */
     DirectX::SimpleMath::Vector3 rotationAxis;
-    //double rx;     //  spin axis vector component
-    //double ry;     //  spin axis vector component
-    //double rz;     //  spin axis vector component
     double radius; //  sphere radius, m
     DirectX::SimpleMath::Vector3 windSpeed;
-    //double windVx;
-    //double windVy;
-    //double windVz;
 };
 
 /*
@@ -81,8 +66,7 @@ class GolfBall
 public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
-    void FireProjectile(Vector4d aSwingInput, Environment* pEnviron);
-    void FireProjectile2(Utility::ImpactData aImpact, Environment* pEnviron);
+    void FireProjectile(Utility::ImpactData aImpact, Environment* pEnviron);
 
     int GetBounceCount() { return m_bounceCount; };
     int GetColorIndex() { return m_drawColorIndex; };
@@ -105,9 +89,7 @@ public:
     
     std::vector<DirectX::SimpleMath::Vector3> OutputShotPath() { return m_shotPath; };
 
-    void PrepProjectileLaunch(Vector4d aSwingInput);
-    void PrepProjectileLaunch2(Utility::ImpactData aImpactData);
-    void PrepProjectileLaunch3(Utility::ImpactData aImpactData);
+    void PrepProjectileLaunch(Utility::ImpactData aImpactData);
 
     void PrintFlightData();
     
@@ -135,6 +117,7 @@ private:
     int m_drawColorIndex = 0;
     std::vector<int> m_drawColorVector;
     std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
+    std::vector<float> m_shotPathTimeStep;
     double m_initialSpinRate;
     double m_landingSpinRate;
     DirectX::SimpleMath::Vector3 m_landingCordinates;

@@ -11,8 +11,7 @@ public:
     GolfSwing();
     ~GolfSwing();
 
-    Vector4d CalculateLaunchVector(void);
-    Utility::ImpactData CalculateLaunchVector2();
+    Utility::ImpactData CalculateLaunchVector();
     void CalculateSwingCordinates();
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);

@@ -84,7 +84,7 @@ void Golf::CalculateData()
 {
     //Vector4d swingVector = pSwing->CalculateLaunchVector();
     //pBall->FireProjectile(swingVector, pEnvironment);
-    pBall->FireProjectile2(pSwing->CalculateLaunchVector2(), pEnvironment);
+    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
 }
 
 void Golf::InputData()
