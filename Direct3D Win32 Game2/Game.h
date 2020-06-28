@@ -41,9 +41,7 @@ public:
     void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
-
     void DrawSwing();
-    void DrawSwing2();
     void DrawProjectile();
     void DrawProjectileRealTime();
     void DrawShotTimerUI();
@@ -52,7 +50,7 @@ private:
     void Update(DX::StepTimer const& timer);
     void UpdateCamera(DX::StepTimer const& timer);
     void Render();
-    void RenderUI();
+    void DrawUI();
     void DrawSwingUI();
     void RenderUIPowerBar();
     void SetGameCamera(int aCamera);
@@ -147,5 +145,5 @@ private:
     float m_powerMeterImpactPoint;
     float m_powerMeterBarScale;
 
-    int m_gameState = 1;
+    int m_gameState = 0;
 };

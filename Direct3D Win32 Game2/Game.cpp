@@ -363,7 +363,7 @@ void Game::Render()
     m_batch->Begin();
     if (m_gameState == 1)
     {
-        //DrawSwing2();
+        DrawSwing();
         DrawWorld();
         DrawProjectile();
     }
@@ -379,7 +379,7 @@ void Game::Render()
     if (m_gameState == 1)
     {
         DrawSwingUI();
-        RenderUI();
+        DrawUI();
     }
     if (m_gameState == 0)
     {
@@ -421,7 +421,7 @@ void Game::DrawSwingUI()
     m_fontPosDebug.y = fontOriginPosY;
 }
 
-void Game::RenderUI()
+void Game::DrawUI()
 {
     std::vector<std::string> uiString = pGolf->GetUIstrings();
 
@@ -1057,34 +1057,35 @@ void Game::DrawShotTimerUI()
 void Game::DrawWorld()
 {
     // draw world grid
-    Vector3 xaxis(2.f, 0.f, 0.f);
-    Vector3 yaxis(0.f, 0.f, 2.f);
+    Vector3 xAxis(2.f, 0.f, 0.f);
+    Vector3 zAxis(0.f, 0.f, 2.f);
     Vector3 origin = Vector3::Zero;
     size_t divisions = 20;
-    for (size_t i = 0; i <= divisions; ++i)
+    for (size_t i = 0; i <= divisions + 10; ++i)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = xaxis * fPercent + origin;
+        Vector3 scale = xAxis * fPercent + origin;
         if (scale.x == 0.0f)
         {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            VertexPositionColor v1(scale - zAxis, Colors::Green);
+            VertexPositionColor v2(scale + zAxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
         else
         {
-            VertexPositionColor v1(scale - yaxis, Colors::Green);
-            VertexPositionColor v2(scale + yaxis, Colors::Green);
+            VertexPositionColor v1(scale - zAxis, Colors::Green);
+            VertexPositionColor v2(scale + zAxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
     }
+
     for (size_t i = 0; i <= divisions; i++)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
 
-        Vector3 scale = yaxis * fPercent + origin;
+        Vector3 scale = zAxis * fPercent + origin;
 
         if (scale.z == 0.0f)
         {
@@ -1094,8 +1095,8 @@ void Game::DrawWorld()
         }
         else
         {
-            VertexPositionColor v1(scale - xaxis, Colors::Green);
-            VertexPositionColor v2(scale + xaxis, Colors::Green);
+            VertexPositionColor v1(scale - xAxis, Colors::Green);
+            VertexPositionColor v2(scale + xAxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
     }
@@ -1118,13 +1119,12 @@ void Game::DrawStartScreen()
     Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
     Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
 
-
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
-void Game::DrawSwing2()
+void Game::DrawSwing()
 {
     float shoulderAccel = .98;
 
@@ -1146,8 +1146,6 @@ void Game::DrawSwing2()
     shaftOrigin.y = -1.0;
     shaftOrigin = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(120.0)));
     shaftOrigin += armOrigin;
-
-
 
     VertexPositionColor shoulder(origin, Colors::White);
     VertexPositionColor hand(armOrigin, Colors::White);
@@ -1240,9 +1238,7 @@ void Game::OnDeviceLost()
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
-
     m_inputLayout.Reset();
-
     m_font.reset();
     m_titleFont.reset();
     m_spriteBatch.reset();

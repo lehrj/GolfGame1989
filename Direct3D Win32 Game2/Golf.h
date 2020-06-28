@@ -17,10 +17,7 @@ public:
 
     void BuildVector();
     void BuildUIstrings();
-    void CalculateData();
 
-    Vector4d GetLaunchVector();
-    std::vector<Vector4d> GetSwingData();
     const int GetSwingStepIncCount() { return pSwing->GetSwingStepIncrementCount(); };
 
     std::vector<DirectX::SimpleMath::Vector3> GetAlpha() { return pSwing->GetAlphaCords(); };

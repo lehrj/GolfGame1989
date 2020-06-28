@@ -7,7 +7,6 @@
 #include "Vector4d.h"
 #include <vector>
 
-
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2)
 {
     double m = (aHeight2 - aHeight1) / (aTime2 - aTime1);
@@ -194,9 +193,7 @@ void GolfBall::LaunchProjectile()
         if (m_ball.q.velocity.y < 1.0 || count > 5)
         {
             isBallFlyOrBounce = false;
-        }
-        
-        
+        } 
     }
     
     m_drawColorVector.push_back(m_shotPath.size());  
@@ -230,11 +227,8 @@ void GolfBall::LaunchProjectile()
         {
             isBallRolling = false;
         }
-        
     }
     SetLandingCordinates(m_ball.q.position);
-    int test = 9;
-    
 }
 
 void GolfBall::LaunchProjectilePostImpact()
@@ -364,7 +358,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     double radius = m_ball.radius;
     double omega = m_faceRoll * vcn / radius;
 
-
     //  Rotate post-collision ball velocities back into 
     //  standard Cartesian frame of reference. Because the
     //  line-of-action was in the xy plane, the z-velocity
@@ -432,7 +425,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     normfManus.Normalize();
     normOmegaBall.Normalize();
 
-    
     //SetSpinAxis(omegaBall);
 
     m_ball.omega = omega;
@@ -647,7 +639,6 @@ void GolfBall::ResetBallData()
     m_ball.q.position.y = 0.0;   //  y  = 0.0
 }
 
-
 void GolfBall::RollRightHandSide(struct SpinProjectile* pBall, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq)
 {
     //  Compute the intermediate values of the 
@@ -705,8 +696,6 @@ void GolfBall::RollRightHandSide(struct SpinProjectile* pBall, BallMotion* q, Ba
     double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
     */
 
-
-   
     //  Compute right-hand side values.
     //dq->velocity.x = ds * (Fdx + Fmx) / pBall->mass;
     //dq->position.x = ds * vx;

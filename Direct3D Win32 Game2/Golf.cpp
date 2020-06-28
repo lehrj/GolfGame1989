@@ -28,7 +28,7 @@ Golf::~Golf()
 
 void Golf::BuildVector()
 {
-    CalculateData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
     InputData();
     //NormalizeData();
     ScaleCordinates();
@@ -54,7 +54,6 @@ void Golf::SelectInputClub(int aInput)
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildVector();
-
     BuildUIstrings();
 }
 
@@ -80,13 +79,6 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
 }
 
-void Golf::CalculateData()
-{
-    //Vector4d swingVector = pSwing->CalculateLaunchVector();
-    //pBall->FireProjectile(swingVector, pEnvironment);
-    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
-}
-
 void Golf::InputData()
 {
     m_shotPathRaw.clear();
@@ -101,17 +93,6 @@ int Golf::GetDrawColorIndex()
 std::vector<int> Golf::GetDrawColorVector()
 {
     return pBall->GetColorVector();
-}
-
-Vector4d Golf::GetLaunchVector()
-{
-    Vector4d launchVector(pSwing->GetArmLength(), pSwing->GetClubLength(), pSwing->GetLaunchAngle(), pSwing->GetLaunchVelocity());
-    return launchVector;
-}
-
-std::vector<Vector4d> Golf::GetSwingData()
-{
-    return pSwing->OutputSwingData();
 }
 
 void Golf::TransformCordinates()

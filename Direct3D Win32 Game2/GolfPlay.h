@@ -7,7 +7,6 @@ public:
     GolfPlay();
     ~GolfPlay();
     void BuildDebugData();
-    void CalculateImpact();
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() { return m_impactData; };
     float GetImpact() { return m_swingImpactProcessed; };

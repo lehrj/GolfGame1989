@@ -56,7 +56,6 @@ public:
     void SetShoulderAccel(double aShoulderAccel);
     void SelectClub();
     void UpdateGolfSwingValues();
-    //void UpdateImpact(float aSwingPower, float aImpact);
     void UpdateImpactData(Utility::ImpactData aImpactData);
     void UpdateClubData();
 
