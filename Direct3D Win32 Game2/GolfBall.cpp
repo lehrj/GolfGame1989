@@ -19,10 +19,8 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
 
 void GolfBall::FireProjectile(Utility::ImpactData aImpactData, Environment* pEnviron)
 {   
-    //PrepProjectileLaunch2(aImpactData);
     PrepProjectileLaunch(aImpactData);
-    //LaunchProjectile();
-    LaunchProjectile2();
+    LaunchProjectile();
     LandProjectile();
 }
 
@@ -126,7 +124,7 @@ void GolfBall::RollBall()
     m_ball.q.velocity.x -= a;
 }
 
-void GolfBall::LaunchProjectile2()
+void GolfBall::LaunchProjectile()
 {
     PushFlightData();
      
@@ -190,12 +188,15 @@ void GolfBall::LaunchProjectile2()
         SetLandingSpinRate(m_ball.omega);
         SetMaxHeight(maxHeight);
         ++m_bounceCount;
+        
         LandProjectile();
         ++count;
         if (m_ball.q.velocity.y < 1.0 || count > 5)
         {
             isBallFlyOrBounce = false;
         }
+        
+        
     }
     
     m_drawColorVector.push_back(m_shotPath.size());  
@@ -316,84 +317,6 @@ void GolfBall::LaunchProjectilePostImpact()
     LandProjectile();
     //PrintLandingData(flightData, maxHeight);
 }
-
-void GolfBall::LaunchProjectile()
-{
-    DirectX::SimpleMath::Vector3 shotOrigin(0.0, 0.0, 0.0);
-    m_shotPath.push_back(shotOrigin);
-
-    // Fly ball on an upward trajectory until it stops climbing
-    Vector4d flightData;
-    double dt = m_timeStep;
-    double maxHeight = m_ball.launchHeight;
-    double time = 0.0;
-    SetInitialSpinRate(m_ball.omega);
-    double x = m_ball.q.position.x;
-    double y = m_ball.q.position.y;
-
-    bool isBallAscending = true;
-    while (isBallAscending == true)
-    {
-        ProjectileRungeKutta4(&m_ball, dt);
-
-        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-
-        //PrintFlightData();
-        PushFlightData();
-
-        if (m_ball.q.velocity.y < 0.0)
-        {
-            maxHeight = m_ball.q.position.y;
-            isBallAscending = false;
-        }
-    }
-    // Check to verify landing area height can be reached. If it cannot the shot is treated as if it is out of play so x = 0.0;
-    /*
-    if (maxHeight + m_ball.launchHeight < m_ball.landingHeight)
-    {
-        printf("Ball has landed out of play, ball does not reach height of landing area!\n");
-        flightData.SetX(0.0);
-        x = 0.0;
-    }
-    */
-
-    double previousY = flightData.GetY();
-    double previousTime = flightData.GetW();
-
-    //  Calculate ball decent path until it reaches landing area height
-    while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
-    {
-        previousY = flightData.GetY();
-        previousTime = flightData.GetW();
-        ProjectileRungeKutta4(&m_ball, dt);
-        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-        //PrintFlightData();
-        PushFlightData();
-        time = m_ball.flightTime;
-        y = m_ball.q.position.y;
-    }
-
-    //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
-    //ProjectileRungeKutta4(&m_ball, -rollBackTime);
-    flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-
-    // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
-    //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
-        /*
-    q[0] = vx, velocity
-    q[1] = x position
-    q[2] = vy, velocity
-    q[3] = y position
-    q[4] = vz, velocity
-    q[5] = z position
-    */
-    SetLandingCordinates(m_ball.q.position);
-    SetLandingSpinRate(m_ball.omega);
-    SetMaxHeight(maxHeight);
-    //LandProjectile();
-    //PrintLandingData(flightData, maxHeight);
-}
-
 
 DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation)
 {
@@ -526,6 +449,7 @@ void GolfBall::PushFlightData()
     if (m_ball.q.position.y >= m_ball.landingHeight)
     {
         m_shotPath.push_back(m_ball.q.position);
+        m_shotPathTimeStep.push_back(m_ball.flightTime);
     }
     //m_shotPath.push_back(m_ball.q.position);
 }
@@ -711,6 +635,7 @@ void GolfBall::ResetBallData()
     m_drawColorIndex = 0;
     m_drawColorVector.clear();
     m_shotPath.clear();
+    m_shotPathTimeStep.clear();
     m_timeStep = 0.1f;
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;
@@ -955,7 +880,8 @@ void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
     m_drawColorVector.clear();
-    m_timeStep = 0.1f;
+    //m_timeStep = 0.1f;
+    m_timeStep = 0.05f;
     m_ball.airDensity = pEnviron->GetAirDensity();
     m_ball.area = 0.001432;
     m_ball.dragCoefficient = 0.22;

@@ -74,7 +74,7 @@ public:
 
     DirectX::SimpleMath::Vector3 GetLandingCordinates() { return m_landingCordinates; };
     const double GetMaxHeight() { return m_maxHeight; };
-    const double GetShotDistance();
+    
     const float GetImpactAngle();
     const float GetImpactDirection();
     const DirectX::SimpleMath::Plane GetImpactPlane();
@@ -82,9 +82,10 @@ public:
     const double GetInitialSpinRate() { return m_initialSpinRate; };
     const double GetLandingSpinRate() { return m_landingSpinRate; };
     const double GetLandingHeight();
+    const double GetShotDistance();
+    std::vector<float> GetShotTimeSteps() { return m_shotPathTimeStep; };
     void LandProjectile();
     void LaunchProjectile();
-    void LaunchProjectile2();
     void LaunchProjectilePostImpact();
     
     std::vector<DirectX::SimpleMath::Vector3> OutputShotPath() { return m_shotPath; };

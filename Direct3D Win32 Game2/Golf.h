@@ -32,6 +32,7 @@ public:
     std::vector<int> GetDrawColorVector();
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     std::vector<DirectX::SimpleMath::Vector3> GetShotPath() { return m_shotPathNorm; };
+    std::vector<float> GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); };
     const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
     void InputData();
     void NormalizeData();

@@ -18,14 +18,14 @@ public:
     void CycleClub();
     void CycleInputClub(int aInput);
     const double GetArmLength() { return m_armLength; };
-    //const double GetBackSwingPercentage() { return m_backSwingPercentage; };
+    
     const double GetBackSwingPercentage() { return m_impactData.power; };
     const double GetClubAngle() { return m_club.angle; };
     const double GetClubLength() { return m_club.length; };
     const double GetClubMass() { return m_club.mass; };
     const std::string GetClubName() { return m_club.clubName; };
     const double GetLaunchAngle() { return m_launchAngle; };
-    //const double GetLaunchVelocity() { return m_launchVelocity; };
+    
     const double GetLaunchVelocity() { return m_impactData.velocity; };
     std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta();
     const int GetSwingImpactStep() { return m_swingImpactStep; };

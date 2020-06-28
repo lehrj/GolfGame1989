@@ -45,6 +45,8 @@ private:
     void DrawSwing();
     void DrawSwing2();
     void DrawProjectile();
+    void DrawProjectileRealTime();
+    void DrawShotTimerUI();
     void DrawWorld();
     void DrawStartScreen();
     void Update(DX::StepTimer const& timer);
@@ -78,6 +80,8 @@ private:
 
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
+    DX::StepTimer                                   m_flightStepTimer;
+    float                                           m_projectileTimer = 0.0f;
 
     // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
@@ -104,7 +108,7 @@ private:
     // WLJ added for drawing projectile and swing
     Golf* pGolf;
     GolfPlay* pPlay;
-    int arcCount = 0;
+    int m_arcCount = 0;
 
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont> m_font;
@@ -143,5 +147,5 @@ private:
     float m_powerMeterImpactPoint;
     float m_powerMeterBarScale;
 
-    int m_gameState = 0;
+    int m_gameState = 1;
 };

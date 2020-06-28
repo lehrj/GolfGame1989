@@ -55,10 +55,13 @@ void Game::Initialize(HWND window, int width, int height)
 void Game::Tick()
 {
     m_timer.Tick([&]()
-        {
-            Update(m_timer);
-        });
+    {
+        Update(m_timer);
+    });
 
+    m_flightStepTimer.Tick([&]()
+        {
+        });
     Render();
 }
 
@@ -66,7 +69,7 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
-
+    m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
     pPlay->Swing();
 
@@ -267,7 +270,10 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_gameCamera == 3)
     {
-        m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
+        m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
+        m_effect->SetView(m_view);
     }
     if (m_gameCamera == 4)
     {
@@ -357,13 +363,14 @@ void Game::Render()
     m_batch->Begin();
     if (m_gameState == 1)
     {
-        DrawSwing2();
+        //DrawSwing2();
         DrawWorld();
         DrawProjectile();
     }
     m_batch->End();
 
     m_spriteBatch->Begin();
+    //DrawShotTimerUI();
 
     if (m_gameState == 1)
     {
@@ -853,15 +860,15 @@ void Game::CreateResources()
     // End Texture
 }
 
-void Game::DrawProjectile()
+// working old version prior to impmenting real time match update
+void Game::DrawProjectile() 
 {
     /////////********* Start projectile draw
     //std::vector<double> xVec = pGolf->GetVect(0);
     //std::vector<double> yVec = pGolf->GetVect(1);
     //std::vector<double> zVec = pGolf->GetVect(2);
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-
+    
     //draw tee box
     double originX = shotPath[0].x;
     double originZ = shotPath[0].z;
@@ -877,21 +884,21 @@ void Game::DrawProjectile()
     m_batch->DrawLine(vt1, vt3);
     m_batch->DrawLine(vt3, vt4);
     m_batch->DrawLine(vt4, vt2);
-
     // end tee box draw
 
     int stepCount = shotPath.size();
 
-    if (arcCount >= stepCount)
+    if (m_arcCount >= stepCount)
     {
-        arcCount = 0;
+        m_flightStepTimer.ResetElapsedTime();
+        m_arcCount = 0;
     }
-    ++arcCount;
+    ++m_arcCount;
     //double prevX = 0.0;
     //double prevY = 0.0;
 
     Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < arcCount; ++i)
+    for (int i = 0; i < m_arcCount; ++i)
     {
         Vector3 p1(prevPos);
 
@@ -978,6 +985,73 @@ void Game::DrawProjectile()
         //toggleGetNextClub = 1;
     //}
     // end landing explosion
+}
+
+void Game::DrawProjectileRealTime()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+    int stepCount = shotPath.size();
+    float shotTimeTotal = shotTimeStep.back();
+
+    if (m_arcCount >= stepCount)
+    {
+        //m_projectileTimer = 0.0;
+        m_arcCount = 0;
+    }
+    ++m_arcCount;
+
+    /*
+    Vector3 prevPos = shotPath[0];
+    int i = -1;
+    do
+    {
+        ++i;
+        Vector3 p1(prevPos);
+
+        Vector3 p2(shotPath[i]);
+
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+        m_batch->DrawLine(aV, bV);
+        prevPos = shotPath[i];
+        
+        //++i;
+        if (i > shotTimeStep.size()-1)
+        {
+            break;
+        }
+        
+    } while (shotTimeStep[i] < m_projectileTimer || i < shotTimeStep.size()-1);
+    */
+    
+    Vector3 prevPos = shotPath[0];
+    for (int i = 0; i < shotPath.size(); ++i)
+    {
+        Vector3 p1(prevPos);
+        Vector3 p2(shotPath[i]);
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+
+        if (shotTimeStep[i] < m_projectileTimer)
+        {
+            m_batch->DrawLine(aV, bV);
+        }
+        prevPos = shotPath[i];
+    }
+    
+    if (m_projectileTimer > shotTimeStep.back())
+    {
+        m_projectileTimer = 0.0;
+    }
+}
+
+void Game::DrawShotTimerUI()
+{
+    std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
+    Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
+    m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
 
 void Game::DrawWorld()
@@ -1084,15 +1158,15 @@ void Game::DrawSwing2()
     Vector3 shaft = shaftOrigin;
 
     int swingStepCount = angles.size();
-    if (arcCount >= swingStepCount)
+    if (m_arcCount >= swingStepCount)
     {
-        arcCount = 0;
+        m_arcCount = 0;
     }
-    ++arcCount;
+    ++m_arcCount;
 
     int impactPoint = pGolf->GetImpactStep();
 
-    for (int i = 0; i < arcCount; ++i)
+    for (int i = 0; i < m_arcCount; ++i)
     {
         if (i < impactPoint)
         {
