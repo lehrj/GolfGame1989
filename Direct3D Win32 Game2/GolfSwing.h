@@ -4,7 +4,6 @@
 #include "Utility.h"
 #include "Vector4d.h"
 
-
 class GolfSwing
 {
 public:
@@ -58,7 +57,6 @@ public:
     void UpdateGolfSwingValues();
     void UpdateImpactData(Utility::ImpactData aImpactData);
     void UpdateClubData();
-
 
 private:
     GolfBag* m_pBag;

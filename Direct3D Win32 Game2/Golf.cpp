@@ -30,7 +30,6 @@ void Golf::BuildVector()
 {
     pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
     InputData();
-    //NormalizeData();
     ScaleCordinates();
 }
 
@@ -81,7 +80,7 @@ void Golf::BuildUIstrings()
 
 void Golf::InputData()
 {
-    m_shotPathRaw.clear();
+    m_shotPath.clear();
     CopyShotPath(pBall->OutputShotPath());
 }
 
@@ -95,78 +94,26 @@ std::vector<int> Golf::GetDrawColorVector()
     return pBall->GetColorVector();
 }
 
-void Golf::TransformCordinates()
+//Transform shotpath to start at edge of world grid
+void Golf::TransformCordinates(const int aIndex)
 {
-    DirectX::SimpleMath::Vector3 oldVec;
-    DirectX::SimpleMath::Vector3 newVec;
-    double sX;
-    double sY;
-    double sZ;
-
-    DirectX::SimpleMath::Matrix transMatrix = DirectX::SimpleMath::Matrix::Identity;
-    transMatrix._14 = 2.0f;
-    transMatrix._24 = 2.0f;
-    transMatrix._34 = 2.0f;
-    for (int i = 0; i < m_shotPathNorm.size(); ++i)
-    {
-        m_shotPathNorm[i].x -= 2;
-    }
+    m_shotPath[aIndex].x -= 2;
 }
 
 void Golf::ScaleCordinates()
 {
-    m_shotPathNorm.clear();
-    DirectX::SimpleMath::Vector3 oldVec;
-    DirectX::SimpleMath::Vector3 newVec;
+    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
     double scaleFactor = .02;
     double sX = scaleFactor;
     double sY = scaleFactor;
     double sZ = scaleFactor;
-
-    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
-    /*
-    scaleMatrix._11 = sX;
-    scaleMatrix._22 = sY;
-    scaleMatrix._33 = sZ;
-    */
     scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
 
-    for (int i = 0; i < m_shotPathRaw.size(); ++i)
+    for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        oldVec = m_shotPathRaw[i];
-
-        //oldVec *= transMatrix;
-        //newVec = oldVec * transMatrix;
-
-        //DirectX::SimpleMath::Vector4 aTestVec = DirectX::SimpleMath::Vector4::Transform(oldVec, transMatrix);
-        newVec = DirectX::SimpleMath::Vector3::Transform(oldVec, scaleMatrix);
-        //m_xNorm[i] = newVec.x;
-        //m_yNorm[i] = newVec.y;
-        //m_zNorm[i] = newVec.z;
-        m_shotPathNorm.push_back(newVec);
-    }
-    TransformCordinates();
-}
-
-void Golf::NormalizeData()
-{
-    SetShotCordMax();
-    //m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
-    //m_yWindow = m_maxY + 10;
-
-    m_xWindow = m_maxX + 10; // WLJ need to adjust how this is done 
-    m_yWindow = m_maxY + 10;
-    m_zWindow = m_maxZ + 10;
-    
-    m_shotPathNorm.clear();
-    for (int i = 0; i < m_shotPathRaw.size(); ++i)
-    {
-        double valX = (((m_shotPathRaw[i].x / m_xWindow)));
-        double valY = (((m_shotPathRaw[i].y / m_yWindow)));
-        double valZ = (((m_shotPathRaw[i].z / m_zWindow)));
-        DirectX::SimpleMath::Vector3 val(valX, valY, valZ);
-        m_shotPathNorm.push_back(val);
-    }
+        m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
+        TransformCordinates(i);
+    }  
 }
 
 void Golf::SetShotCordMax()
@@ -174,19 +121,19 @@ void Golf::SetShotCordMax()
     double maxX = 0.0;
     double maxY = 0.0;
     double maxZ = 0.0;
-    for (int i = 0; i < m_shotPathRaw.size(); ++i)
+    for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        if (maxX < m_shotPathRaw[i].x)
+        if (maxX < m_shotPath[i].x)
         {
-            maxX = m_shotPathRaw[i].x;
+            maxX = m_shotPath[i].x;
         }
-        if (maxY < m_shotPathRaw[i].y)
+        if (maxY < m_shotPath[i].y)
         {
-            maxY = m_shotPathRaw[i].y;
+            maxY = m_shotPath[i].y;
         }
-        if (maxZ < m_shotPathRaw[i].z)
+        if (maxZ < m_shotPath[i].z)
         {
-            maxZ = m_shotPathRaw[i].z;
+            maxZ = m_shotPath[i].z;
         }
     }
     m_maxX = maxX;
@@ -194,23 +141,17 @@ void Golf::SetShotCordMax()
     m_maxZ = maxZ;
 }
 
-void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3> aPath)
+void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
 {
-    m_shotPathRaw = aPath;
+    m_shotPath = aPath;
 }
 
 void Golf::UpdateImpact(Utility::ImpactData aImpact)
 {
     pSwing->UpdateImpactData(aImpact);
-    //pSwing->UpdateBackSwing(aImpact.power);
-    //BuildVector();
-
-    //pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     pBall->ResetBallData();
-    //pSwing->CycleInputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildVector();
-
     BuildUIstrings();
 }

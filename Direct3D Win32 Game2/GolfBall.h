@@ -83,13 +83,13 @@ public:
     const double GetLandingSpinRate() { return m_landingSpinRate; };
     const double GetLandingHeight();
     const double GetShotDistance();
-    std::vector<float> GetShotTimeSteps() { return m_shotPathTimeStep; };
+    std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
     void LandProjectile();
     void LaunchProjectile();
     void LaunchProjectilePostImpact();
     
-    std::vector<DirectX::SimpleMath::Vector3> OutputShotPath() { return m_shotPath; };
-
+    std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
+    //std::vector<DirectX::SimpleMath::Vector3>& OutputShotPathRef() { return m_shotPath; };
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
 
     void PrintFlightData();

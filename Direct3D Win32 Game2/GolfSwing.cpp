@@ -135,7 +135,6 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     double dt = 0.0025; // Time delta between frames in seconds
     double    a, at; // stores previous time steps results for alpha and its first derivative
     double    b, bt; // stores previous time steps results for beta and its first derivative
-
     double    phi; // stores value of theta + beta
     double    Vc2; // square of club head velocity 
     double  ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
@@ -144,9 +143,6 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     double launchAngle = 0.0;
     bool isVcFound = false;
 
-    //PrintSwingMechanics(Vc, time);
-
-    //for (int i = 0; i < 200; i++)
     for (int i = 0; i < m_swingStepIncrementCount; i++)
     {
         time += dt;

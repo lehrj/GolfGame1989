@@ -8,7 +8,6 @@
 #include "Utility.h"
 #include "Vector4d.h"
 
-
 class Golf
 {
 public:
@@ -28,15 +27,14 @@ public:
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-    std::vector<DirectX::SimpleMath::Vector3> GetShotPath() { return m_shotPathNorm; };
-    std::vector<float> GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); };
+    std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
+    std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); };
     const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
     void InputData();
-    void NormalizeData();
     void ScaleCordinates();
     void SelectNextClub();
     void SelectInputClub(int aInput);
-    void TransformCordinates();
+    void TransformCordinates(const int aIndex);
     void SetShotCordMax();
     void UpdateImpact(Utility::ImpactData aImpact);
     
@@ -47,7 +45,7 @@ private:
     GolfPlay* pPlay;
     Utility::ImpactData m_impactData;
 
-    void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3> aPath);
+    void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
     double m_maxX;
     double m_maxY;
     double m_maxZ;
@@ -55,10 +53,6 @@ private:
     double m_yWindow;
     double m_zWindow;
 
-    std::vector<DirectX::SimpleMath::Vector3> m_shotPathNorm;
-
-    std::vector<DirectX::SimpleMath::Vector3> m_shotPathRaw;
-    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_testShotPathsRaw;
-    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_testShotPathsNorm;
+    std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
     std::vector<std::string> m_uiStrings;
 };
