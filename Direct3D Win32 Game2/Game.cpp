@@ -207,46 +207,45 @@ void Game::Update(DX::StepTimer const& timer)
     {
         SetGameCamera(4);
     }
-    if (kb.F5)
+    if (kb.NumPad6)
     {
-        SetGameCamera(5);
+        m_cameraRotationX -= m_cameraMovementSpeed;
     }
-    if (kb.F6)
+    if (kb.NumPad4)
     {
-        SetGameCamera(6);
+        m_cameraRotationX += m_cameraMovementSpeed;
     }
-    if (kb.F7)
+    if (kb.NumPad2)
     {
-        SetGameCamera(7);
+        m_cameraRotationY -= m_cameraMovementSpeed;
     }
-    if (kb.F8)
+    if (kb.NumPad8)
     {
-        SetGameCamera(8);
+        m_cameraRotationY += m_cameraMovementSpeed;
     }
-    if (kb.Q)
+    if (kb.NumPad7)
     {
-        SetGameCamera(8);
-        //pPlay->StartSwing();
+        m_cameraTargetX += m_cameraMovementSpeed;
     }
-    if (kb.F9)
+    if (kb.NumPad9)
     {
-        SetGameCamera(9);
+        m_cameraTargetX -= m_cameraMovementSpeed;
+    }
+    if (kb.NumPad1)
+    {
+        m_cameraTargetZ += m_cameraMovementSpeed;
+    }
+    if (kb.NumPad3)
+    {
+        m_cameraTargetZ -= m_cameraMovementSpeed;
     }
     if (kb.OemMinus)
     {
-        m_cameraRotationX -= .01;
+        m_cameraZoom -= m_cameraMovementSpeed + .3f;
     }
     if (kb.OemPlus)
     {
-        m_cameraRotationX += .01;
-    }
-    if (kb.OemOpenBrackets)
-    {
-        m_cameraRotationY -= .01;
-    }
-    if (kb.OemCloseBrackets)
-    {
-        m_cameraRotationY += .01;
+        m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
     auto mouse = m_mouse->GetState();
 
@@ -264,24 +263,29 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_gameCamera == 2)
     {
-        m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
+        m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 0.f), Vector3::Zero, Vector3::UnitY);
         m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
     if (m_gameCamera == 3)
     {
-        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_world = Matrix::CreateRotationY(m_cameraRotationX);
         m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
-        m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
     if (m_gameCamera == 4)
     {
-        m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
-        //m_world = Matrix::CreateRotationY(0.0);
+        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
+        m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , Vector3::UnitY);
         m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
+            float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
+
         m_effect->SetView(m_view);
+        m_effect->SetProjection(m_proj);
     }
     if (m_gameCamera == 5)
     {
@@ -363,9 +367,10 @@ void Game::Render()
     m_batch->Begin();
     if (m_gameState == 1)
     {
-        DrawSwing();
+        //DrawSwing();
         DrawWorld();
-        DrawProjectile();
+        //DrawProjectile();
+        DrawProjectileRealTime();
     }
     m_batch->End();
 

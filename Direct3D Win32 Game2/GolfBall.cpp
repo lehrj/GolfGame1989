@@ -204,23 +204,28 @@ void GolfBall::LaunchProjectile()
     bool isBallRolling = true;
     while (isBallRolling == true)
     {
-        //RollRungeKutta4(&m_ball, dt);
+
+        RollRungeKutta4(&m_ball, dt);
         
-        //RollBall();
+        m_ball.q.velocity.y = 0.0;
+        m_ball.q.position.y = 0.0;
+        m_ball.q.velocity.z = 0.0;
+        m_ball.q.position.z = 0.0;
+        /*
         float pg = 1.2;
         float g = m_ball.gravity;
         float a = -(5.0 / 7.0) * pg * g;
 
         a = a * m_timeStep;
         a = 0.6;
-        this->m_ball.q.velocity.x = a * this->m_ball.q.velocity.x;
+        this->m_ball.q.velocity.x = (a / dt) * this->m_ball.q.velocity.x;
         this->m_ball.q.velocity.z = a * this->m_ball.q.velocity.z;
         this->m_ball.q.velocity.y = 0.0;
         m_ball.q.position.y = 0.0;
         //RollRungeKutta4(&m_ball, dt);
         m_ball.q.position += m_ball.q.velocity;
         flightData = m_ball.q;
-        
+        */
         //PrintFlightData();
         PushFlightData();
         if (m_ball.q.velocity.x < 0.1)
@@ -229,87 +234,6 @@ void GolfBall::LaunchProjectile()
         }
     }
     SetLandingCordinates(m_ball.q.position);
-}
-
-void GolfBall::LaunchProjectilePostImpact()
-{
-    /*
-    double shotOrigin = 0.0;
-    m_xVals.push_back(shotOrigin);
-    m_yVals.push_back(shotOrigin);
-    m_zVals.push_back(shotOrigin);
-    */
-    // Fly ball on an upward trajectory until it stops climbing
-    Vector4d flightData;
-    double dt = m_timeStep;
-    double maxHeight = m_ball.launchHeight;
-    //double time = 0.0;
-    double time = m_ball.flightTime;
-    SetInitialSpinRate(m_ball.omega);
-    double x = m_ball.q.position.x;
-    double y = m_ball.q.position.y;
-
-    bool isBallAscending = true;
-    while (isBallAscending == true)
-    {
-        ProjectileRungeKutta4(&m_ball, dt);
-
-        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-
-        //PrintFlightData();
-        PushFlightData();
-
-        if (m_ball.q.velocity.y < 0.0)
-        {
-            maxHeight = m_ball.q.position.y;
-            isBallAscending = false;
-        }
-    }
-    // Check to verify landing area height can be reached. If it cannot the shot is treated as if it is out of play so x = 0.0;
-    /*
-    if (maxHeight + m_ball.launchHeight < m_ball.landingHeight)
-    {
-        printf("Ball has landed out of play, ball does not reach height of landing area!\n");
-        flightData.SetX(0.0);
-        x = 0.0;
-    }
-    */
-
-    double previousY = flightData.GetY();
-    double previousTime = flightData.GetW();
-
-    //  Calculate ball decent path until it reaches landing area height
-    while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
-    {
-        previousY = flightData.GetY();
-        previousTime = flightData.GetW();
-        ProjectileRungeKutta4(&m_ball, dt);
-        flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-        //PrintFlightData();
-        PushFlightData();
-        time = m_ball.flightTime;
-        y = m_ball.q.position.y;
-    }
-
-    //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, y);
-    //ProjectileRungeKutta4(&m_ball, -rollBackTime);
-    flightData.SetAll(m_ball.q.position.x, m_ball.q.position.y, m_ball.q.velocity.y, m_ball.flightTime);
-
-    // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
-    //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
-        /*
-    q[0] = vx, velocity
-    q[1] = x position
-    q[2] = vy, velocity
-    q[3] = y position
-    q[4] = vz, velocity
-    q[5] = z position
-    */
-    SetLandingCordinates(m_ball.q.position);
-    SetLandingSpinRate(m_ball.omega);
-    SetMaxHeight(maxHeight);
-    LandProjectile();
-    //PrintLandingData(flightData, maxHeight);
 }
 
 DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation)
@@ -376,15 +300,11 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     double div1 = ((1.0 + e) * clubMass) / (clubMass + ballMass);
     double div2 = (2 * clubMass) / (7 * (clubMass + ballMass));
 
-    //DirectX::SimpleMath::Vector4 vBall = ((((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vFaceNormal) 
-        + (((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
-
     DirectX::SimpleMath::Vector4 vBall = ((((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vHeadNormal)
         + (((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
     DirectX::SimpleMath::Vector4 vBall1 = (((1.0 + e) * clubMass) / (clubMass + ballMass) * aImpactData.vHeadNormal);
     DirectX::SimpleMath::Vector4 vBall2 = ((2 * clubMass) / (7 * (clubMass + ballMass)) * aImpactData.vHeadParallel);
     DirectX::SimpleMath::Vector4 vBall3 = vBall1 + vBall2;
-
 
     DirectX::SimpleMath::Vector3 unitVHead = aImpactData.vHead;
     unitVHead.Normalize();
@@ -393,13 +313,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
 
-    /*
-    DirectX::SimpleMath::Vector4 absvHeadParallel = aImpactData.vHeadParallel;
-    absvHeadParallel.x = abs(absvHeadParallel.x);
-    absvHeadParallel.y = abs(absvHeadParallel.y);
-    absvHeadParallel.z = abs(absvHeadParallel.z);
-    absvHeadParallel.w = abs(absvHeadParallel.w);
-    */
     float absVhP = sqrt((aImpactData.vHeadParallel.x * aImpactData.vHeadParallel.x) 
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
@@ -660,112 +573,130 @@ void GolfBall::RollRightHandSide(struct SpinProjectile* pBall, BallMotion* q, Ba
     //  Compute the apparent velocities bz subtracting
     //  the wind velocity components from the projectile
     //  velocity components.
-    double vax = vx;// -pBall->windSpeed.x;
-    double vay = vy;// -pBall->windSpeed.y;
-    double vaz = vz;// -pBall->windSpeed.z;
+    //double vax = vx;// -pBall->windSpeed.x;
+    //double vay = vy;// -pBall->windSpeed.y;
+    //double vaz = vz;// -pBall->windSpeed.z;
 
     //  Compute the apparent velocity magnitude. The 1.0e-8 term
     //  ensures there won't be a divide bz yero later on
     //  if all of the velocity components are zero.
-    double va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8;
+    //double va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8;
 
     // a = - (5/7) PgG = 0.840000093
     double a = 0.840000093;
     //  Compute the total drag force.
+    /*
     double Fd = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
+    double FdwithA = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va * a;
+    double FdwithdivA = (0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va) / a;
+    double FdwithplusA = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va + a;
+    */
+    //Fd = FdwithA;
+    double Fd = 0.5;
+        
     /*
     double Fdx = -Fd * vax / va;
     double Fdy = -Fd * vay / va;
     double Fdz = -Fd * vaz / va;
-    */
+
     double Fdx = (-Fd * vax / va) * a;
     double Fdy = (-Fd * vay / va) * a;
     double Fdz = (-Fd * vaz / va) * a;
+    */
+    //double Fdx = (-Fd * vax / va);
+    //double Fdy = (-Fd * vay / va);
+    //double Fdz = (-Fd * vaz / va);
     //Fdx = Fdx * a;
     //Fdy = Fdy * a;
     //Fdz = Fdz * a;
     //  Compute the velocity magnitude
     double v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8;
 
-    //  Evaluate the Magnus force terms.
-    /*
-    double Cl = -0.05 + sqrt(0.0025 + 0.36 * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
-    double Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
-    double Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
-    double Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
-    double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
-    */
-
-    //  Compute right-hand side values.
-    //dq->velocity.x = ds * (Fdx + Fmx) / pBall->mass;
-    //dq->position.x = ds * vx;
-    //dq->velocity.y = ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass);
-    //dq->position.y = ds * vy;
-    //dq->velocity.z = ds * (Fdz + Fmz) / pBall->mass;
-    //dq->position.z = ds * vz;
-
     //dq->velocity.x = ds * Fdx / pBall->mass;
-    dq->velocity.x = vx * a;
-    //dq->velocity.x = ds * vx * a / pBall->mass;;
+    //dq->velocity.x = ds * vx * a / pBall->mass;;  
+    //dq->velocity.y = ds * Fdy / pBall->mass;  
+    //dq->velocity.z = ds * Fdz / pBall->mass;
     dq->position.x = ds * vx;
-    //dq->velocity.y = ds * (Fdy / pBall->mass);
-    //dq->position.y = ds * vy;
-    dq->velocity.z = vx * a;
-    //dq->velocity.z = ds * vz * a / pBall->mass;;
+    dq->position.y = ds * vy;
     dq->position.z = ds * vz;
+    //dq->position.z = ds * vz;
+    //dq->velocity.x = vx * a;
+    //dq->position.x = ds * vx;
+    //dq->velocity.z = vx * a;
+}
 
-    /*
+void GolfBall::RollRightHandSideOld(struct SpinProjectile* pBall, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq)
+{
     //  Compute the intermediate values of the 
     //  dependent variables.
-    double newQ[6]; // intermediate dependent variable values.
-    for (int i = 0; i < 6; ++i)
-    {
-        newQ[i] = q[i] + qScale * deltaQ[i];
-    }
+    BallMotion newQ;
+    newQ.position.x = q->position.x + qScale * deltaQ->position.x;
+    newQ.position.y = q->position.y + qScale * deltaQ->position.y;
+    newQ.position.z = q->position.z + qScale * deltaQ->position.z;
+    newQ.velocity.x = q->velocity.x + qScale * deltaQ->velocity.x;
+    newQ.velocity.y = q->velocity.y + qScale * deltaQ->velocity.y;
+    newQ.velocity.z = q->velocity.z + qScale * deltaQ->velocity.z;
 
     //  Declare some convenience variables representing
     //  the intermediate values of velocity.
-    double vx = newQ[0];
-    double vy = newQ[2];
-    double vz = newQ[4];
+    double vx = newQ.velocity.x;
+    double vy = newQ.velocity.y;
+    double vz = newQ.velocity.z;
 
     //  Compute the apparent velocities bz subtracting
     //  the wind velocity components from the projectile
     //  velocity components.
-    double vax = vx - pBall->windSpeed.x;
-    double vay = vy - pBall->windSpeed.y;
-    double vaz = vz - pBall->windSpeed.z;
+    //double vax = vx;// -pBall->windSpeed.x;
+    //double vay = vy;// -pBall->windSpeed.y;
+    //double vaz = vz;// -pBall->windSpeed.z;
 
     //  Compute the apparent velocity magnitude. The 1.0e-8 term
     //  ensures there won't be a divide bz yero later on
     //  if all of the velocity components are zero.
-    double va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8;
+    //double va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8;
+    double va = newQ.velocity.Length();
 
+    // a = - (5/7) PgG = 0.840000093
+    double Fd = 0.16;
     //  Compute the total drag force.
-    double Fd = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
-    double Fdx = -Fd * vax / va;
-    double Fdy = -Fd * vay / va;
-    double Fdz = -Fd * vaz / va;
-
-    //  Compute the velocity magnitude
-    double v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8;
-
-    //  Evaluate the Magnus force terms.
-    double Cl = -0.05 + sqrt(0.0025 + 0.36 * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
-    double Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
-    double Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
-    double Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
-    double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
-
-    //  Compute right-hand side values.
-    dq[0] = ds * (Fdx + Fmx) / pBall->mass;
-    dq[1] = ds * vx;
-    //dq[2] = ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass);
-    dq[2] = ds * ((Fdy + Fmy) / pBall->mass);
-    dq[3] = ds * vy;
-    dq[4] = ds * (Fdz + Fmz) / pBall->mass;
-    dq[5] = ds * vz;
+    //double Fd = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
+    
+    double Fdx = -Fd * vx / va;
+    //double Fdy = -Fd * vy / va;
+    //double Fdz = (-Fd * vz) / va;
+    /*
+    double Fdx = (-Fd * vax / va) * a;
+    double Fdy = (-Fd * vay / va) * a;
+    double Fdz = (-Fd * vaz / va) * a;
     */
+    //double Fdx = (-Fd * vax / va);
+    //double Fdy = (-Fd * vay / va);
+    //double Fdz = (-Fd * vaz / va);
+    //Fdx = Fdx * a;
+    //Fdy = Fdy * a;
+    //Fdz = Fdz * a;
+    //  Compute the velocity magnitude
+    //double v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8;
+
+    //dq->velocity.x = ds * Fdx / pBall->mass;
+    //dq->velocity.x = ds * vx * a / pBall->mass;;  
+    //dq->velocity.y = ds * (Fdy / pBall->mass);
+    //dq->position.y = ds * vy;   
+    //dq->velocity.z = ds * vz * a / pBall->mass;;
+    //double a = 0.840000093;
+    
+    //dq->velocity.x = vx * a;
+    //dq->position.x = ds * vx;
+    //dq->velocity.z = vx * a;
+    //dq->position.z = ds * vz;
+
+    //double a = 0.840000093;
+    dq->velocity.x = (ds * Fdx) / pBall->mass;
+    dq->position.x = ds * vx;
+    dq->velocity.y = (ds * Fdx) / pBall->mass;
+    dq->position.y = ds * vy;
+    dq->velocity.z = (ds * Fdx) / pBall->mass;
+    dq->position.z = ds * vz;
 }
 
 void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
@@ -789,10 +720,10 @@ void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
     // Compute the four Runge-Kutta steps, The return 
     // value of projectileRightHandSide method is an array
     // of delta-q values for each of the four steps.   
-    RollRightHandSide(pBall, &pQ, &pQ, aTimeDelta, 0.0, &pQ1);
-    RollRightHandSide(pBall, &pQ, &pQ1, aTimeDelta, 0.5, &pQ2);
-    RollRightHandSide(pBall, &pQ, &pQ2, aTimeDelta, 0.5, &pQ3);
-    RollRightHandSide(pBall, &pQ, &pQ3, aTimeDelta, 1.0, &pQ4);
+    RollRightHandSideOld(pBall, &pQ, &pQ, aTimeDelta, 0.0, &pQ1);
+    RollRightHandSideOld(pBall, &pQ, &pQ1, aTimeDelta, 0.5, &pQ2);
+    RollRightHandSideOld(pBall, &pQ, &pQ2, aTimeDelta, 0.5, &pQ3);
+    RollRightHandSideOld(pBall, &pQ, &pQ3, aTimeDelta, 1.0, &pQ4);
 
     //  Update the dependent and independent variable values
     //  at the new dependent variable location and store the
@@ -811,59 +742,6 @@ void GolfBall::RollRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
     pBall->q.velocity.y = pQ.velocity.y;
     pQ.velocity.z = pQ.velocity.z + (pQ1.velocity.z + 2.0 * pQ2.velocity.z + 2.0 * pQ3.velocity.z + pQ4.velocity.z) / numEqns;
     pBall->q.velocity.z = pQ.velocity.z;
-/*
-    int numEqns = pBall->numEqns;
-    //  Allocate memory for the arrays.    
-    std::vector<double> vecQ(numEqns);
-    std::vector<double> vecDq1(numEqns);
-    std::vector<double> vecDq2(numEqns);
-    std::vector<double> vecDq3(numEqns);
-    std::vector<double> vecDq4(numEqns);
-    double* pQ = vecQ.data();
-    double* pQ1 = vecDq1.data();
-    double* pQ2 = vecDq2.data();
-    double* pQ3 = vecDq3.data();
-    double* pQ4 = vecDq4.data();
-
-    //  Retrieve the current values of the dependent
-    //  and independent variables.
-    for (int i = 0; i < numEqns; ++i)
-    {
-        pQ[i] = pBall->q[i];
-    }
-
-    // Compute the four Runge-Kutta steps, The return 
-    // value of projectileRightHandSide method is an array
-    // of delta-q values for each of the four steps.   
-    RollRightHandSide(pBall, pQ, pQ, aTimeDelta, 0.0, pQ1);
-    RollRightHandSide(pBall, pQ, pQ1, aTimeDelta, 0.5, pQ2);
-    RollRightHandSide(pBall, pQ, pQ2, aTimeDelta, 0.5, pQ3);
-    RollRightHandSide(pBall, pQ, pQ3, aTimeDelta, 1.0, pQ4);
-
-    //  Update the dependent and independent variable values
-    //  at the new dependent variable location and store the
-    //  values in the ODE object arrays.
-    pBall->flightTime = pBall->flightTime + aTimeDelta;
-    for (int i = 0; i < numEqns; ++i)
-    {
-        pQ[i] = pQ[i] + (pQ1[i] + 2.0 * pQ2[i] + 2.0 * pQ3[i] + pQ4[i]) / numEqns;
-        pBall->q[i] = pQ[i];
-    }
-
-    //  Free up memory   
-    pQ = nullptr;
-    pQ1 = nullptr;
-    pQ2 = nullptr;
-    pQ3 = nullptr;
-    pQ4 = nullptr;
-    delete pQ;
-    delete pQ1;
-    delete pQ2;
-    delete pQ3;
-    delete pQ4;
-
-    //UpdateSpinRate(aTimeDelta);
-    */
 }
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)

@@ -47,8 +47,9 @@ void Golf::SelectNextClub()
 
 void Golf::SelectInputClub(int aInput)
 {
-    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     pBall->ResetBallData();
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    
     pSwing->CycleInputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();

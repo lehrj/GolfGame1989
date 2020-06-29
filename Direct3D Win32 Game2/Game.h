@@ -98,9 +98,14 @@ private:
     DirectX::SimpleMath::Matrix m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
 
-    int m_gameCamera = 1;
+    int m_gameCamera = 4;
     float m_cameraRotationX = 2.0;
-    float m_cameraRotationY = 0.0;
+    float m_cameraRotationY = 2.0;
+    float m_cameraTargetX = 0.0;
+    float m_cameraTargetY = 0.0;
+    float m_cameraTargetZ = 0.0;
+    float m_cameraZoom = 0.0f;
+    float m_cameraMovementSpeed = 0.01;
     //world end
 
     // WLJ added for drawing projectile and swing

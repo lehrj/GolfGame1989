@@ -101,6 +101,7 @@ public:
     void ResetBallData();
     void RollBall();
     void RollRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
+    void RollRightHandSideOld(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
     void RollRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void SetDefaultBallValues(Environment* pEnviron);
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
