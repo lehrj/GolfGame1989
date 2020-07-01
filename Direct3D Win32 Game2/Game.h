@@ -6,7 +6,9 @@
 #include "StepTimer.h"
 #include "Golf.h"
 #include "Keyboard.h"
-
+#include "AnimatedTexture.h"
+#include "SpriteSheet.h"
+#include "WICTextureLoader.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -124,7 +126,7 @@ private:
     DirectX::SimpleMath::Vector2                    m_fontPosDebug;
     DirectX::SimpleMath::Vector2                    m_fontMenuPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
-
+    std::unique_ptr<SpriteSheet>                    m_sprites;
     // WLJ add for mouse and keybord interface
     std::unique_ptr<DirectX::Keyboard>              m_keyboard;
     std::unique_ptr<DirectX::Mouse>                 m_mouse;
@@ -132,6 +134,11 @@ private:
     //Keyboard::KeyboardStateTracker m_kbStateTracker;
     //DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
     std::unique_ptr < DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
+
+    // Golf Character Texture
+    std::unique_ptr<AnimatedTexture> m_character;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterTexture;
+    DirectX::SimpleMath::Vector2 m_characterPos;
 
     // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;

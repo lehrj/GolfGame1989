@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Golf.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
@@ -192,6 +194,7 @@
     <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="ChacterSpriteSheet.png" />
     <Image Include="directx.ico" />
     <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />

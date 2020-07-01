@@ -18,6 +18,8 @@
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
     <ClInclude Include="GolfPlay.h" />
+    <ClInclude Include="AnimatedTexture.h" />
+    <ClInclude Include="SpriteSheet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -49,6 +51,9 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="PowerbarBackswing.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="ChacterSpriteSheet.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

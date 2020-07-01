@@ -74,6 +74,9 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
+
+    m_character->Update(elapsedTime);
+
     pPlay->Swing();
 
     if (pPlay->UpdateSwing() == true)
@@ -424,6 +427,10 @@ void Game::Render()
     m_batch->End();
 
     m_spriteBatch->Begin();
+
+    m_character->Draw(m_spriteBatch.get(), m_characterPos);
+
+
     //DrawShotTimerUI();
     if (m_gameState == 0)
     {
@@ -706,7 +713,6 @@ void Game::CreateDevice()
 
     // world end
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
-
     m_effect = std::make_unique<BasicEffect>(m_d3dDevice.Get());
     m_effect->SetVertexColorEnabled(true);
 
@@ -775,6 +781,12 @@ void Game::CreateDevice()
     m_powerBarImpactOrigin.y = float(PowerbarImpactDesc.Height / 2);
     m_powerBarBackswingOrigin.x = float(PowerbarBackswingDesc.Width / 2);
     m_powerBarBackswingOrigin.y = float(PowerbarBackswingDesc.Height / 2);
+
+    // Character Textures
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"ChacterSpriteSheet.png", nullptr, m_characterTexture.ReleaseAndGetAddressOf()));
+    m_character = std::make_unique<AnimatedTexture>();
+    m_character->Load(m_characterTexture.Get(), 4, 6);
+
     // End texture
 }
 
@@ -919,6 +931,9 @@ void Game::CreateResources()
 
     m_powerMeterBarScale = 1.0 - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
+    // Character texture
+    m_characterPos.x = float(backBufferWidth / 2);
+    m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
     // End Texture
 }
 
@@ -1299,6 +1314,336 @@ void Game::DrawMenuMain()
 void Game::DrawStartScreen()
 {
     std::string title = "GolfGame1989";
+    float lineDraw = m_fontMenuPos.y + 10;
+    float fontTitlePosX = m_fontPosDebug.x - 100;
+    //float fontTitlePosX = m_fontPos.x;
+    float fontTitlePosY = lineDraw;
+    Vector2 titlePos(fontTitlePosX, fontTitlePosY);
+
+
+    Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
+    
+    float space = 35;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+    titlePos.y += titleOrigin.y + space;
+
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::Lime, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, -4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::White, 0.f, titleOrigin);
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, -4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::White, 0.f, titleOrigin);
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y = m_fontMenuPos.y + 15;
+    titlePos.x = m_fontPos2.x - 450;/////////////////////////////Break
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-10.f, -10.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-9.f, -9.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-10.f, -10.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-9.f, -9.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Gray, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(1.f, 1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(1.f, 1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(1.f, 1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::White, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::White, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(1.f, 1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::White, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::White, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-8.f, -8.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-7.f, -7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-5.f, -5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-3.f, -3.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::Lime, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+
+    titlePos.y += titleOrigin.y + space;
+}
+
+/* Save for post Testing
+void Game::DrawStartScreen()
+{
+    std::string title = "GolfGame1989";
     std::string author = "By Lehr Jackson";
     std::string startText = "Press Enter to Start";
     float fontTitlePosX = m_fontPos.x;
@@ -1313,11 +1658,18 @@ void Game::DrawStartScreen()
     Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
     Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
 
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LawnGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-4.f, -4.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
-
+*/
 void Game::DrawSwing()
 {
     float shoulderAccel = .98;
@@ -1484,10 +1836,15 @@ void Game::OnDeviceLost()
     m_font.reset();
     m_titleFont.reset();
     m_spriteBatch.reset();
+    //Powerbar
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();
     m_powerImpactTexture.Reset();
     m_powerBackswingTexture.Reset();
+
+    // Charcter
+    m_character.reset();
+    m_characterTexture.Reset();
     // end
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();
