@@ -44,7 +44,8 @@ private:
     void DrawSwing();
     void DrawProjectile();
     void DrawProjectileRealTime();
-    void DrawMenu();
+    void DrawMenuCharacterSelect();
+    void DrawMenuMain(); 
     void DrawShotTimerUI();
     void DrawStartScreen();
     void DrawWorld();
@@ -86,19 +87,19 @@ private:
     // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
 
-    std::unique_ptr<DirectX::CommonStates> m_states;
-    std::unique_ptr<DirectX::BasicEffect> m_effect;
+    std::unique_ptr<DirectX::CommonStates>          m_states;
+    std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
 
-    Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_inputLayout;
     // End
 
     //world start 
-    DirectX::SimpleMath::Matrix m_world;
+    DirectX::SimpleMath::Matrix                     m_world;
 
-    DirectX::SimpleMath::Matrix m_view;
-    DirectX::SimpleMath::Matrix m_proj;
-    Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_raster; // WLJ anti-aliasing
+    DirectX::SimpleMath::Matrix                     m_view;
+    DirectX::SimpleMath::Matrix                     m_proj;
+    Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_raster; // WLJ anti-aliasing
 
     int m_gameCamera = 4;
     float m_cameraRotationX = 2.0;
@@ -116,16 +117,17 @@ private:
     int m_arcCount = 0;
 
     // WLJ added for displaying text
-    std::unique_ptr<DirectX::SpriteFont> m_font;
-    std::unique_ptr<DirectX::SpriteFont> m_titleFont;
-    DirectX::SimpleMath::Vector2 m_fontPos;
-    DirectX::SimpleMath::Vector2 m_fontPos2;
-    DirectX::SimpleMath::Vector2 m_fontPosDebug;
-    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    std::unique_ptr<DirectX::SpriteFont>            m_font;
+    std::unique_ptr<DirectX::SpriteFont>            m_titleFont;
+    DirectX::SimpleMath::Vector2                    m_fontPos;
+    DirectX::SimpleMath::Vector2                    m_fontPos2;
+    DirectX::SimpleMath::Vector2                    m_fontPosDebug;
+    DirectX::SimpleMath::Vector2                    m_fontMenuPos;
+    std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
 
     // WLJ add for mouse and keybord interface
-    std::unique_ptr<DirectX::Keyboard> m_keyboard;
-    std::unique_ptr<DirectX::Mouse> m_mouse;
+    std::unique_ptr<DirectX::Keyboard>              m_keyboard;
+    std::unique_ptr<DirectX::Mouse>                 m_mouse;
 
     //Keyboard::KeyboardStateTracker m_kbStateTracker;
     //DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
@@ -136,14 +138,14 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerImpactTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerBackswingTexture;
-    DirectX::SimpleMath::Vector2 m_powerBarFramePos;
-    DirectX::SimpleMath::Vector2 m_powerBarMeterPos;
-    DirectX::SimpleMath::Vector2 m_powerBarImpactPos;
-    DirectX::SimpleMath::Vector2 m_powerBarBackswingPos;
-    DirectX::SimpleMath::Vector2 m_powerBarFrameOrigin;
-    DirectX::SimpleMath::Vector2 m_powerBarMeterOrigin;
-    DirectX::SimpleMath::Vector2 m_powerBarImpactOrigin;
-    DirectX::SimpleMath::Vector2 m_powerBarBackswingOrigin;
+    DirectX::SimpleMath::Vector2                    m_powerBarFramePos;
+    DirectX::SimpleMath::Vector2                    m_powerBarMeterPos;
+    DirectX::SimpleMath::Vector2                    m_powerBarImpactPos;
+    DirectX::SimpleMath::Vector2                    m_powerBarBackswingPos;
+    DirectX::SimpleMath::Vector2                    m_powerBarFrameOrigin;
+    DirectX::SimpleMath::Vector2                    m_powerBarMeterOrigin;
+    DirectX::SimpleMath::Vector2                    m_powerBarImpactOrigin;
+    DirectX::SimpleMath::Vector2                    m_powerBarBackswingOrigin;
 
     RECT m_powerMeterBarRect;
     RECT m_powerMeterFrameRect;

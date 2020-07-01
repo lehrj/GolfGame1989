@@ -90,18 +90,28 @@ void Game::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        ExitGame();
+        m_gameState = 1;
     }
-    //if (m_kbStateTracker->IsKeyPressed(Keyboard::Enter))
     if (m_kbStateTracker->pressed.Enter)
     {
-        if (m_gameState == 1)
+        if (m_gameState == 1) // Main Menu State
         {
-            m_gameState = 2;
+            if (m_menuSelect == 0) // GoTo Game State
+            {
+                m_gameState = 10;
+            }
+            if (m_menuSelect == 1) // GoTo Character Select State
+            {
+                m_gameState = 2;
+            }
+            if (m_menuSelect == 2) // Quit Game
+            {
+                ExitGame();
+            }
         }
-        if (m_gameState == 0)
+        if (m_gameState == 0) // Start Screen state
         {
-            m_gameState = 1;
+            m_gameState = 1; // GoTo Main Menu
         }
     }
     if (m_kbStateTracker->pressed.Up)
@@ -110,10 +120,18 @@ void Game::Update(DX::StepTimer const& timer)
         {
             --m_menuSelect;
         }
+        if (m_gameState == 2)
+        {
+            --m_menuSelect;
+        }
     }
     if (m_kbStateTracker->pressed.Down)
     {
         if (m_gameState == 1)
+        {
+            ++m_menuSelect;
+        }
+        if (m_gameState == 2)
         {
             ++m_menuSelect;
         }
@@ -208,9 +226,12 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pPlay->ResetGamePlayButton();
     }
-    if (m_kbStateTracker->pressed.S)
+    if (m_kbStateTracker->pressed.Space)
     {
-        pPlay->UpdateSwingState();
+        if (m_gameState == 10)
+        {
+            pPlay->UpdateSwingState();
+        }
     }
     /*
     if (m_kbStateTracker.IsKeyReleased(DirectX::Keyboard::Keys::A))
@@ -393,7 +414,7 @@ void Game::Render()
 
     m_batch->Begin();
 
-    if (m_gameState == 2)
+    if (m_gameState == 10)
     {
         //DrawSwing();
         DrawWorld();
@@ -410,13 +431,17 @@ void Game::Render()
     }
     if (m_gameState == 1)
     {
-        DrawMenu();
+        DrawMenuMain();
     }
     if (m_gameState == 2)
     {
+        DrawMenuCharacterSelect();
+    }
+    if (m_gameState == 10)
+    {
         RenderUIPowerBar();
     }
-    if (m_gameState == 2)
+    if (m_gameState == 10)
     {
         DrawSwingUI();
         DrawUI();
@@ -854,17 +879,17 @@ void Game::CreateResources()
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
-    //SetGameCamera(2);
     // world end
-
+    
+    // UI font positions
     m_fontPos.x = backBufferWidth / 2.f;
     m_fontPos.y = backBufferHeight / 2.f;
-    //m_fontPos2.x = backBufferWidth / 5.f;
     m_fontPos2.x = backBufferWidth - 5;
-    //m_fontPos2.y = backBufferHeight / 30.f;
     m_fontPos2.y = 35;
     m_fontPosDebug.x = 480;
     m_fontPosDebug.y = 35;
+    m_fontMenuPos.x = backBufferWidth / 2.f;
+    m_fontMenuPos.y = 35;
 
     // Start swing power bar
     m_powerMeterFrameRect.left = (backBufferWidth / 2) - m_powerBarFrameOrigin.x;
@@ -1091,30 +1116,33 @@ void Game::DrawShotTimerUI()
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
 
-void Game::DrawMenu()
+void Game::DrawMenuCharacterSelect()
 {
-    std::string menuTitle = "Menu";
-    float menuTitlePosX = m_fontPos.x;
+    float lineDrawY = m_fontMenuPos.y + 15;
+    float lineDrawSpacingY = 15;
+    std::string menuTitle = "Character Select";
+    float menuTitlePosX = m_fontMenuPos.x;
     //float menuTitlePosY = m_fontPos.y / 2.f;
-    float menuTitlePosY = m_fontPosDebug.y + 15;
-    Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);   
+    float menuTitlePosY = lineDrawY;
+    Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);  
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
-    std::string menuObj0String = "Driving Range";
-    Vector2 menuObj0Pos(menuTitlePosX, menuTitlePosY + menuOrigin.x + 0);
+    lineDrawY += menuTitlePosY + lineDrawSpacingY;
+    std::string menuObj0String = "Character 1";
+    Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
-    //m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
 
-    std::string menuObj1String = "Charachter Select";
-    Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObj1String = "Character 2";
+    //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
+    Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
-    //m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
 
-    std::string menuObj2String = "Quit";
-    Vector2 menuObj2Pos(menuTitlePosX, menuObj1Pos.y + menuOrigin.x + 0);
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObj2String = "Character 3";
+    Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
-    //m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos, Colors::White, 0.f, menuObj3Origin);
 
     if (m_menuSelect < 0 || m_menuSelect > 2)
     {
@@ -1122,17 +1150,17 @@ void Game::DrawMenu()
     }
     if (m_menuSelect == 0)
     {
-        
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, 2.f), Colors::Green, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, -2.f), Colors::Green, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, -2.f), Colors::Green, 0.f, menuObj0Origin);
-        
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
     }
     else
     {
@@ -1146,10 +1174,12 @@ void Game::DrawMenu()
         m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, 2.f), Colors::Green, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, -2.f), Colors::Green, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, -2.f), Colors::Green, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
     }
     else
     {
@@ -1163,10 +1193,102 @@ void Game::DrawMenu()
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, 2.f), Colors::Green, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, -2.f), Colors::Green, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, -2.f), Colors::Green, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
+    }
+    else
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
+    }
+}
+
+void Game::DrawMenuMain()
+{
+    float lineDrawY = m_fontMenuPos.y + 15;
+    float lineDrawSpacingY = 15;
+    std::string menuTitle = "Main Menu";
+    float menuTitlePosX = m_fontMenuPos.x;
+    //float menuTitlePosY = m_fontPos.y / 2.f;
+    float menuTitlePosY = lineDrawY;
+    Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);   
+    Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);  
+
+    lineDrawY += menuTitlePosY + lineDrawSpacingY;
+    std::string menuObj0String = "Driving Range";
+    Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
+    Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
+
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObj1String = "Charachter Select";
+    //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
+    Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
+    Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
+
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObj2String = "Quit";
+    Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
+    Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
+
+    if (m_menuSelect < 0 || m_menuSelect > 2)
+    {
+        m_menuSelect = 0;
+    }
+    if (m_menuSelect == 0)
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
+    }
+    else
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
+    }
+
+    if (m_menuSelect == 1)
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
+    }
+    else
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
+    }
+
+    if (m_menuSelect == 2)
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
     else
     {
