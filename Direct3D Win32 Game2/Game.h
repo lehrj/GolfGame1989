@@ -44,9 +44,11 @@ private:
     void DrawSwing();
     void DrawProjectile();
     void DrawProjectileRealTime();
+    void DrawMenu();
     void DrawShotTimerUI();
-    void DrawWorld();
     void DrawStartScreen();
+    void DrawWorld();
+    
     void Update(DX::StepTimer const& timer);
     void UpdateCamera(DX::StepTimer const& timer);
     void Render();
@@ -126,6 +128,8 @@ private:
     std::unique_ptr<DirectX::Mouse> m_mouse;
 
     //Keyboard::KeyboardStateTracker m_kbStateTracker;
+    //DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
+    std::unique_ptr < DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
 
     // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
@@ -151,4 +155,5 @@ private:
     float m_powerMeterBarScale;
 
     int m_gameState = 0;
+    int m_menuSelect = 0;
 };

@@ -85,8 +85,9 @@ public:
     const double GetShotDistance();
     std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
     void LandProjectile();
+    void LandProjectileOld();
+    void LandProjectileEdit();
     void LaunchProjectile();
-    void LaunchProjectilePostImpact();
     
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
     //std::vector<DirectX::SimpleMath::Vector3>& OutputShotPathRef() { return m_shotPath; };
