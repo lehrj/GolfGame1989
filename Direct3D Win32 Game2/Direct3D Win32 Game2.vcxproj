@@ -194,7 +194,11 @@
     <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Chacter0SpriteSheet.png" />
+    <Image Include="Chacter1SpriteSheet.png" />
+    <Image Include="Chacter2SpriteSheet.png" />
     <Image Include="ChacterSpriteSheet.png" />
+    <Image Include="CharacterBackground.png" />
     <Image Include="directx.ico" />
     <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />
@@ -207,6 +211,9 @@
   <ItemGroup>
     <None Include="myfile.spritefont" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CharacterSpriteSheetData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

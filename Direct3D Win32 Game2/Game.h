@@ -57,7 +57,7 @@ private:
     void Render();
     void DrawUI();
     void DrawSwingUI();
-    void RenderUIPowerBar();
+    void DrawPowerBarUI();
     void SetGameCamera(int aCamera);
 
     void Clear();
@@ -126,19 +126,36 @@ private:
     DirectX::SimpleMath::Vector2                    m_fontPosDebug;
     DirectX::SimpleMath::Vector2                    m_fontMenuPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
-    std::unique_ptr<SpriteSheet>                    m_sprites;
+    //std::unique_ptr<SpriteSheet>                    m_sprites;
+    
     // WLJ add for mouse and keybord interface
     std::unique_ptr<DirectX::Keyboard>              m_keyboard;
     std::unique_ptr<DirectX::Mouse>                 m_mouse;
 
     //Keyboard::KeyboardStateTracker m_kbStateTracker;
     //DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
-    std::unique_ptr < DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
+    std::unique_ptr<DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
 
     // Golf Character Texture
     std::unique_ptr<AnimatedTexture> m_character;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterTexture;
     DirectX::SimpleMath::Vector2 m_characterPos;
+
+    std::unique_ptr<AnimatedTexture> m_character0;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character0Texture;
+    DirectX::SimpleMath::Vector2 m_character0Pos;
+
+    std::unique_ptr<AnimatedTexture> m_character1;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character1Texture;
+    DirectX::SimpleMath::Vector2 m_character1Pos;
+
+    std::unique_ptr<AnimatedTexture> m_character2;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character2Texture;
+    DirectX::SimpleMath::Vector2 m_character2Pos;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterBackgroundTexture;
+    DirectX::SimpleMath::Vector2 m_characterBackgroundPos;
+    DirectX::SimpleMath::Vector2 m_characterBackgroundOrigin;
 
     // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;

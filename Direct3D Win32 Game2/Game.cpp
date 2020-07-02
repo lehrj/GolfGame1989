@@ -75,8 +75,21 @@ void Game::Update(DX::StepTimer const& timer)
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
 
-    m_character->Update(elapsedTime);
-
+    if (m_gameState == 2)
+    {
+        if (m_menuSelect == 0)
+        {
+            m_character0->Update(elapsedTime);
+        }
+        if (m_menuSelect == 1)
+        {
+            m_character1->Update(elapsedTime);
+        }
+        if (m_menuSelect == 2)
+        {
+            m_character2->Update(elapsedTime);
+        }
+    }
     pPlay->Swing();
 
     if (pPlay->UpdateSwing() == true)
@@ -89,12 +102,14 @@ void Game::Update(DX::StepTimer const& timer)
 
     // WLJ add for mouse and keybord interface
     auto kb = m_keyboard->GetState();    
+    
     m_kbStateTracker->Update(kb);
 
     if (kb.Escape)
     {
         m_gameState = 1;
     }
+    
     if (m_kbStateTracker->pressed.Enter)
     {
         if (m_gameState == 1) // Main Menu State
@@ -139,6 +154,7 @@ void Game::Update(DX::StepTimer const& timer)
             ++m_menuSelect;
         }
     }
+    
     if (kb.L)
     {
         if (m_gameState == 1)
@@ -225,6 +241,7 @@ void Game::Update(DX::StepTimer const& timer)
             pPlay->SetGameplayButtonReadyFalse();
         }
     }
+    
     if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
     {
         pPlay->ResetGamePlayButton();
@@ -236,6 +253,7 @@ void Game::Update(DX::StepTimer const& timer)
             pPlay->UpdateSwingState();
         }
     }
+    
     /*
     if (m_kbStateTracker.IsKeyReleased(DirectX::Keyboard::Keys::A))
     {
@@ -424,12 +442,10 @@ void Game::Render()
         DrawProjectile();
         //DrawProjectileRealTime();
     }
+
     m_batch->End();
 
     m_spriteBatch->Begin();
-
-    m_character->Draw(m_spriteBatch.get(), m_characterPos);
-
 
     //DrawShotTimerUI();
     if (m_gameState == 0)
@@ -446,7 +462,7 @@ void Game::Render()
     }
     if (m_gameState == 10)
     {
-        RenderUIPowerBar();
+        DrawPowerBarUI();
     }
     if (m_gameState == 10)
     {
@@ -510,7 +526,7 @@ void Game::DrawUI()
     m_fontPos2.y = fontOriginPosY;
 }
 
-void Game::RenderUIPowerBar()
+void Game::DrawPowerBarUI()
 {
     if (pPlay->GetMeterPower() >= 0.0)
     {
@@ -604,17 +620,22 @@ void Game::Present()
 void Game::OnActivated()
 {
     // TODO: Game is becoming active window.
+    m_keyboard.reset();
     m_kbStateTracker.reset();
 }
 
 void Game::OnDeactivated()
 {
     // TODO: Game is becoming background window.
+    m_keyboard.reset();
+    m_kbStateTracker.reset();
 }
 
 void Game::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
+    m_keyboard.reset();
+    m_kbStateTracker.reset();
 }
 
 void Game::OnResuming()
@@ -739,7 +760,6 @@ void Game::CreateDevice()
         m_raster.ReleaseAndGetAddressOf()));
     // world end
 
-
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
@@ -787,6 +807,28 @@ void Game::CreateDevice()
     m_character = std::make_unique<AnimatedTexture>();
     m_character->Load(m_characterTexture.Get(), 4, 6);
 
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"Chacter0SpriteSheet.png", nullptr, m_character0Texture.ReleaseAndGetAddressOf()));
+    m_character0 = std::make_unique<AnimatedTexture>();
+    m_character0->Load(m_character0Texture.Get(), 4, 6);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"Chacter1SpriteSheet.png", nullptr, m_character1Texture.ReleaseAndGetAddressOf()));
+    m_character1 = std::make_unique<AnimatedTexture>();
+    m_character1->Load(m_character1Texture.Get(), 4, 6);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"Chacter2SpriteSheet.png", nullptr, m_character2Texture.ReleaseAndGetAddressOf()));
+    m_character2 = std::make_unique<AnimatedTexture>();
+    m_character2->Load(m_character2Texture.Get(), 4, 6);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", resource.GetAddressOf(), m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> characterBackground;
+    DX::ThrowIfFailed(resource.As(&characterBackground));
+    CD3D11_TEXTURE2D_DESC characterBackgroundDesc;
+    characterBackground->GetDesc(&characterBackgroundDesc);
+    m_characterBackgroundOrigin.x = float(characterBackgroundDesc.Width / 2);
+    m_characterBackgroundOrigin.y = float(characterBackgroundDesc.Height / 2);
+
+    //m_sprites = std::make_unique<SpriteSheet>();
+    //m_sprites->Load(m_characterTexture.Get(), L"CharacterSpriteSheetData.txt");
     // End texture
 }
 
@@ -934,6 +976,19 @@ void Game::CreateResources()
     // Character texture
     m_characterPos.x = float(backBufferWidth / 2);
     m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+
+    m_character0Pos.x = float(backBufferWidth / 2);
+    m_character0Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+
+    m_character1Pos.x = float(backBufferWidth / 2);
+    m_character1Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+
+    m_character2Pos.x = float(backBufferWidth / 2);
+    m_character2Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
+    m_characterBackgroundPos.x = backBufferWidth / 2.f;
+    m_characterBackgroundPos.y = backBufferHeight / 2.f;
     // End Texture
 }
 
@@ -1133,11 +1188,10 @@ void Game::DrawShotTimerUI()
 
 void Game::DrawMenuCharacterSelect()
 {
-    float lineDrawY = m_fontMenuPos.y + 15;
+    float lineDrawY = m_fontMenuPos.y + 25;
     float lineDrawSpacingY = 15;
     std::string menuTitle = "Character Select";
     float menuTitlePosX = m_fontMenuPos.x;
-    //float menuTitlePosY = m_fontPos.y / 2.f;
     float menuTitlePosY = lineDrawY;
     Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
@@ -1147,22 +1201,88 @@ void Game::DrawMenuCharacterSelect()
     std::string menuObj0String = "Character 1";
     Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
+    m_character0Pos.x = menuTitlePosX / 3;
+    m_character0Pos.y = lineDrawY - menuObj0Origin.y;
+    m_characterBackgroundPos.x = m_character0Pos.x + menuObj0Origin.x;
+    m_characterBackgroundPos.y = m_character0Pos.y + 10;
+    m_characterBackgroundOrigin = menuObj0Origin;
 
+    if (m_menuSelect == 0)
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);       
+    }
+    else
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+    }
+    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
+    m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
+    
     lineDrawY += menuObj0Pos.y;
     std::string menuObj1String = "Character 2";
     //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
     Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
+    m_character1Pos.x = menuTitlePosX / 3;
+    m_character1Pos.y = lineDrawY - menuObj1Origin.y;
+    m_characterBackgroundPos.x = m_character1Pos.x + menuObj1Origin.x;
+    m_characterBackgroundPos.y = m_character1Pos.y + 10;
+    m_characterBackgroundOrigin = menuObj1Origin;
+    if (m_menuSelect == 1)
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+    }
+    else
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+    }
+    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
+    m_character1->Draw(m_spriteBatch.get(), m_character1Pos);
 
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = "Character 3";
     Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
+    m_character2Pos.x = menuTitlePosX / 3;
+    m_character2Pos.y = lineDrawY - menuObj2Origin.y;
+    m_characterBackgroundPos.x = m_character2Pos.x + menuObj2Origin.x;
+    m_characterBackgroundPos.y = m_character2Pos.y + 10;
+    m_characterBackgroundOrigin = menuObj2Origin;
+    if (m_menuSelect == 2)
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+    }
+    else
+    {
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+    }
+    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
+    m_character2->Draw(m_spriteBatch.get(), m_character2Pos);
 
     if (m_menuSelect < 0 || m_menuSelect > 2)
     {
         m_menuSelect = 0;
     }
+
+    // Start Menu Select Highlight
     if (m_menuSelect == 0)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
@@ -1311,9 +1431,10 @@ void Game::DrawMenuMain()
     }
 }
 
+/*
 void Game::DrawStartScreen()
 {
-    std::string title = "GolfGame1989";
+    std::string title = "Golf Gm 1989";
     float lineDraw = m_fontMenuPos.y + 10;
     float fontTitlePosX = m_fontPosDebug.x - 100;
     //float fontTitlePosX = m_fontPos.x;
@@ -1639,8 +1760,8 @@ void Game::DrawStartScreen()
 
     titlePos.y += titleOrigin.y + space;
 }
+*/
 
-/* Save for post Testing
 void Game::DrawStartScreen()
 {
     std::string title = "GolfGame1989";
@@ -1669,7 +1790,8 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
-*/
+
+
 void Game::DrawSwing()
 {
     float shoulderAccel = .98;
@@ -1836,6 +1958,8 @@ void Game::OnDeviceLost()
     m_font.reset();
     m_titleFont.reset();
     m_spriteBatch.reset();
+    m_keyboard.reset();
+    m_kbStateTracker.reset();
     //Powerbar
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();
@@ -1845,6 +1969,13 @@ void Game::OnDeviceLost()
     // Charcter
     m_character.reset();
     m_characterTexture.Reset();
+    m_character0.reset();
+    m_character0Texture.Reset();
+    m_character1.reset();
+    m_character1Texture.Reset();
+    m_character2.reset();
+    m_character2Texture.Reset();
+    m_characterBackgroundTexture.Reset();
     // end
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();

@@ -56,6 +56,18 @@
     <Image Include="ChacterSpriteSheet.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Chacter0SpriteSheet.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Chacter1SpriteSheet.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Chacter2SpriteSheet.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="CharacterBackground.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">
@@ -65,5 +77,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="myfile.spritefont" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CharacterSpriteSheetData.txt" />
   </ItemGroup>
 </Project>
