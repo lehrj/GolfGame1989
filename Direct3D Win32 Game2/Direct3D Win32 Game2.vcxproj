@@ -209,6 +209,7 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bitwise16.spritefont" />
     <None Include="myfile.spritefont" />
     <None Include="packages.config" />
   </ItemGroup>

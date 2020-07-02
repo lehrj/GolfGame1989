@@ -742,35 +742,31 @@ void Game::CreateDevice()
 
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
-    DX::ThrowIfFailed(
-        m_d3dDevice->CreateInputLayout(VertexType::InputElements,
-            VertexType::InputElementCount,
-            shaderByteCode, byteCodeLength,
-            m_inputLayout.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
 
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
-
 
     // world start
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
 
-    DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc,
-        m_raster.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc, m_raster.ReleaseAndGetAddressOf()));
     // world end
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
+    m_textFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"bitwise16.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
     // end
 
     // Start Texture
+    ComPtr<ID3D11Resource> resource;
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", nullptr, m_powerFrameTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", nullptr, m_powerMeterTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", nullptr, m_powerImpactTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarBackswing.png", nullptr, m_powerBackswingTexture.ReleaseAndGetAddressOf()));
-    ComPtr<ID3D11Resource> resource;
+    
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", resource.GetAddressOf(), m_powerFrameTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", resource.GetAddressOf(), m_powerMeterTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", resource.GetAddressOf(), m_powerImpactTexture.ReleaseAndGetAddressOf()));
@@ -944,6 +940,8 @@ void Game::CreateResources()
     m_fontPosDebug.y = 35;
     m_fontMenuPos.x = backBufferWidth / 2.f;
     m_fontMenuPos.y = 35;
+    m_textFontPos.x = backBufferWidth / 2.f;
+    m_textFontPos.y = backBufferHeight / 2.f;
 
     // Start swing power bar
     m_powerMeterFrameRect.left = (backBufferWidth / 2) - m_powerBarFrameOrigin.x;
@@ -1957,6 +1955,7 @@ void Game::OnDeviceLost()
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
+    m_textFont.reset();
     m_spriteBatch.reset();
     m_keyboard.reset();
     m_kbStateTracker.reset();

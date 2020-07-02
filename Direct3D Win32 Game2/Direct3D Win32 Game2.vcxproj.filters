@@ -77,6 +77,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="myfile.spritefont" />
+    <None Include="bitwise16.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CharacterSpriteSheetData.txt" />
