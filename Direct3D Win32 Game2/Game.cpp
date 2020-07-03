@@ -112,6 +112,23 @@ void Game::Update(DX::StepTimer const& timer)
     
     if (m_kbStateTracker->pressed.Enter)
     {
+        if (m_gameState == 2) // Character Select State
+        {
+            if (m_menuSelect == 0)
+            {
+                pGolf->SetCharacter(0);
+            }
+            if (m_menuSelect == 1)
+            {
+                pGolf->SetCharacter(1);
+            }
+            if (m_menuSelect == 2)
+            {
+                pGolf->SetCharacter(2);
+            }
+            m_menuSelect = 0;
+            m_gameState = 0; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+        }
         if (m_gameState == 1) // Main Menu State
         {
             if (m_menuSelect == 0) // GoTo Game State
@@ -126,6 +143,7 @@ void Game::Update(DX::StepTimer const& timer)
             {
                 ExitGame();
             }
+            m_menuSelect = 0;
         }
         if (m_gameState == 0) // Start Screen state
         {
@@ -1196,7 +1214,7 @@ void Game::DrawMenuCharacterSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
     lineDrawY += menuTitlePosY + lineDrawSpacingY;
-    std::string menuObj0String = "Character 1";
+    std::string menuObj0String = pGolf->GetCharacterName(0);
     Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
     m_character0Pos.x = menuTitlePosX / 3;
@@ -1223,7 +1241,7 @@ void Game::DrawMenuCharacterSelect()
     m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
     
     lineDrawY += menuObj0Pos.y;
-    std::string menuObj1String = "Character 2";
+    std::string menuObj1String = pGolf->GetCharacterName(1);
     //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
     Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
@@ -1250,7 +1268,7 @@ void Game::DrawMenuCharacterSelect()
     m_character1->Draw(m_spriteBatch.get(), m_character1Pos);
 
     lineDrawY += menuObj0Pos.y;
-    std::string menuObj2String = "Character 3";
+    std::string menuObj2String = pGolf->GetCharacterName(2);
     Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
     m_character2Pos.x = menuTitlePosX / 3;

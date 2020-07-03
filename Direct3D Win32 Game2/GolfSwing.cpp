@@ -496,9 +496,24 @@ void GolfSwing::SelectClub()
     }
 }
 
+void GolfSwing::SetArmBalancePoint(double aBalancePoint)
+{
+
+}
+
 void GolfSwing::SetArmLength(double aLength)
 {
     m_armLength = aLength;
+}
+
+void GolfSwing::SetArmMass(double aArmMass)
+{
+    m_armMass = aArmMass;
+}
+
+void GolfSwing::SetArmMassMoI(double aArmMassMoi)
+{
+    m_armMassMoI = aArmMassMoi;
 }
 
 void GolfSwing::SetBackSwingPercentage(double aPercentage)
@@ -530,6 +545,11 @@ void GolfSwing::SetClubCoR(double aCoR)
 void GolfSwing::SetClubLength(double aLength)
 {
     m_club.length = aLength;
+}
+
+void GolfSwing::SetClubLengthModifier(double aLengthModifier)
+{
+    m_clubLengthModifier = aLengthModifier;
 }
 
 void GolfSwing::SetClubMass(double aMass)
@@ -608,6 +628,11 @@ void GolfSwing::UpdateClubData()
     //m_clubLength = m_club.clubLength;
     //m_clubMass = m_club.clubMass;
     //m_clubMassMoI = m_club.clubMassMoI;
+}
+void GolfSwing::UpdateGolfer()
+{
+    m_club.firstMoment = m_club.mass * m_club.length * m_club.balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
+    m_armFirstMoment = m_armMass * m_armLength * m_armBalancePoint; // First moment of the arm rod about the shoulder axis kg m
 }
 
 void GolfSwing::UpdateGolfSwingValues()

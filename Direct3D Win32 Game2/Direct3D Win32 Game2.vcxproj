@@ -164,6 +164,7 @@
     <ClInclude Include="Golf.h" />
     <ClInclude Include="GolfBag.h" />
     <ClInclude Include="GolfBall.h" />
+    <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
     <ClInclude Include="pch.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Golf.cpp" />
     <ClCompile Include="GolfBag.cpp" />
     <ClCompile Include="GolfBall.cpp" />
+    <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfSwing.cpp" />
     <ClCompile Include="Main.cpp" />

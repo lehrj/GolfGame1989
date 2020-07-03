@@ -7,6 +7,7 @@ Golf::Golf()
     //BuildVector();
     pEnvironment = new Environment();
     pEnvironment->SetDefaultEnvironment();
+    pCharachter = new GolfCharacter();
     pSwing = new GolfSwing();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     
@@ -16,6 +17,7 @@ Golf::Golf()
     pPlay = new GolfPlay();
     BuildVector();
     BuildUIstrings();
+    SetCharacter(0);
 }
 
 Golf::~Golf()
@@ -23,6 +25,7 @@ Golf::~Golf()
     delete pBall;
     delete pSwing;
     delete pEnvironment;
+    delete pCharachter;
     delete pPlay;
 }
 
@@ -33,28 +36,9 @@ void Golf::BuildVector()
     ScaleCordinates();
 }
 
-void Golf::SelectNextClub()
+void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
 {
-    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    pBall->ResetBallData();
-    pSwing->CycleClub();
-    pSwing->ResetAlphaBeta();
-    pSwing->UpdateGolfSwingValues();
-    BuildVector();
-
-    BuildUIstrings();
-}
-
-void Golf::SelectInputClub(int aInput)
-{
-    pBall->ResetBallData();
-    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    
-    pSwing->CycleInputClub(aInput);
-    pSwing->ResetAlphaBeta();
-    pSwing->UpdateGolfSwingValues();
-    BuildVector();
-    BuildUIstrings();
+    m_shotPath = aPath;
 }
 
 void Golf::BuildUIstrings()
@@ -85,6 +69,16 @@ void Golf::InputData()
     CopyShotPath(pBall->OutputShotPath());
 }
 
+std::string Golf::GetCharacterBio(const int aCharacterIndex) const
+{
+    return pCharachter->GetBio(aCharacterIndex);
+}
+
+std::string Golf::GetCharacterName(const int aCharacterIndex) const
+{
+    return pCharachter->GetName(aCharacterIndex);
+}
+
 int Golf::GetDrawColorIndex()
 {
     return pBall->GetColorIndex();
@@ -95,10 +89,14 @@ std::vector<int> Golf::GetDrawColorVector()
     return pBall->GetColorVector();
 }
 
-//Transform shotpath to start at edge of world grid
-void Golf::TransformCordinates(const int aIndex)
+void Golf::LoadCharacterTraits()
 {
-    m_shotPath[aIndex].x -= 2;
+    pSwing->SetArmBalancePoint(pCharachter->GetArmBalancePoint(m_selectedCharacter));
+    pSwing->SetArmLength(pCharachter->GetArmLength(m_selectedCharacter));
+    pSwing->SetArmMass(pCharachter->GetArmMass(m_selectedCharacter));
+    pSwing->SetArmMassMoI(pCharachter->GetArmMassMoI(m_selectedCharacter));
+    pSwing->SetClubLengthModifier(pCharachter->GetClubLenghtModifier(m_selectedCharacter));
+    pSwing->UpdateGolfer();
 }
 
 void Golf::ScaleCordinates()
@@ -115,6 +113,43 @@ void Golf::ScaleCordinates()
         m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
         TransformCordinates(i);
     }  
+}
+
+void Golf::SelectNextClub()
+{
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pBall->ResetBallData();
+    pSwing->CycleClub();
+    pSwing->ResetAlphaBeta();
+    pSwing->UpdateGolfSwingValues();
+    BuildVector();
+
+    BuildUIstrings();
+}
+
+void Golf::SelectInputClub(int aInput)
+{
+    pBall->ResetBallData();
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+
+    pSwing->CycleInputClub(aInput);
+    pSwing->ResetAlphaBeta();
+    pSwing->UpdateGolfSwingValues();
+    BuildVector();
+    BuildUIstrings();
+}
+
+void Golf::SetCharacter(const int aCharacterIndex)
+{
+    if (aCharacterIndex < 0 || aCharacterIndex > pCharachter->GetCharacterCount() - 1)
+    {
+        m_selectedCharacter = 0;
+    }
+    else
+    {
+        m_selectedCharacter = aCharacterIndex;
+    }
+    LoadCharacterTraits();
 }
 
 void Golf::SetShotCordMax()
@@ -142,9 +177,10 @@ void Golf::SetShotCordMax()
     m_maxZ = maxZ;
 }
 
-void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
+//Transform shotpath to start at edge of world grid
+void Golf::TransformCordinates(const int aIndex)
 {
-    m_shotPath = aPath;
+    m_shotPath[aIndex].x -= 2;
 }
 
 void Golf::UpdateImpact(Utility::ImpactData aImpact)

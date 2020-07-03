@@ -3,6 +3,7 @@
 #include "GolfBag.h"
 #include "Utility.h"
 #include "Vector4d.h"
+#include "GolfCharacter.h"
 
 class GolfSwing
 {
@@ -41,19 +42,24 @@ public:
     void ReadInSwingValues();
     void ResetAlphaBeta();
 
+    void SetArmBalancePoint(double aBalancePoint);
     void SetArmLength(double aLength);
+    void SetArmMass(double aArmMass);
+    void SetArmMassMoI(double aArmMassMoi);
     void SetBackSwingPercentage(double aPercentage);
     void SetBallPlacementAngle(double aAngle);
     void SetBeta(double aBeta);
     void SetClubAngle(double aAngle);
     void SetClubCoR(double aCoR);
     void SetClubLength(double aLength);
+    void SetClubLengthModifier(double aLengthModifier);
     void SetClubMass(double aMass);
     void SetDefaultSwingValues(double aGravity);
     void SetQalpha(double aQalpha);
     void SetQbeta(double aQbeta);
     void SetShoulderAccel(double aShoulderAccel);
     void SelectClub();
+    void UpdateGolfer();
     void UpdateGolfSwingValues();
     void UpdateImpactData(Utility::ImpactData aImpactData);
     void UpdateClubData();
@@ -89,6 +95,7 @@ private:
     double m_beta; // Wrist cock angle in radians 120.0 in radians
     double m_beta_dot;
     double m_beta_dotdot;
+    double m_clubLengthModifier = 1.0;
     //double m_clubAngle;
     //double m_clubBalancePoint;
     //double m_clubCoR; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
