@@ -19,6 +19,7 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
 }
 
 Game::~Game()
@@ -75,7 +76,7 @@ void Game::Update(DX::StepTimer const& timer)
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
 
-    if (m_gameState == 2)
+    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
     {
         if (m_menuSelect == 0)
         {
@@ -107,12 +108,12 @@ void Game::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        m_gameState = 1;
+        m_currentState = GameState::GAMESTATE_MAINMENU;
     }
     
     if (m_kbStateTracker->pressed.Enter)
     {
-        if (m_gameState == 2) // Character Select State
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             if (m_menuSelect == 0)
             {
@@ -127,17 +128,19 @@ void Game::Update(DX::StepTimer const& timer)
                 pGolf->SetCharacter(2);
             }
             m_menuSelect = 0;
-            m_gameState = 0; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+            //m_currentState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+            m_currentState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
         }
-        if (m_gameState == 1) // Main Menu State
+
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
             if (m_menuSelect == 0) // GoTo Game State
             {
-                m_gameState = 10;
+                m_currentState = GameState::GAMESTATE_GAMEPLAY;
             }
             if (m_menuSelect == 1) // GoTo Character Select State
             {
-                m_gameState = 2;
+                m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
             }
             if (m_menuSelect == 2) // Quit Game
             {
@@ -145,55 +148,33 @@ void Game::Update(DX::StepTimer const& timer)
             }
             m_menuSelect = 0;
         }
-        if (m_gameState == 0) // Start Screen state
+        if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
         {
-            m_gameState = 1; // GoTo Main Menu
+            m_currentState = GameState::GAMESTATE_MAINMENU;
         }
     }
     if (m_kbStateTracker->pressed.Up)
     {
-        if (m_gameState == 1)
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
             --m_menuSelect;
         }
-        if (m_gameState == 2)
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             --m_menuSelect;
         }
     }
     if (m_kbStateTracker->pressed.Down)
     {
-        if (m_gameState == 1)
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
             ++m_menuSelect;
         }
-        if (m_gameState == 2)
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             ++m_menuSelect;
         }
-    }
-    
-    if (kb.L)
-    {
-        if (m_gameState == 1)
-        {
-            m_gameState = 2;
-        }
-    }
-    if (kb.K)
-    {
-        if (m_gameState == 2)
-        {
-            m_gameState = 3;
-        }
-    }
-    if (kb.J)
-    {
-        if (m_gameState == 3)
-        {
-            m_gameState = 0;
-        }
-    }
+    }  
     if (kb.D1)
     {
         pGolf->SelectInputClub(1);
@@ -266,18 +247,11 @@ void Game::Update(DX::StepTimer const& timer)
     }
     if (m_kbStateTracker->pressed.Space)
     {
-        if (m_gameState == 10)
+        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
             pPlay->UpdateSwingState();
         }
     }
-    
-    /*
-    if (m_kbStateTracker.IsKeyReleased(DirectX::Keyboard::Keys::A))
-    {
-        pPlay->ResetGamePlayButton();
-    }
-    */
     if (kb.F1)
     {
         SetGameCamera(1);
@@ -346,7 +320,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
-
     }
     if (m_gameCamera == 2)
     {
@@ -453,7 +426,7 @@ void Game::Render()
 
     m_batch->Begin();
 
-    if (m_gameState == 10)
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         //DrawSwing();
         DrawWorld();
@@ -466,28 +439,25 @@ void Game::Render()
     m_spriteBatch->Begin();
 
     //DrawShotTimerUI();
-    if (m_gameState == 0)
+
+    if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
     {
         DrawStartScreen();
     }
-    if (m_gameState == 1)
+    if (m_currentState == GameState::GAMESTATE_MAINMENU)
     {
         DrawMenuMain();
     }
-    if (m_gameState == 2)
+    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
     {
         DrawMenuCharacterSelect();
     }
-    if (m_gameState == 10)
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawPowerBarUI();
-    }
-    if (m_gameState == 10)
-    {
         DrawSwingUI();
         DrawUI();
     }
-
 
     m_spriteBatch->End();
 
@@ -1795,6 +1765,7 @@ void Game::DrawStartScreen()
     Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
     Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
 
+    /*
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
@@ -1802,6 +1773,42 @@ void Game::DrawStartScreen()
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+    */
+//////////////////////////////////////////////////////////////////////
+    /*
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(11.f, 11.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(10.f, 10.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(9.f, 9.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::Green, 0.f, titleOrigin);
+    */
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+    
+/////////////////////////////////////////////////////////////
+    /*
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::DarkOliveGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+    */
+/////////////////////////////////////////////////////////////////////////////////////////////////////    
 
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);

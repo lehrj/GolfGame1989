@@ -182,6 +182,16 @@ private:
     float m_powerMeterImpactPoint;
     float m_powerMeterBarScale;
 
-    int m_gameState = 0;
     int m_menuSelect = 0;
+
+    enum class GameState
+    {
+        GAMESTATE_STARTSCREEN,
+        GAMESTATE_MAINMENU,
+        GAMESTATE_CHARACTERSELECT,
+        GAMESTATE_ENVIRONTMENTSELECT,
+        GAMESTATE_GAMEPLAY
+    };
+
+    GameState m_currentState;
 };
