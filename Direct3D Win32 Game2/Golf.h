@@ -46,7 +46,7 @@ public:
 private:
     Environment* pEnvironment;    
     GolfBall* pBall;
-    GolfCharacter* pCharachter;
+    GolfCharacter* pCharacter;
     GolfPlay* pPlay;
     GolfSwing* pSwing;
     Utility::ImpactData m_impactData;

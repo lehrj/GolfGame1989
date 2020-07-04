@@ -498,7 +498,7 @@ void GolfSwing::SelectClub()
 
 void GolfSwing::SetArmBalancePoint(double aBalancePoint)
 {
-
+    m_armBalancePoint = aBalancePoint;
 }
 
 void GolfSwing::SetArmLength(double aLength)
@@ -573,10 +573,6 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_alpha = 0.0; // Angle swept by arm rod from initial backswing position in radians
     m_alpha_dot = 0.0;
     m_alpha_dotdot = 0.0;
-    m_armBalancePoint = 0.5;
-    m_armLength = 0.62;
-    m_armMass = 7.3;
-    m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
     m_backSwingPercentage = 100.0;
     m_impactData.power = 100.0;
     m_ballPlacementAngle = 5.0;
@@ -629,6 +625,7 @@ void GolfSwing::UpdateClubData()
     //m_clubMass = m_club.clubMass;
     //m_clubMassMoI = m_club.clubMassMoI;
 }
+
 void GolfSwing::UpdateGolfer()
 {
     m_club.firstMoment = m_club.mass * m_club.length * m_club.balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m

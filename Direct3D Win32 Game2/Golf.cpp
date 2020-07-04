@@ -7,7 +7,7 @@ Golf::Golf()
     //BuildVector();
     pEnvironment = new Environment();
     pEnvironment->SetDefaultEnvironment();
-    pCharachter = new GolfCharacter();
+    pCharacter = new GolfCharacter();
     pSwing = new GolfSwing();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     
@@ -15,9 +15,9 @@ Golf::Golf()
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
     pPlay = new GolfPlay();
+    SetCharacter(0);
     BuildVector();
     BuildUIstrings();
-    SetCharacter(0);
 }
 
 Golf::~Golf()
@@ -25,7 +25,7 @@ Golf::~Golf()
     delete pBall;
     delete pSwing;
     delete pEnvironment;
-    delete pCharachter;
+    delete pCharacter;
     delete pPlay;
 }
 
@@ -61,6 +61,7 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Max Height = " + std::to_string(pBall->GetMaxHeight()) + " meters");
     m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
     m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+    m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 }
 
 void Golf::InputData()
@@ -71,12 +72,12 @@ void Golf::InputData()
 
 std::string Golf::GetCharacterBio(const int aCharacterIndex) const
 {
-    return pCharachter->GetBio(aCharacterIndex);
+    return pCharacter->GetBio(aCharacterIndex);
 }
 
 std::string Golf::GetCharacterName(const int aCharacterIndex) const
 {
-    return pCharachter->GetName(aCharacterIndex);
+    return pCharacter->GetName(aCharacterIndex);
 }
 
 int Golf::GetDrawColorIndex()
@@ -91,11 +92,11 @@ std::vector<int> Golf::GetDrawColorVector()
 
 void Golf::LoadCharacterTraits()
 {
-    pSwing->SetArmBalancePoint(pCharachter->GetArmBalancePoint(m_selectedCharacter));
-    pSwing->SetArmLength(pCharachter->GetArmLength(m_selectedCharacter));
-    pSwing->SetArmMass(pCharachter->GetArmMass(m_selectedCharacter));
-    pSwing->SetArmMassMoI(pCharachter->GetArmMassMoI(m_selectedCharacter));
-    pSwing->SetClubLengthModifier(pCharachter->GetClubLenghtModifier(m_selectedCharacter));
+    pSwing->SetArmBalancePoint(pCharacter->GetArmBalancePoint(m_selectedCharacter));
+    pSwing->SetArmLength(pCharacter->GetArmLength(m_selectedCharacter));
+    pSwing->SetArmMass(pCharacter->GetArmMass(m_selectedCharacter));
+    pSwing->SetArmMassMoI(pCharacter->GetArmMassMoI(m_selectedCharacter));
+    pSwing->SetClubLengthModifier(pCharacter->GetClubLenghtModifier(m_selectedCharacter));
     pSwing->UpdateGolfer();
 }
 
@@ -141,7 +142,7 @@ void Golf::SelectInputClub(int aInput)
 
 void Golf::SetCharacter(const int aCharacterIndex)
 {
-    if (aCharacterIndex < 0 || aCharacterIndex > pCharachter->GetCharacterCount() - 1)
+    if (aCharacterIndex < 0 || aCharacterIndex > pCharacter->GetCharacterCount() - 1)
     {
         m_selectedCharacter = 0;
     }
