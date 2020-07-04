@@ -13,6 +13,7 @@ GolfSwing::GolfSwing()
     //this->SetDefaultSwingValues(9.8);
     m_pBag = new GolfBag();
     //Utility::ZeroImpactData(m_impactData);
+    InputClub(m_clubIndex);
 }
 
 GolfSwing::~GolfSwing()
@@ -259,6 +260,7 @@ double GolfSwing::ComputeBetaDotDot(void)
     return (G - C * m_alpha_dotdot) / D;
 }
 
+/*
 void GolfSwing::CycleClub()
 {
     ++m_clubIndex;
@@ -271,13 +273,13 @@ void GolfSwing::CycleClub()
     UpdateGolfSwingValues();
     CalculateLaunchVector();
 }
+*/
 
-void GolfSwing::CycleInputClub(int aInput)
+void GolfSwing::InputClub(int aInput)
 {
     m_club = m_pBag->GetClub(aInput);
-    UpdateClubData();
     UpdateGolfSwingValues();
-    CalculateLaunchVector();
+    //CalculateLaunchVector();
 }
 
 std::vector<Vector4d> GolfSwing::OutputSwingData()
@@ -471,6 +473,7 @@ void GolfSwing::ResetAlphaBeta()
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
+/*
 // Select club from GolfBag class and update member variables
 void GolfSwing::SelectClub()
 {
@@ -495,6 +498,7 @@ void GolfSwing::SelectClub()
         }
     }
 }
+*/
 
 void GolfSwing::SetArmBalancePoint(double aBalancePoint)
 {
@@ -584,7 +588,9 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_club.balancePoint = 0.75;
     m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
     m_impactData.cor = 0.78;
+
     m_club.length = 1.1; // length of club in m
+    //m_club.length = m_club.lengthBase * m_clubLengthModifier;
     m_club.mass = 0.4;
     m_impactData.mass = 0.4;
     m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
@@ -613,17 +619,6 @@ void GolfSwing::SetQalpha(double aQalpha)
 void GolfSwing::SetQbeta(double aQbeta)
 {
     m_Qbeta = aQbeta;
-}
-
-void GolfSwing::UpdateClubData()
-{
-    //m_clubAngle = m_club.clubAngle;
-    //m_club.clubBalancePoint = m_club.clubBalancePoint;
-    //m_clubCoR = m_club.clubCoR;
-    //m_clubFirstMoment = m_club.clubFirstMoment;
-    //m_clubLength = m_club.clubLength;
-    //m_clubMass = m_club.clubMass;
-    //m_clubMassMoI = m_club.clubMassMoI;
 }
 
 void GolfSwing::UpdateGolfer()

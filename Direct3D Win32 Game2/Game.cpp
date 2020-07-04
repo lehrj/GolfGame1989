@@ -48,7 +48,7 @@ void Game::Initialize(HWND window, int width, int height)
 
     // WLJ add for mouse and keybord interface
     m_keyboard = std::make_unique<Keyboard>();
-    m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
+    //m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
 
     m_mouse = std::make_unique<Mouse>();
     m_mouse->SetWindow(window);
@@ -102,16 +102,17 @@ void Game::Update(DX::StepTimer const& timer)
     UpdateCamera(timer);
 
     // WLJ add for mouse and keybord interface
+    
     auto kb = m_keyboard->GetState();    
     
-    m_kbStateTracker->Update(kb);
+    m_kbStateTracker.Update(kb);
 
     if (kb.Escape)
     {
         m_currentState = GameState::GAMESTATE_MAINMENU;
     }
     
-    if (m_kbStateTracker->pressed.Enter)
+    if (m_kbStateTracker.pressed.Enter)
     {
         if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
         {
@@ -153,7 +154,7 @@ void Game::Update(DX::StepTimer const& timer)
             m_currentState = GameState::GAMESTATE_MAINMENU;
         }
     }
-    if (m_kbStateTracker->pressed.Up)
+    if (m_kbStateTracker.pressed.Up)
     {
         if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
@@ -164,7 +165,7 @@ void Game::Update(DX::StepTimer const& timer)
             --m_menuSelect;
         }
     }
-    if (m_kbStateTracker->pressed.Down)
+    if (m_kbStateTracker.pressed.Down)
     {
         if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
@@ -245,7 +246,7 @@ void Game::Update(DX::StepTimer const& timer)
     {
         pPlay->ResetGamePlayButton();
     }
-    if (m_kbStateTracker->pressed.Space)
+    if (m_kbStateTracker.pressed.Space)
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
@@ -308,6 +309,7 @@ void Game::Update(DX::StepTimer const& timer)
     {
         m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
+    
     auto mouse = m_mouse->GetState();
 
     elapsedTime;
@@ -608,28 +610,29 @@ void Game::Present()
 void Game::OnActivated()
 {
     // TODO: Game is becoming active window.
-    m_keyboard.reset();
-    m_kbStateTracker.reset();
+    //m_keyboard.reset();
+    m_kbStateTracker.Reset();
 }
 
 void Game::OnDeactivated()
 {
     // TODO: Game is becoming background window.
-    m_keyboard.reset();
-    m_kbStateTracker.reset();
+    //m_keyboard.reset();
+    //m_kbStateTracker.reset();
 }
 
 void Game::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
-    m_keyboard.reset();
-    m_kbStateTracker.reset();
+    //m_keyboard.reset();
+    //m_kbStateTracker.reset();
 }
 
 void Game::OnResuming()
 {
     m_timer.ResetElapsedTime();
-    m_kbStateTracker.reset();
+    //m_keyboard.reset();
+    m_kbStateTracker.Reset();
     // TODO: Game is being power-resumed (or returning from minimize).
 }
 
@@ -1982,8 +1985,9 @@ void Game::OnDeviceLost()
     m_titleFont.reset();
     m_textFont.reset();
     m_spriteBatch.reset();
-    m_keyboard.reset();
-    m_kbStateTracker.reset();
+    m_kbStateTracker.Reset();
+    //m_keyboard.reset();
+    
     //Powerbar
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();

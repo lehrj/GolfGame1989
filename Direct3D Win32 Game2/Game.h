@@ -135,8 +135,8 @@ private:
     std::unique_ptr<DirectX::Mouse>                 m_mouse;
 
     //Keyboard::KeyboardStateTracker m_kbStateTracker;
-    //DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
-    std::unique_ptr<DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
+    DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
+    //std::unique_ptr<DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
 
     // Golf Character Texture
     std::unique_ptr<AnimatedTexture> m_character;

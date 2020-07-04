@@ -28,7 +28,7 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armLength = 0.62;
     m_characters[i].armMass = 7.3;
     m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = 1.0;
+    m_characters[i].clubLengthModifier = 2.0;
     
     ++i;
     /*
@@ -46,7 +46,7 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armLength = 0.82;
     m_characters[i].armMass = 5.3;
     m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = 1.0;
+    m_characters[i].clubLengthModifier = 1.3;
     ++i;
     /*
     m_characters[i].name = "Chubs McShortRound";
@@ -63,6 +63,6 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armLength = 0.62;
     m_characters[i].armMass = 7.3;
     m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = 1.0;
+    m_characters[i].clubLengthModifier = .5;
 }
 

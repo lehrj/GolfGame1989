@@ -116,6 +116,7 @@ void Golf::ScaleCordinates()
     }  
 }
 
+/*
 void Golf::SelectNextClub()
 {
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
@@ -127,13 +128,14 @@ void Golf::SelectNextClub()
 
     BuildUIstrings();
 }
+*/
 
 void Golf::SelectInputClub(int aInput)
 {
     pBall->ResetBallData();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
 
-    pSwing->CycleInputClub(aInput);
+    pSwing->InputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildVector();

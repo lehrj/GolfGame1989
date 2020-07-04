@@ -15,8 +15,7 @@ public:
     void CalculateSwingCordinates();
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);
-    void CycleClub();
-    void CycleInputClub(int aInput);
+    void InputClub(int aInput);
     const double GetArmLength() { return m_armLength; };
     
     const double GetBackSwingPercentage() { return m_impactData.power; };
@@ -96,6 +95,7 @@ private:
     double m_beta_dot;
     double m_beta_dotdot;
     double m_clubLengthModifier = 1.0;
+    double m_clubLengthSelected;
     //double m_clubAngle;
     //double m_clubBalancePoint;
     //double m_clubCoR; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
