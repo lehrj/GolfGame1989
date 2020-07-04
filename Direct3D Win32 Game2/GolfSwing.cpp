@@ -442,6 +442,7 @@ void GolfSwing::ReadInSwingValues()
 
 void GolfSwing::ResetAlphaBeta()
 {
+    m_club.length = m_club.lengthBase * m_clubLengthModifier;
     // Input Variables
     m_alpha = 0.0; // Angle swept by arm rod from initial backswing position in radians
     m_alpha_dot = 0.0;
@@ -554,6 +555,7 @@ void GolfSwing::SetClubLength(double aLength)
 void GolfSwing::SetClubLengthModifier(double aLengthModifier)
 {
     m_clubLengthModifier = aLengthModifier;
+    m_club.length = m_club.lengthBase * m_clubLengthModifier;
 }
 
 void GolfSwing::SetClubMass(double aMass)

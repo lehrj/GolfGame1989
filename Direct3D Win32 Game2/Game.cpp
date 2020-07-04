@@ -430,7 +430,7 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawSwing();
+        DrawSwing();
         DrawWorld();
         DrawProjectile();
         //DrawProjectileRealTime();

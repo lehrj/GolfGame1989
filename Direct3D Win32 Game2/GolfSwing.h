@@ -95,7 +95,6 @@ private:
     double m_beta_dot;
     double m_beta_dotdot;
     double m_clubLengthModifier = 1.0;
-    double m_clubLengthSelected;
     //double m_clubAngle;
     //double m_clubBalancePoint;
     //double m_clubCoR; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
