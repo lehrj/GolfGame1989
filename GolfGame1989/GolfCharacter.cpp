@@ -18,12 +18,12 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].bioLine1 = "1";
     m_characters[i].bioLine2 = "2";
     m_characters[i].bioLine3 = "3";
-    m_characters[i].armBalancePoint = 0.500069;
-    m_characters[i].armLength = 0.620069;
+    m_characters[i].armLength = 0.620000;
+    m_characters[i].armLength = 0.20069;
     m_characters[i].armMass = 7.300069;
     m_characters[i].armMassMoI = 1.150069;
     m_characters[i].clubLengthModifier = 1.000069;
-    
+ 
     /*
     m_characters[i].name = "Natty Noonan";
     m_characters[i].bio = "The Natural";

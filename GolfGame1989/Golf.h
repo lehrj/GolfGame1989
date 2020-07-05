@@ -42,7 +42,8 @@ public:
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); };
     const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
-    
+    double GetArmLength() { return pSwing->GetArmLength(); };
+    double GetClubLength() { return pSwing->GetClubLength(); };
     void InputData();
     void ScaleCordinates();
     void SelectNextClub();

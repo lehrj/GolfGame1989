@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <RootNamespace>Direct3D_Win32_Game2</RootNamespace>
+    <RootNamespace>GolfGame1989</RootNamespace>
     <ProjectGuid>{9692f301-0c97-41c9-963a-0f6fcf7f2524}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>

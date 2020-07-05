@@ -9,6 +9,7 @@ extern void ExitGame() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath; // WLJ add
+
 using Microsoft::WRL::ComPtr;
 
 Game::Game() noexcept :
@@ -20,6 +21,7 @@ Game::Game() noexcept :
     pGolf = new Golf;
     pPlay = new GolfPlay;
     m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
 Game::~Game()
@@ -2170,7 +2172,6 @@ void Game::DrawSwing()
     Vector3 thetaOrigin;
     thetaOrigin.Zero;
     thetaOrigin.y = -1.0;
-
     Vector3 armOrigin;
     armOrigin.Zero;
     armOrigin.y = -1.0;
@@ -2221,48 +2222,6 @@ void Game::DrawSwing()
             //m_batch->DrawLine(thetaColor, updateClubHead);
         }
     }
-
-    /*
-    Vector3 top(0.0f, 1.0f, 0.0f);
-    Vector3 bottom(0.0f, -1.0f, 0.0f);
-    Vector3 left(-1.0f, 0.0f, 0.0f);
-    Vector3 right(1.0f, 0.0f, 0.0f);
-    VertexPositionColor vTop(top, Colors::Red);
-    VertexPositionColor vBottom(bottom, Colors::Red);
-    VertexPositionColor vLeft(left, Colors::Red);
-    VertexPositionColor vRight(right, Colors::Red);
-    m_batch->DrawLine(vTop, vBottom);
-    m_batch->DrawLine(vLeft, vRight);
-    /////////********* Start swing draw
-    int impactPoint = pGolf->GetImpactStep();
-    std::vector<DirectX::SimpleMath::Vector3> alphaVec = pGolf->GetAlpha();
-    std::vector<DirectX::SimpleMath::Vector3> betaVec = pGolf->GetBeta();
-    std::vector<DirectX::SimpleMath::Vector3> thetaVec = pGolf->GetTheta();
-    int swingStepCount = alphaVec.size();
-    if (arcCount >= swingStepCount)
-    {
-        arcCount = 0;
-    }
-    ++arcCount;
-    Vector3 swingOrigin(0.0f, 0.0f, 0.0f);
-    Vector3 swingTop(0.0f, 1.0f, 0.0f);
-    VertexPositionColor feet(swingOrigin, Colors::Yellow);
-    VertexPositionColor shoulder(swingTop, Colors::White);
-    for (int i = 0; i < arcCount; ++i)
-    {
-        //Vector3 hand = thetaVec[i];
-        Vector3 hand = alphaVec[i];
-        hand += swingTop;
-        Vector3 clubHead = betaVec[i];
-        Vector3 thetaPoint = thetaVec[i];
-        clubHead -= hand;
-        VertexPositionColor body(swingOrigin, Colors::Red);
-        VertexPositionColor arm(hand, Colors::Green);
-        VertexPositionColor shaft(clubHead, Colors::Blue);
-        VertexPositionColor thetaVertex(thetaPoint, Colors::White);
-        m_batch->DrawLine(shoulder,arm);
-    }
-    */
 }
 
 void Game::DrawWorld()
