@@ -70,9 +70,53 @@ void Golf::InputData()
     CopyShotPath(pBall->OutputShotPath());
 }
 
-std::string Golf::GetCharacterBio(const int aCharacterIndex) const
+std::string Golf::GetCharacterArmBalancePoint(const int aCharacterIndex) const
 {
-    return pCharacter->GetBio(aCharacterIndex);
+    std::string armBalancePointString = "Arm Balance Point = " + std::to_string(pCharacter->GetArmBalancePoint(aCharacterIndex)) + " %";
+    return armBalancePointString;
+}
+std::string Golf::GetCharacterArmLength(const int aCharacterIndex) const
+{
+    std::string armLengthString = "Arm Length = " + std::to_string(pCharacter->GetArmLength(aCharacterIndex)) + " m";
+    return armLengthString;
+}
+
+std::string Golf::GetCharacterArmMass(const int aCharacterIndex) const
+{
+    std::string armMassString = "Arm Mass = " + std::to_string(pCharacter->GetArmMass(aCharacterIndex)) + " kg";
+    return armMassString;
+}
+
+std::string Golf::GetCharacterClubLengthMod(const int aCharacterIndex) const
+{
+    std::string clubLengthModString = "Club Length = x" + std::to_string(pCharacter->GetClubLenghtModifier(aCharacterIndex)) + " m";
+    return clubLengthModString;
+}
+
+std::string Golf::GetCharacterArmMassMoI(const int aCharacterIndex) const
+{
+    std::string armMassMoIString = "Arm MoI = " + std::to_string(pCharacter->GetArmMassMoI(aCharacterIndex)) + " kg Squared";
+    return armMassMoIString;
+}
+
+std::string Golf::GetCharacterBioLine0(const int aCharacterIndex) const
+{
+    return pCharacter->GetBioLine0(aCharacterIndex);
+}
+
+std::string Golf::GetCharacterBioLine1(const int aCharacterIndex) const
+{
+    return pCharacter->GetBioLine1(aCharacterIndex);
+}
+
+std::string Golf::GetCharacterBioLine2(const int aCharacterIndex) const
+{
+    return pCharacter->GetBioLine2(aCharacterIndex);
+}
+
+std::string Golf::GetCharacterBioLine3(const int aCharacterIndex) const
+{
+    return pCharacter->GetBioLine3(aCharacterIndex);
 }
 
 std::string Golf::GetCharacterName(const int aCharacterIndex) const

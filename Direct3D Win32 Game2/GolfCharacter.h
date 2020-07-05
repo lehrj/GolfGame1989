@@ -3,7 +3,10 @@
 struct Character
 {
     std::string name;
-    std::string bio;
+    std::string bioLine0;
+    std::string bioLine1;
+    std::string bioLine2;
+    std::string bioLine3;
     double armBalancePoint;
     double armLength;
     double armMass;
@@ -23,7 +26,10 @@ public:
     int GetCharacterCount() const { return m_charactersAvailable; };
     double GetClubLenghtModifier(const int aCharacterIndex) const { return m_characters[aCharacterIndex].clubLengthModifier; };
     std::string GetName(const int aCharacterIndex) const { return m_characters[aCharacterIndex].name; };
-    std::string GetBio(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bio; };
+    std::string GetBioLine0(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bioLine0; };
+    std::string GetBioLine1(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bioLine1; };
+    std::string GetBioLine2(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bioLine2; };
+    std::string GetBioLine3(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bioLine3; };
 
 private:
     void LoadCharacterData();

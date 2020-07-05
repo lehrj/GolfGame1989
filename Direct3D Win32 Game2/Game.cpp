@@ -176,6 +176,20 @@ void Game::Update(DX::StepTimer const& timer)
             ++m_menuSelect;
         }
     }  
+    if (m_kbStateTracker.pressed.Left)
+    {
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            --m_menuSelect;
+        }
+    }
+    if (m_kbStateTracker.pressed.Right)
+    {
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            ++m_menuSelect;
+        }
+    }
     if (kb.D1)
     {
         pGolf->SelectInputClub(1);
@@ -747,7 +761,7 @@ void Game::CreateDevice()
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
-    m_textFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"bitwise16.spritefont");
+    m_bitwiseFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"bitwise24.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
     // end
 
@@ -931,8 +945,8 @@ void Game::CreateResources()
     m_fontPosDebug.y = 35;
     m_fontMenuPos.x = backBufferWidth / 2.f;
     m_fontMenuPos.y = 35;
-    m_textFontPos.x = backBufferWidth / 2.f;
-    m_textFontPos.y = backBufferHeight / 2.f;
+    m_bitwiseFontPos.x = backBufferWidth / 2.f;
+    m_bitwiseFontPos.y = backBufferHeight / 2.f;
 
     // Start swing power bar
     m_powerMeterFrameRect.left = (backBufferWidth / 2) - m_powerBarFrameOrigin.x;
@@ -961,12 +975,13 @@ void Game::CreateResources()
     m_powerMeterBackswingRect.right = m_powerMeterBarRect.right;
 
     m_powerMeterBarScale = 1.0 - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
-
+    /*
     // Character texture
     m_characterPos.x = float(backBufferWidth / 2);
     m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
 
-    m_character0Pos.x = float(backBufferWidth / 2);
+    //m_character0Pos.x = float(backBufferWidth / 2);
+    m_character0Pos.x = float(0.0);
     m_character0Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
 
     m_character1Pos.x = float(backBufferWidth / 2);
@@ -978,6 +993,25 @@ void Game::CreateResources()
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
     m_characterBackgroundPos.x = backBufferWidth / 2.f;
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
+    */
+
+    // Character texture
+    m_characterPos.x = 200.f;
+    m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+    //m_character0Pos.x = float(backBufferWidth / 2);
+    m_character0Pos.x = 200.f;
+    m_character0Pos.y = float((backBufferHeight * .25f));
+
+    m_character1Pos.x = 200.f;
+    m_character1Pos.y = float((backBufferHeight * .5f));
+
+    m_character2Pos.x = 200.f;
+    m_character2Pos.y = float((backBufferHeight * .75f));
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
+    m_characterBackgroundPos.x = backBufferWidth / 2.f;
+    m_characterBackgroundPos.y = backBufferHeight / 2.f;
+
     // End Texture
 }
 
@@ -1175,8 +1209,13 @@ void Game::DrawShotTimerUI()
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
 
+
+
 void Game::DrawMenuCharacterSelect()
 {
+    const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+    const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+
     float lineDrawY = m_fontMenuPos.y + 25;
     float lineDrawSpacingY = 15;
     std::string menuTitle = "Character Select";
@@ -1184,24 +1223,138 @@ void Game::DrawMenuCharacterSelect()
     float menuTitlePosY = lineDrawY;
     Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
-
+    
+    float posY0 = 250.0f;
+    float originY = posY0;
+    float ySpacing = 50.f;
     lineDrawY += menuTitlePosY + lineDrawSpacingY;
     std::string menuObj0String = pGolf->GetCharacterName(0);
-    Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
+
+    float posX0 = backBufferWidth * .20f;
+    //float posX0 = 200.0;
+    Vector2 menuObj0Pos(posX0, posY0);
     Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
-    m_character0Pos.x = menuTitlePosX / 3;
-    m_character0Pos.y = lineDrawY - menuObj0Origin.y;
-    m_characterBackgroundPos.x = m_character0Pos.x + menuObj0Origin.x;
+
+
+    //float ySpacing = menuObj0Origin.y * 2;
+    
+    //m_characterBackgroundPos.x = m_character0Pos.x + menuObj0Origin.x;
+    float half = m_characterBackgroundOrigin.x / 2.f;
+    //float half = m_characterBackgroundOrigin.x - 105;
+    //float half = m_characterBackgroundOrigin.x - 105;
+    m_characterBackgroundPos.x = posX0 + half + 25.f;
     m_characterBackgroundPos.y = m_character0Pos.y + 10;
     m_characterBackgroundOrigin = menuObj0Origin;
 
+    //m_character0Pos.x = menuTitlePosX / 3;
+    m_character0Pos.x = m_characterBackgroundPos.x -menuObj0Origin.x;
+    m_character0Pos.y = lineDrawY - menuObj0Origin.y;
+    
+    posY0 += ySpacing;
+    int i = 0;
+    
+    std::string dataString = "Data: ";
+    Vector2 dataOrigin = m_bitwiseFont->MeasureString(dataString.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 dataPos;
+    dataPos.x = posX0;
+    dataPos.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
+
+    std::string armLengthString0 = pGolf->GetCharacterArmLength(i);
+    Vector2 armLengthOrigin0 = m_bitwiseFont->MeasureString(armLengthString0.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 armLengthPos0;
+    armLengthPos0.x = posX0;
+    armLengthPos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString0.c_str(), armLengthPos0, Colors::White, 0.f, armLengthOrigin0);
+    
+    std::string armMassString0 = pGolf->GetCharacterArmMass(i);
+    Vector2 armMassOrigin0 = m_bitwiseFont->MeasureString(armMassString0.c_str()) / 2.f;
+    Vector2 armMassPos0;
+    posY0 += ySpacing;
+    armMassPos0.x = posX0;
+    armMassPos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString0.c_str(), armMassPos0, Colors::White, 0.f, armMassOrigin0);
+
+    std::string clubLengthModString0 = pGolf->GetCharacterClubLengthMod(i);
+    Vector2 clubLengthModOrigin0 = m_bitwiseFont->MeasureString(clubLengthModString0.c_str()) / 2.f;
+    Vector2 clubLengthModPos0;
+    posY0 += ySpacing;
+    clubLengthModPos0.x = posX0;
+    clubLengthModPos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString0.c_str(), clubLengthModPos0, Colors::White, 0.f, clubLengthModOrigin0);
+
+    std::string armBalancePointString0 = pGolf->GetCharacterArmBalancePoint(i);
+    Vector2 armBalancePointOrigin0 = m_bitwiseFont->MeasureString(armBalancePointString0.c_str()) / 2.f;
+    Vector2 armBalancePointPos0;
+    posY0 += ySpacing;
+    armBalancePointPos0.x = posX0;
+    armBalancePointPos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString0.c_str(), armBalancePointPos0, Colors::White, 0.f, armBalancePointOrigin0);
+
+    std::string armMassMoIString0 = pGolf->GetCharacterArmMassMoI(i);
+    Vector2 armMassMoIOrigin0 = m_bitwiseFont->MeasureString(armMassMoIString0.c_str()) / 2.f;
+    Vector2 armMassMoIPos0;
+    posY0 += ySpacing;
+    armMassMoIPos0.x = posX0;
+    armMassMoIPos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassMoIString0.c_str(), armMassMoIPos0, Colors::White, 0.f, armMassMoIOrigin0);
+
+    std::string bioString = "Bio:";
+    Vector2 bioOrigin = m_bitwiseFont->MeasureString(bioString.c_str()) / 2.f;
+    posY0 += ySpacing + ySpacing;
+    Vector2 bioPos;
+    bioPos.x = posX0;
+    bioPos.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
+
+    std::string bioLine0String0 = pGolf->GetCharacterBioLine0(i);
+    Vector2 bioLine0Origin0 = m_bitwiseFont->MeasureString(bioLine0String0.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 bioLine0Pos0;
+    bioLine0Pos0.x = posX0;
+    bioLine0Pos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String0.c_str(), bioLine0Pos0, Colors::White, 0.f, bioLine0Origin0);
+
+    std::string bioLine1String0 = pGolf->GetCharacterBioLine1(i);
+    Vector2 bioLine1Origin0 = m_bitwiseFont->MeasureString(bioLine1String0.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 bioLine1Pos0;
+    bioLine1Pos0.x = posX0;
+    bioLine1Pos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String0.c_str(), bioLine1Pos0, Colors::White, 0.f, bioLine1Origin0);
+
+    std::string bioLine2String0 = pGolf->GetCharacterBioLine2(i);
+    Vector2 bioLine2Origin0 = m_bitwiseFont->MeasureString(bioLine2String0.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 bioLine2Pos0;
+    bioLine2Pos0.x = posX0;
+    bioLine2Pos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String0.c_str(), bioLine2Pos0, Colors::White, 0.f, bioLine2Origin0);
+
+    std::string bioLine3String0 = pGolf->GetCharacterBioLine3(i);
+    Vector2 bioLine3Origin0 = m_bitwiseFont->MeasureString(bioLine3String0.c_str()) / 2.f;
+    posY0 += ySpacing;
+    Vector2 bioLine3Pos0;
+    bioLine3Pos0.x = posX0;
+    bioLine3Pos0.y = posY0;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String0.c_str(), bioLine3Pos0, Colors::White, 0.f, bioLine3Origin0);
+
+ ///////////////////////////////////////////////////////////
+
     if (m_menuSelect == 0)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);       
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
@@ -1212,23 +1365,114 @@ void Game::DrawMenuCharacterSelect()
     }
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
-    
+
+    float posX1 = backBufferWidth / 2.0;
+    float posY1 = 250.0f;
     lineDrawY += menuObj0Pos.y;
     std::string menuObj1String = pGolf->GetCharacterName(1);
     //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
-    Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
+
+   
+    Vector2 menuObj1Pos(posX1, posY1);
     Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
-    m_character1Pos.x = menuTitlePosX / 3;
-    m_character1Pos.y = lineDrawY - menuObj1Origin.y;
-    m_characterBackgroundPos.x = m_character1Pos.x + menuObj1Origin.x;
-    m_characterBackgroundPos.y = m_character1Pos.y + 10;
-    m_characterBackgroundOrigin = menuObj1Origin;
+
+    //half = m_characterBackgroundOrigin.x;
+    m_characterBackgroundPos.x = posX1 + half + 10.f;
+    //m_characterBackgroundPos.y = m_character1Pos.y + 10;
+    //m_characterBackgroundOrigin = menuObj1Origin;
+    m_character1Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
+    m_character1Pos.y = m_character0Pos.y;
+
+    posY1 += ySpacing + ySpacing;
+    ++i;
+
+    dataPos.x = posX1;
+    dataPos.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
+
+    std::string armLengthString1 = pGolf->GetCharacterArmLength(i);
+    Vector2 armLengthOrigin1 = m_bitwiseFont->MeasureString(armLengthString1.c_str()) / 2.f;
+    Vector2 armLengthPos1;
+    posY1 += ySpacing;
+    armLengthPos1.x = posX1;
+    armLengthPos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString1.c_str(), armLengthPos1, Colors::White, 0.f, armLengthOrigin1);
+
+    std::string armMassString1 = pGolf->GetCharacterArmMass(i);
+    Vector2 armMassOrigin1 = m_bitwiseFont->MeasureString(armMassString1.c_str()) / 2.f;
+    Vector2 armMassPos1;
+    posY1 += ySpacing;
+    armMassPos1.x = posX1;
+    armMassPos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString1.c_str(), armMassPos1, Colors::White, 0.f, armMassOrigin1);
+
+    std::string clubLengthModString1 = pGolf->GetCharacterClubLengthMod(i);
+    Vector2 clubLengthModOrigin1 = m_bitwiseFont->MeasureString(clubLengthModString1.c_str()) / 2.f;
+    Vector2 clubLengthModPos1;
+    posY1 += ySpacing;
+    clubLengthModPos1.x = posX1;
+    clubLengthModPos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString1.c_str(), clubLengthModPos1, Colors::White, 0.f, clubLengthModOrigin1);
+
+    std::string armBalancePointString1 = pGolf->GetCharacterArmBalancePoint(i);
+    Vector2 armBalancePointOrigin1 = m_bitwiseFont->MeasureString(armBalancePointString1.c_str()) / 2.f;
+    Vector2 armBalancePointPos1;
+    posY1 += ySpacing;
+    armBalancePointPos1.x = posX1;
+    armBalancePointPos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString1.c_str(), armBalancePointPos1, Colors::White, 0.f, armBalancePointOrigin1);
+
+    std::string armMassMoIString1 = pGolf->GetCharacterArmMassMoI(i);
+    Vector2 armMassMoIOrigin1 = m_bitwiseFont->MeasureString(armMassMoIString1.c_str()) / 2.f;
+    Vector2 armMassMoIPos1;
+    posY1 += ySpacing;
+    armMassMoIPos1.x = posX1;
+    armMassMoIPos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassMoIString1.c_str(), armMassMoIPos1, Colors::White, 0.f, armMassMoIOrigin1);
+
+    posY1 += ySpacing + ySpacing;
+    bioPos.x = posX1;
+    bioPos.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
+
+    std::string bioLine0String1 = pGolf->GetCharacterBioLine0(i);
+    Vector2 bioLine0Origin1 = m_bitwiseFont->MeasureString(bioLine0String1.c_str()) / 2.f;
+    Vector2 bioLine0Pos1;
+    posY1 += ySpacing;
+    bioLine0Pos1.x = posX1;
+    bioLine0Pos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String1.c_str(), bioLine0Pos1, Colors::White, 0.f, bioLine0Origin1);
+
+    std::string bioLine1String1 = pGolf->GetCharacterBioLine1(i);
+    Vector2 bioLine1Origin1 = m_bitwiseFont->MeasureString(bioLine1String1.c_str()) / 2.f;
+    Vector2 bioLine1Pos1;
+    posY1 += ySpacing;
+    bioLine1Pos1.x = posX1;
+    bioLine1Pos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String1.c_str(), bioLine1Pos1, Colors::White, 0.f, bioLine1Origin1);
+
+    std::string bioLine2String1 = pGolf->GetCharacterBioLine2(i);
+    Vector2 bioLine2Origin1 = m_bitwiseFont->MeasureString(bioLine2String1.c_str()) / 2.f;
+    Vector2 bioLine2Pos1;
+    posY1 += ySpacing;
+    bioLine2Pos1.x = posX1;
+    bioLine2Pos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String1.c_str(), bioLine2Pos1, Colors::White, 0.f, bioLine2Origin1);
+
+    std::string bioLine3String1 = pGolf->GetCharacterBioLine3(i);
+    Vector2 bioLine3Origin1 = m_bitwiseFont->MeasureString(bioLine3String1.c_str()) / 2.f;
+    Vector2 bioLine3Pos1;
+    posY1 += ySpacing;
+    bioLine3Pos1.x = posX1;
+    bioLine3Pos1.y = posY1;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String1.c_str(), bioLine3Pos1, Colors::White, 0.f, bioLine3Origin1);
+
     if (m_menuSelect == 1)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
@@ -1240,21 +1484,111 @@ void Game::DrawMenuCharacterSelect()
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character1->Draw(m_spriteBatch.get(), m_character1Pos);
 
+    float posX2 = backBufferWidth * .80f;
+    float posY2 = 250.0f;
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = pGolf->GetCharacterName(2);
-    Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
+
+    Vector2 menuObj2Pos(posX2, posY2);
     Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
-    m_character2Pos.x = menuTitlePosX / 3;
-    m_character2Pos.y = lineDrawY - menuObj2Origin.y;
-    m_characterBackgroundPos.x = m_character2Pos.x + menuObj2Origin.x;
-    m_characterBackgroundPos.y = m_character2Pos.y + 10;
-    m_characterBackgroundOrigin = menuObj2Origin;
+
+    //m_characterBackgroundPos.x = posX2 + half;
+    m_characterBackgroundPos.x = posX2 + half + 25.f;
+    //m_characterBackgroundPos.y = m_character2Pos.y + 10;
+    //m_characterBackgroundOrigin = menuObj2Origin;
+    m_character2Pos.x = m_characterBackgroundPos.x - 135.f;
+    m_character2Pos.y = m_character0Pos.y;
+
+    ++i;
+    posY2 += ySpacing + ySpacing;
+
+    dataPos.x = posX2;
+    dataPos.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
+
+    std::string armLengthString2 = pGolf->GetCharacterArmLength(i);
+    Vector2 armLengthOrigin2 = m_bitwiseFont->MeasureString(armLengthString2.c_str()) / 2.f;
+    Vector2 armLengthPos2;
+    posY2 += ySpacing;
+    armLengthPos2.x = posX2;
+    armLengthPos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString2.c_str(), armLengthPos2, Colors::White, 0.f, armLengthOrigin2);
+
+    std::string armMassString2 = pGolf->GetCharacterArmMass(i);
+    Vector2 armMassOrigin2 = m_bitwiseFont->MeasureString(armMassString2.c_str()) / 2.f;
+    Vector2 armMassPos2;
+    posY2 += ySpacing;
+    armMassPos2.x = posX2;
+    armMassPos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString2.c_str(), armMassPos2, Colors::White, 0.f, armMassOrigin2);
+
+    std::string clubLengthModString2 = pGolf->GetCharacterClubLengthMod(i);
+    Vector2 clubLengthModOrigin2 = m_bitwiseFont->MeasureString(clubLengthModString2.c_str()) / 2.f;
+    Vector2 clubLengthModPos2;
+    posY2 += ySpacing;
+    clubLengthModPos2.x = posX2;
+    clubLengthModPos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString2.c_str(), clubLengthModPos2, Colors::White, 0.f, clubLengthModOrigin2);
+
+    std::string armBalancePointString2 = pGolf->GetCharacterArmBalancePoint(i);
+    Vector2 armBalancePointOrigin2 = m_bitwiseFont->MeasureString(armBalancePointString2.c_str()) / 2.f;
+    Vector2 armBalancePointPos2;
+    posY2 += ySpacing;
+    armBalancePointPos2.x = posX2;
+    armBalancePointPos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString2.c_str(), armBalancePointPos2, Colors::White, 0.f, armBalancePointOrigin2);
+
+    std::string armMassMoIString2 = pGolf->GetCharacterArmMassMoI(i);
+    Vector2 armMassMoIOrigin2 = m_bitwiseFont->MeasureString(armMassMoIString2.c_str()) / 2.f;
+    Vector2 armMassMoIPos2;
+    posY2 += ySpacing;
+    armMassMoIPos2.x = posX2;
+    armMassMoIPos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassMoIString2.c_str(), armMassMoIPos2, Colors::White, 0.f, armMassMoIOrigin2);
+
+    posY2 += ySpacing + ySpacing;
+    bioPos.x = posX2;
+    bioPos.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
+
+    std::string bioLine0String2 = pGolf->GetCharacterBioLine0(i);
+    Vector2 bioLine0Origin2 = m_bitwiseFont->MeasureString(bioLine0String2.c_str()) / 2.f;
+    Vector2 bioLine0Pos2;
+    posY2 += ySpacing;
+    bioLine0Pos2.x = posX2;
+    bioLine0Pos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String2.c_str(), bioLine0Pos2, Colors::White, 0.f, bioLine0Origin2);
+
+    std::string bioLine1String2 = pGolf->GetCharacterBioLine1(i);
+    Vector2 bioLine1Origin2 = m_bitwiseFont->MeasureString(bioLine1String2.c_str()) / 2.f;
+    Vector2 bioLine1Pos2;
+    posY2 += ySpacing;
+    bioLine1Pos2.x = posX2;
+    bioLine1Pos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String2.c_str(), bioLine1Pos2, Colors::White, 0.f, bioLine1Origin2);
+
+    std::string bioLine2String2 = pGolf->GetCharacterBioLine2(i);
+    Vector2 bioLine2Origin2 = m_bitwiseFont->MeasureString(bioLine2String2.c_str()) / 2.f;
+    Vector2 bioLine2Pos2;
+    posY2 += ySpacing;
+    bioLine2Pos2.x = posX2;
+    bioLine2Pos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String2.c_str(), bioLine2Pos2, Colors::White, 0.f, bioLine2Origin2);
+
+    std::string bioLine3String2 = pGolf->GetCharacterBioLine3(i);
+    Vector2 bioLine3Origin2 = m_bitwiseFont->MeasureString(bioLine3String2.c_str()) / 2.f;
+    Vector2 bioLine3Pos2;
+    posY2 += ySpacing;
+    bioLine3Pos2.x = posX2;
+    bioLine3Pos2.y = posY2;
+    m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String2.c_str(), bioLine3Pos2, Colors::White, 0.f, bioLine3Origin2);
+
     if (m_menuSelect == 2)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
@@ -1328,6 +1662,7 @@ void Game::DrawMenuCharacterSelect()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
+    
 }
 
 void Game::DrawMenuMain()
@@ -1340,6 +1675,11 @@ void Game::DrawMenuMain()
     float menuTitlePosY = lineDrawY;
     Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);   
     Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(3.f,3.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);  
 
     lineDrawY += menuTitlePosY + lineDrawSpacingY;
@@ -1983,7 +2323,7 @@ void Game::OnDeviceLost()
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
-    m_textFont.reset();
+    m_bitwiseFont.reset();
     m_spriteBatch.reset();
     m_kbStateTracker.Reset();
     //m_keyboard.reset();

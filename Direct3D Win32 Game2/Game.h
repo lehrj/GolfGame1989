@@ -121,12 +121,12 @@ private:
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont>            m_font;
     std::unique_ptr<DirectX::SpriteFont>            m_titleFont;
-    std::unique_ptr<DirectX::SpriteFont>            m_textFont;
+    std::unique_ptr<DirectX::SpriteFont>            m_bitwiseFont;
     DirectX::SimpleMath::Vector2                    m_fontPos;
     DirectX::SimpleMath::Vector2                    m_fontPos2;
     DirectX::SimpleMath::Vector2                    m_fontPosDebug;
     DirectX::SimpleMath::Vector2                    m_fontMenuPos;
-    DirectX::SimpleMath::Vector2                    m_textFontPos;
+    DirectX::SimpleMath::Vector2                    m_bitwiseFontPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
     //std::unique_ptr<SpriteSheet>                    m_sprites;
     

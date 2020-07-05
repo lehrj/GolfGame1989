@@ -24,9 +24,18 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetBeta() { return pSwing->GetBetaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetTheta() { return pSwing->GetThetaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
-
+    
+    std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
+    std::string GetCharacterArmLength(const int aCharacterIndex) const;
+    std::string GetCharacterArmMass(const int aCharacterIndex) const;
+    std::string GetCharacterClubLengthMod(const int aCharacterIndex) const;
+    std::string GetCharacterArmMassMoI(const int aCharacterIndex) const;
+    std::string GetCharacterBioLine0(const int aCharacterIndex) const;
+    std::string GetCharacterBioLine1(const int aCharacterIndex) const;
+    std::string GetCharacterBioLine2(const int aCharacterIndex) const;
+    std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
-    std::string GetCharacterBio(const int aCharacterIndex) const;
+
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };

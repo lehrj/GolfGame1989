@@ -14,12 +14,15 @@ void GolfCharacter::LoadCharacterData()
     int i = 0;
     
     m_characters[i].name = "Natty Noonan";
-    m_characters[i].bio = "The Natural";
-    m_characters[i].armBalancePoint = 0.5;
-    m_characters[i].armLength = 0.62;
-    m_characters[i].armMass = 7.3;
-    m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = 1.0;
+    m_characters[i].bioLine0 = "The Natural";
+    m_characters[i].bioLine1 = "1";
+    m_characters[i].bioLine2 = "2";
+    m_characters[i].bioLine3 = "3";
+    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armLength = 0.620069;
+    m_characters[i].armMass = 7.300069;
+    m_characters[i].armMassMoI = 1.150069;
+    m_characters[i].clubLengthModifier = 1.000069;
     
     /*
     m_characters[i].name = "Natty Noonan";
@@ -43,12 +46,15 @@ void GolfCharacter::LoadCharacterData()
     */
     
     m_characters[i].name = "Larry Leisureson";
-    m_characters[i].bio = "Fan of Leisure suits and knows that a drink tossed in his face means no";
-    m_characters[i].armBalancePoint = 0.5;
-    m_characters[i].armLength = 0.62;
-    m_characters[i].armMass = 7.3;
-    m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = 1.1;
+    m_characters[i].bioLine0 = "Big fan of leisure suits";
+    m_characters[i].bioLine1 = "but knows that a drink ";
+    m_characters[i].bioLine2 = "tossed in his face means no";
+    m_characters[i].bioLine3 = "3";
+    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armLength = 0.620069;
+    m_characters[i].armMass = 7.300069;
+    m_characters[i].armMassMoI = 1.150069;
+    m_characters[i].clubLengthModifier = 1.100069;
     
     ++i;
     /*
@@ -61,11 +67,14 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].clubLengthModifier = 1.0;
     */
     m_characters[i].name = "Chubs McShortRound";
-    m_characters[i].bio = "Mario ate the skinny one and then got hit by a turtle thing";
-    m_characters[i].armBalancePoint = 0.5;
-    m_characters[i].armLength = 0.62;
-    m_characters[i].armMass = 7.3;
-    m_characters[i].armMassMoI = 1.15;
-    m_characters[i].clubLengthModifier = .9;
+    m_characters[i].bioLine0 = "Mario ate the skinny one ";
+    m_characters[i].bioLine1 = "and then got hit by";
+    m_characters[i].bioLine2 = "a drunk turtle thing";
+    m_characters[i].bioLine3 = "3";
+    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armLength = 0.620069;
+    m_characters[i].armMass = 7.300069;
+    m_characters[i].armMassMoI = 1.150069;
+    m_characters[i].clubLengthModifier = .900069;
 }
 
