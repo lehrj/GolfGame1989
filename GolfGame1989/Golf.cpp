@@ -9,8 +9,8 @@ Golf::Golf()
     pEnvironment->SetDefaultEnvironment();
     pCharacter = new GolfCharacter();
     pSwing = new GolfSwing();
-    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
@@ -18,6 +18,7 @@ Golf::Golf()
     SetCharacter(0);
     BuildVector();
     BuildUIstrings();
+    
 }
 
 Golf::~Golf()

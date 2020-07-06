@@ -274,7 +274,7 @@ void GolfBall::LandProjectileOld()
 
     float vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
     //float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
-    float vry = vryPrime * sin(thetaC) + vryPrime * cos(thetaC);
+    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
 
     m_ball.q.velocity.x = vrx;
     m_ball.q.velocity.y = vry;
@@ -329,7 +329,10 @@ void GolfBall::LaunchProjectile()
 
             if (m_ball.q.velocity.y < 0.0)
             {
-                maxHeight = m_ball.q.position.y;
+                if (m_ball.q.position.y > maxHeight)
+                {
+                    maxHeight = m_ball.q.position.y;
+                }
                 isBallAscending = false;
             }
         }
@@ -349,11 +352,13 @@ void GolfBall::LaunchProjectile()
             PushFlightData();
             time = m_ball.flightTime;
         }
+
+
         double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
-        //ProjectileRungeKutta4(&m_ball, -rollBackTime);
-        PushFlightData();
+        ProjectileRungeKutta4(&m_ball, -rollBackTime);
+        //PushFlightData();
         //flightData.SetAll(m_ball.q.position.x, m_ball.q.position.x, m_ball.q.velocity.y, m_ball.flightTime - rollBackTime);
-        //m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+        m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
         // WLJ BugTask: look into systemic bugs from erro passing dz value instead of z value here
         //SetLandingCordinates(flightData.GetX(), flightData.GetY(), flightData.GetZ());
             /*
@@ -366,23 +371,26 @@ void GolfBall::LaunchProjectile()
         */
         //SetLandingCordinates(m_ball.q.position);
         SetLandingSpinRate(m_ball.omega);
-        SetMaxHeight(maxHeight);
+        
         ++m_bounceCount;
         
-        LandProjectileOld();
+        //LandProjectileOld();
+        //LandProjectileEdit();
+        LandProjectile();
+
         ++count;
         if (m_ball.q.velocity.y < .01 || count > 5)
         {
             isBallFlyOrBounce = false;
         } 
     }
-    
+    SetMaxHeight(maxHeight);
     m_drawColorVector.push_back(m_shotPath.size());  
     m_drawColorIndex++;
 
     this->m_ball.q.velocity.y = 0.0;
     m_ball.q.position.y = 0.0;
-    bool isBallRolling = false;
+    bool isBallRolling = true;
     while (isBallRolling == true)
     {
 
@@ -390,8 +398,9 @@ void GolfBall::LaunchProjectile()
         
         m_ball.q.velocity.y = 0.0;
         m_ball.q.position.y = 0.0;
-        m_ball.q.velocity.z = 0.0;
-        m_ball.q.position.z = 0.0;
+        //m_ball.q.velocity.z = 0.0;
+        //m_ball.q.position.z = 0.0;
+
         /*
         float pg = 1.2;
         float g = m_ball.gravity;
@@ -843,8 +852,8 @@ void GolfBall::RollRightHandSideOld(struct SpinProjectile* pBall, BallMotion* q,
     //double Fd = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
     
     double Fdx = -Fd * vx / va;
-    //double Fdy = -Fd * vy / va;
-    //double Fdz = (-Fd * vz) / va;
+    double Fdy = -Fd * vy / va;
+    double Fdz = (-Fd * vz) / va;
     /*
     double Fdx = (-Fd * vax / va) * a;
     double Fdy = (-Fd * vay / va) * a;
@@ -874,9 +883,9 @@ void GolfBall::RollRightHandSideOld(struct SpinProjectile* pBall, BallMotion* q,
     //double a = 0.840000093;
     dq->velocity.x = (ds * Fdx) / pBall->mass;
     dq->position.x = ds * vx;
-    dq->velocity.y = (ds * Fdx) / pBall->mass;
+    dq->velocity.y = (ds * Fdy) / pBall->mass;
     dq->position.y = ds * vy;
-    dq->velocity.z = (ds * Fdx) / pBall->mass;
+    dq->velocity.z = (ds * Fdz) / pBall->mass;
     dq->position.z = ds * vz;
 }
 

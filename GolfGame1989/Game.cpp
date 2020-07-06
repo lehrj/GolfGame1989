@@ -20,8 +20,8 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
 Game::~Game()
@@ -446,7 +446,7 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawSwing();
+        //DrawSwing();
         DrawWorld();
         DrawProjectile();
         //DrawProjectileRealTime();
@@ -2228,10 +2228,12 @@ void Game::DrawWorld()
 {
     // draw world grid
     Vector3 xAxis(2.f, 0.f, 0.f);
+    Vector3 xFarAxis(6.f, 0.f, 0.f);
     Vector3 zAxis(0.f, 0.f, 2.f);
     Vector3 origin = Vector3::Zero;
     size_t divisions = 20;
-    for (size_t i = 0; i <= divisions + 10; ++i)
+    size_t extention = 20;
+    for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
@@ -2259,14 +2261,14 @@ void Game::DrawWorld()
 
         if (scale.z == 0.0f)
         {
-            //VertexPositionColor v1(scale - xaxis, Colors::Red);
-            //VertexPositionColor v2(scale + xaxis, Colors::Red);
-            //m_batch->DrawLine(v1, v2);
+            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
+            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
+            m_batch->DrawLine(v1, v2);
         }
         else
         {
             VertexPositionColor v1(scale - xAxis, Colors::Green);
-            VertexPositionColor v2(scale + xAxis, Colors::Green);
+            VertexPositionColor v2(scale + xFarAxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
     }

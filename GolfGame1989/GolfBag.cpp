@@ -171,12 +171,22 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m 
     ++i;
-
+    /*
     m_bag[i].clubName = "3 Wood";
     m_bag[i].angle = 14.5;
     m_bag[i].balancePoint = 0.75;
     m_bag[i].coefficiantOfRestitution = 0.78;
     m_bag[i].lengthBase = 1.0922;
+    m_bag[i].mass = 0.4;
+    m_bag[i].massMoI = 0.08;
+    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
+    ++i;
+    */
+    m_bag[i].clubName = "Custom Debug";
+    m_bag[i].angle = 25.0;
+    m_bag[i].balancePoint = 0.75;
+    m_bag[i].coefficiantOfRestitution = 0.78;
+    m_bag[i].lengthBase = 1.1;
     m_bag[i].mass = 0.4;
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
