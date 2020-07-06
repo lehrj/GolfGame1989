@@ -20,8 +20,8 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
 Game::~Game()
@@ -1762,7 +1762,7 @@ void Game::DrawMenuMain()
     }
 }
 
-/*
+/* Testing different start screen designs
 void Game::DrawStartScreen()
 {
     std::string title = "Golf Gm 1989";

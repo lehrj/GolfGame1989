@@ -390,7 +390,7 @@ void GolfBall::LaunchProjectile()
 
     this->m_ball.q.velocity.y = 0.0;
     m_ball.q.position.y = 0.0;
-    bool isBallRolling = true;
+    bool isBallRolling = false;
     while (isBallRolling == true)
     {
 
