@@ -23,14 +23,15 @@ public:
     GolfBag();
     ~GolfBag();
 
-    void BuildBag();
     GolfClub GetClub(const int aClubIndex);
     int GetClubCount() { return m_bagSize; };
     void PrintClubList();
-    void SetDiffcultyFactor();
     
 private:
-    std::vector<GolfClub> m_bag;
-    const int m_bagSize = 14;
+    void BuildBag();
+    void SetDiffcultyFactor();
+
+    std::vector<GolfClub>               m_bag;
+    const int                           m_bagSize = 14;
 };
 

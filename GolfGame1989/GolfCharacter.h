@@ -34,7 +34,7 @@ public:
 private:
     void LoadCharacterData();
 
-    std::vector<Character> m_characters;
-    const int m_charactersAvailable = 3;
+    std::vector<Character>              m_characters;
+    const int                           m_charactersAvailable = 3;
 };
 

@@ -15,10 +15,10 @@ public:
     Golf();
     ~Golf();
 
-    void BuildVector();
+ 
     void BuildUIstrings();
 
-    const int GetSwingStepIncCount() { return pSwing->GetSwingStepIncrementCount(); };
+    int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
 
     std::vector<DirectX::SimpleMath::Vector3> GetAlpha() { return pSwing->GetAlphaCords(); };
     std::vector<DirectX::SimpleMath::Vector3> GetBeta() { return pSwing->GetBetaCords(); };
@@ -45,33 +45,35 @@ public:
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
     void InputData();
-    void ScaleCordinates();
-    void SelectNextClub();
+
     void SelectInputClub(int aInput);
     void SetCharacter(const int aCharacterIndex);    
-    void SetShotCordMax();
-    void TransformCordinates(const int aIndex);
+ 
     void UpdateImpact(Utility::ImpactData aImpact);
     
 private:
-    Environment* pEnvironment;    
-    GolfBall* pBall;
-    GolfCharacter* pCharacter;
-    GolfPlay* pPlay;
-    GolfSwing* pSwing;
-    Utility::ImpactData m_impactData;
+    Environment*                    pEnvironment;    
+    GolfBall*                       pBall;
+    GolfCharacter*                  pCharacter;
+    GolfPlay*                       pPlay;
+    GolfSwing*                      pSwing;
+    Utility::ImpactData             m_impactData;
 
+    void BuildVector();
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
     void LoadCharacterTraits();
+    void ScaleCordinates();
+    void SetShotCordMax();
+    void TransformCordinates(const int aIndex);
 
-    double m_maxX;
-    double m_maxY;
-    double m_maxZ;
-    double m_xWindow;
-    double m_yWindow;
-    double m_zWindow;
+    double                          m_maxX;
+    double                          m_maxY;
+    double                          m_maxZ;
+    double                          m_xWindow;
+    double                          m_yWindow;
+    double                          m_zWindow;
 
-    int m_selectedCharacter;
+    int                             m_selectedCharacter;
     std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
-    std::vector<std::string> m_uiStrings;
+    std::vector<std::string>        m_uiStrings;
 };
