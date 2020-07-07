@@ -20,8 +20,11 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
+
     m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+
+    m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
 }
 
 Game::~Game()
@@ -333,26 +336,34 @@ void Game::Update(DX::StepTimer const& timer)
 
 void Game::UpdateCamera(DX::StepTimer const& timer)
 {
-    // world start
-    if (m_gameCamera == 1)
+    //if (m_gameCamera == 1)
+    if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
     }
-    if (m_gameCamera == 2)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
+    {
+        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
+    }
+    //if (m_gameCamera == 2)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
     {
         m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 0.f), Vector3::Zero, Vector3::UnitY);
         m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
-    if (m_gameCamera == 3)
+    //if (m_gameCamera == 3)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
         m_world = Matrix::CreateRotationY(m_cameraRotationX);
         m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
-    if (m_gameCamera == 4)
+    //if (m_gameCamera == 4)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
     {
         const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
         const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
@@ -365,7 +376,8 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
-    if (m_gameCamera == 5)
+    //if (m_gameCamera == 5)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
     {
         m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
@@ -373,7 +385,8 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         m_effect->SetView(m_view);
     }
-    if (m_gameCamera == 6)
+    //if (m_gameCamera == 6)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
     {
         const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
         const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
@@ -383,12 +396,14 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
-    if (m_gameCamera == 7)
+    //if (m_gameCamera == 7)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA7)
     {
         m_view = Matrix::CreateLookAt(Vector3(.0f, 0.0f, 7.0f), Vector3::Zero, Vector3::UnitY);
         m_effect->SetView(m_view);
     }
-    if (m_gameCamera == 8)
+    //if (m_gameCamera == 8)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA8)
     {
         m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
@@ -397,7 +412,8 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
 
     }
-    if (m_gameCamera == 9)
+    //if (m_gameCamera == 9)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA9)
     {
         m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f), Vector3::Zero, Vector3::UnitY);
 
@@ -410,11 +426,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         */
     }
-    else
-    {
-
-    }
-    // world end
 }
 
 // Draws the scene.
@@ -537,16 +548,10 @@ void Game::DrawPowerBarUI()
 {
     if (pPlay->GetMeterPower() >= 0.0)
     {
-        //m_powerMeterBarRect.left = m_powerMeterBarRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
-        //m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
         m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
-
-        //m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.007));
     }
     else
     {
-        //m_powerMeterBarRect.right = m_powerMeterBarRect.right - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
-        //m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * (pPlay->GetMeterPower() * 0.01));
         m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
     }
     if (pPlay->GetIsBackswingSet() == false)
@@ -557,7 +562,6 @@ void Game::DrawPowerBarUI()
     {
         m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01));
     }
-    //m_powerMeterBackswingRect = m_powerMeterFrameRect;
 
     m_spriteBatch->Draw(m_powerBackswingTexture.Get(), m_powerMeterBackswingRect, nullptr, Colors::White);
     m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
@@ -570,23 +574,23 @@ void Game::SetGameCamera(int aCamera)
 {
     if (aCamera == 1)
     {
-        m_gameCamera = 1;
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA1;
     }
     if (aCamera == 2)
     {
-        m_gameCamera = 2;
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA2;
     }
     if (aCamera == 3)
     {
-        m_gameCamera = 3;
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
     }
     if (aCamera == 4)
     {
-        m_gameCamera = 4;
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     }
     if (aCamera == 5)
     {
-        m_gameCamera = 5;
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA5;
     }
 }
 
@@ -595,7 +599,6 @@ void Game::Clear()
 {
     // Clear the views.
     m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::Black);
-    //m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     m_d3dContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
@@ -627,28 +630,24 @@ void Game::Present()
 void Game::OnActivated()
 {
     // TODO: Game is becoming active window.
-    //m_keyboard.reset();
     m_kbStateTracker.Reset();
 }
 
 void Game::OnDeactivated()
 {
     // TODO: Game is becoming background window.
-    //m_keyboard.reset();
-    //m_kbStateTracker.reset();
+
 }
 
 void Game::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
-    //m_keyboard.reset();
-    //m_kbStateTracker.reset();
+
 }
 
 void Game::OnResuming()
 {
     m_timer.ResetElapsedTime();
-    //m_keyboard.reset();
     m_kbStateTracker.Reset();
     // TODO: Game is being power-resumed (or returning from minimize).
 }
@@ -736,11 +735,7 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(context.As(&m_d3dContext));
 
     // TODO: Initialize device dependent objects here (independent of window size).
-    // WLJ start
-    // world start
     m_world = Matrix::Identity;
-
-    // world end
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
     m_effect = std::make_unique<BasicEffect>(m_d3dDevice.Get());
     m_effect->SetVertexColorEnabled(true);
@@ -754,19 +749,16 @@ void Game::CreateDevice()
 
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
 
-    // world start
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
 
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc, m_raster.ReleaseAndGetAddressOf()));
-    // world end
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
     m_bitwiseFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"bitwise24.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(m_d3dContext.Get());
-    // end
 
     // Start Texture
     ComPtr<ID3D11Resource> resource;
@@ -830,10 +822,6 @@ void Game::CreateDevice()
     characterBackground->GetDesc(&characterBackgroundDesc);
     m_characterBackgroundOrigin.x = float(characterBackgroundDesc.Width / 2);
     m_characterBackgroundOrigin.y = float(characterBackgroundDesc.Height / 2);
-
-    //m_sprites = std::make_unique<SpriteSheet>();
-    //m_sprites->Load(m_characterTexture.Get(), L"CharacterSpriteSheetData.txt");
-    // End texture
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -978,30 +966,10 @@ void Game::CreateResources()
     m_powerMeterBackswingRect.right = m_powerMeterBarRect.right;
 
     m_powerMeterBarScale = 1.0 - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
-    /*
-    // Character texture
-    m_characterPos.x = float(backBufferWidth / 2);
-    m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-
-    //m_character0Pos.x = float(backBufferWidth / 2);
-    m_character0Pos.x = float(0.0);
-    m_character0Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-
-    m_character1Pos.x = float(backBufferWidth / 2);
-    m_character1Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-
-    m_character2Pos.x = float(backBufferWidth / 2);
-    m_character2Pos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-
-    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
-    m_characterBackgroundPos.x = backBufferWidth / 2.f;
-    m_characterBackgroundPos.y = backBufferHeight / 2.f;
-    */
 
     // Character texture
     m_characterPos.x = 200.f;
     m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-    //m_character0Pos.x = float(backBufferWidth / 2);
     m_character0Pos.x = 200.f;
     m_character0Pos.y = float((backBufferHeight * .25f));
 
@@ -1014,7 +982,6 @@ void Game::CreateResources()
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
     m_characterBackgroundPos.x = backBufferWidth / 2.f;
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
-
     // End Texture
 }
 void Game::DrawCameraFocus()
@@ -1036,10 +1003,6 @@ void Game::DrawCameraFocus()
 // working old version prior to impmenting real time match update
 void Game::DrawProjectile() 
 {
-    /////////********* Start projectile draw
-    //std::vector<double> xVec = pGolf->GetVect(0);
-    //std::vector<double> yVec = pGolf->GetVect(1);
-    //std::vector<double> zVec = pGolf->GetVect(2);
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
     
     //draw tee box
@@ -1067,8 +1030,6 @@ void Game::DrawProjectile()
         m_arcCount = 0;
     }
     ++m_arcCount;
-    //double prevX = 0.0;
-    //double prevY = 0.0;
 
     Vector3 prevPos = shotPath[0];
     for (int i = 0; i < m_arcCount; ++i)
@@ -1076,8 +1037,6 @@ void Game::DrawProjectile()
         Vector3 p1(prevPos);
 
         Vector3 p2(shotPath[i]);
-        //VertexPositionColor aV(p1, Colors::White);
-        //VertexPositionColor bV(p2, Colors::White);
 
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
@@ -1170,34 +1129,9 @@ void Game::DrawProjectileRealTime()
 
     if (m_arcCount >= stepCount)
     {
-        //m_projectileTimer = 0.0;
         m_arcCount = 0;
     }
     ++m_arcCount;
-
-    /*
-    Vector3 prevPos = shotPath[0];
-    int i = -1;
-    do
-    {
-        ++i;
-        Vector3 p1(prevPos);
-
-        Vector3 p2(shotPath[i]);
-
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        m_batch->DrawLine(aV, bV);
-        prevPos = shotPath[i];
-        
-        //++i;
-        if (i > shotTimeStep.size()-1)
-        {
-            break;
-        }
-        
-    } while (shotTimeStep[i] < m_projectileTimer || i < shotTimeStep.size()-1);
-    */
     
     Vector3 prevPos = shotPath[0];
     for (int i = 0; i < shotPath.size(); ++i)
@@ -1226,8 +1160,6 @@ void Game::DrawShotTimerUI()
     Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
-
-
 
 void Game::DrawMenuCharacterSelect()
 {

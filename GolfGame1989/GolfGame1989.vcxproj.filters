@@ -40,9 +40,6 @@
     <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="directx.ico">
-      <Filter>Assets</Filter>
-    </Image>
     <Image Include="PowerbarFrame.png">
       <Filter>Assets</Filter>
     </Image>

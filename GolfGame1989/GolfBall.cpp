@@ -29,7 +29,6 @@ void GolfBall::LandProjectileEdit()
     float direction = GetImpactDirection();
     float impactAngle = GetImpactAngle();
     float impactVelocity = GetImpactVelocity();
-    //float vix = m_ball.q[0];
     DirectX::SimpleMath::Vector3 xtestVel(0.0, -18.6, 0.0);
     float xtestVelSpeed = xtestVel.Length();
     xtestVel = DirectX::SimpleMath::Vector3::Transform(xtestVel, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-44.4)));
@@ -1107,7 +1106,6 @@ const double GolfBall::GetShotDistance()
     DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
     double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
         * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
-
 
     return distance;
 }

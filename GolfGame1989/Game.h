@@ -16,7 +16,6 @@ class Game
 {
 public:
     Game() noexcept;
-    //~Game() = default;
     ~Game();
 
     Game(Game&&) = default;
@@ -100,25 +99,15 @@ private:
 
     //world start 
     DirectX::SimpleMath::Matrix                     m_world;
-
     DirectX::SimpleMath::Matrix                     m_view;
     DirectX::SimpleMath::Matrix                     m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_raster; // WLJ anti-aliasing
-
-    int m_gameCamera = 4;
-    float m_cameraRotationX = 2.0;
-    float m_cameraRotationY = 2.0;
-    float m_cameraTargetX = 0.0;
-    float m_cameraTargetY = 0.0;
-    float m_cameraTargetZ = 0.0;
-    float m_cameraZoom = 0.0f;
-    float m_cameraMovementSpeed = 0.01;
     //world end
 
     // WLJ added for drawing projectile and swing
-    Golf* pGolf;
-    GolfPlay* pPlay;
-    int m_arcCount = 0;
+    Golf*                                           pGolf;
+    GolfPlay*                                       pPlay;
+    int                                             m_arcCount = 0;
 
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont>            m_font;
@@ -130,36 +119,33 @@ private:
     DirectX::SimpleMath::Vector2                    m_fontMenuPos;
     DirectX::SimpleMath::Vector2                    m_bitwiseFontPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
-    //std::unique_ptr<SpriteSheet>                    m_sprites;
     
     // WLJ add for mouse and keybord interface
     std::unique_ptr<DirectX::Keyboard>              m_keyboard;
     std::unique_ptr<DirectX::Mouse>                 m_mouse;
 
-    //Keyboard::KeyboardStateTracker m_kbStateTracker;
-    DirectX::Keyboard::KeyboardStateTracker m_kbStateTracker;
-    //std::unique_ptr<DirectX::Keyboard::KeyboardStateTracker> m_kbStateTracker;
+    DirectX::Keyboard::KeyboardStateTracker         m_kbStateTracker;
 
     // Golf Character Texture
-    std::unique_ptr<AnimatedTexture> m_character;
+    std::unique_ptr<AnimatedTexture>                m_character;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterTexture;
-    DirectX::SimpleMath::Vector2 m_characterPos;
+    DirectX::SimpleMath::Vector2                    m_characterPos;
 
-    std::unique_ptr<AnimatedTexture> m_character0;
+    std::unique_ptr<AnimatedTexture>                m_character0;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character0Texture;
-    DirectX::SimpleMath::Vector2 m_character0Pos;
+    DirectX::SimpleMath::Vector2                    m_character0Pos;
 
-    std::unique_ptr<AnimatedTexture> m_character1;
+    std::unique_ptr<AnimatedTexture>                m_character1;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character1Texture;
-    DirectX::SimpleMath::Vector2 m_character1Pos;
+    DirectX::SimpleMath::Vector2                    m_character1Pos;
 
     std::unique_ptr<AnimatedTexture> m_character2;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character2Texture;
-    DirectX::SimpleMath::Vector2 m_character2Pos;
+    DirectX::SimpleMath::Vector2                    m_character2Pos;
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterBackgroundTexture;
-    DirectX::SimpleMath::Vector2 m_characterBackgroundPos;
-    DirectX::SimpleMath::Vector2 m_characterBackgroundOrigin;
+    DirectX::SimpleMath::Vector2                    m_characterBackgroundPos;
+    DirectX::SimpleMath::Vector2                    m_characterBackgroundOrigin;
 
     // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
@@ -175,16 +161,16 @@ private:
     DirectX::SimpleMath::Vector2                    m_powerBarImpactOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarBackswingOrigin;
 
-    RECT m_powerMeterBarRect;
-    RECT m_powerMeterFrameRect;
-    RECT m_powerMeterImpactRect;
-    RECT m_powerMeterBackswingRect;
+    RECT                                            m_powerMeterBarRect;
+    RECT                                            m_powerMeterFrameRect;
+    RECT                                            m_powerMeterImpactRect;
+    RECT                                            m_powerMeterBackswingRect;
 
-    float m_powerMeterSize;
-    float m_powerMeterImpactPoint;
-    float m_powerMeterBarScale;
+    float                                           m_powerMeterSize;
+    float                                           m_powerMeterImpactPoint;
+    float                                           m_powerMeterBarScale;
 
-    int m_menuSelect = 0;
+    int                                             m_menuSelect = 0;
 
     enum class GameState
     {
@@ -194,6 +180,29 @@ private:
         GAMESTATE_ENVIRONTMENTSELECT,
         GAMESTATE_GAMEPLAY
     };
+    GameState                                       m_currentState;
 
-    GameState m_currentState;
+    enum class GameCamera
+    {
+        GAMECAMERA_DEFAULT,
+        GAMECAMERA_CAMERA1,
+        GAMECAMERA_CAMERA2,
+        GAMECAMERA_CAMERA3,
+        GAMECAMERA_CAMERA4,
+        GAMECAMERA_CAMERA5,
+        GAMECAMERA_CAMERA6,
+        GAMECAMERA_CAMERA7,
+        GAMECAMERA_CAMERA8,
+        GAMECAMERA_CAMERA9,
+    };
+
+    GameCamera                                  m_currentCamera;
+ 
+    float                                       m_cameraRotationX = 2.0;
+    float                                       m_cameraRotationY = 2.0;
+    float                                       m_cameraTargetX = 0.0;
+    float                                       m_cameraTargetY = 0.0;
+    float                                       m_cameraTargetZ = 0.0;
+    float                                       m_cameraZoom = 0.0f;
+    float                                       m_cameraMovementSpeed = 0.01;
 };
