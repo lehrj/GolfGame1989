@@ -56,7 +56,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         wcex.hIcon = LoadIconW(hInstance, L"IDI_ICON");
         wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
         wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-        wcex.lpszClassName = L"Direct3D_Win32_Game2WindowClass";
+        wcex.lpszClassName = L"GolfGame1989WindowClass";
         wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
         if (!RegisterClassExW(&wcex))
             return 1;
@@ -69,10 +69,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-        HWND hwnd = CreateWindowExW(0, L"Direct3D_Win32_Game2WindowClass", L"Direct3D Win32 Game2", WS_OVERLAPPEDWINDOW,
+        HWND hwnd = CreateWindowExW(0, L"GolfGame1989WindowClass", L"GolfGame1989", WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
             nullptr);
-        // TODO: Change to CreateWindowExW(WS_EX_TOPMOST, L"Direct3D_Win32_Game2WindowClass", L"Direct3D Win32 Game2", WS_POPUP,
+        // TODO: Change to CreateWindowExW(WS_EX_TOPMOST, L"GolfGame1989WindowClass", L"GolfGame1989", WS_POPUP,
         // to default to fullscreen.
 
         if (!hwnd)

@@ -181,10 +181,21 @@ void GolfBall::LandProjectile()
 
     float vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
     //float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
-    float vry = vryPrime * sin(thetaC) + vryPrime * cos(thetaC);
+    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
+
+    // WLJ dirty calculation for z velocity update until I convert 2d equations into 3d;
+    DirectX::SimpleMath::Vector3 directionOfTravel = m_ball.q.velocity;
+    directionOfTravel.y = 0.0f;
+
+    float ratioX = vrx / m_ball.q.velocity.x;
+    float ratioY = vry / m_ball.q.velocity.y;
+    float ratioZ = ratioX + ratioY;
+    float preZ = m_ball.q.velocity.z;
+    float vrz = m_ball.q.velocity.z * ratioZ;
 
     m_ball.q.velocity.x = vrx;
     m_ball.q.velocity.y = vry;
+    //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0;
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
@@ -297,11 +308,31 @@ void GolfBall::LandProjectileOld()
 
 void GolfBall::RollBall()
 {
-    float pg = 0.15;
+    float pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
     float g = m_ball.gravity;
-    float a = -(5.0 / 7.0) * pg * g;
+    float a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
 
-    m_ball.q.velocity.x -= a;
+    double decelFactor = 0.65;
+    double aStartVelX = m_ball.q.velocity.x;
+    double aStartVelZ = m_ball.q.velocity.z;
+    float stopTolerance = 0.1;
+    int overflowTolerance = 350;
+
+    DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
+    directionVec.y = 0.0;
+    directionVec.Normalize();
+
+    int i = 0;
+    while (m_ball.q.velocity.x > stopTolerance && i < overflowTolerance)
+    {
+        float velocity = m_ball.q.velocity.Length();
+
+        velocity -= decelFactor * velocity * m_timeStep;
+        m_ball.q.velocity = directionVec * velocity;
+        m_ball.q.position += m_ball.q.velocity * m_timeStep;
+        PushFlightData();
+        ++i;
+    }
 }
 
 void GolfBall::LaunchProjectile()
@@ -390,7 +421,9 @@ void GolfBall::LaunchProjectile()
 
     this->m_ball.q.velocity.y = 0.0;
     m_ball.q.position.y = 0.0;
-    bool isBallRolling = false;
+    RollBall();
+    /*
+    bool isBallRolling = false; // Turning this off for now, attempting a different path
     while (isBallRolling == true)
     {
 
@@ -415,7 +448,7 @@ void GolfBall::LaunchProjectile()
         //RollRungeKutta4(&m_ball, dt);
         m_ball.q.position += m_ball.q.velocity;
         flightData = m_ball.q;
-        */
+        //*
         //PrintFlightData();
         PushFlightData();
         if (m_ball.q.velocity.x < 0.1)
@@ -423,6 +456,7 @@ void GolfBall::LaunchProjectile()
             isBallRolling = false;
         }
     }
+    */
     SetLandingCordinates(m_ball.q.position);
 }
 

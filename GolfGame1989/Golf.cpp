@@ -11,6 +11,7 @@ Golf::Golf()
     pSwing = new GolfSwing();
     
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pSwing->InputClub(1);
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetDefaultBallValues(pEnvironment);
@@ -61,8 +62,8 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Travel Distance = " + std::to_string(pBall->GetShotDistance()) + " meters");
     m_uiStrings.push_back("Max Height = " + std::to_string(pBall->GetMaxHeight()) + " meters");
     m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
-    m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
-    m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
+    //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+    //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 }
 
 void Golf::InputData()

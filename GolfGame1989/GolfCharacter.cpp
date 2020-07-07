@@ -18,12 +18,12 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].bioLine1 = "1";
     m_characters[i].bioLine2 = "2";
     m_characters[i].bioLine3 = "3";
-    m_characters[i].armBalancePoint = 0.500069;
-    m_characters[i].armLength = 0.620000;
-    m_characters[i].armMass = 7.300069;
-    m_characters[i].armMassMoI = 1.150069;
-    m_characters[i].clubLengthModifier = 1.0000;
- 
+    m_characters[i].armBalancePoint = 0.5;
+    m_characters[i].armLength = 0.62;
+    m_characters[i].armMass = 7.3;
+    m_characters[i].armMassMoI = 1.15;
+    m_characters[i].clubLengthModifier = 1.0;
+
     /*
     m_characters[i].name = "Natty Noonan";
     m_characters[i].bio = "The Natural";
@@ -66,6 +66,7 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armMassMoI = 1.15;
     m_characters[i].clubLengthModifier = 1.0;
     */
+
     m_characters[i].name = "Chubs McShortRound";
     m_characters[i].bioLine0 = "Mario ate the skinny one ";
     m_characters[i].bioLine1 = "and then got hit by";

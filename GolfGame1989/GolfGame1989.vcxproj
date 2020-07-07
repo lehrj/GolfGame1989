@@ -202,6 +202,7 @@
     <Image Include="ChacterSpriteSheet.png" />
     <Image Include="CharacterBackground.png" />
     <Image Include="directx.ico" />
+    <Image Include="Icon.ico" />
     <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />
     <Image Include="PowerbarImpact.png" />

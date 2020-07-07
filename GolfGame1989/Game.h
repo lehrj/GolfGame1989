@@ -43,11 +43,13 @@ public:
     void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
+    void DrawCameraFocus();
+    void DrawMenuMain();
+    void DrawMenuCharacterSelect();
     void DrawSwing();
     void DrawProjectile();
     void DrawProjectileRealTime();
-    void DrawMenuCharacterSelect();
-    void DrawMenuMain(); 
+
     void DrawShotTimerUI();
     void DrawStartScreen();
     void DrawWorld();

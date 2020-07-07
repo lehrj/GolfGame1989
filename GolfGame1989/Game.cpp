@@ -449,6 +449,7 @@ void Game::Render()
         //DrawSwing();
         DrawWorld();
         DrawProjectile();
+        DrawCameraFocus();
         //DrawProjectileRealTime();
     }
 
@@ -473,7 +474,7 @@ void Game::Render()
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawPowerBarUI();
-        DrawSwingUI();
+        //DrawSwingUI();
         DrawUI();
     }
 
@@ -1015,6 +1016,21 @@ void Game::CreateResources()
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
 
     // End Texture
+}
+void Game::DrawCameraFocus()
+{
+    float line = .25f;
+    Vector3 focalPoint(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ);
+    Vector3 yLine(m_cameraTargetX, m_cameraTargetY + line, m_cameraTargetZ);
+    Vector3 xLine(m_cameraTargetX + line, m_cameraTargetY, m_cameraTargetZ);
+    Vector3 zLine(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ + line);
+    VertexPositionColor origin(focalPoint, Colors::Yellow);
+    VertexPositionColor yOffset(yLine, Colors::Yellow);
+    VertexPositionColor xOffset(xLine, Colors::Yellow);
+    VertexPositionColor zOffset(zLine, Colors::Yellow);
+    m_batch->DrawLine(origin, yOffset);
+    m_batch->DrawLine(origin, xOffset);
+    m_batch->DrawLine(origin, zOffset);
 }
 
 // working old version prior to impmenting real time match update
@@ -2231,8 +2247,8 @@ void Game::DrawWorld()
     Vector3 xFarAxis(6.f, 0.f, 0.f);
     Vector3 zAxis(0.f, 0.f, 2.f);
     Vector3 origin = Vector3::Zero;
-    size_t divisions = 20;
-    size_t extention = 20;
+    size_t divisions = 50;
+    size_t extention = 50;
     for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);
