@@ -11,7 +11,6 @@ public:
     const double GetWindY() { return m_windY; };
     const double GetWindZ() { return m_windZ; };
 
-
     void PrintEnvironmentData();
     void ReadInEnvironmentData();
 
@@ -20,7 +19,7 @@ public:
 private:
     void InputEnvironmentData();
     void InputEnvironmentDataBasic();
-
+ 
     void SetAirDensity(double aDensity);   
     void SetGravity(double aGravity);
     void SetLandingHeight(double aLandingHeight);

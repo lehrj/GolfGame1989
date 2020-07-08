@@ -1116,4 +1116,7 @@ const double GolfBall::GetLandingHeight()
     int i = m_shotPath.size() - 1;
     height = m_shotPath[i].y;
     return height;
+
+    DirectX::XMVECTOR testVec;
+    
 }

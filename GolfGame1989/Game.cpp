@@ -21,10 +21,11 @@ Game::Game() noexcept :
     pGolf = new Golf;
     pPlay = new GolfPlay;
 
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
 
     m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
+    //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
 }
 
 Game::~Game()
@@ -328,6 +329,10 @@ void Game::Update(DX::StepTimer const& timer)
     {
         m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
+    if (m_kbStateTracker.pressed.P)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
+    }
     
     auto mouse = m_mouse->GetState();
 
@@ -336,7 +341,6 @@ void Game::Update(DX::StepTimer const& timer)
 
 void Game::UpdateCamera(DX::StepTimer const& timer)
 {
-    //if (m_gameCamera == 1)
     if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
@@ -344,17 +348,15 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
     {
-        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
     }
-    //if (m_gameCamera == 2)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
     {
         m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 0.f), Vector3::Zero, Vector3::UnitY);
         m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
-    //if (m_gameCamera == 3)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
         m_world = Matrix::CreateRotationY(m_cameraRotationX);
@@ -362,7 +364,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
-    //if (m_gameCamera == 4)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
     {
         const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
@@ -376,16 +377,14 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
-    //if (m_gameCamera == 5)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
     {
         m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
         //m_world = Matrix::CreateRotationY(0.0);
-        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         m_effect->SetView(m_view);
     }
-    //if (m_gameCamera == 6)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
     {
         const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
@@ -396,23 +395,20 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
-    //if (m_gameCamera == 7)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA7)
     {
         m_view = Matrix::CreateLookAt(Vector3(.0f, 0.0f, 7.0f), Vector3::Zero, Vector3::UnitY);
         m_effect->SetView(m_view);
     }
-    //if (m_gameCamera == 8)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA8)
     {
         m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
         //m_world = Matrix::CreateRotationY(0.0);
-        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         m_effect->SetView(m_view);
 
     }
-    //if (m_gameCamera == 9)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA9)
     {
         m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f), Vector3::Zero, Vector3::UnitY);
@@ -425,6 +421,21 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_world = Matrix::CreateRotationY(m_cameraRotationX);
         m_effect->SetView(m_view);
         */
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
+    {  
+        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), Vector3(-2.0f, .0f, 0.0f), Vector3::UnitY);
+        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), m_ballPos, Vector3::UnitY);
+        
+        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_world = Matrix::Identity;
+        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
+
+        m_effect->SetView(m_view);
+        m_effect->SetProjection(m_proj); 
     }
 }
 
@@ -457,7 +468,7 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawSwing();
+        DrawSwing();
         DrawWorld();
         DrawProjectile();
         DrawCameraFocus();
@@ -1024,15 +1035,16 @@ void Game::DrawProjectile()
 
     int stepCount = shotPath.size();
 
-    if (m_arcCount >= stepCount)
+    if (m_projectilePathStep >= stepCount)
     {
         m_flightStepTimer.ResetElapsedTime();
-        m_arcCount = 0;
+        m_projectilePathStep = 0;
     }
-    ++m_arcCount;
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
 
     Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < m_arcCount; ++i)
+    for (int i = 0; i < m_projectilePathStep; ++i)
     {
         Vector3 p1(prevPos);
 
@@ -1078,6 +1090,7 @@ void Game::DrawProjectile()
         prevPos = shotPath[i];
 
     }
+    
 
     //bool toggleGetNextClub = 0;
     ///// Landing explosion
@@ -1127,11 +1140,12 @@ void Game::DrawProjectileRealTime()
     int stepCount = shotPath.size();
     float shotTimeTotal = shotTimeStep.back();
 
-    if (m_arcCount >= stepCount)
+    if (m_projectilePathStep >= stepCount)
     {
-        m_arcCount = 0;
+        m_projectilePathStep = 0;
     }
-    ++m_arcCount;
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
     
     Vector3 prevPos = shotPath[0];
     for (int i = 0; i < shotPath.size(); ++i)
@@ -2107,7 +2121,6 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
-
 void Game::DrawSwing()
 {
     float shoulderAccel = .98;
@@ -2139,15 +2152,15 @@ void Game::DrawSwing()
     Vector3 shaft = shaftOrigin;
 
     int swingStepCount = angles.size();
-    if (m_arcCount >= swingStepCount)
+    if (m_swingPathStep >= swingStepCount)
     {
-        m_arcCount = 0;
+        m_swingPathStep = 0;
     }
-    ++m_arcCount;
+    ++m_swingPathStep;
 
     int impactPoint = pGolf->GetImpactStep();
 
-    for (int i = 0; i < m_arcCount; ++i)
+    for (int i = 0; i < m_swingPathStep; ++i)
     {
         if (i < impactPoint)
         {

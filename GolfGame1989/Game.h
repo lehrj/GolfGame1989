@@ -10,6 +10,7 @@
 #include "SpriteSheet.h"
 #include "WICTextureLoader.h"
 
+
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
 class Game
@@ -107,8 +108,8 @@ private:
     // WLJ added for drawing projectile and swing
     Golf*                                           pGolf;
     GolfPlay*                                       pPlay;
-    int                                             m_arcCount = 0;
-
+    int                                             m_swingPathStep = 0;
+    int                                             m_projectilePathStep = 0;
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont>            m_font;
     std::unique_ptr<DirectX::SpriteFont>            m_titleFont;
@@ -194,6 +195,7 @@ private:
         GAMECAMERA_CAMERA7,
         GAMECAMERA_CAMERA8,
         GAMECAMERA_CAMERA9,
+        GAMECAMERA_SWINGVIEW,
     };
 
     GameCamera                                  m_currentCamera;
@@ -205,4 +207,7 @@ private:
     float                                       m_cameraTargetZ = 0.0;
     float                                       m_cameraZoom = 0.0f;
     float                                       m_cameraMovementSpeed = 0.01;
+
+    DirectX::SimpleMath::Vector3 m_ballPos = DirectX::SimpleMath::Vector3::Zero;
+    
 };
