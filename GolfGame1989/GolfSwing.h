@@ -12,28 +12,21 @@ public:
     ~GolfSwing();
 
     Utility::ImpactData CalculateLaunchVector();
-    void CalculateSwingCordinates();
 
     void InputClub(int aInput);
-    const double GetArmLength() { return m_armLength; };
+    const double GetArmLength() const { return m_armLength; };
     
-    const double GetBackSwingPercentage() { return m_impactData.power; };
-    const double GetClubAngle() { return m_club.angle; };
-    const double GetClubLength() { return m_club.length; };
-    const double GetClubMass() { return m_club.mass; };
-    const std::string GetClubName() { return m_club.clubName; };
-    const double GetLaunchAngle() { return m_launchAngle; };
+    const double GetBackSwingPercentage() const { return m_impactData.power; };
+    const double GetClubAngle() const { return m_club.angle; };
+    const double GetClubLength() const { return m_club.length; };
+    const double GetClubMass() const { return m_club.mass; };
+    const std::string GetClubName() const { return m_club.clubName; };
+    const double GetLaunchAngle() const { return m_launchAngle; };
     
-    const double GetLaunchVelocity() { return m_impactData.velocity; };
-    std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta();
-    const int GetSwingImpactStep() { return m_swingImpactStep; };
-    const int GetSwingStepIncrementCount() { return m_swingStepIncrementCount; };
-
-    std::vector<DirectX::SimpleMath::Vector3> GetAlphaCords();
-    std::vector<DirectX::SimpleMath::Vector3> GetBetaCords();
-    std::vector<DirectX::SimpleMath::Vector3> GetThetaCords();
-
-    std::vector<Vector4d> OutputSwingData();
+    const double GetLaunchVelocity() const { return m_impactData.velocity; };
+    std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta() const { return m_alphaBetaThetaVec; };
+    const int GetSwingImpactStep() const { return m_swingImpactStep; };
+    const int GetSwingStepIncrementCount() const { return m_swingStepIncrementCount; };
 
     void PrintSwingInputData();
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
@@ -71,7 +64,8 @@ private:
 
     Utility::ImpactData                         m_impactData;
     int                                         m_clubIndex = 0;
-    std::vector<Vector4d>                       m_alphaBetaThetaVec;
+
+    std::vector<DirectX::SimpleMath::Vector3>   m_alphaBetaThetaVec;
 
     std::vector<DirectX::SimpleMath::Vector3>   m_alphaCord;
     std::vector<DirectX::SimpleMath::Vector3>   m_betaCord;

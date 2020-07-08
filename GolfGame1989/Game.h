@@ -43,32 +43,29 @@ public:
     void GetDefaultSize(int& width, int& height) const noexcept;
 
 private:
-    void DrawCameraFocus();
-    void DrawMenuMain();
-    void DrawMenuCharacterSelect();
-    void DrawSwing();
-    void DrawProjectile();
-    void DrawProjectileRealTime();
-
-    void DrawShotTimerUI();
-    void DrawStartScreen();
-    void DrawWorld();
-    
-    void Update(DX::StepTimer const& timer);
-    void UpdateCamera(DX::StepTimer const& timer);
-    void Render();
-    void DrawUI();
-    void DrawSwingUI();
-    void DrawPowerBarUI();
-    void SetGameCamera(int aCamera);
-
     void Clear();
-    void Present();
-
     void CreateDevice();
     void CreateResources();
 
+    void DrawCameraFocus();
+    void DrawMenuCharacterSelect();
+    void DrawMenuMain();
+    void DrawPowerBarUI();
+    void DrawProjectile();
+    void DrawProjectileRealTime();
+    void DrawShotTimerUI();
+    void DrawStartScreen();
+    void DrawSwing();
+    void DrawSwingUI();
+    void DrawUI();
+    void DrawWorld();
+
     void OnDeviceLost();
+    void Present();
+    void Render();
+    void SetGameCamera(int aCamera);
+    void Update(DX::StepTimer const& timer);
+    void UpdateCamera(DX::StepTimer const& timer);
 
     // Device resources.
     HWND                                            m_window;
@@ -209,5 +206,7 @@ private:
     float                                       m_cameraMovementSpeed = 0.01;
 
     DirectX::SimpleMath::Vector3 m_ballPos = DirectX::SimpleMath::Vector3::Zero;
+    DirectX::SimpleMath::Vector3 m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
+    DirectX::SimpleMath::Vector3 m_swingOrigin = DirectX::SimpleMath::Vector3(-2.02f, .1f, 0.f);
     
 };

@@ -24,8 +24,9 @@ Game::Game() noexcept :
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     m_currentState = GameState::GAMESTATE_GAMEPLAY;
 
-    m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
+    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
+    m_currentCamera = GameCamera::GAMECAMERA_CAMERA9;
 }
 
 Game::~Game()
@@ -329,6 +330,10 @@ void Game::Update(DX::StepTimer const& timer)
     {
         m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
+    if (m_kbStateTracker.pressed.O)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA9;
+    }
     if (m_kbStateTracker.pressed.P)
     {
         m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
@@ -411,16 +416,18 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA9)
     {
-        m_view = Matrix::CreateLookAt(Vector3(0.f, 0.f, 3.f), Vector3::Zero, Vector3::UnitY);
+        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
+        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
+        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), Vector3(-2.0f, .0f, 0.0f), Vector3::UnitY);
+        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.0f, .5f), m_shootOrigin, Vector3::UnitY);
+
+        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        m_world = Matrix::Identity;
+        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
 
         m_effect->SetView(m_view);
-        /*
-        m_view = Matrix::CreateLookAt(Vector3(m_cameraRotationY, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
-        //m_world = Matrix::CreateRotationY(0.0);
-        m_world = Matrix::CreateRotationY(m_cameraRotationX);
-        m_effect->SetView(m_view);
-        */
+        m_effect->SetProjection(m_proj);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
     {  
@@ -579,6 +586,56 @@ void Game::DrawPowerBarUI()
 
     m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
+}
+
+void Game::DrawWorld()
+{
+    // draw world grid
+    Vector3 xAxis(2.f, 0.f, 0.f);
+    Vector3 xFarAxis(6.f, 0.f, 0.f);
+    Vector3 zAxis(0.f, 0.f, 2.f);
+    Vector3 origin = Vector3::Zero;
+    size_t divisions = 50;
+    size_t extention = 50;
+    for (size_t i = 0; i <= divisions + extention; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        Vector3 scale = xAxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - zAxis, Colors::Green);
+            VertexPositionColor v2(scale + zAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - zAxis, Colors::Green);
+            VertexPositionColor v2(scale + zAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+
+    for (size_t i = 0; i <= divisions; i++)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        Vector3 scale = zAxis * fPercent + origin;
+
+        if (scale.z == 0.0f)
+        {
+            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
+            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xAxis, Colors::Green);
+            VertexPositionColor v2(scale + xFarAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
 }
 
 void Game::SetGameCamera(int aCamera)
@@ -2129,27 +2186,12 @@ void Game::DrawSwing()
     angles = pGolf->GetRawSwingAngles();
     Vector3 origin;
     origin.Zero;
-
+    origin += m_swingOrigin;
     Vector3 thetaOrigin;
     thetaOrigin.Zero;
-    thetaOrigin.y = -1.0;
-    Vector3 armOrigin;
-    armOrigin.Zero;
-    armOrigin.y = -1.0;
-    armOrigin = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(Utility::ToRadians(-135.0)));
-    Vector3 shaftOrigin;
-    shaftOrigin.Zero;
-    shaftOrigin.y = -1.0;
-    shaftOrigin = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(120.0)));
-    shaftOrigin += armOrigin;
+    thetaOrigin.y = -.05;
 
     VertexPositionColor shoulder(origin, Colors::White);
-    VertexPositionColor hand(armOrigin, Colors::White);
-    VertexPositionColor clubHead(shaftOrigin, Colors::White);
-    //m_batch->DrawLine(shoulder, hand);
-    //m_batch->DrawLine(hand, clubHead);
-    Vector3 arm = armOrigin;
-    Vector3 shaft = shaftOrigin;
 
     int swingStepCount = angles.size();
     if (m_swingPathStep >= swingStepCount)
@@ -2165,72 +2207,15 @@ void Game::DrawSwing()
         if (i < impactPoint)
         {
             Vector3 theta = Vector3::Transform(thetaOrigin, Matrix::CreateRotationZ(-angles[i].z));
-            VertexPositionColor thetaColor(theta, Colors::Blue);
-            m_batch->DrawLine(shoulder, thetaColor);
             Vector3 beta = Vector3::Transform(theta, Matrix::CreateRotationZ(-angles[i].y));
+            theta += m_swingOrigin;
+                       
+            //beta += m_swingOrigin;
             beta += theta;
+            VertexPositionColor thetaColor(theta, Colors::Blue);
             VertexPositionColor betaColor(beta, Colors::Red);
+            m_batch->DrawLine(shoulder, thetaColor);
             m_batch->DrawLine(thetaColor, betaColor);
-            arm = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(angles[i].z));
-            //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(Utility::ToRadians(180.0)));
-            //shaft = Vector3::Transform(shaftOrigin, Matrix::CreateRotationZ(-angles[i].y));
-            //shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
-            shaft = Vector3::Transform(armOrigin, Matrix::CreateRotationZ(-angles[i].y));
-            //shaft += arm;
-            VertexPositionColor updateHand(arm, Colors::White);
-            VertexPositionColor updateClubHead(shaft, Colors::Red);
-            //m_batch->DrawLine(updateHand, shoulder);
-            //m_batch->DrawLine(thetaColor, updateClubHead);
-        }
-    }
-}
-
-void Game::DrawWorld()
-{
-    // draw world grid
-    Vector3 xAxis(2.f, 0.f, 0.f);
-    Vector3 xFarAxis(6.f, 0.f, 0.f);
-    Vector3 zAxis(0.f, 0.f, 2.f);
-    Vector3 origin = Vector3::Zero;
-    size_t divisions = 50;
-    size_t extention = 50;
-    for (size_t i = 0; i <= divisions + extention; ++i)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = xAxis * fPercent + origin;
-        if (scale.x == 0.0f)
-        {
-            VertexPositionColor v1(scale - zAxis, Colors::Green);
-            VertexPositionColor v2(scale + zAxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - zAxis, Colors::Green);
-            VertexPositionColor v2(scale + zAxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-
-    for (size_t i = 0; i <= divisions; i++)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-
-        Vector3 scale = zAxis * fPercent + origin;
-
-        if (scale.z == 0.0f)
-        {
-            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
-            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - xAxis, Colors::Green);
-            VertexPositionColor v2(scale + xFarAxis, Colors::Green);
-            m_batch->DrawLine(v1, v2);
         }
     }
 }

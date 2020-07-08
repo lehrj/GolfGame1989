@@ -21,46 +21,7 @@ GolfSwing::~GolfSwing()
     delete m_pBag;
 }
 
-void GolfSwing::CalculateSwingCordinates()
-{
-    DirectX::SimpleMath::Vector3 alpha;
-    DirectX::SimpleMath::Vector3 prevAlpha;
-    double alphaAngle = m_alphaBetaThetaVec[0].GetX();
-    DirectX::SimpleMath::Vector3 beta;
-    DirectX::SimpleMath::Vector3 prevBeta;
-    double betaAngle = m_alphaBetaThetaVec[0].GetY();;
-    DirectX::SimpleMath::Vector3 theta;
-    DirectX::SimpleMath::Vector3 prevTheta;
-    double thetaAngle = m_alphaBetaThetaVec[0].GetZ();
-    std::vector< DirectX::SimpleMath::Vector3> alphaVec;
-    std::vector< DirectX::SimpleMath::Vector3> betaVec;
-    std::vector< DirectX::SimpleMath::Vector3> thetaVec;
-    double armNorm = 1.0;
-    double clubNorm = 1.0;
-    DirectX::SimpleMath::Vector3 body(0.0, 1.0, 0.0);
-    DirectX::SimpleMath::Vector3 arm;
-    DirectX::SimpleMath::Vector4 arm4(0.0, 1.0, 0.0, 0.0);
-    DirectX::SimpleMath::Vector3 club;
-    DirectX::SimpleMath::Vector4 testV4(0.0, 1.0, 0.0, 1.0);
-    DirectX::SimpleMath::Vector4 testV42(0.0, 1.0, 0.0, 1.0);
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
-
-    DirectX::SimpleMath::Matrix testMat;
-    //testV4.Transform(DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle));
-
-    //testV42 = DirectX::SimpleMath::Matrix::Ro
-    //club = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
-    DirectX::SimpleMath::Matrix rotMatTest = DirectX::SimpleMath::Matrix::CreateRotationZ(thetaAngle);
-    testV4.Transform(arm4, rotMatTest);
-    DirectX::SimpleMath::Vector4 a4Vec = DirectX::SimpleMath::Vector4::Transform(arm4, rotMatTest);
-    //DirectX::SimpleMath::Vector3 a4Vec = DirectX::SimpleMath::Vector3::Transform(arm, rotMatTest);
-    DirectX::SimpleMath::Vector4 a4Vec2 = a4Vec;
-    a4Vec2.Normalize();
-
-    int bStop = 0;
-    bStop++;
-}
-
+/*
 std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetAlphaCords()
 {
     m_alphaCord.clear();
@@ -124,6 +85,7 @@ std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetThetaCords()
     }
     return m_thetaCord;
 }
+*/
 
 Utility::ImpactData GolfSwing::CalculateLaunchVector()
 {
@@ -196,7 +158,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
         Vc = sqrt(Vc2);
 
-        Vector4d swingAngles(m_alpha, m_beta, m_theta, 0.0);
+        DirectX::SimpleMath::Vector3 swingAngles(m_alpha, m_beta, m_theta);
         m_alphaBetaThetaVec.push_back(swingAngles);
 
         phi = m_theta + m_beta;
@@ -260,32 +222,11 @@ double GolfSwing::ComputeBetaDotDot(void)
     return (G - C * m_alpha_dotdot) / D;
 }
 
-/*
-void GolfSwing::CycleClub()
-{
-    ++m_clubIndex;
-    if (m_clubIndex >= m_pBag->GetClubCount())
-    {
-        m_clubIndex = 0;
-    }
-    m_club = m_pBag->GetClub(m_clubIndex);
-    UpdateClubData();
-    UpdateGolfSwingValues();
-    CalculateLaunchVector();
-}
-*/
-
 void GolfSwing::InputClub(int aInput)
 {
     m_club = m_pBag->GetClub(aInput);
     UpdateGolfSwingValues();
     //CalculateLaunchVector();
-}
-
-std::vector<Vector4d> GolfSwing::OutputSwingData()
-{
-    CalculateSwingCordinates();
-    return m_alphaBetaThetaVec;
 }
 
 void GolfSwing::PrintSwingInputData()
@@ -474,33 +415,6 @@ void GolfSwing::ResetAlphaBeta()
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
-/*
-// Select club from GolfBag class and update member variables
-void GolfSwing::SelectClub()
-{
-    m_pBag->PrintClubList();
-
-    bool isInputValid = false;
-    while (isInputValid == false)
-    {
-        int input;
-        printf("Please Select Club by Number : ");
-        std::cin >> input;
-        --input; // undoes offset input index to improve visual of GolfBag print
-        if (input >= 0 && input < m_pBag->GetClubCount())
-        {
-            isInputValid = true;
-            m_club = m_pBag->GetClub(input);
-            UpdateClubData();
-        }
-        else
-        {
-            std::cout << "Input Error, please try again \n";
-        }
-    }
-}
-*/
-
 void GolfSwing::SetArmBalancePoint(double aBalancePoint)
 {
     m_armBalancePoint = aBalancePoint;
@@ -649,19 +563,3 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     UpdateGolfSwingValues();
     //CalculateLaunchVector2();
 }
-
-std::vector<DirectX::SimpleMath::Vector3> GolfSwing::GetRawAlphaBetaTheta()
-{
-    std::vector<DirectX::SimpleMath::Vector3> vecList;
-
-    for (int i = 0; i < m_alphaBetaThetaVec.size(); ++i)
-    {
-        DirectX::SimpleMath::Vector3 aVec;
-        aVec.x = m_alphaBetaThetaVec[i].GetX();
-        aVec.y = m_alphaBetaThetaVec[i].GetY();
-        aVec.z = m_alphaBetaThetaVec[i].GetZ();
-        vecList.push_back(aVec);
-    }
-    return vecList;
-}
-
