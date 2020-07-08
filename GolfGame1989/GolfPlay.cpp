@@ -31,6 +31,7 @@ std::vector<std::string> GolfPlay::GetDebugData()
 
 void GolfPlay::UpdateSwingState()
 {
+    //if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)
     if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)
     {
         this->StartSwing();
@@ -114,7 +115,8 @@ void GolfPlay::SetImpact()
 
 void GolfPlay::SetPower()
 {
-    if (m_isSwingStart == true && m_isOnDownSwing == false)
+    //if (m_isSwingStart == true && m_isOnDownSwing == false)
+    if (m_isSwingStart == true)
     {
         m_impactData.power = m_meterBar;
         m_swingPower = m_meterBar;
