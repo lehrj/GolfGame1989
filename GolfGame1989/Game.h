@@ -190,8 +190,8 @@ private:
         GAMECAMERA_CAMERA5,
         GAMECAMERA_CAMERA6,
         GAMECAMERA_CAMERA7,
-        GAMECAMERA_CAMERA8,
-        GAMECAMERA_CAMERA9,
+        GAMECAMERA_PRESWINGVIEW,
+        GAMECAMERA_PROJECTILEFLIGHTVIEW,
         GAMECAMERA_SWINGVIEW,
     };
 
@@ -207,6 +207,6 @@ private:
 
     DirectX::SimpleMath::Vector3 m_ballPos = DirectX::SimpleMath::Vector3::Zero;
     DirectX::SimpleMath::Vector3 m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
-    DirectX::SimpleMath::Vector3 m_swingOrigin = DirectX::SimpleMath::Vector3(-2.02f, .1f, 0.f);
+    DirectX::SimpleMath::Vector3 m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
     
 };

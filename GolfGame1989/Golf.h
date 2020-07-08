@@ -52,19 +52,19 @@ public:
     void UpdateImpact(Utility::ImpactData aImpact);
     
 private:
-    Environment*                    pEnvironment;    
-    GolfBall*                       pBall;
-    GolfCharacter*                  pCharacter;
-    GolfPlay*                       pPlay;
-    GolfSwing*                      pSwing;
-    Utility::ImpactData             m_impactData;
-
     void BuildVector();
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
     void LoadCharacterTraits();
     void ScaleCordinates();
     void SetShotCordMax();
     void TransformCordinates(const int aIndex);
+
+    Environment*                    pEnvironment;    
+    GolfBall*                       pBall;
+    GolfCharacter*                  pCharacter;
+    GolfPlay*                       pPlay;
+    GolfSwing*                      pSwing;
+    Utility::ImpactData             m_impactData;
 
     double                          m_maxX;
     double                          m_maxY;

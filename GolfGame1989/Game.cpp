@@ -26,7 +26,8 @@ Game::Game() noexcept :
 
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-    m_currentCamera = GameCamera::GAMECAMERA_CAMERA9;
+    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+    m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
 }
 
 Game::~Game()
@@ -330,9 +331,13 @@ void Game::Update(DX::StepTimer const& timer)
     {
         m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
+    if (m_kbStateTracker.pressed.I)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    }
     if (m_kbStateTracker.pressed.O)
     {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA9;
+        m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
     }
     if (m_kbStateTracker.pressed.P)
     {
@@ -349,12 +354,10 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
         m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-        //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
     {
-        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-        //m_world = Matrix::CreateRotationY((static_cast<float>(m_cameraRotationX)));
+
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
     {
@@ -385,9 +388,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
     {
         m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
-        //m_world = Matrix::CreateRotationY(0.0);
-        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
@@ -405,44 +405,28 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_view = Matrix::CreateLookAt(Vector3(.0f, 0.0f, 7.0f), Vector3::Zero, Vector3::UnitY);
         m_effect->SetView(m_view);
     }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA8)
+    if (m_currentCamera == GameCamera::GAMECAMERA_PRESWINGVIEW)
     {
-        m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(45));
-        //m_world = Matrix::CreateRotationY(0.0);
-        //m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-        m_effect->SetView(m_view);
-
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA9)
-    {
-        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
-        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), Vector3(-2.0f, .0f, 0.0f), Vector3::UnitY);
-        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.0f, .5f), m_shootOrigin, Vector3::UnitY);
-
-        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+        Vector3 cameraPos = m_shootOrigin;
+        cameraPos.x -= .9f;
+        cameraPos.y += .5f;
+        Vector3 cameraLookAt = m_shootOrigin;
+        cameraLookAt.y += .3f;
+        m_view = Matrix::CreateLookAt(cameraPos, cameraLookAt, Vector3::UnitY);
         m_world = Matrix::Identity;
-        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
-
         m_effect->SetView(m_view);
-        m_effect->SetProjection(m_proj);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
-    {  
-        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
-        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), Vector3(-2.0f, .0f, 0.0f), Vector3::UnitY);
-        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), m_ballPos, Vector3::UnitY);
-        
-        //m_world = Matrix::CreateRotationY(m_cameraRotationX);
+    {
+        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.0f, .5f), m_shootOrigin, Vector3::UnitY);
         m_world = Matrix::Identity;
-        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
-
         m_effect->SetView(m_view);
-        m_effect->SetProjection(m_proj); 
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+    {  
+        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), m_ballPos, Vector3::UnitY);       
+        m_world = Matrix::Identity;
+        m_effect->SetView(m_view);
     }
 }
 
@@ -594,6 +578,7 @@ void Game::DrawWorld()
     Vector3 xAxis(2.f, 0.f, 0.f);
     Vector3 xFarAxis(6.f, 0.f, 0.f);
     Vector3 zAxis(0.f, 0.f, 2.f);
+    Vector3 yAxis(0.f, 2.f, 0.f);
     Vector3 origin = Vector3::Zero;
     size_t divisions = 50;
     size_t extention = 50;
@@ -612,6 +597,43 @@ void Game::DrawWorld()
         {
             VertexPositionColor v1(scale - zAxis, Colors::Green);
             VertexPositionColor v2(scale + zAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+
+    for (size_t i = 0; i <= divisions + extention; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        Vector3 scale = xAxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - yAxis, Colors::Green);
+            VertexPositionColor v2(scale + yAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - yAxis, Colors::Green);
+            VertexPositionColor v2(scale + yAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+    for (size_t i = 0; i <= divisions + extention; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        Vector3 scale = yAxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - xAxis, Colors::Green);
+            VertexPositionColor v2(scale + xAxis, Colors::Green);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xAxis, Colors::Green);
+            VertexPositionColor v2(scale + xAxis, Colors::Green);
             m_batch->DrawLine(v1, v2);
         }
     }
@@ -2189,7 +2211,7 @@ void Game::DrawSwing()
     origin += m_swingOrigin;
     Vector3 thetaOrigin;
     thetaOrigin.Zero;
-    thetaOrigin.y = -.05;
+    thetaOrigin.y = -.02;
 
     VertexPositionColor shoulder(origin, Colors::White);
 
@@ -2223,7 +2245,6 @@ void Game::DrawSwing()
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
-    // WLJ start
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
@@ -2233,7 +2254,6 @@ void Game::OnDeviceLost()
     m_bitwiseFont.reset();
     m_spriteBatch.reset();
     m_kbStateTracker.Reset();
-    //m_keyboard.reset();
     
     //Powerbar
     m_powerFrameTexture.Reset();
@@ -2251,7 +2271,7 @@ void Game::OnDeviceLost()
     m_character2.reset();
     m_character2Texture.Reset();
     m_characterBackgroundTexture.Reset();
-    // end
+
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();
     m_swapChain.Reset();
@@ -2259,6 +2279,5 @@ void Game::OnDeviceLost()
     m_d3dDevice.Reset();
 
     CreateDevice();
-
     CreateResources();
 }
