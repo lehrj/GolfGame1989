@@ -7,10 +7,6 @@ GolfPlay::GolfPlay()
     ResetPlayData();
 }
 
-GolfPlay::~GolfPlay()
-{
-}
-
 void GolfPlay::BuildDebugData()
 {
     m_debugData.clear();
@@ -23,7 +19,7 @@ void GolfPlay::BuildDebugData()
     m_debugData.push_back("m_sliceRate = " + std::to_string(m_sliceRate));
 }
 
-std::vector<std::string> GolfPlay::GetDebugData() 
+std::vector<std::string> GolfPlay::GetDebugData()
 { 
     BuildDebugData();
     return m_debugData; 
@@ -31,12 +27,10 @@ std::vector<std::string> GolfPlay::GetDebugData()
 
 void GolfPlay::UpdateSwingState()
 {
-    //if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)
     if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)
     {
         this->StartSwing();
     }
-    //else if (m_isSwingStart == true && m_isSwingPowerSet == false && m_isOnDownSwing == false)
     else if (m_isSwingStart == true && m_isSwingPowerSet == false)
     {
         this->SetPower();
@@ -115,7 +109,6 @@ void GolfPlay::SetImpact()
 
 void GolfPlay::SetPower()
 {
-    //if (m_isSwingStart == true && m_isOnDownSwing == false)
     if (m_isSwingStart == true)
     {
         m_impactData.power = m_meterBar;

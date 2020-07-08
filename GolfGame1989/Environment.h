@@ -13,13 +13,11 @@ public:
 
     void PrintEnvironmentData();
     void ReadInEnvironmentData();
-
     void SetDefaultEnvironment();
     
 private:
     void InputEnvironmentData();
     void InputEnvironmentDataBasic();
- 
     void SetAirDensity(double aDensity);   
     void SetGravity(double aGravity);
     void SetLandingHeight(double aLandingHeight);

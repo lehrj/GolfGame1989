@@ -8,7 +8,7 @@
 extern void ExitGame() noexcept;
 
 using namespace DirectX;
-using namespace DirectX::SimpleMath; // WLJ add
+//using namespace DirectX::SimpleMath; // WLJ add
 
 using Microsoft::WRL::ComPtr;
 
@@ -21,13 +21,13 @@ Game::Game() noexcept :
     pGolf = new Golf;
     pPlay = new GolfPlay;
 
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
-    m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+    //m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
 }
 
 Game::~Game()
@@ -55,7 +55,7 @@ void Game::Initialize(HWND window, int width, int height)
     */
 
     // WLJ add for mouse and keybord interface
-    m_keyboard = std::make_unique<Keyboard>();
+    m_keyboard = std::make_unique<DirectX::Keyboard>();
     //m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
 
     m_mouse = std::make_unique<Mouse>();
@@ -99,6 +99,7 @@ void Game::Update(DX::StepTimer const& timer)
             m_character2->Update(elapsedTime);
         }
     }
+
     pPlay->Swing();
 
     if (pPlay->UpdateSwing() == true)
@@ -109,17 +110,14 @@ void Game::Update(DX::StepTimer const& timer)
 
     UpdateCamera(timer);
 
-    // WLJ add for mouse and keybord interface
-    
-    auto kb = m_keyboard->GetState();    
-    
+    // WLJ add for mouse and keybord interface   
+    auto kb = m_keyboard->GetState();       
     m_kbStateTracker.Update(kb);
 
     if (kb.Escape)
     {
         m_currentState = GameState::GAMESTATE_MAINMENU;
-    }
-    
+    }   
     if (m_kbStateTracker.pressed.Enter)
     {
         if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
@@ -353,7 +351,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
 {
     if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
-        m_world = Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
     {
@@ -361,71 +359,64 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
     {
-        m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 0.f), Vector3::Zero, Vector3::UnitY);
-        m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
-        m_world = Matrix::CreateRotationY(m_cameraRotationX);
-        m_view = Matrix::CreateLookAt(Vector3(6.f, 0.f, 0.f), Vector3::Zero, Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(6.f, 0.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
         //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
     {
-        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
         //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , Vector3::UnitY);
-        m_world = Matrix::CreateRotationY(m_cameraRotationX);
-        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f,
-            float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.0f);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
 
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
     {
-        m_view = Matrix::CreateLookAt(Vector3(-6.f, 1.f, 2.f), Vector3::Zero, Vector3::UnitY);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-6.f, 1.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
     {
-        const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
-        const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
-        m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
-        m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA7)
     {
-        m_view = Matrix::CreateLookAt(Vector3(.0f, 0.0f, 7.0f), Vector3::Zero, Vector3::UnitY);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(.0f, 0.0f, 7.0f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_PRESWINGVIEW)
     {
-        Vector3 cameraPos = m_shootOrigin;
+        DirectX::SimpleMath::Vector3 cameraPos = m_shootOrigin;
         cameraPos.x -= .9f;
         cameraPos.y += .5f;
-        Vector3 cameraLookAt = m_shootOrigin;
+        DirectX::SimpleMath::Vector3 cameraLookAt = m_shootOrigin;
         cameraLookAt.y += .3f;
-        m_view = Matrix::CreateLookAt(cameraPos, cameraLookAt, Vector3::UnitY);
-        m_world = Matrix::Identity;
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(cameraPos, cameraLookAt, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
     {
-        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.0f, .5f), m_shootOrigin, Vector3::UnitY);
-        m_world = Matrix::Identity;
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.0f, .5f), m_shootOrigin, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
     {  
-        m_view = Matrix::CreateLookAt(Vector3(-2.f, 0.3f, 2.f), m_ballPos, Vector3::UnitY);       
-        m_world = Matrix::Identity;
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.3f, 2.f), m_ballPos, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
         m_effect->SetView(m_view);
     }
 }
@@ -517,7 +508,7 @@ void Game::DrawSwingUI()
     for (int i = 0; i < uiString.size(); ++i)
     {
         std::string uiLine = std::string(uiString[i]);
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
 
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
         m_fontPosDebug.y += 35;
@@ -538,7 +529,7 @@ void Game::DrawUI()
     {
         std::string uiLine = std::string(uiString[i]);
         //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
-        Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
         //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
         m_fontPos2.y += 35;
@@ -575,18 +566,18 @@ void Game::DrawPowerBarUI()
 void Game::DrawWorld()
 {
     // draw world grid
-    Vector3 xAxis(2.f, 0.f, 0.f);
-    Vector3 xFarAxis(6.f, 0.f, 0.f);
-    Vector3 zAxis(0.f, 0.f, 2.f);
-    Vector3 yAxis(0.f, 2.f, 0.f);
-    Vector3 origin = Vector3::Zero;
+    DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
+    //DirectX::SimpleMath::Vector3 yAxis(0.f, 2.f, 0.f);
+    DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
     size_t extention = 50;
     for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = xAxis * fPercent + origin;
+        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
         if (scale.x == 0.0f)
         {
             VertexPositionColor v1(scale - zAxis, Colors::Green);
@@ -600,12 +591,12 @@ void Game::DrawWorld()
             m_batch->DrawLine(v1, v2);
         }
     }
-
+    /*
     for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = xAxis * fPercent + origin;
+        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
         if (scale.x == 0.0f)
         {
             VertexPositionColor v1(scale - yAxis, Colors::Green);
@@ -623,7 +614,7 @@ void Game::DrawWorld()
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
-        Vector3 scale = yAxis * fPercent + origin;
+        DirectX::SimpleMath::Vector3 scale = yAxis * fPercent + origin;
         if (scale.x == 0.0f)
         {
             VertexPositionColor v1(scale - xAxis, Colors::Green);
@@ -637,13 +628,13 @@ void Game::DrawWorld()
             m_batch->DrawLine(v1, v2);
         }
     }
-
+    */
     for (size_t i = 0; i <= divisions; i++)
     {
         float fPercent = float(i) / float(divisions);
         fPercent = (fPercent * 2.0f) - 1.0f;
 
-        Vector3 scale = zAxis * fPercent + origin;
+        DirectX::SimpleMath::Vector3 scale = zAxis * fPercent + origin;
 
         if (scale.z == 0.0f)
         {
@@ -825,7 +816,7 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(context.As(&m_d3dContext));
 
     // TODO: Initialize device dependent objects here (independent of window size).
-    m_world = Matrix::Identity;
+    m_world = DirectX::SimpleMath::Matrix::Identity;
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
     m_effect = std::make_unique<BasicEffect>(m_d3dDevice.Get());
     m_effect->SetVertexColorEnabled(true);
@@ -1010,8 +1001,8 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here.
 
     ////********* WLJ world start ----- deactivate to turn off world spin
-    m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
-    m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+    m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+    m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
@@ -1077,10 +1068,10 @@ void Game::CreateResources()
 void Game::DrawCameraFocus()
 {
     float line = .25f;
-    Vector3 focalPoint(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ);
-    Vector3 yLine(m_cameraTargetX, m_cameraTargetY + line, m_cameraTargetZ);
-    Vector3 xLine(m_cameraTargetX + line, m_cameraTargetY, m_cameraTargetZ);
-    Vector3 zLine(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ + line);
+    DirectX::SimpleMath::Vector3 focalPoint(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ);
+    DirectX::SimpleMath::Vector3 yLine(m_cameraTargetX, m_cameraTargetY + line, m_cameraTargetZ);
+    DirectX::SimpleMath::Vector3 xLine(m_cameraTargetX + line, m_cameraTargetY, m_cameraTargetZ);
+    DirectX::SimpleMath::Vector3 zLine(m_cameraTargetX, m_cameraTargetY, m_cameraTargetZ + line);
     VertexPositionColor origin(focalPoint, Colors::Yellow);
     VertexPositionColor yOffset(yLine, Colors::Yellow);
     VertexPositionColor xOffset(xLine, Colors::Yellow);
@@ -1098,10 +1089,10 @@ void Game::DrawProjectile()
     //draw tee box
     double originX = shotPath[0].x;
     double originZ = shotPath[0].z;
-    Vector3 t1(originX - .05, 0.0f, -0.1f);
-    Vector3 t2(originX + .05, 0.0f, -0.1f);
-    Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    Vector3 t4(originX + .05, 0.0f, 0.1f);
+    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
+    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
     VertexPositionColor vt1(t1, Colors::White);
     VertexPositionColor vt2(t2, Colors::White);
     VertexPositionColor vt3(t3, Colors::White);
@@ -1122,12 +1113,11 @@ void Game::DrawProjectile()
     m_ballPos = shotPath[m_projectilePathStep];
     ++m_projectilePathStep;
 
-    Vector3 prevPos = shotPath[0];
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
     for (int i = 0; i < m_projectilePathStep; ++i)
     {
-        Vector3 p1(prevPos);
-
-        Vector3 p2(shotPath[i]);
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
 
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
@@ -1226,11 +1216,11 @@ void Game::DrawProjectileRealTime()
     m_ballPos = shotPath[m_projectilePathStep];
     ++m_projectilePathStep;
     
-    Vector3 prevPos = shotPath[0];
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
     for (int i = 0; i < shotPath.size(); ++i)
     {
-        Vector3 p1(prevPos);
-        Vector3 p2(shotPath[i]);
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
 
@@ -1250,7 +1240,7 @@ void Game::DrawProjectileRealTime()
 void Game::DrawShotTimerUI()
 {
     std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
-    Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
+    DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
 
@@ -1264,13 +1254,13 @@ void Game::DrawMenuCharacterSelect()
     std::string menuTitle = "Character Select";
     float menuTitlePosX = m_fontMenuPos.x;
     float menuTitlePosY = lineDrawY;
-    Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
-    Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
+    DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
+    DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
     
     float posY0 = 250.0f;
@@ -1281,8 +1271,8 @@ void Game::DrawMenuCharacterSelect()
 
     float posX0 = backBufferWidth * .20f;
     //float posX0 = 200.0;
-    Vector2 menuObj0Pos(posX0, posY0);
-    Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj0Pos(posX0, posY0);
+    DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
 
     //float ySpacing = menuObj0Origin.y * 2;
@@ -1303,89 +1293,89 @@ void Game::DrawMenuCharacterSelect()
     int i = 0;
     
     std::string dataString = "Data: ";
-    Vector2 dataOrigin = m_bitwiseFont->MeasureString(dataString.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 dataOrigin = m_bitwiseFont->MeasureString(dataString.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 dataPos;
+    DirectX::SimpleMath::Vector2 dataPos;
     dataPos.x = posX0;
     dataPos.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
 
     std::string armLengthString0 = pGolf->GetCharacterArmLength(i);
-    Vector2 armLengthOrigin0 = m_bitwiseFont->MeasureString(armLengthString0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armLengthOrigin0 = m_bitwiseFont->MeasureString(armLengthString0.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 armLengthPos0;
+    DirectX::SimpleMath::Vector2 armLengthPos0;
     armLengthPos0.x = posX0;
     armLengthPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString0.c_str(), armLengthPos0, Colors::White, 0.f, armLengthOrigin0);
     
     std::string armMassString0 = pGolf->GetCharacterArmMass(i);
-    Vector2 armMassOrigin0 = m_bitwiseFont->MeasureString(armMassString0.c_str()) / 2.f;
-    Vector2 armMassPos0;
+    DirectX::SimpleMath::Vector2 armMassOrigin0 = m_bitwiseFont->MeasureString(armMassString0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassPos0;
     posY0 += ySpacing;
     armMassPos0.x = posX0;
     armMassPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString0.c_str(), armMassPos0, Colors::White, 0.f, armMassOrigin0);
 
     std::string clubLengthModString0 = pGolf->GetCharacterClubLengthMod(i);
-    Vector2 clubLengthModOrigin0 = m_bitwiseFont->MeasureString(clubLengthModString0.c_str()) / 2.f;
-    Vector2 clubLengthModPos0;
+    DirectX::SimpleMath::Vector2 clubLengthModOrigin0 = m_bitwiseFont->MeasureString(clubLengthModString0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 clubLengthModPos0;
     posY0 += ySpacing;
     clubLengthModPos0.x = posX0;
     clubLengthModPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString0.c_str(), clubLengthModPos0, Colors::White, 0.f, clubLengthModOrigin0);
 
     std::string armBalancePointString0 = pGolf->GetCharacterArmBalancePoint(i);
-    Vector2 armBalancePointOrigin0 = m_bitwiseFont->MeasureString(armBalancePointString0.c_str()) / 2.f;
-    Vector2 armBalancePointPos0;
+    DirectX::SimpleMath::Vector2 armBalancePointOrigin0 = m_bitwiseFont->MeasureString(armBalancePointString0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armBalancePointPos0;
     posY0 += ySpacing;
     armBalancePointPos0.x = posX0;
     armBalancePointPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString0.c_str(), armBalancePointPos0, Colors::White, 0.f, armBalancePointOrigin0);
 
     std::string armMassMoIString0 = pGolf->GetCharacterArmMassMoI(i);
-    Vector2 armMassMoIOrigin0 = m_bitwiseFont->MeasureString(armMassMoIString0.c_str()) / 2.f;
-    Vector2 armMassMoIPos0;
+    DirectX::SimpleMath::Vector2 armMassMoIOrigin0 = m_bitwiseFont->MeasureString(armMassMoIString0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassMoIPos0;
     posY0 += ySpacing;
     armMassMoIPos0.x = posX0;
     armMassMoIPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassMoIString0.c_str(), armMassMoIPos0, Colors::White, 0.f, armMassMoIOrigin0);
 
     std::string bioString = "Bio:";
-    Vector2 bioOrigin = m_bitwiseFont->MeasureString(bioString.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioOrigin = m_bitwiseFont->MeasureString(bioString.c_str()) / 2.f;
     posY0 += ySpacing + ySpacing;
-    Vector2 bioPos;
+    DirectX::SimpleMath::Vector2 bioPos;
     bioPos.x = posX0;
     bioPos.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
 
     std::string bioLine0String0 = pGolf->GetCharacterBioLine0(i);
-    Vector2 bioLine0Origin0 = m_bitwiseFont->MeasureString(bioLine0String0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine0Origin0 = m_bitwiseFont->MeasureString(bioLine0String0.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 bioLine0Pos0;
+    DirectX::SimpleMath::Vector2 bioLine0Pos0;
     bioLine0Pos0.x = posX0;
     bioLine0Pos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String0.c_str(), bioLine0Pos0, Colors::White, 0.f, bioLine0Origin0);
 
     std::string bioLine1String0 = pGolf->GetCharacterBioLine1(i);
-    Vector2 bioLine1Origin0 = m_bitwiseFont->MeasureString(bioLine1String0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine1Origin0 = m_bitwiseFont->MeasureString(bioLine1String0.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 bioLine1Pos0;
+    DirectX::SimpleMath::Vector2 bioLine1Pos0;
     bioLine1Pos0.x = posX0;
     bioLine1Pos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String0.c_str(), bioLine1Pos0, Colors::White, 0.f, bioLine1Origin0);
 
     std::string bioLine2String0 = pGolf->GetCharacterBioLine2(i);
-    Vector2 bioLine2Origin0 = m_bitwiseFont->MeasureString(bioLine2String0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine2Origin0 = m_bitwiseFont->MeasureString(bioLine2String0.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 bioLine2Pos0;
+    DirectX::SimpleMath::Vector2 bioLine2Pos0;
     bioLine2Pos0.x = posX0;
     bioLine2Pos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String0.c_str(), bioLine2Pos0, Colors::White, 0.f, bioLine2Origin0);
 
     std::string bioLine3String0 = pGolf->GetCharacterBioLine3(i);
-    Vector2 bioLine3Origin0 = m_bitwiseFont->MeasureString(bioLine3String0.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine3Origin0 = m_bitwiseFont->MeasureString(bioLine3String0.c_str()) / 2.f;
     posY0 += ySpacing;
-    Vector2 bioLine3Pos0;
+    DirectX::SimpleMath::Vector2 bioLine3Pos0;
     bioLine3Pos0.x = posX0;
     bioLine3Pos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String0.c_str(), bioLine3Pos0, Colors::White, 0.f, bioLine3Origin0);
@@ -1394,17 +1384,17 @@ void Game::DrawMenuCharacterSelect()
 
     if (m_menuSelect == 0)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
     }
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
@@ -1416,8 +1406,8 @@ void Game::DrawMenuCharacterSelect()
     //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
 
    
-    Vector2 menuObj1Pos(posX1, posY1);
-    Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj1Pos(posX1, posY1);
+    DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
     //half = m_characterBackgroundOrigin.x;
     m_characterBackgroundPos.x = posX1 + half + 10.f;
@@ -1434,40 +1424,40 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
 
     std::string armLengthString1 = pGolf->GetCharacterArmLength(i);
-    Vector2 armLengthOrigin1 = m_bitwiseFont->MeasureString(armLengthString1.c_str()) / 2.f;
-    Vector2 armLengthPos1;
+    DirectX::SimpleMath::Vector2 armLengthOrigin1 = m_bitwiseFont->MeasureString(armLengthString1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armLengthPos1;
     posY1 += ySpacing;
     armLengthPos1.x = posX1;
     armLengthPos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString1.c_str(), armLengthPos1, Colors::White, 0.f, armLengthOrigin1);
 
     std::string armMassString1 = pGolf->GetCharacterArmMass(i);
-    Vector2 armMassOrigin1 = m_bitwiseFont->MeasureString(armMassString1.c_str()) / 2.f;
-    Vector2 armMassPos1;
+    DirectX::SimpleMath::Vector2 armMassOrigin1 = m_bitwiseFont->MeasureString(armMassString1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassPos1;
     posY1 += ySpacing;
     armMassPos1.x = posX1;
     armMassPos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString1.c_str(), armMassPos1, Colors::White, 0.f, armMassOrigin1);
 
     std::string clubLengthModString1 = pGolf->GetCharacterClubLengthMod(i);
-    Vector2 clubLengthModOrigin1 = m_bitwiseFont->MeasureString(clubLengthModString1.c_str()) / 2.f;
-    Vector2 clubLengthModPos1;
+    DirectX::SimpleMath::Vector2 clubLengthModOrigin1 = m_bitwiseFont->MeasureString(clubLengthModString1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 clubLengthModPos1;
     posY1 += ySpacing;
     clubLengthModPos1.x = posX1;
     clubLengthModPos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString1.c_str(), clubLengthModPos1, Colors::White, 0.f, clubLengthModOrigin1);
 
     std::string armBalancePointString1 = pGolf->GetCharacterArmBalancePoint(i);
-    Vector2 armBalancePointOrigin1 = m_bitwiseFont->MeasureString(armBalancePointString1.c_str()) / 2.f;
-    Vector2 armBalancePointPos1;
+    DirectX::SimpleMath::Vector2 armBalancePointOrigin1 = m_bitwiseFont->MeasureString(armBalancePointString1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armBalancePointPos1;
     posY1 += ySpacing;
     armBalancePointPos1.x = posX1;
     armBalancePointPos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString1.c_str(), armBalancePointPos1, Colors::White, 0.f, armBalancePointOrigin1);
 
     std::string armMassMoIString1 = pGolf->GetCharacterArmMassMoI(i);
-    Vector2 armMassMoIOrigin1 = m_bitwiseFont->MeasureString(armMassMoIString1.c_str()) / 2.f;
-    Vector2 armMassMoIPos1;
+    DirectX::SimpleMath::Vector2 armMassMoIOrigin1 = m_bitwiseFont->MeasureString(armMassMoIString1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassMoIPos1;
     posY1 += ySpacing;
     armMassMoIPos1.x = posX1;
     armMassMoIPos1.y = posY1;
@@ -1479,32 +1469,32 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
 
     std::string bioLine0String1 = pGolf->GetCharacterBioLine0(i);
-    Vector2 bioLine0Origin1 = m_bitwiseFont->MeasureString(bioLine0String1.c_str()) / 2.f;
-    Vector2 bioLine0Pos1;
+    DirectX::SimpleMath::Vector2 bioLine0Origin1 = m_bitwiseFont->MeasureString(bioLine0String1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine0Pos1;
     posY1 += ySpacing;
     bioLine0Pos1.x = posX1;
     bioLine0Pos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String1.c_str(), bioLine0Pos1, Colors::White, 0.f, bioLine0Origin1);
 
     std::string bioLine1String1 = pGolf->GetCharacterBioLine1(i);
-    Vector2 bioLine1Origin1 = m_bitwiseFont->MeasureString(bioLine1String1.c_str()) / 2.f;
-    Vector2 bioLine1Pos1;
+    DirectX::SimpleMath::Vector2 bioLine1Origin1 = m_bitwiseFont->MeasureString(bioLine1String1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine1Pos1;
     posY1 += ySpacing;
     bioLine1Pos1.x = posX1;
     bioLine1Pos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String1.c_str(), bioLine1Pos1, Colors::White, 0.f, bioLine1Origin1);
 
     std::string bioLine2String1 = pGolf->GetCharacterBioLine2(i);
-    Vector2 bioLine2Origin1 = m_bitwiseFont->MeasureString(bioLine2String1.c_str()) / 2.f;
-    Vector2 bioLine2Pos1;
+    DirectX::SimpleMath::Vector2 bioLine2Origin1 = m_bitwiseFont->MeasureString(bioLine2String1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine2Pos1;
     posY1 += ySpacing;
     bioLine2Pos1.x = posX1;
     bioLine2Pos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String1.c_str(), bioLine2Pos1, Colors::White, 0.f, bioLine2Origin1);
 
     std::string bioLine3String1 = pGolf->GetCharacterBioLine3(i);
-    Vector2 bioLine3Origin1 = m_bitwiseFont->MeasureString(bioLine3String1.c_str()) / 2.f;
-    Vector2 bioLine3Pos1;
+    DirectX::SimpleMath::Vector2 bioLine3Origin1 = m_bitwiseFont->MeasureString(bioLine3String1.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine3Pos1;
     posY1 += ySpacing;
     bioLine3Pos1.x = posX1;
     bioLine3Pos1.y = posY1;
@@ -1512,17 +1502,17 @@ void Game::DrawMenuCharacterSelect()
 
     if (m_menuSelect == 1)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
     }
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character1->Draw(m_spriteBatch.get(), m_character1Pos);
@@ -1532,8 +1522,8 @@ void Game::DrawMenuCharacterSelect()
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = pGolf->GetCharacterName(2);
 
-    Vector2 menuObj2Pos(posX2, posY2);
-    Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj2Pos(posX2, posY2);
+    DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
     //m_characterBackgroundPos.x = posX2 + half;
     m_characterBackgroundPos.x = posX2 + half + 25.f;
@@ -1550,40 +1540,40 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
 
     std::string armLengthString2 = pGolf->GetCharacterArmLength(i);
-    Vector2 armLengthOrigin2 = m_bitwiseFont->MeasureString(armLengthString2.c_str()) / 2.f;
-    Vector2 armLengthPos2;
+    DirectX::SimpleMath::Vector2 armLengthOrigin2 = m_bitwiseFont->MeasureString(armLengthString2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armLengthPos2;
     posY2 += ySpacing;
     armLengthPos2.x = posX2;
     armLengthPos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString2.c_str(), armLengthPos2, Colors::White, 0.f, armLengthOrigin2);
 
     std::string armMassString2 = pGolf->GetCharacterArmMass(i);
-    Vector2 armMassOrigin2 = m_bitwiseFont->MeasureString(armMassString2.c_str()) / 2.f;
-    Vector2 armMassPos2;
+    DirectX::SimpleMath::Vector2 armMassOrigin2 = m_bitwiseFont->MeasureString(armMassString2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassPos2;
     posY2 += ySpacing;
     armMassPos2.x = posX2;
     armMassPos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armMassString2.c_str(), armMassPos2, Colors::White, 0.f, armMassOrigin2);
 
     std::string clubLengthModString2 = pGolf->GetCharacterClubLengthMod(i);
-    Vector2 clubLengthModOrigin2 = m_bitwiseFont->MeasureString(clubLengthModString2.c_str()) / 2.f;
-    Vector2 clubLengthModPos2;
+    DirectX::SimpleMath::Vector2 clubLengthModOrigin2 = m_bitwiseFont->MeasureString(clubLengthModString2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 clubLengthModPos2;
     posY2 += ySpacing;
     clubLengthModPos2.x = posX2;
     clubLengthModPos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), clubLengthModString2.c_str(), clubLengthModPos2, Colors::White, 0.f, clubLengthModOrigin2);
 
     std::string armBalancePointString2 = pGolf->GetCharacterArmBalancePoint(i);
-    Vector2 armBalancePointOrigin2 = m_bitwiseFont->MeasureString(armBalancePointString2.c_str()) / 2.f;
-    Vector2 armBalancePointPos2;
+    DirectX::SimpleMath::Vector2 armBalancePointOrigin2 = m_bitwiseFont->MeasureString(armBalancePointString2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armBalancePointPos2;
     posY2 += ySpacing;
     armBalancePointPos2.x = posX2;
     armBalancePointPos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armBalancePointString2.c_str(), armBalancePointPos2, Colors::White, 0.f, armBalancePointOrigin2);
 
     std::string armMassMoIString2 = pGolf->GetCharacterArmMassMoI(i);
-    Vector2 armMassMoIOrigin2 = m_bitwiseFont->MeasureString(armMassMoIString2.c_str()) / 2.f;
-    Vector2 armMassMoIPos2;
+    DirectX::SimpleMath::Vector2 armMassMoIOrigin2 = m_bitwiseFont->MeasureString(armMassMoIString2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 armMassMoIPos2;
     posY2 += ySpacing;
     armMassMoIPos2.x = posX2;
     armMassMoIPos2.y = posY2;
@@ -1595,32 +1585,32 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioString.c_str(), bioPos, Colors::White, 0.f, bioOrigin);
 
     std::string bioLine0String2 = pGolf->GetCharacterBioLine0(i);
-    Vector2 bioLine0Origin2 = m_bitwiseFont->MeasureString(bioLine0String2.c_str()) / 2.f;
-    Vector2 bioLine0Pos2;
+    DirectX::SimpleMath::Vector2 bioLine0Origin2 = m_bitwiseFont->MeasureString(bioLine0String2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine0Pos2;
     posY2 += ySpacing;
     bioLine0Pos2.x = posX2;
     bioLine0Pos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine0String2.c_str(), bioLine0Pos2, Colors::White, 0.f, bioLine0Origin2);
 
     std::string bioLine1String2 = pGolf->GetCharacterBioLine1(i);
-    Vector2 bioLine1Origin2 = m_bitwiseFont->MeasureString(bioLine1String2.c_str()) / 2.f;
-    Vector2 bioLine1Pos2;
+    DirectX::SimpleMath::Vector2 bioLine1Origin2 = m_bitwiseFont->MeasureString(bioLine1String2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine1Pos2;
     posY2 += ySpacing;
     bioLine1Pos2.x = posX2;
     bioLine1Pos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine1String2.c_str(), bioLine1Pos2, Colors::White, 0.f, bioLine1Origin2);
 
     std::string bioLine2String2 = pGolf->GetCharacterBioLine2(i);
-    Vector2 bioLine2Origin2 = m_bitwiseFont->MeasureString(bioLine2String2.c_str()) / 2.f;
-    Vector2 bioLine2Pos2;
+    DirectX::SimpleMath::Vector2 bioLine2Origin2 = m_bitwiseFont->MeasureString(bioLine2String2.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 bioLine2Pos2;
     posY2 += ySpacing;
     bioLine2Pos2.x = posX2;
     bioLine2Pos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String2.c_str(), bioLine2Pos2, Colors::White, 0.f, bioLine2Origin2);
 
     std::string bioLine3String2 = pGolf->GetCharacterBioLine3(i);
-    Vector2 bioLine3Origin2 = m_bitwiseFont->MeasureString(bioLine3String2.c_str()) / 2.f;
-    Vector2 bioLine3Pos2;
+    DirectX::SimpleMath::Vector2 bioLine3Pos2;
+    DirectX::SimpleMath::Vector2 bioLine3Origin2;
     posY2 += ySpacing;
     bioLine3Pos2.x = posX2;
     bioLine3Pos2.y = posY2;
@@ -1628,17 +1618,17 @@ void Game::DrawMenuCharacterSelect()
 
     if (m_menuSelect == 2)
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
     }
     else
     {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
+        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
     }
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character2->Draw(m_spriteBatch.get(), m_character2Pos);
@@ -1651,15 +1641,15 @@ void Game::DrawMenuCharacterSelect()
     // Start Menu Select Highlight
     if (m_menuSelect == 0)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
     }
@@ -1670,15 +1660,15 @@ void Game::DrawMenuCharacterSelect()
 
     if (m_menuSelect == 1)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
     }
@@ -1689,15 +1679,15 @@ void Game::DrawMenuCharacterSelect()
 
     if (m_menuSelect == 2)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
@@ -1716,30 +1706,30 @@ void Game::DrawMenuMain()
     float menuTitlePosX = m_fontMenuPos.x;
     //float menuTitlePosY = m_fontPos.y / 2.f;
     float menuTitlePosY = lineDrawY;
-    Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);   
-    Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(3.f,3.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
+    DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
+    DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(3.f,3.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);  
 
     lineDrawY += menuTitlePosY + lineDrawSpacingY;
     std::string menuObj0String = "Driving Range";
-    Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
-    Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj0Pos(menuTitlePosX, lineDrawY);
+    DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
     lineDrawY += menuObj0Pos.y;
     std::string menuObj1String = "Charachter Select";
     //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
-    Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
-    Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
+    DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = "Quit";
-    Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
-    Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
+    DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
     if (m_menuSelect < 0 || m_menuSelect > 2)
     {
@@ -1747,15 +1737,15 @@ void Game::DrawMenuMain()
     }
     if (m_menuSelect == 0)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj0Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj0Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos, Colors::White, 0.f, menuObj0Origin);
     }
@@ -1766,15 +1756,15 @@ void Game::DrawMenuMain()
 
     if (m_menuSelect == 1)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj1Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj1Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj1String.c_str(), menuObj1Pos, Colors::White, 0.f, menuObj1Origin);
     }
@@ -1785,15 +1775,15 @@ void Game::DrawMenuMain()
 
     if (m_menuSelect == 2)
     {
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj2Origin);
 
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
-        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj2Origin);
 
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
@@ -2141,15 +2131,15 @@ void Game::DrawStartScreen()
     std::string startText = "Press Enter to Start";
     float fontTitlePosX = m_fontPos.x;
     float fontTitlePosY = m_fontPos.y / 2.f;
-    Vector2 titlePos(fontTitlePosX, fontTitlePosY);
+    DirectX::SimpleMath::Vector2 titlePos(fontTitlePosX, fontTitlePosY);
     float fontAuthorPosX = m_fontPos.x;
     float fontAuthorPosY = m_fontPos.y;
-    Vector2 authorPos(fontAuthorPosX, fontAuthorPosY);
-    Vector2 startTextPos(m_fontPos.x, m_fontPos.y + fontTitlePosY);
+    DirectX::SimpleMath::Vector2 authorPos(fontAuthorPosX, fontAuthorPosY);
+    DirectX::SimpleMath::Vector2 startTextPos(m_fontPos.x, m_fontPos.y + fontTitlePosY);
 
-    Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
-    Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
-    Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
 
     /*
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
@@ -2167,16 +2157,16 @@ void Game::DrawStartScreen()
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(9.f, 9.f), Colors::Green, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::Green, 0.f, titleOrigin);
     */
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(5.f, 5.f), Colors::Green, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
     
 /////////////////////////////////////////////////////////////
@@ -2206,10 +2196,10 @@ void Game::DrawSwing()
 
     std::vector<DirectX::SimpleMath::Vector3> angles;
     angles = pGolf->GetRawSwingAngles();
-    Vector3 origin;
+    DirectX::SimpleMath::Vector3 origin;
     origin.Zero;
     origin += m_swingOrigin;
-    Vector3 thetaOrigin;
+    DirectX::SimpleMath::Vector3 thetaOrigin;
     thetaOrigin.Zero;
     thetaOrigin.y = -.02;
 
@@ -2228,8 +2218,8 @@ void Game::DrawSwing()
     {
         if (i < impactPoint)
         {
-            Vector3 theta = Vector3::Transform(thetaOrigin, Matrix::CreateRotationZ(-angles[i].z));
-            Vector3 beta = Vector3::Transform(theta, Matrix::CreateRotationZ(-angles[i].y));
+            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
             theta += m_swingOrigin;
                        
             //beta += m_swingOrigin;

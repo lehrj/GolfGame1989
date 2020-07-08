@@ -35,7 +35,6 @@ public:
     std::string GetCharacterBioLine2(const int aCharacterIndex) const;
     std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
-
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
@@ -45,10 +44,8 @@ public:
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
     void InputData();
-
     void SelectInputClub(int aInput);
     void SetCharacter(const int aCharacterIndex);    
- 
     void UpdateImpact(Utility::ImpactData aImpact);
     
 private:
