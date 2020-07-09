@@ -9,6 +9,7 @@
 #include "AnimatedTexture.h"
 #include "SpriteSheet.h"
 #include "WICTextureLoader.h"
+#include "Camera.h"
 
 
 // A basic game implementation that creates a D3D11 device and

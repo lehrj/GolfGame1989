@@ -21,6 +21,7 @@
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="GolfCharacter.h" />
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -35,6 +36,7 @@
     <ClCompile Include="Vector4d.cpp" />
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfCharacter.cpp" />
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
