@@ -11,6 +11,26 @@ Camera::Camera()
 	Reset();
 }
 
+Camera::Camera(float aWidth, float aHeight)
+{
+	m_clientWidth = aWidth;
+	m_clientHeight = aHeight;
+	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f);
+	m_target.Zero;
+	m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	m_homePitch = 0.0f;
+	m_homeYaw = 0.0f;
+
+	m_nearPlane = 0.1f;
+	m_farPlane = 10.0f;
+
+	Reset();
+	InitializeViewMatrix();
+	InitializeProjectionMatrix();
+	InitializeOrthoganalMatrix();
+}
+
+/*
 Camera::Camera(DirectX::XMFLOAT3 aHomePos, float aHomePitch, float aHomeYaw) noexcept
 	:
 	m_homePosition(aHomePos),
@@ -19,6 +39,7 @@ Camera::Camera(DirectX::XMFLOAT3 aHomePos, float aHomePitch, float aHomeYaw) noe
 {
 	Reset();
 }
+*/
 
 void Camera::InitializeOrthoganalMatrix()
 {
@@ -27,7 +48,8 @@ void Camera::InitializeOrthoganalMatrix()
 
 void Camera::InitializeProjectionMatrix()
 {
-	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, m_clientWidth / m_clientHeight, 0.1f, 10.f);
+	//m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, m_clientWidth / m_clientHeight, 0.1f, 10.f);
+	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, m_clientWidth / m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::InitializeViewMatrix()
@@ -39,6 +61,7 @@ void Camera::OnResize(uint32_t aWidth, uint32_t aHeight)
 {
 	m_clientWidth = aWidth;
 	m_clientHeight = aHeight;
+	UpdateProjectionMatrix();
 }
 
 void Camera::Reset()
@@ -120,6 +143,11 @@ void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
 		DirectX::XMMatrixScaling(m_posTravelSpeed, m_posTravelSpeed, m_posTravelSpeed)
 	));
 	m_position = { m_position.x + aTranslation.x, m_position.y + aTranslation.y, m_position.z + aTranslation.z };
+}
+
+void Camera::UpdateProjectionMatrix()
+{
+	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, m_clientWidth / m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::UpdateUp()

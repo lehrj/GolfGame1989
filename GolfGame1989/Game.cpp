@@ -20,6 +20,8 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
+    pCamera = new Camera(m_outputWidth, m_outputHeight);
+
 
     m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
@@ -34,6 +36,7 @@ Game::~Game()
 {
     delete pGolf;
     delete pPlay;
+    delete pCamera;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -741,6 +744,17 @@ void Game::OnWindowSizeChanged(int width, int height)
     CreateResources();
 
     // TODO: Game window is being resized.
+    pCamera->OnResize(m_outputWidth, m_outputHeight);
+    m_proj = pCamera->GetProjectionMatrix();
+    m_effect->SetProjection(m_proj);
+    
+    /*
+    m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+    m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+
+    m_effect->SetView(m_view);
+    m_effect->SetProjection(m_proj);
+    */
 }
 
 // Properties
@@ -2203,7 +2217,7 @@ void Game::DrawSwing()
     thetaOrigin.Zero;
     thetaOrigin.y = -.02;
 
-    VertexPositionColor shoulder(origin, Colors::White);
+    VertexPositionColor shoulder(origin, Colors::Blue);
 
     int swingStepCount = angles.size();
     if (m_swingPathStep >= swingStepCount)
@@ -2224,7 +2238,7 @@ void Game::DrawSwing()
                        
             //beta += m_swingOrigin;
             beta += theta;
-            VertexPositionColor thetaColor(theta, Colors::Blue);
+            VertexPositionColor thetaColor(theta, Colors::White);
             VertexPositionColor betaColor(beta, Colors::Red);
             m_batch->DrawLine(shoulder, thetaColor);
             m_batch->DrawLine(thetaColor, betaColor);

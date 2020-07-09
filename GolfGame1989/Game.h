@@ -206,8 +206,10 @@ private:
     float                                       m_cameraZoom = 0.0f;
     float                                       m_cameraMovementSpeed = 0.01;
 
-    DirectX::SimpleMath::Vector3 m_ballPos = DirectX::SimpleMath::Vector3::Zero;
-    DirectX::SimpleMath::Vector3 m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
-    DirectX::SimpleMath::Vector3 m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
+    Camera*                                     pCamera;
+
+    DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;
+    DirectX::SimpleMath::Vector3                m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
+    DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
     
 };
