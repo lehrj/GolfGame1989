@@ -332,6 +332,10 @@ void Game::Update(DX::StepTimer const& timer)
     {
         m_cameraZoom += m_cameraMovementSpeed + .3f;
     }
+    if (m_kbStateTracker.pressed.U)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERACLASS;
+    }
     if (m_kbStateTracker.pressed.I)
     {
         m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
@@ -343,6 +347,10 @@ void Game::Update(DX::StepTimer const& timer)
     if (m_kbStateTracker.pressed.P)
     {
         m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
+    }
+    if (kb.R)
+    {
+        pCamera->RotateCounterClockWise();
     }
     
     auto mouse = m_mouse->GetState();
@@ -378,7 +386,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
         m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , DirectX::SimpleMath::Vector3::UnitY);
         m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
-
+        
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
@@ -394,10 +402,10 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA7)
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERACLASS)
     {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(.0f, 0.0f, 7.0f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        m_effect->SetView(m_view);
+        pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
+        m_effect->SetView(pCamera->GetProjectionMatrix());
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_PRESWINGVIEW)
     {
@@ -456,7 +464,7 @@ void Game::Render()
         DrawSwing();
         DrawWorld();
         DrawProjectile();
-        DrawCameraFocus();
+        //DrawCameraFocus();
         //DrawProjectileRealTime();
     }
 
@@ -499,6 +507,48 @@ void Game::Render()
         pGolf->SelectNextClub();
     }
     */
+}
+
+void Game::DrawSwing()
+{
+    float shoulderAccel = .98;
+
+    std::vector<DirectX::SimpleMath::Vector3> angles;
+    angles = pGolf->GetRawSwingAngles();
+    DirectX::SimpleMath::Vector3 origin;
+    origin.Zero;
+    origin += m_swingOrigin;
+    DirectX::SimpleMath::Vector3 thetaOrigin;
+    thetaOrigin.Zero;
+    thetaOrigin.y = -.02;
+
+    VertexPositionColor shoulder(origin, Colors::Blue);
+
+    int swingStepCount = angles.size();
+    if (m_swingPathStep >= swingStepCount)
+    {
+        m_swingPathStep = 0;
+    }
+    ++m_swingPathStep;
+
+    int impactPoint = pGolf->GetImpactStep();
+
+    for (int i = 0; i < m_swingPathStep; ++i)
+    {
+        if (i < impactPoint)
+        {
+            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+            theta += m_swingOrigin;
+
+            //beta += m_swingOrigin;
+            beta += theta;
+            VertexPositionColor thetaColor(theta, Colors::White);
+            VertexPositionColor betaColor(beta, Colors::Red);
+            m_batch->DrawLine(shoulder, thetaColor);
+            m_batch->DrawLine(thetaColor, betaColor);
+        }
+    }
 }
 
 void Game::DrawSwingUI()
@@ -1079,6 +1129,7 @@ void Game::CreateResources()
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
     // End Texture
 }
+
 void Game::DrawCameraFocus()
 {
     float line = .25f;
@@ -1135,8 +1186,10 @@ void Game::DrawProjectile()
 
         VertexPositionColor aV(p1, Colors::White);
         VertexPositionColor bV(p2, Colors::White);
-        VertexPositionColor aVRed(p1, Colors::Red);
-        VertexPositionColor bVRed(p2, Colors::Red);
+        //VertexPositionColor aVRed(p1, Colors::Red);
+        //VertexPositionColor bVRed(p2, Colors::Red);
+        VertexPositionColor aVRed(p1, Colors::White);
+        VertexPositionColor bVRed(p2, Colors::White);
         VertexPositionColor aVBlue(p1, Colors::Blue);
         VertexPositionColor bVBlue(p2, Colors::Blue);
         VertexPositionColor aVYellow(p1, Colors::Yellow);
@@ -1623,8 +1676,9 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine2String2.c_str(), bioLine2Pos2, Colors::White, 0.f, bioLine2Origin2);
 
     std::string bioLine3String2 = pGolf->GetCharacterBioLine3(i);
+    DirectX::SimpleMath::Vector2 bioLine3Origin2 = m_bitwiseFont->MeasureString(bioLine2String2.c_str()) / 2.f;
     DirectX::SimpleMath::Vector2 bioLine3Pos2;
-    DirectX::SimpleMath::Vector2 bioLine3Origin2;
+
     posY2 += ySpacing;
     bioLine3Pos2.x = posX2;
     bioLine3Pos2.y = posY2;
@@ -2204,48 +2258,6 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
-void Game::DrawSwing()
-{
-    float shoulderAccel = .98;
-
-    std::vector<DirectX::SimpleMath::Vector3> angles;
-    angles = pGolf->GetRawSwingAngles();
-    DirectX::SimpleMath::Vector3 origin;
-    origin.Zero;
-    origin += m_swingOrigin;
-    DirectX::SimpleMath::Vector3 thetaOrigin;
-    thetaOrigin.Zero;
-    thetaOrigin.y = -.02;
-
-    VertexPositionColor shoulder(origin, Colors::Blue);
-
-    int swingStepCount = angles.size();
-    if (m_swingPathStep >= swingStepCount)
-    {
-        m_swingPathStep = 0;
-    }
-    ++m_swingPathStep;
-
-    int impactPoint = pGolf->GetImpactStep();
-
-    for (int i = 0; i < m_swingPathStep; ++i)
-    {
-        if (i < impactPoint)
-        {
-            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            theta += m_swingOrigin;
-                       
-            //beta += m_swingOrigin;
-            beta += theta;
-            VertexPositionColor thetaColor(theta, Colors::White);
-            VertexPositionColor betaColor(beta, Colors::Red);
-            m_batch->DrawLine(shoulder, thetaColor);
-            m_batch->DrawLine(thetaColor, betaColor);
-        }
-    }
-}
-
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
@@ -2258,7 +2270,7 @@ void Game::OnDeviceLost()
     m_bitwiseFont.reset();
     m_spriteBatch.reset();
     m_kbStateTracker.Reset();
-    
+
     //Powerbar
     m_powerFrameTexture.Reset();
     m_powerMeterTexture.Reset();

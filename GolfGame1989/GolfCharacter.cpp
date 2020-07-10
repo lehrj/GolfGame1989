@@ -68,10 +68,12 @@ void GolfCharacter::LoadCharacterData()
     */
 
     m_characters[i].name = "Chubs McShortRound";
-    m_characters[i].bioLine0 = "Mario ate the skinny one ";
-    m_characters[i].bioLine1 = "and then got hit by";
-    m_characters[i].bioLine2 = "a drunk turtle thing";
-    m_characters[i].bioLine3 = "3";
+    
+    /// ////////////////////////12345678901234567801234567890
+    m_characters[i].bioLine0 = "An Italian plumber that ate";
+    m_characters[i].bioLine1 = "to many glowing flowers and ";
+    m_characters[i].bioLine2 = "then got hit by some kind ";
+    m_characters[i].bioLine3 = "of drunk turtle thing";
     m_characters[i].armBalancePoint = 0.500069;
     m_characters[i].armLength = 0.620069;
     m_characters[i].armMass = 7.300069;

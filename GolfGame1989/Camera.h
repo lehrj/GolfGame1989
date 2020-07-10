@@ -11,8 +11,10 @@ public:
     //Camera(DirectX::XMFLOAT3 aHomePos = { 0.0f,0.0f,0.0f }, float aHomePitch = 0.0f, float aHomeYaw = 0.0f) noexcept; //Chili
     //Camera(DirectX::XMFLOAT3 aHomePos, DirectX::XMFLOAT3 
     void Reset();
-    void RotateAtSpeed(float aDx, float aDy);  //Chili
     void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
+    void RotateAtSpeed(float aDx, float aDy);  //Chili
+    void RotateCounterClockWise();
+    void RotateClockWise();
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
@@ -24,15 +26,13 @@ public:
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
     void SetHomePos(const DirectX::SimpleMath::Vector3 aHomePos);
 
-
-
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
     void InitializeViewMatrix(); //Pavel
     void UpdateUp();
     void UpdateProjectionMatrix();
-
+    void UpdateViewMatrix();
 
     DirectX::SimpleMath::Vector3    m_position;
     DirectX::SimpleMath::Vector3    m_homePosition;

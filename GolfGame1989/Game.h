@@ -190,14 +190,14 @@ private:
         GAMECAMERA_CAMERA4,
         GAMECAMERA_CAMERA5,
         GAMECAMERA_CAMERA6,
-        GAMECAMERA_CAMERA7,
+        GAMECAMERA_CAMERACLASS,
         GAMECAMERA_PRESWINGVIEW,
         GAMECAMERA_PROJECTILEFLIGHTVIEW,
         GAMECAMERA_SWINGVIEW,
     };
 
     GameCamera                                  m_currentCamera;
- 
+    
     float                                       m_cameraRotationX = 2.0;
     float                                       m_cameraRotationY = 2.0;
     float                                       m_cameraTargetX = 0.0;
@@ -205,7 +205,7 @@ private:
     float                                       m_cameraTargetZ = 0.0;
     float                                       m_cameraZoom = 0.0f;
     float                                       m_cameraMovementSpeed = 0.01;
-
+    
     Camera*                                     pCamera;
 
     DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;

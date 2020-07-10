@@ -15,7 +15,7 @@ Camera::Camera(float aWidth, float aHeight)
 {
 	m_clientWidth = aWidth;
 	m_clientHeight = aHeight;
-	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f);
+	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 1.0f, 0.0f);
 	m_target.Zero;
 	m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
 	m_homePitch = 0.0f;
@@ -72,22 +72,13 @@ void Camera::Reset()
 	m_yaw = m_homeYaw;
 }
 
-void Camera::RotateAtSpeed(float aDx, float aDy)
-{
-	m_yaw = Utility::WrapAngle(m_yaw + aDx * m_rotationTravelSpeed);
-	float rotation = m_pitch + aDy * m_rotationTravelSpeed;
-	float min = 0.995f * -Utility::GetPi() / 2.0f;
-	float max = 0.995f * Utility::GetPi() / 2.0f;
-	//m_pitch = std::clamp(m_pitch + aDy * m_rotationTravelSpeed, 0.995f * -Utility::GetPi() / 2.0f, 0.995f * Utility::GetPi() / 2.0f);
-	m_pitch = std::clamp(rotation, min, max);
-}
-
 void Camera::Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees)
 {
 	if (aAxis == DirectX::SimpleMath::Vector3::Zero || aDegrees == 0.0f)
 	{
 		return;
 	}
+
 	DirectX::SimpleMath::Vector3 lookAtTarget = m_target - m_position;
 	DirectX::SimpleMath::Vector3 lookAtUp = m_up - m_position;
 	lookAtTarget = DirectX::SimpleMath::Vector3::Transform(lookAtTarget, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(aAxis, Utility::ToRadians(aDegrees)));
@@ -97,6 +88,30 @@ void Camera::Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees)
 	m_up = DirectX::SimpleMath::Vector3(m_position + lookAtUp);
 
 	this->InitializeViewMatrix();
+}
+
+void Camera::RotateAtSpeed(float aDx, float aDy)
+{
+	m_yaw = Utility::WrapAngle(m_yaw + aDx * m_rotationTravelSpeed);
+	float rotation = m_pitch + aDy * m_rotationTravelSpeed;
+	float min = 0.995f * -Utility::GetPi() / 2.0f;
+	float max = 0.995f * Utility::GetPi() / 2.0f;
+	float pi = Utility::GetPi();
+	//m_pitch = std::clamp(m_pitch + aDy * m_rotationTravelSpeed, 0.995f * -Utility::GetPi() / 2.0f, 0.995f * Utility::GetPi() / 2.0f);
+	//m_pitch = std::clamp(m_pitch + aDy * m_rotationTravelSpeed, 0.995f * -pi / 2.0f, 0.995f * pi / 2.0f);
+	m_pitch = std::clamp(rotation, min, max);
+}
+
+void Camera::RotateCounterClockWise()
+{
+	float spinRate = 3.0f;
+	m_yaw = Utility::WrapAngle(m_yaw + spinRate * m_rotationTravelSpeed);
+	UpdateViewMatrix();
+}
+
+void Camera::RotateClockWise()
+{
+
 }
 
 void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
@@ -153,4 +168,9 @@ void Camera::UpdateProjectionMatrix()
 void Camera::UpdateUp()
 {
 	m_up = m_position + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+}
+
+void Camera::UpdateViewMatrix()
+{
+	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
 }
