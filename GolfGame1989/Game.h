@@ -65,8 +65,10 @@ private:
     void Present();
     void Render();
     void SetGameCamera(int aCamera);
+
     void Update(DX::StepTimer const& timer);
     void UpdateCamera(DX::StepTimer const& timer);
+    void UpdateInput();
 
     // Device resources.
     HWND                                            m_window;
@@ -197,12 +199,13 @@ private:
     };
 
     GameCamera                                  m_currentCamera;
-    
+    void                                        SetGameCamera(GameCamera aCameraState);
     float                                       m_cameraRotationX = 2.0;
     float                                       m_cameraRotationY = 2.0;
-    float                                       m_cameraTargetX = 0.0;
-    float                                       m_cameraTargetY = 0.0;
-    float                                       m_cameraTargetZ = 0.0;
+    DirectX::SimpleMath::Vector3                m_cameraTarget = DirectX::SimpleMath::Vector3::Zero;
+    //float                                       m_cameraTargetX = 0.0;
+    //float                                       m_cameraTargetY = 0.0;
+    //float                                       m_cameraTargetZ = 0.0;
     float                                       m_cameraZoom = 0.0f;
     float                                       m_cameraMovementSpeed = 0.01;
     

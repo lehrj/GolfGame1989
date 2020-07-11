@@ -57,11 +57,33 @@ void Camera::InitializeViewMatrix()
 	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
 }
 
+bool Camera::IsCameraAtDestination()
+{
+	if (m_position == m_destinationPosition || m_isCameraAtDestination == true)
+	{
+		return true;
+	}
+	else
+	{
+		if (m_position == m_destinationPosition)
+		{
+			m_isCameraAtDestination = true;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+
 void Camera::OnResize(uint32_t aWidth, uint32_t aHeight)
 {
 	m_clientWidth = aWidth;
 	m_clientHeight = aHeight;
+	UpdateOrthoganalMatrix();
 	UpdateProjectionMatrix();
+	UpdateViewMatrix();
 }
 
 void Camera::Reset()
@@ -111,31 +133,20 @@ void Camera::RotateCounterClockWise()
 
 void Camera::RotateClockWise()
 {
-
+	float spinRate = 3.0f;
+	m_yaw = Utility::WrapAngle(m_yaw - spinRate * m_rotationTravelSpeed);
+	UpdateViewMatrix();
 }
 
-void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
+void Camera::SetDestinationPos(const DirectX::SimpleMath::Vector3 aDestPos)
 {
-	if (aTarget == m_position)
-	{
-		// add error handling to prevent crash
-		//std::cerr << "Error in Camera::SetTargetPos, updated target position = current camera position";
-		return;
-	}
-	m_target = aTarget;
-	this->InitializeViewMatrix();
-}
-
-void Camera::SetPos(DirectX::SimpleMath::Vector3 aPos)
-{
-	if (aPos == m_target)
+	if (aDestPos == m_target)
 	{
 		// add error handling to prevent crash
 		//std::cerr << "Error in Camera::UpdatePosition, updated position = current target position";
 		return;
 	}
-	m_position = aPos;
-	UpdateUp();
+	m_destinationPosition = aDestPos;
 }
 
 void Camera::SetHomePos(DirectX::SimpleMath::Vector3 aHomePos)
@@ -150,6 +161,30 @@ void Camera::SetHomePos(DirectX::SimpleMath::Vector3 aHomePos)
 	UpdateUp();
 }
 
+void Camera::SetPos(DirectX::SimpleMath::Vector3 aPos)
+{
+	if (aPos == m_target)
+	{
+		// add error handling to prevent crash
+		//std::cerr << "Error in Camera::UpdatePosition, updated position = current target position";
+		return;
+	}
+	m_position = aPos;
+	UpdateUp();
+}
+
+void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
+{
+	if (aTarget == m_position)
+	{
+		// add error handling to prevent crash
+		//std::cerr << "Error in Camera::SetTargetPos, updated target position = current camera position";
+		return;
+	}
+	m_target = aTarget;
+	this->InitializeViewMatrix();
+}
+
 void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
 {
 	DirectX::XMStoreFloat3(&aTranslation, DirectX::XMVector3Transform(
@@ -158,6 +193,11 @@ void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
 		DirectX::XMMatrixScaling(m_posTravelSpeed, m_posTravelSpeed, m_posTravelSpeed)
 	));
 	m_position = { m_position.x + aTranslation.x, m_position.y + aTranslation.y, m_position.z + aTranslation.z };
+}
+
+void Camera::UpdateOrthoganalMatrix()
+{
+	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic(m_clientWidth, m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::UpdateProjectionMatrix()
@@ -172,5 +212,21 @@ void Camera::UpdateUp()
 
 void Camera::UpdateViewMatrix()
 {
-	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
+	DirectX::SimpleMath::Vector3 axis;
+	axis.Zero;
+	axis.x = 1.0f;
+	axis.y = 2.0f;
+	
+	DirectX::SimpleMath::Vector3 newPosition;
+	newPosition.Zero;
+
+	DirectX::SimpleMath::Matrix testMatrix;
+
+	newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis, m_yaw));
+	//DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
+
+	//DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+	//DirectX::SimpleMath::Matrix::CreateFromAxisAngle(aAxis, Utility::ToRadians(aDegrees))
+	//m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
+	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(newPosition, m_target, m_up);
 }

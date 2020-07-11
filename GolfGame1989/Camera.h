@@ -10,21 +10,28 @@ public:
 
     //Camera(DirectX::XMFLOAT3 aHomePos = { 0.0f,0.0f,0.0f }, float aHomePitch = 0.0f, float aHomeYaw = 0.0f) noexcept; //Chili
     //Camera(DirectX::XMFLOAT3 aHomePos, DirectX::XMFLOAT3 
+
+    DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
+    DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
+    DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
+    DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
+    DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
+    DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
+    bool IsCameraAtDestination();
+    void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
+    void ResetIsCameraAtDestination() { m_isCameraAtDestination; };
     void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
     void RotateAtSpeed(float aDx, float aDy);  //Chili
     void RotateCounterClockWise();
     void RotateClockWise();
-    void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
-    DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
-    DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
-    DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
-    DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
-    DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
-    void OnResize(uint32_t aWidth, uint32_t aHeight);
+    
+    void SetDestinationPos(const DirectX::SimpleMath::Vector3 aDestPos);
+    void SetHomePos(const DirectX::SimpleMath::Vector3 aHomePos);
     void SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget);
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
-    void SetHomePos(const DirectX::SimpleMath::Vector3 aHomePos);
+
+    void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
 
 private:
     void InitializeOrthoganalMatrix(); //Pavel
@@ -32,8 +39,10 @@ private:
     void InitializeViewMatrix(); //Pavel
     void UpdateUp();
     void UpdateProjectionMatrix();
+    void UpdateOrthoganalMatrix();
     void UpdateViewMatrix();
 
+    DirectX::SimpleMath::Vector3    m_destinationPosition;
     DirectX::SimpleMath::Vector3    m_position;
     DirectX::SimpleMath::Vector3    m_homePosition;
     DirectX::SimpleMath::Vector3    m_target;
@@ -55,5 +64,7 @@ private:
 
     const float                     m_posTravelSpeed = 0.5f;
     const float                     m_rotationTravelSpeed = 0.004f;
+
+    bool                            m_isCameraAtDestination;
 };
 
