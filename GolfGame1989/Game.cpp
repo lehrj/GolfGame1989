@@ -23,13 +23,13 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
 
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-    m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
-    //m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+    m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
 }
 
 Game::~Game()
@@ -103,14 +103,16 @@ void Game::Update(DX::StepTimer const& timer)
         }
     }
 
-    pPlay->Swing();
-
-    if (pPlay->UpdateSwing() == true)
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        pPlay->ResetSwingUpdateReady();
-        pGolf->UpdateImpact(pPlay->GetImpactData());
-    }
+        pPlay->Swing();
 
+        if (pPlay->UpdateSwing() == true)
+        {
+            pPlay->ResetSwingUpdateReady();
+            pGolf->UpdateImpact(pPlay->GetImpactData());
+        }
+    }
     UpdateCamera(timer);
 
     UpdateInput();
@@ -181,7 +183,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
     {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.0f, .5f), m_shootOrigin, DirectX::SimpleMath::Vector3::UnitY);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f), m_shootOrigin, DirectX::SimpleMath::Vector3::UnitY);
         m_world = DirectX::SimpleMath::Matrix::Identity;
         m_effect->SetView(m_view);
     }
@@ -223,7 +225,6 @@ void Game::UpdateInput()
             //m_currentState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
             m_currentState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
         }
-
         if (m_currentState == GameState::GAMESTATE_MAINMENU)
         {
             if (m_menuSelect == 0) // GoTo Game State
@@ -346,7 +347,6 @@ void Game::UpdateInput()
             pPlay->SetGameplayButtonReadyFalse();
         }
     }
-
     if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
     {
         pPlay->ResetGamePlayButton();
@@ -467,9 +467,10 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawSwing();
         DrawWorld();
+        
         DrawProjectile();
+        DrawSwing();
         DrawCameraFocus();
         //DrawProjectileRealTime();
     }
