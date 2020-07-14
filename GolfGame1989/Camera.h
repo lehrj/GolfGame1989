@@ -2,6 +2,21 @@
 #include <algorithm>
 #include "Utility.h"
 
+enum class CameraState
+{
+    CAMERASTATE_DEFAULT,
+    CAMERASTATE_CAMERA1,
+    CAMERASTATE_CAMERA2,
+    CAMERASTATE_CAMERA3,
+    CAMERASTATECAMERA4,
+    CAMERASTATE_CAMERA5,
+    CAMERASTATE_CAMERA6,
+    CAMERASTATECAMERACLASS,
+    CAMERASTATE_PRESWINGVIEW,
+    CAMERASTATE_PROJECTILEFLIGHTVIEW,
+    CAMERASTATE_SWINGVIEW,
+};
+
 class Camera
 {
 public:
@@ -11,6 +26,7 @@ public:
     //Camera(DirectX::XMFLOAT3 aHomePos = { 0.0f,0.0f,0.0f }, float aHomePitch = 0.0f, float aHomeYaw = 0.0f) noexcept; //Chili
     //Camera(DirectX::XMFLOAT3 aHomePos, DirectX::XMFLOAT3 
 
+    CameraState GetCameraState() const { return m_cameraState; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
     DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
@@ -26,6 +42,7 @@ public:
     void RotateCounterClockWise();
     void RotateClockWise();
     
+    void SetCameraState(const CameraState aCameraState);
     void SetDestinationPos(const DirectX::SimpleMath::Vector3 aDestPos);
     void SetHomePos(const DirectX::SimpleMath::Vector3 aHomePos);
     void SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget);
@@ -62,9 +79,11 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 0.5f;
+    const float                     m_posTravelSpeed = 0.0000005f;
     const float                     m_rotationTravelSpeed = 0.004f;
 
     bool                            m_isCameraAtDestination;
+
+    CameraState                     m_cameraState;
 };
 

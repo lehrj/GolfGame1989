@@ -14,7 +14,6 @@ class Golf
 public:
     Golf();
     ~Golf();
-
  
     void BuildUIstrings();
 

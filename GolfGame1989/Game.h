@@ -50,6 +50,7 @@ private:
 
     void DrawCameraFocus();
     void DrawMenuCharacterSelect();
+    void DrawMenuEnvironmentSelect();
     void DrawMenuMain();
     void DrawPowerBarUI();
     void DrawProjectile();
@@ -192,12 +193,14 @@ private:
         GAMECAMERA_CAMERA4,
         GAMECAMERA_CAMERA5,
         GAMECAMERA_CAMERA6,
+        GAMECAMERA_TOSWINGVIEW,
         GAMECAMERA_CAMERACLASS,
         GAMECAMERA_PRESWINGVIEW,
         GAMECAMERA_PROJECTILEFLIGHTVIEW,
         GAMECAMERA_SWINGVIEW,
     };
 
+    CameraState                                 m_cState;
     GameCamera                                  m_currentCamera;
     void                                        SetGameCamera(GameCamera aCameraState);
     float                                       m_cameraRotationX = 2.0;

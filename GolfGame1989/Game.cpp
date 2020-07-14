@@ -165,6 +165,15 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetView(m_view);
         m_effect->SetProjection(m_proj);
     }
+    if (m_currentCamera == GameCamera::GAMECAMERA_TOSWINGVIEW)
+    {
+        //pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
+        DirectX::SimpleMath::Vector3 swingViewPos(-2.f, 0.02f, 1.2f);
+
+        pCamera->TranslateAtSpeed(swingViewPos);
+
+        m_effect->SetView(pCamera->GetViewMatrix());
+    }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERACLASS)
     {
         pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
@@ -235,7 +244,11 @@ void Game::UpdateInput()
             {
                 m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
             }
-            if (m_menuSelect == 2) // Quit Game
+            if (m_menuSelect == 2) // GoTo Environment Select State
+            {
+                m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
+            }
+            if (m_menuSelect == 3) // Quit Game
             {
                 ExitGame();
             }
@@ -434,6 +447,10 @@ void Game::UpdateInput()
     {
         pCamera->RotateCounterClockWise();
     }
+    if (m_kbStateTracker.pressed.Y)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_TOSWINGVIEW;
+    }
 
     auto mouse = m_mouse->GetState();
 }
@@ -492,6 +509,10 @@ void Game::Render()
     if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
     {
         DrawMenuCharacterSelect();
+    }
+    if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+    {
+        DrawMenuEnvironmentSelect();
     }
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -1766,6 +1787,11 @@ void Game::DrawMenuCharacterSelect()
     
 }
 
+void Game::DrawMenuEnvironmentSelect()
+{
+
+}
+
 void Game::DrawMenuMain()
 {
     float lineDrawY = m_fontMenuPos.y + 15;
@@ -1794,12 +1820,19 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
+    
     lineDrawY += menuObj0Pos.y;
-    std::string menuObj2String = "Quit";
+    std::string menuObj2String = "Environment Select";
     DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
+    
 
-    if (m_menuSelect < 0 || m_menuSelect > 2)
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObj3String = "Quit";
+    DirectX::SimpleMath::Vector2 menuObj3Pos(menuTitlePosX, lineDrawY);
+    DirectX::SimpleMath::Vector2 menuObj3Origin = m_font->MeasureString(menuObj3String.c_str()) / 2.f;
+
+    if (m_menuSelect < 0 || m_menuSelect > 3)
     {
         m_menuSelect = 0;
     }
@@ -1858,6 +1891,25 @@ void Game::DrawMenuMain()
     else
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
+    }
+
+    if (m_menuSelect == 3)
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObj3Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObj3Origin);
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObj3Origin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos, Colors::White, 0.f, menuObj3Origin);
+    }
+    else
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos, Colors::White, 0.f, menuObj3Origin);
     }
 }
 

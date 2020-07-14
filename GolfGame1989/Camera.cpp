@@ -138,6 +138,11 @@ void Camera::RotateClockWise()
 	UpdateViewMatrix();
 }
 
+void Camera::SetCameraState(const CameraState aCameraState)
+{
+	m_cameraState = aCameraState;
+}
+
 void Camera::SetDestinationPos(const DirectX::SimpleMath::Vector3 aDestPos)
 {
 	if (aDestPos == m_target)
@@ -214,16 +219,14 @@ void Camera::UpdateViewMatrix()
 {
 	DirectX::SimpleMath::Vector3 axis;
 	axis.Zero;
-	axis.x = 1.0f;
-	axis.y = 2.0f;
+	//axis.x = 1.0f;
+	axis.y = 1.0f;
 	
-	DirectX::SimpleMath::Vector3 newPosition;
-	newPosition.Zero;
+	//DirectX::SimpleMath::Vector3 newPosition;
+	//newPosition.Zero;
 
-	DirectX::SimpleMath::Matrix testMatrix;
-
-	newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis, m_yaw));
-	//DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
+	//DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis, m_yaw));
+	DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
 
 	//DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
 	//DirectX::SimpleMath::Matrix::CreateFromAxisAngle(aAxis, Utility::ToRadians(aDegrees))
