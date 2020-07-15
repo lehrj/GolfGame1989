@@ -7,6 +7,7 @@ Golf::Golf()
     //BuildVector();
     pEnvironment = new Environment();
     pEnvironment->SetDefaultEnvironment();
+
     pCharacter = new GolfCharacter();
     pSwing = new GolfSwing();
     
@@ -19,7 +20,8 @@ Golf::Golf()
     SetCharacter(0);
     BuildVector();
     BuildUIstrings();
-    
+    BuildEnvironSelectStrings();
+
 }
 
 Golf::~Golf()
@@ -29,18 +31,6 @@ Golf::~Golf()
     delete pEnvironment;
     delete pCharacter;
     delete pPlay;
-}
-
-void Golf::BuildVector()
-{
-    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
-    InputData();
-    ScaleCordinates();
-}
-
-void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
-{
-    m_shotPath = aPath;
 }
 
 void Golf::BuildUIstrings()
@@ -64,6 +54,65 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
     //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
+}
+
+void Golf::BuildVector()
+{
+    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
+    InputData();
+    ScaleCordinates();
+}
+
+void Golf::BuildEnvironSelectStrings()
+{
+    m_environSelectStrings.clear();
+    const int environCount = pEnvironment->GetNumerOfEnvirons();
+
+    std::vector<std::string> strVec;
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = pEnvironment->GetEnvironName(i);
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Air Density = " + std::to_string(pEnvironment->GetAirDensity(i)) + " kg/m^3";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Gravity = " + std::to_string(pEnvironment->GetGravity(i)) + " m/s^2";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Wind X = " + std::to_string(pEnvironment->GetWindX(i)) + " m/s ";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Wind Z = " + std::to_string(pEnvironment->GetWindZ(i)) + " m/s ";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+}
+
+void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
+{
+    m_shotPath = aPath;
 }
 
 void Golf::InputData()
@@ -146,6 +195,15 @@ void Golf::LoadCharacterTraits()
     pSwing->UpdateGolfer();
 }
 
+void Golf::LoadEnvironment(const int aIndex)
+{
+    m_selectedEnvironment = aIndex;
+    pEnvironment->UpdateEnvironment(m_selectedEnvironment);
+    pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
+    pBall->SetDefaultBallValues(pEnvironment);   
+    BuildUIstrings();
+}
+
 void Golf::ScaleCordinates()
 {
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
@@ -199,6 +257,19 @@ void Golf::SetCharacter(const int aCharacterIndex)
         m_selectedCharacter = aCharacterIndex;
     }
     LoadCharacterTraits();
+}
+
+void Golf::SetEnvironment(const int aEnvironmentIndex)
+{
+    if (aEnvironmentIndex < 0 || aEnvironmentIndex > pEnvironment->GetNumerOfEnvirons() - 1)
+    {
+        m_selectedEnvironment = 0;
+    }
+    else
+    {
+        m_selectedEnvironment = aEnvironmentIndex;
+    }
+    LoadEnvironment(aEnvironmentIndex);
 }
 
 void Golf::SetShotCordMax()

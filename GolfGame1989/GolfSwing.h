@@ -49,6 +49,7 @@ public:
 
     void UpdateGolfer();
     void UpdateGolfSwingValues();
+    void UpdateGravityDependants(const double aGravity);
     void UpdateImpactData(Utility::ImpactData aImpactData);
 
 private:

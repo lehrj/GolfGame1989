@@ -5,7 +5,11 @@
 #include <string>
 #include <vector>
 
-
+Environment::Environment()
+{
+    LoadEnvironmentData();
+    m_currentEnviron = m_environs[0];
+}
 
 void Environment::InputEnvironmentData()
 {
@@ -129,7 +133,6 @@ void Environment::InputEnvironmentData()
     }
 }
 
-
 void Environment::InputEnvironmentDataBasic()
 {
     bool isInputValid = false;
@@ -205,6 +208,46 @@ void Environment::InputEnvironmentDataBasic()
     }
 }
 
+void Environment::LoadEnvironmentData()
+{
+    m_environs.clear();
+    m_environs.resize(m_environsAvailable);
+
+    int i = 0;
+
+    m_environs[i].name = "Calm";
+    m_environs[i].terainColor = DirectX::Colors::Green;
+    m_environs[i].airDensity = 1.225;
+    m_environs[i].gravity = -9.8;
+    m_environs[i].windX = 0.0;
+    m_environs[i].windY = 0.0;
+    m_environs[i].windZ = 0.0;
+    m_environs[i].landingFrictionScale = 1.0;
+    m_environs[i].landingHardnessScale = 1.0;
+
+    ++i;
+    m_environs[i].name = "Breezy";
+    m_environs[i].terainColor = DirectX::Colors::Green;
+    m_environs[i].airDensity = 1.225;
+    m_environs[i].gravity = -9.85;
+    m_environs[i].windX = 10.0;
+    m_environs[i].windY = -0.69;
+    m_environs[i].windZ = 0.0;
+    m_environs[i].landingFrictionScale = 1.0;
+    m_environs[i].landingHardnessScale = 1.0;
+
+    ++i;
+    m_environs[i].name = "Non Terrestrial(Alien Golf!!)";
+    m_environs[i].terainColor = DirectX::Colors::Blue;
+    m_environs[i].airDensity = 11.2;
+    m_environs[i].gravity = -5.8;
+    m_environs[i].windX = 3.0;
+    m_environs[i].windY = 1.0;
+    m_environs[i].windZ = 0.0;
+    m_environs[i].landingFrictionScale = 1.0;
+    m_environs[i].landingHardnessScale = 1.0;
+}
+
 void Environment::PrintEnvironmentData()
 {
     printf("===================================== Environment Data =====================================\n");
@@ -217,7 +260,6 @@ void Environment::PrintEnvironmentData()
     printf(" Wind Velocity Z (perpendicular to shot direction) : %g  m/s \n", m_windZ);
     printf("============================================================================================\n");
 }
-
 
 void Environment::ReadInEnvironmentData()
 {
@@ -310,7 +352,6 @@ void Environment::ReadInEnvironmentData()
     }
 }
 
-
 void Environment::SetDefaultEnvironment()
 {
     m_gravity = -9.8;
@@ -361,4 +402,16 @@ void Environment::SetWindY(const double& aWindY)
 void Environment::SetWindZ(const double& aWindZ)
 {
     m_windZ = aWindZ;
+}
+
+void Environment::UpdateEnvironment(const int aIndex)
+{
+    m_currentEnviron = m_environs[aIndex];
+    m_airDensity = m_environs[aIndex].airDensity;
+    m_gravity = m_environs[aIndex].gravity;
+    m_windX = m_environs[aIndex].windX;
+    m_windY = m_environs[aIndex].windY;
+    m_windZ = m_environs[aIndex].windZ;
+    m_landingFriction = m_environs[aIndex].landingFrictionScale;
+    m_landingHardness = m_environs[aIndex].landingHardnessScale;
 }

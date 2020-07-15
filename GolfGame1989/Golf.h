@@ -16,14 +16,8 @@ public:
     ~Golf();
  
     void BuildUIstrings();
+    void BuildEnvironSelectStrings();
 
-    int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
-
-    //std::vector<DirectX::SimpleMath::Vector3> GetAlpha() { return pSwing->GetAlphaCords(); };
-    //std::vector<DirectX::SimpleMath::Vector3> GetBeta() { return pSwing->GetBetaCords(); };
-    //std::vector<DirectX::SimpleMath::Vector3> GetTheta() { return pSwing->GetThetaCords(); };
-    std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
-    
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
     std::string GetCharacterArmMass(const int aCharacterIndex) const;
@@ -36,40 +30,50 @@ public:
     std::string GetCharacterName(const int aCharacterIndex) const;
     int GetDrawColorIndex();
     std::vector<int> GetDrawColorVector();
+    std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-    std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
-    std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); };
+;
     const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
+    std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
+    std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
+    std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
+    int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
+    DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
     void InputData();
+    void LoadEnvironment(const int aIndex);
     void SelectInputClub(int aInput);
     void SetCharacter(const int aCharacterIndex);    
+    void SetEnvironment(const int aEnvironmentIndex);
     void UpdateImpact(Utility::ImpactData aImpact);
     
 private:
     void BuildVector();
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
     void LoadCharacterTraits();
+
     void ScaleCordinates();
     void SetShotCordMax();
     void TransformCordinates(const int aIndex);
 
-    Environment*                    pEnvironment;    
-    GolfBall*                       pBall;
-    GolfCharacter*                  pCharacter;
-    GolfPlay*                       pPlay;
-    GolfSwing*                      pSwing;
-    Utility::ImpactData             m_impactData;
+    Environment*                                pEnvironment;    
+    GolfBall*                                   pBall;
+    GolfCharacter*                              pCharacter;
+    GolfPlay*                                   pPlay;
+    GolfSwing*                                  pSwing;
+    Utility::ImpactData                         m_impactData;
 
-    double                          m_maxX;
-    double                          m_maxY;
-    double                          m_maxZ;
-    double                          m_xWindow;
-    double                          m_yWindow;
-    double                          m_zWindow;
+    double                                      m_maxX;
+    double                                      m_maxY;
+    double                                      m_maxZ;
+    double                                      m_xWindow;
+    double                                      m_yWindow;
+    double                                      m_zWindow;
 
-    int                             m_selectedCharacter;
-    std::vector<DirectX::SimpleMath::Vector3> m_shotPath;
-    std::vector<std::string>        m_uiStrings;
+    int                                         m_selectedCharacter;
+    int                                         m_selectedEnvironment;
+    std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
+    std::vector<std::string>                    m_uiStrings;
+    std::vector<std::vector<std::string>>       m_environSelectStrings;
 };

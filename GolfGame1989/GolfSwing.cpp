@@ -554,6 +554,12 @@ void GolfSwing::UpdateGolfSwingValues()
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
 }
 
+void GolfSwing::UpdateGravityDependants(const double aGravity)
+{
+    m_gravity = aGravity;
+    m_shoulderHorizAccel = 0.1 * m_gravity;
+}
+
 void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
 {
     m_launchImpact = aImpactData.impactMissOffSet;

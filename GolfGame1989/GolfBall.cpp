@@ -474,9 +474,7 @@ DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, d
 }
 
 void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
-{
-    //DirectX::SimpleMath::Vector4 impactVector = CalculateImpactVector(aSwingInput.GetX(), Utility::ToRadians(aSwingInput.GetY()), 0.0);
-    
+{ 
     //  Convert the loft angle from degrees to radians and
     //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aImpactData.angleY);
