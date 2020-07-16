@@ -982,6 +982,34 @@ void Game::CreateDevice()
     characterBackground->GetDesc(&characterBackgroundDesc);
     m_characterBackgroundOrigin.x = float(characterBackgroundDesc.Width / 2);
     m_characterBackgroundOrigin.y = float(characterBackgroundDesc.Height / 2);
+
+    // Environment select textures
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectCalm.png", nullptr, m_environSelectCalmTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectCalm.png", resource.GetAddressOf(), m_environSelectCalmTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> pEnvironmentSelectCalm;
+    DX::ThrowIfFailed(resource.As(&pEnvironmentSelectCalm));
+    CD3D11_TEXTURE2D_DESC EnvironmentSelectCalmDesc;
+    pEnvironmentSelectCalm->GetDesc(&EnvironmentSelectCalmDesc);
+    m_environSelectCalmOrigin.x = float(EnvironmentSelectCalmDesc.Width / 2);
+    m_environSelectCalmOrigin.y = float(EnvironmentSelectCalmDesc.Height / 2);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectBreezy.png", nullptr, m_environSelectBreezyTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectBreezy.png", resource.GetAddressOf(), m_environSelectBreezyTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> pEnvironmentSelectBreezy;
+    DX::ThrowIfFailed(resource.As(&pEnvironmentSelectBreezy));
+    CD3D11_TEXTURE2D_DESC EnvironmentSelectBreezyDesc;
+    pEnvironmentSelectBreezy->GetDesc(&EnvironmentSelectBreezyDesc);
+    m_environSelectBreezyOrigin.x = float(EnvironmentSelectBreezyDesc.Width / 2);
+    m_environSelectBreezyOrigin.y = float(EnvironmentSelectBreezyDesc.Height / 2);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectAlien.jpg", nullptr, m_environSelectAlienTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectAlien.jpg", resource.GetAddressOf(), m_environSelectAlienTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> pEnvironmentSelectAlien;
+    DX::ThrowIfFailed(resource.As(&pEnvironmentSelectAlien));
+    CD3D11_TEXTURE2D_DESC EnvironmentSelectAlienDesc;
+    pEnvironmentSelectAlien->GetDesc(&EnvironmentSelectAlienDesc);
+    m_environSelectAlienOrigin.x = float(EnvironmentSelectAlienDesc.Width / 2);
+    m_environSelectAlienOrigin.y = float(EnvironmentSelectAlienDesc.Height / 2);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -1127,7 +1155,7 @@ void Game::CreateResources()
 
     m_powerMeterBarScale = 1.0 - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
-    // Character texture
+    // Character textures
     m_characterPos.x = 200.f;
     m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
     m_character0Pos.x = 200.f;
@@ -1142,6 +1170,16 @@ void Game::CreateResources()
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
     m_characterBackgroundPos.x = backBufferWidth / 2.f;
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
+
+    // Environment select textures
+    m_environSelectCalmPos.x = backBufferWidth / 2.f;
+    m_environSelectCalmPos.y = backBufferWidth / 2.f;
+
+    m_environSelectBreezyPos.x = backBufferWidth / 2.f;
+    m_environSelectBreezyPos.y = backBufferWidth / 2.f;
+
+    m_environSelectAlienPos.x = backBufferWidth / 2.f;
+    m_environSelectAlienPos.y = backBufferWidth / 2.f;
     // End Texture
 }
 
@@ -2667,6 +2705,10 @@ void Game::OnDeviceLost()
     m_character2.reset();
     m_character2Texture.Reset();
     m_characterBackgroundTexture.Reset();
+
+    m_environSelectCalmTexture.Reset();
+    m_environSelectBreezyTexture.Reset();
+    m_environSelectAlienTexture.Reset();
 
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();

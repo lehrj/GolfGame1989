@@ -13,7 +13,19 @@ void GolfCharacter::LoadCharacterData()
 
     int i = 0;
     
-    m_characters[i].name = "Natty Noonan";
+    m_characters[i].name = "Grace Jones";
+    m_characters[i].bioLine0 = "If you saw Conan then you ";
+    m_characters[i].bioLine1 = "just know she can swing the ";
+    m_characters[i].bioLine2 = "big stick better than you";
+    m_characters[i].bioLine3 = "and looks better doing it";
+    m_characters[i].armBalancePoint = 0.5;
+    m_characters[i].armLength = 0.62;
+    m_characters[i].armMass = 7.3;
+    m_characters[i].armMassMoI = 1.15;
+    m_characters[i].clubLengthModifier = 1.0;
+
+    /*
+        m_characters[i].name = "Natty Noonan";
     m_characters[i].bioLine0 = "The Natural";
     m_characters[i].bioLine1 = "1";
     m_characters[i].bioLine2 = "2";
@@ -23,8 +35,7 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armMass = 7.3;
     m_characters[i].armMassMoI = 1.15;
     m_characters[i].clubLengthModifier = 1.0;
-
-    /*
+    ///////////////////////////////////////
     m_characters[i].name = "Natty Noonan";
     m_characters[i].bio = "The Natural";
     m_characters[i].armBalancePoint = 0.5;
@@ -43,13 +54,25 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armMass = 10.3;
     m_characters[i].armMassMoI = 1.15;
     m_characters[i].clubLengthModifier = 1.0;
-    */
-    
+    //////////////////
     m_characters[i].name = "Larry Leisureson";
     m_characters[i].bioLine0 = "Big fan of leisure suits";
     m_characters[i].bioLine1 = "but knows that a drink ";
     m_characters[i].bioLine2 = "tossed in his face means no";
     m_characters[i].bioLine3 = "3";
+    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armLength = 0.620069;
+    m_characters[i].armMass = 7.300069;
+    m_characters[i].armMassMoI = 1.150069;
+    m_characters[i].clubLengthModifier = 1.100069;
+
+    */
+    
+    m_characters[i].name = "Larry Leisureson";
+    m_characters[i].bioLine0 = "Although he is a big fan of";
+    m_characters[i].bioLine1 = "leisure suits and flirting";
+    m_characters[i].bioLine2 = "he still knows that a drink";
+    m_characters[i].bioLine3 = "tossed in his face means no";
     m_characters[i].armBalancePoint = 0.500069;
     m_characters[i].armLength = 0.620069;
     m_characters[i].armMass = 7.300069;

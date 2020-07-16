@@ -141,13 +141,25 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character1Texture;
     DirectX::SimpleMath::Vector2                    m_character1Pos;
 
-    std::unique_ptr<AnimatedTexture> m_character2;
+    std::unique_ptr<AnimatedTexture>                m_character2;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_character2Texture;
     DirectX::SimpleMath::Vector2                    m_character2Pos;
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterBackgroundTexture;
     DirectX::SimpleMath::Vector2                    m_characterBackgroundPos;
     DirectX::SimpleMath::Vector2                    m_characterBackgroundOrigin;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_environSelectCalmTexture;
+    DirectX::SimpleMath::Vector2                    m_environSelectCalmPos;
+    DirectX::SimpleMath::Vector2                    m_environSelectCalmOrigin;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_environSelectBreezyTexture;
+    DirectX::SimpleMath::Vector2                    m_environSelectBreezyPos;
+    DirectX::SimpleMath::Vector2                    m_environSelectBreezyOrigin;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_environSelectAlienTexture;
+    DirectX::SimpleMath::Vector2                    m_environSelectAlienPos;
+    DirectX::SimpleMath::Vector2                    m_environSelectAlienOrigin;
 
     // WLJ swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;

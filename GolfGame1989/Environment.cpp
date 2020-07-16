@@ -237,7 +237,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].landingHardnessScale = 1.0;
 
     ++i;
-    m_environs[i].name = "Non Terrestrial(Alien Golf!!)";
+    m_environs[i].name = "Non Terrestrial (Alien Golf!!)";
     m_environs[i].terainColor = DirectX::Colors::Blue;
     m_environs[i].airDensity = 11.2;
     m_environs[i].gravity = -5.8;
@@ -358,7 +358,7 @@ void Environment::SetDefaultEnvironment()
     m_airDensity = 1.225;
     m_windX = 0.0;
     m_windY = 0.0;
-    m_windZ = 10.0;
+    m_windZ = 0.0;
     m_launchHeight = 0.0;
     m_landingHeight = 0.0;
 

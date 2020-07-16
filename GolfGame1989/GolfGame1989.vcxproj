@@ -204,6 +204,9 @@
     <Image Include="Chacter2SpriteSheet.png" />
     <Image Include="ChacterSpriteSheet.png" />
     <Image Include="CharacterBackground.png" />
+    <Image Include="EnvironmentSelectAlien.jpg" />
+    <Image Include="EnvironmentSelectBreezy.png" />
+    <Image Include="EnvironmentSelectCalm.png" />
     <Image Include="Icon.ico" />
     <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />

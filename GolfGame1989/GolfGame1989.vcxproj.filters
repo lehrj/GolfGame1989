@@ -72,6 +72,15 @@
     <Image Include="Icon.ico">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="EnvironmentSelectAlien.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="EnvironmentSelectBreezy.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="EnvironmentSelectCalm.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">
