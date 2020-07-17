@@ -1826,11 +1826,10 @@ void Game::DrawMenuEnvironmentSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawY = m_fontMenuPos.y + 25;
     float lineDrawSpacingY = 15;
     std::string menuTitle = "Environment Select";
     float menuTitlePosX = m_fontMenuPos.x;
-    float menuTitlePosY = lineDrawY;
+    float menuTitlePosY = m_fontMenuPos.y + 25;;
     DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
@@ -1841,41 +1840,20 @@ void Game::DrawMenuEnvironmentSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
     std::vector<std::vector<std::string>> environData = pGolf->GetEnvironSelectStrings();
-
-    float posY0 = 250.0f;
-    float originY = posY0;
+ 
     float ySpacing = 50.f;
-    lineDrawY += menuTitlePosY + lineDrawSpacingY;
+    float posX0 = backBufferWidth * .20f;
+    float posY0 = 250.0f;
     int i = 0;
     int j = 0;
-    
-    std::string menuObj0String = environData[i][j]; // Get name
-    float posX0 = backBufferWidth * .20f;
-    //float posX0 = 200.0;
+
+    std::string menuObj0String = environData[i][j];
     DirectX::SimpleMath::Vector2 menuObj0Pos(posX0, posY0);
     DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
-
-    //float ySpacing = menuObj0Origin.y * 2;
-
-    //m_characterBackgroundPos.x = m_character0Pos.x + menuObj0Origin.x;
-    float half = m_characterBackgroundOrigin.x / 2.f;
-    //float half = m_characterBackgroundOrigin.x - 105;
-    //float half = m_characterBackgroundOrigin.x - 105;
-    m_characterBackgroundPos.x = posX0 + half + 25.f;
-    m_characterBackgroundPos.y = m_character0Pos.y + 10;
-    m_characterBackgroundOrigin = menuObj0Origin;
-
-    //m_character0Pos.x = menuTitlePosX / 3;
-    m_character0Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
-    m_character0Pos.y = lineDrawY - menuObj0Origin.y;
-
-    posY0 += ySpacing;
-
-
     std::string dataString = "Data: ";
     DirectX::SimpleMath::Vector2 dataOrigin = m_bitwiseFont->MeasureString(dataString.c_str()) / 2.f;
-    posY0 += ySpacing;
+    posY0 += ySpacing + ySpacing;
     DirectX::SimpleMath::Vector2 dataPos;
     dataPos.x = posX0;
     dataPos.y = posY0;
@@ -1917,45 +1895,21 @@ void Game::DrawMenuEnvironmentSelect()
     windZPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), windZString0.c_str(), windZPos0, Colors::White, 0.f, windZOrigin0);
 
+    posY0 += ySpacing + ySpacing  + ySpacing + ySpacing + ySpacing;
+    m_environSelectCalmPos.x = posX0;
+    m_environSelectCalmPos.y = posY0;
+    m_spriteBatch->Draw(m_environSelectCalmTexture.Get(), m_environSelectCalmPos, nullptr, Colors::White, 0.f, m_environSelectCalmOrigin);
 
-    ///////////////////////////////////////////////////////////
-
-    if (m_menuSelect == 0)
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-    }
-    else
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-    }
-    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
-    //m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
+    //////// next environment point
 
     float posX1 = backBufferWidth / 2.0;
     float posY1 = 250.0f;
-    lineDrawY += menuObj0Pos.y;
 
     i = 0;
     ++j;
     std::string menuObj1String = environData[i][j];
-    //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
-
-
     DirectX::SimpleMath::Vector2 menuObj1Pos(posX1, posY1);
     DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
-
-    //half = m_characterBackgroundOrigin.x;
-    m_characterBackgroundPos.x = posX1 + half + 10.f;
-    //m_characterBackgroundPos.y = m_character1Pos.y + 10;
-    //m_characterBackgroundOrigin = menuObj1Origin;
-    m_character1Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
-    m_character1Pos.y = m_character0Pos.y;
 
     posY1 += ySpacing + ySpacing;
     dataPos.x = posX1;
@@ -1998,28 +1952,15 @@ void Game::DrawMenuEnvironmentSelect()
     windZPos1.y = posY1;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), windZString1.c_str(), windZPos1, Colors::White, 0.f, windZOrigin1);
 
-/////////////////////////
+    posY1 += ySpacing + ySpacing + ySpacing + ySpacing + ySpacing;
+    m_environSelectBreezyPos.x = posX1;
+    m_environSelectBreezyPos.y = posY1;
+    m_spriteBatch->Draw(m_environSelectBreezyTexture.Get(), m_environSelectBreezyPos, nullptr, Colors::White, 0.f, m_environSelectBreezyOrigin);
 
-    if (m_menuSelect == 1)
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-    }
-    else
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-    }
-    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
-    //m_character1->Draw(m_spriteBatch.get(), m_character1Pos);
-
+    //////// next environment point
+    
     float posX2 = backBufferWidth * .80f;
     float posY2 = 250.0f;
-    lineDrawY += menuObj0Pos.y;
 
     i = 0;
     ++j;
@@ -2028,18 +1969,10 @@ void Game::DrawMenuEnvironmentSelect()
     DirectX::SimpleMath::Vector2 menuObj2Pos(posX2, posY2);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
-    //m_characterBackgroundPos.x = posX2 + half;
-    m_characterBackgroundPos.x = posX2 + half + 25.f;
-    //m_characterBackgroundPos.y = m_character2Pos.y + 10;
-    //m_characterBackgroundOrigin = menuObj2Origin;
-    m_character2Pos.x = m_characterBackgroundPos.x - 135.f;
-    m_character2Pos.y = m_character0Pos.y;
-
     posY2 += ySpacing + ySpacing;
     dataPos.x = posX2;
     dataPos.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), dataString.c_str(), dataPos, Colors::White, 0.f, dataOrigin);
-
 
     ++i;
     std::string airDensityString2 = environData[i][j]; // air density
@@ -2077,23 +2010,12 @@ void Game::DrawMenuEnvironmentSelect()
     windZPos2.y = posY2;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), windZString2.c_str(), windZPos2, Colors::White, 0.f, windZOrigin2);
 
+    posY2 += ySpacing + ySpacing + ySpacing + ySpacing + ySpacing;
+    m_environSelectAlienPos.x = posX2;
+    m_environSelectAlienPos.y = posY2;
+    m_spriteBatch->Draw(m_environSelectAlienTexture.Get(), m_environSelectAlienPos, nullptr, Colors::White, 0.f, m_environSelectAlienOrigin);
 
-    if (m_menuSelect == 2)
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(3.f, 3.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(2.f, 2.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(1.f, 1.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
-    }
-    else
-    {
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-3.f, -3.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-        m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(-1.f, -1.f), nullptr, Colors::Gray, 0.f, m_characterBackgroundOrigin);
-    }
-    m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
-    //m_character2->Draw(m_spriteBatch.get(), m_character2Pos);
+    //////// start of menu highlight drawing
 
     if (m_menuSelect < 0 || m_menuSelect > 2)
     {
