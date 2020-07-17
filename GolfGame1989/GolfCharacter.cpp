@@ -91,8 +91,6 @@ void GolfCharacter::LoadCharacterData()
     */
 
     m_characters[i].name = "Chubs McShortRound";
-    
-    /// ////////////////////////12345678901234567801234567890
     m_characters[i].bioLine0 = "An Italian plumber that ate";
     m_characters[i].bioLine1 = "to many glowing flowers and ";
     m_characters[i].bioLine2 = "then got hit by some kind ";

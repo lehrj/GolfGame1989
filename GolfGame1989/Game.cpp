@@ -560,8 +560,6 @@ void Game::Render()
 
 void Game::DrawSwing()
 {
-    float shoulderAccel = .98;
-
     std::vector<DirectX::SimpleMath::Vector3> angles;
     angles = pGolf->GetRawSwingAngles();
     DirectX::SimpleMath::Vector3 origin;
@@ -571,8 +569,6 @@ void Game::DrawSwing()
     thetaOrigin.Zero;
     thetaOrigin.y = -.02;
 
-    VertexPositionColor shoulder(origin, Colors::Blue);
-
     int swingStepCount = angles.size();
     if (m_swingPathStep >= swingStepCount)
     {
@@ -581,22 +577,27 @@ void Game::DrawSwing()
     ++m_swingPathStep;
 
     int impactPoint = pGolf->GetImpactStep();
+    DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
+    DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
+    DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
 
     for (int i = 0; i < m_swingPathStep; ++i)
     {
-        if (i < impactPoint)
+        if (i > impactPoint)
         {
-            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            theta += m_swingOrigin;
-
-            //beta += m_swingOrigin;
-            beta += theta;
-            VertexPositionColor thetaColor(theta, Colors::White);
-            VertexPositionColor betaColor(beta, Colors::Red);
-            m_batch->DrawLine(shoulder, thetaColor);
-            m_batch->DrawLine(thetaColor, betaColor);
+            shoulderColor = DirectX::Colors::Gray;
+            handColor = DirectX::Colors::Black;
+            clubHeadColor = DirectX::Colors::Green;
         }
+        DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+        DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+        theta += m_swingOrigin;
+        beta += theta;
+        VertexPositionColor shoulder(origin, shoulderColor);
+        VertexPositionColor thetaColor(theta, handColor);
+        VertexPositionColor betaColor(beta, clubHeadColor);
+        m_batch->DrawLine(shoulder, thetaColor);
+        m_batch->DrawLine(thetaColor, betaColor);    
     }
 }
 

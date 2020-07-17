@@ -46,15 +46,12 @@ public:
     template<typename T>
     static T WrapAngle(T theta) noexcept
     {
-        //constexpr T twoPi = (T)2 * (T)PI_D;
         const T twoPi = (T)2 * (T)Utility::GetPi();
         const T mod = fmod(theta, twoPi);
-        //if (mod > (T)PI_D)
         if (mod > (T)Utility::GetPi())
         {
             return mod - twoPi;
         }
-        //else if (mod < -(T)PI_D)
         else if (mod < -(T)Utility::GetPi())
         {
             return mod + twoPi;
