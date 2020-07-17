@@ -20,8 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
@@ -555,17 +556,6 @@ void Game::Render()
     m_spriteBatch->End();
 
     Present();
-
-    // Switch to next club in the bag after impact of previous shot
-    /*
-    if (toggleGetNextClub == 1)
-    {
-        xVec.clear();
-        yVec.clear();
-        zVec.clear();
-        pGolf->SelectNextClub();
-    }
-    */
 }
 
 void Game::DrawSwing()
@@ -1371,11 +1361,10 @@ void Game::DrawMenuCharacterSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawY = m_fontMenuPos.y + 25;
     float lineDrawSpacingY = 15;
     std::string menuTitle = "Character Select";
     float menuTitlePosX = m_fontMenuPos.x;
-    float menuTitlePosY = lineDrawY;
+    float menuTitlePosY = m_fontMenuPos.y + 25;
     DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
@@ -1386,31 +1375,23 @@ void Game::DrawMenuCharacterSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
     
     float posY0 = 250.0f;
-    float originY = posY0;
     float ySpacing = 50.f;
-    lineDrawY += menuTitlePosY + lineDrawSpacingY;
+
     std::string menuObj0String = pGolf->GetCharacterName(0);
 
     float posX0 = backBufferWidth * .20f;
-    //float posX0 = 200.0;
     DirectX::SimpleMath::Vector2 menuObj0Pos(posX0, posY0);
     DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
-
-    //float ySpacing = menuObj0Origin.y * 2;
-    
-    //m_characterBackgroundPos.x = m_character0Pos.x + menuObj0Origin.x;
     float half = m_characterBackgroundOrigin.x / 2.f;
-    //float half = m_characterBackgroundOrigin.x - 105;
-    //float half = m_characterBackgroundOrigin.x - 105;
+    
     m_characterBackgroundPos.x = posX0 + half + 25.f;
     m_characterBackgroundPos.y = m_character0Pos.y + 10;
     m_characterBackgroundOrigin = menuObj0Origin;
 
-    //m_character0Pos.x = menuTitlePosX / 3;
-    m_character0Pos.x = m_characterBackgroundPos.x -menuObj0Origin.x;
-    m_character0Pos.y = lineDrawY - menuObj0Origin.y;
-    
+    m_character0Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
+    m_character0Pos.y = m_fontMenuPos.y + menuTitlePosY + 20;
+
     posY0 += ySpacing;
     int i = 0;
     
@@ -1523,18 +1504,12 @@ void Game::DrawMenuCharacterSelect()
 
     float posX1 = backBufferWidth / 2.0;
     float posY1 = 250.0f;
-    lineDrawY += menuObj0Pos.y;
     std::string menuObj1String = pGolf->GetCharacterName(1);
-    //Vector2 menuObj1Pos(menuTitlePosX, menuObj0Pos.y + menuOrigin.x + 0);
 
-   
     DirectX::SimpleMath::Vector2 menuObj1Pos(posX1, posY1);
     DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
-    //half = m_characterBackgroundOrigin.x;
     m_characterBackgroundPos.x = posX1 + half + 10.f;
-    //m_characterBackgroundPos.y = m_character1Pos.y + 10;
-    //m_characterBackgroundOrigin = menuObj1Origin;
     m_character1Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
     m_character1Pos.y = m_character0Pos.y;
 
@@ -1641,17 +1616,14 @@ void Game::DrawMenuCharacterSelect()
 
     float posX2 = backBufferWidth * .80f;
     float posY2 = 250.0f;
-    lineDrawY += menuObj0Pos.y;
+
     std::string menuObj2String = pGolf->GetCharacterName(2);
 
     DirectX::SimpleMath::Vector2 menuObj2Pos(posX2, posY2);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
-    //m_characterBackgroundPos.x = posX2 + half;
-    m_characterBackgroundPos.x = posX2 + half + 25.f;
-    //m_characterBackgroundPos.y = m_character2Pos.y + 10;
-    //m_characterBackgroundOrigin = menuObj2Origin;
-    m_character2Pos.x = m_characterBackgroundPos.x - 135.f;
+    m_characterBackgroundPos.x = posX2 + half;
+    m_character2Pos.x = m_characterBackgroundPos.x - 125.f;
     m_character2Pos.y = m_character0Pos.y;
 
     ++i;
@@ -2022,7 +1994,6 @@ void Game::DrawMenuEnvironmentSelect()
         m_menuSelect = 0;
     }
 
-    // Start Menu Select Highlight
     if (m_menuSelect == 0)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj0String.c_str(), menuObj0Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj0Origin);
@@ -2549,7 +2520,7 @@ void Game::DrawStartScreen()
     DirectX::SimpleMath::Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
     DirectX::SimpleMath::Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
 
-    /*
+    /* Messing around with different visuals for title design
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-6.f, -6.f), Colors::ForestGreen, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
