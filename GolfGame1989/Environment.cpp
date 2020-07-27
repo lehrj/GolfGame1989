@@ -216,7 +216,7 @@ void Environment::LoadEnvironmentData()
     int i = 0;
 
     m_environs[i].name = "Calm";
-    m_environs[i].terainColor = DirectX::Colors::Green;
+    m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
     m_environs[i].windX = 0.0;
@@ -227,7 +227,7 @@ void Environment::LoadEnvironmentData()
 
     ++i;
     m_environs[i].name = "Breezy";
-    m_environs[i].terainColor = DirectX::Colors::Green;
+    m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.85;
     m_environs[i].windX = 10.0;
@@ -238,7 +238,7 @@ void Environment::LoadEnvironmentData()
 
     ++i;
     m_environs[i].name = "Non Terrestrial (Alien Golf!!)";
-    m_environs[i].terainColor = DirectX::Colors::Blue;
+    m_environs[i].terrainColor = DirectX::Colors::Blue;
     m_environs[i].airDensity = 11.2;
     m_environs[i].gravity = -5.8;
     m_environs[i].windX = 3.0;

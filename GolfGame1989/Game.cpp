@@ -451,25 +451,80 @@ void Game::DrawCameraFocus()
 
 void Game::DrawIntroScreen()
 {
-    if (m_timer.GetTotalSeconds() < 5.f)
+    float logoDisplayDuration = 5.f;
+    float timeStamp = m_timer.GetTotalSeconds();
+    float fadeDuration = 2.f;
+    DirectX::XMVECTORF32 fadeColor = DirectX::Colors::White;
+
+    if (timeStamp < logoDisplayDuration)
     {
-        m_spriteBatch->Draw(m_jiLogoTexture.Get(), m_jiLogoPos, nullptr, Colors::White, 0.f, m_jiLogoOrigin);
         std::string textLine = "Proudly Presents";
         float textLinePosX = m_bitwiseFontPos.x;
         float textLinePosY = m_bitwiseFontPos.y + 100;
         DirectX::SimpleMath::Vector2 textLinePos(textLinePosX, textLinePosY);
         DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
-        m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, Colors::White, 0.f, textLineOrigin);
+
+        if (timeStamp < fadeDuration)  // fade in
+        {
+            float colorIntensity = timeStamp / fadeDuration;
+            fadeColor.f[0] = colorIntensity;
+            fadeColor.f[1] = colorIntensity;
+            fadeColor.f[2] = colorIntensity;
+            m_spriteBatch->Draw(m_jiLogoTexture.Get(), m_jiLogoPos, nullptr, fadeColor, 0.f, m_jiLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
+        else if (timeStamp > logoDisplayDuration - fadeDuration) // fade out
+        {
+            //float colorIntensity = timeStamp / fadeDuration;
+            float startFade = logoDisplayDuration - fadeDuration;
+
+            float colorIntensity = (timeStamp - startFade) / (logoDisplayDuration - startFade);
+            colorIntensity = 1.f - colorIntensity;
+            fadeColor.f[0] = colorIntensity;
+            fadeColor.f[1] = colorIntensity;
+            fadeColor.f[2] = colorIntensity;
+            m_spriteBatch->Draw(m_jiLogoTexture.Get(), m_jiLogoPos, nullptr, fadeColor, 0.f, m_jiLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
+        else // display at full intesity
+        {
+            m_spriteBatch->Draw(m_jiLogoTexture.Get(), m_jiLogoPos, nullptr, fadeColor, 0.f, m_jiLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
     }
-    else if (m_timer.GetTotalSeconds() < 10.f)
+    else if (timeStamp < logoDisplayDuration + logoDisplayDuration)
     {
-        m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, Colors::White, 0.f, m_bmwLogoOrigin);
         std::string textLine = "A Baltimore Magic Werks Production";
         float textLinePosX = m_bitwiseFontPos.x;
         float textLinePosY = m_bitwiseFontPos.y + 450;
         DirectX::SimpleMath::Vector2 textLinePos(textLinePosX, textLinePosY);
         DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
-        m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, Colors::White, 0.f, textLineOrigin);
+        if (timeStamp < fadeDuration + logoDisplayDuration)  // fade in
+        {
+            float colorIntensity = (timeStamp - logoDisplayDuration) / fadeDuration;
+            fadeColor.f[0] = colorIntensity;
+            fadeColor.f[1] = colorIntensity;
+            fadeColor.f[2] = colorIntensity;
+            m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
+        else if (timeStamp > logoDisplayDuration + logoDisplayDuration - fadeDuration) // fade out
+        {
+            float startFade = logoDisplayDuration + logoDisplayDuration - fadeDuration;
+
+            float colorIntensity = (timeStamp - startFade) / (logoDisplayDuration + logoDisplayDuration - startFade);
+            colorIntensity = 1.f - colorIntensity;
+            fadeColor.f[0] = colorIntensity;
+            fadeColor.f[1] = colorIntensity;
+            fadeColor.f[2] = colorIntensity;
+            m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
+        else // display at full intesity
+        {
+            m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
     }
     if (m_timer.GetTotalSeconds() > 10.f)
     {
@@ -1975,6 +2030,7 @@ void Game::DrawWorld()
     size_t divisions = 50;
     size_t extention = 50;
     DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
+    
     for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);

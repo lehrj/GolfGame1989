@@ -3,7 +3,7 @@
 struct Environ
 {
     std::string                         name;
-    DirectX::XMVECTORF32                terainColor;
+    DirectX::XMVECTORF32                terrainColor;
     double                              airDensity;        // in kg/m^3
     double                              gravity;           // in m/s^2
     double                              windX;             // in m/s
@@ -24,7 +24,7 @@ public:
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
     double GetLandingHeight() const { return m_landingHeight; };
     double GetLauchHeight() const { return m_launchHeight; };
-    DirectX::XMVECTORF32 GetEnvironColor() const { return m_currentEnviron.terainColor; };
+    DirectX::XMVECTORF32 GetEnvironColor() const { return m_currentEnviron.terrainColor; };
     std::string GetEnvironName(const int aEnvironmentIndex) const {return m_environs[aEnvironmentIndex].name;};
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
     int GetNumberOfEnvironSelectDisplayVariables() const { return m_environSelectDisplayDataPoints; };

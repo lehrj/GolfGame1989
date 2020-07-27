@@ -243,5 +243,4 @@ private:
     DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;
     DirectX::SimpleMath::Vector3                m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
     DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
-    
 };
