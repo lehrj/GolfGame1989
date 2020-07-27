@@ -54,7 +54,6 @@ public:
     std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
   
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
-    //std::vector<DirectX::SimpleMath::Vector3>& OutputShotPathRef() { return m_shotPath; };
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
     void PrintFlightData();  
     void ResetBallData();

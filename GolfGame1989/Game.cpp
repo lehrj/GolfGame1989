@@ -20,7 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -73,8 +74,8 @@ void Game::Tick()
     });
 
     m_flightStepTimer.Tick([&]()
-        {
-        });
+    {
+    });
 
     Render();
 }
@@ -530,6 +531,10 @@ void Game::Render()
 
     //DrawShotTimerUI();
 
+    if (m_currentState == GameState::GAMESTATE_INTROSCREEN)
+    {
+        DrawIntroScreen();
+    }
     if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
     {
         DrawStartScreen();
@@ -664,6 +669,166 @@ void Game::DrawPowerBarUI()
 
     m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
     m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
+}
+
+// working old version prior to impmenting real time match update
+void Game::DrawProjectile()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    //draw tee box
+    double originX = shotPath[0].x;
+    double originZ = shotPath[0].z;
+    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
+    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
+
+    int stepCount = shotPath.size();
+
+    if (m_projectilePathStep >= stepCount)
+    {
+        m_flightStepTimer.ResetElapsedTime();
+        m_projectilePathStep = 0;
+    }
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
+
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+    for (int i = 0; i < m_projectilePathStep; ++i)
+    {
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+        //VertexPositionColor aVRed(p1, Colors::Red);
+        //VertexPositionColor bVRed(p2, Colors::Red);
+        VertexPositionColor aVRed(p1, Colors::White);
+        VertexPositionColor bVRed(p2, Colors::White);
+        VertexPositionColor aVBlue(p1, Colors::Blue);
+        VertexPositionColor bVBlue(p2, Colors::Blue);
+        VertexPositionColor aVYellow(p1, Colors::Yellow);
+        VertexPositionColor bVYellow(p2, Colors::Yellow);
+        std::vector<int> colorVec = pGolf->GetDrawColorVector();
+        int vecIndex = pGolf->GetDrawColorIndex();
+
+        // this is causing an exception, reenable after debuging
+        /*
+        if (vecIndex > 0)
+        {
+            if (i > colorVec[0])
+            {
+                aV = aVRed;
+                bV = bVRed;
+            }
+        }
+        if (vecIndex > 1)
+        {
+            if (i > colorVec[1])
+            {
+                aV = aVBlue;
+                bV = bVBlue;
+            }
+        }
+        if (vecIndex > 2)
+        {
+            if (i > colorVec[2])
+            {
+                aV = aVYellow;
+                bV = bVYellow;
+            }
+        }
+        */
+        m_batch->DrawLine(aV, bV);
+        prevPos = shotPath[i];
+
+    }
+
+
+    //bool toggleGetNextClub = 0;
+    ///// Landing explosion
+    //if (arcCount == stepCount)
+    //{
+        /*
+        Vector3 f1(prevPos);
+        Vector3 f2(prevX, prevY + 0.2f, prevZ);
+        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
+        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
+        VertexPositionColor ft1(f1, Colors::Red);
+        VertexPositionColor ft2(f2, Colors::Red);
+        VertexPositionColor ft3(f3, Colors::Red);
+        VertexPositionColor ft4(f4, Colors::Red);
+        VertexPositionColor ft5(f5, Colors::Red);
+        VertexPositionColor ft6(f6, Colors::Red);
+        VertexPositionColor ft7(f7, Colors::Red);
+        VertexPositionColor ft8(f8, Colors::Red);
+        VertexPositionColor ft9(f9, Colors::Red);
+        VertexPositionColor ft10(f10, Colors::Red);
+        m_batch->DrawLine(ft1, ft2);
+        m_batch->DrawLine(ft1, ft3);
+        m_batch->DrawLine(ft1, ft4);
+        m_batch->DrawLine(ft1, ft5);
+        m_batch->DrawLine(ft1, ft6);
+        m_batch->DrawLine(ft1, ft7);
+        m_batch->DrawLine(ft1, ft8);
+        m_batch->DrawLine(ft1, ft9);
+        m_batch->DrawLine(ft1, ft10);
+        */
+        //toggleGetNextClub = 1;
+    //}
+    // end landing explosion
+}
+
+void Game::DrawProjectileRealTime()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+    int stepCount = shotPath.size();
+    float shotTimeTotal = shotTimeStep.back();
+
+    if (m_projectilePathStep >= stepCount)
+    {
+        m_projectilePathStep = 0;
+    }
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
+
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+    for (int i = 0; i < shotPath.size(); ++i)
+    {
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+
+        if (shotTimeStep[i] < m_projectileTimer)
+        {
+            m_batch->DrawLine(aV, bV);
+        }
+        prevPos = shotPath[i];
+    }
+
+    if (m_projectileTimer > shotTimeStep.back())
+    {
+        m_projectileTimer = 0.0;
+    }
 }
 
 void Game::DrawWorld()
@@ -949,7 +1114,7 @@ void Game::CreateDevice()
     m_powerBarBackswingOrigin.x = float(PowerbarBackswingDesc.Width / 2);
     m_powerBarBackswingOrigin.y = float(PowerbarBackswingDesc.Height / 2);
 
-    // Character Textures
+    // Character Select Textures
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"ChacterSpriteSheet.png", nullptr, m_characterTexture.ReleaseAndGetAddressOf()));
     m_character = std::make_unique<AnimatedTexture>();
     m_character->Load(m_characterTexture.Get(), 4, 6);
@@ -974,7 +1139,7 @@ void Game::CreateDevice()
     m_characterBackgroundOrigin.x = float(characterBackgroundDesc.Width / 2);
     m_characterBackgroundOrigin.y = float(characterBackgroundDesc.Height / 2);
 
-    // Environment select textures
+    // Environment Select textures
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectCalm.png", nullptr, m_environSelectCalmTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"EnvironmentSelectCalm.png", resource.GetAddressOf(), m_environSelectCalmTexture.ReleaseAndGetAddressOf()));
     ComPtr<ID3D11Texture2D> pEnvironmentSelectCalm;
@@ -1001,6 +1166,26 @@ void Game::CreateDevice()
     pEnvironmentSelectAlien->GetDesc(&EnvironmentSelectAlienDesc);
     m_environSelectAlienOrigin.x = float(EnvironmentSelectAlienDesc.Width / 2);
     m_environSelectAlienOrigin.y = float(EnvironmentSelectAlienDesc.Height / 2);
+
+    // Intro screen textures
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"logoBMW.png", nullptr, m_bmwLogoTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"logoBMW.png", resource.GetAddressOf(), m_bmwLogoTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> logoBMW;
+    DX::ThrowIfFailed(resource.As(&logoBMW));
+    CD3D11_TEXTURE2D_DESC logoBMWDesc;
+    logoBMW->GetDesc(&logoBMWDesc);
+    m_bmwLogoOrigin.x = float(logoBMWDesc.Width / 2);
+    m_bmwLogoOrigin.y = float(logoBMWDesc.Height / 2);
+
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"logoJI.png", nullptr, m_jiLogoTexture.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"logoJI.png", resource.GetAddressOf(), m_jiLogoTexture.ReleaseAndGetAddressOf()));
+    ComPtr<ID3D11Texture2D> logoJI;
+    DX::ThrowIfFailed(resource.As(&logoJI));
+    CD3D11_TEXTURE2D_DESC logoJIDesc;
+    logoJI->GetDesc(&logoJIDesc);
+    m_jiLogoOrigin.x = float(logoJIDesc.Width / 2);
+    m_jiLogoOrigin.y = float(logoJIDesc.Height / 2);
+
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -1171,6 +1356,14 @@ void Game::CreateResources()
 
     m_environSelectAlienPos.x = backBufferWidth / 2.f;
     m_environSelectAlienPos.y = backBufferWidth / 2.f;
+
+    // Intro Sceen textures
+    m_bmwLogoPos.x = backBufferWidth / 2.f;
+    m_bmwLogoPos.y = backBufferHeight / 2.f;
+
+    m_jiLogoPos.x = backBufferWidth / 2.f;
+    m_jiLogoPos.y = backBufferHeight / 2.f;
+
     // End Texture
 }
 
@@ -1190,171 +1383,32 @@ void Game::DrawCameraFocus()
     m_batch->DrawLine(origin, zOffset);
 }
 
-// working old version prior to impmenting real time match update
-void Game::DrawProjectile() 
+void Game::DrawIntroScreen()
 {
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-    
-    //draw tee box
-    double originX = shotPath[0].x;
-    double originZ = shotPath[0].z;
-    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-    // end tee box draw
-
-    int stepCount = shotPath.size();
-
-    if (m_projectilePathStep >= stepCount)
+    if (m_timer.GetTotalSeconds() < 5.f)
     {
-        m_flightStepTimer.ResetElapsedTime();
-        m_projectilePathStep = 0;
+        m_spriteBatch->Draw(m_jiLogoTexture.Get(), m_jiLogoPos, nullptr, Colors::White, 0.f, m_jiLogoOrigin);
+        std::string textLine = "Proudly Presents";
+        float textLinePosX = m_bitwiseFontPos.x;
+        float textLinePosY = m_bitwiseFontPos.y + 100;
+        DirectX::SimpleMath::Vector2 textLinePos(textLinePosX, textLinePosY);
+        DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
+        m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, Colors::White, 0.f, textLineOrigin);
     }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
-
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < m_projectilePathStep; ++i)
+    else if (m_timer.GetTotalSeconds() < 10.f)
     {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        //VertexPositionColor aVRed(p1, Colors::Red);
-        //VertexPositionColor bVRed(p2, Colors::Red);
-        VertexPositionColor aVRed(p1, Colors::White);
-        VertexPositionColor bVRed(p2, Colors::White);
-        VertexPositionColor aVBlue(p1, Colors::Blue);
-        VertexPositionColor bVBlue(p2, Colors::Blue);
-        VertexPositionColor aVYellow(p1, Colors::Yellow);
-        VertexPositionColor bVYellow(p2, Colors::Yellow);
-        std::vector<int> colorVec = pGolf->GetDrawColorVector();
-        int vecIndex = pGolf->GetDrawColorIndex();
-
-        // this is causing an exception, reenable after debuging
-        /*
-        if (vecIndex > 0)
-        {
-            if (i > colorVec[0])
-            {
-                aV = aVRed;
-                bV = bVRed;
-            }
-        }
-        if (vecIndex > 1)
-        {
-            if (i > colorVec[1])
-            {
-                aV = aVBlue;
-                bV = bVBlue;
-            }
-        }
-        if (vecIndex > 2)
-        {
-            if (i > colorVec[2])
-            {
-                aV = aVYellow;
-                bV = bVYellow;
-            }
-        }
-        */
-        m_batch->DrawLine(aV, bV);
-        prevPos = shotPath[i];
-
+        m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, Colors::White, 0.f, m_bmwLogoOrigin);
+        std::string textLine = "A Baltimore Magic Werks Production";
+        float textLinePosX = m_bitwiseFontPos.x;
+        float textLinePosY = m_bitwiseFontPos.y + 450;
+        DirectX::SimpleMath::Vector2 textLinePos(textLinePosX, textLinePosY);
+        DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
+        m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, Colors::White, 0.f, textLineOrigin);
     }
-    
-
-    //bool toggleGetNextClub = 0;
-    ///// Landing explosion
-    //if (arcCount == stepCount)
-    //{
-        /*
-        Vector3 f1(prevPos);
-        Vector3 f2(prevX, prevY + 0.2f, prevZ);
-        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        VertexPositionColor ft1(f1, Colors::Red);
-        VertexPositionColor ft2(f2, Colors::Red);
-        VertexPositionColor ft3(f3, Colors::Red);
-        VertexPositionColor ft4(f4, Colors::Red);
-        VertexPositionColor ft5(f5, Colors::Red);
-        VertexPositionColor ft6(f6, Colors::Red);
-        VertexPositionColor ft7(f7, Colors::Red);
-        VertexPositionColor ft8(f8, Colors::Red);
-        VertexPositionColor ft9(f9, Colors::Red);
-        VertexPositionColor ft10(f10, Colors::Red);
-        m_batch->DrawLine(ft1, ft2);
-        m_batch->DrawLine(ft1, ft3);
-        m_batch->DrawLine(ft1, ft4);
-        m_batch->DrawLine(ft1, ft5);
-        m_batch->DrawLine(ft1, ft6);
-        m_batch->DrawLine(ft1, ft7);
-        m_batch->DrawLine(ft1, ft8);
-        m_batch->DrawLine(ft1, ft9);
-        m_batch->DrawLine(ft1, ft10);
-        */
-        //toggleGetNextClub = 1;
-    //}
-    // end landing explosion
-}
-
-void Game::DrawProjectileRealTime()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-    int stepCount = shotPath.size();
-    float shotTimeTotal = shotTimeStep.back();
-
-    if (m_projectilePathStep >= stepCount)
+    if (m_timer.GetTotalSeconds() > 10.f)
     {
-        m_projectilePathStep = 0;
+        m_currentState = GameState::GAMESTATE_STARTSCREEN;
     }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
-    
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < shotPath.size(); ++i)
-    {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-
-        if (shotTimeStep[i] < m_projectileTimer)
-        {
-            m_batch->DrawLine(aV, bV);
-        }
-        prevPos = shotPath[i];
-    }
-    
-    if (m_projectileTimer > shotTimeStep.back())
-    {
-        m_projectileTimer = 0.0;
-    }
-}
-
-void Game::DrawShotTimerUI()
-{
-    std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
-    DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
-    m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
 }
 
 void Game::DrawMenuCharacterSelect()
@@ -1790,8 +1844,7 @@ void Game::DrawMenuCharacterSelect()
     else
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
-    }
-    
+    } 
 }
 
 void Game::DrawMenuEnvironmentSelect()
@@ -2570,6 +2623,13 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
+void Game::DrawShotTimerUI()
+{
+    std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
+    DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
+    m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
+}
+
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
@@ -2589,7 +2649,7 @@ void Game::OnDeviceLost()
     m_powerImpactTexture.Reset();
     m_powerBackswingTexture.Reset();
 
-    // Charcter
+    // Charcter Select
     m_character.reset();
     m_characterTexture.Reset();
     m_character0.reset();
@@ -2600,9 +2660,14 @@ void Game::OnDeviceLost()
     m_character2Texture.Reset();
     m_characterBackgroundTexture.Reset();
 
+    // Environment Select
     m_environSelectCalmTexture.Reset();
     m_environSelectBreezyTexture.Reset();
     m_environSelectAlienTexture.Reset();
+
+    // Intro Screen
+    m_bmwLogoTexture.Reset();
+    m_jiLogoTexture.Reset();
 
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();

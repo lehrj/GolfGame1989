@@ -49,6 +49,7 @@ private:
     void CreateResources();
 
     void DrawCameraFocus();
+    void DrawIntroScreen();
     void DrawMenuCharacterSelect();
     void DrawMenuEnvironmentSelect();
     void DrawMenuMain();
@@ -111,6 +112,12 @@ private:
     GolfPlay*                                       pPlay;
     int                                             m_swingPathStep = 0;
     int                                             m_projectilePathStep = 0;
+
+    // WLJ add for mouse and keybord interface
+    std::unique_ptr<DirectX::Keyboard>              m_keyboard;
+    std::unique_ptr<DirectX::Mouse>                 m_mouse;
+    DirectX::Keyboard::KeyboardStateTracker         m_kbStateTracker;
+
     // WLJ added for displaying text
     std::unique_ptr<DirectX::SpriteFont>            m_font;
     std::unique_ptr<DirectX::SpriteFont>            m_titleFont;
@@ -122,12 +129,6 @@ private:
     DirectX::SimpleMath::Vector2                    m_bitwiseFontPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
     
-    // WLJ add for mouse and keybord interface
-    std::unique_ptr<DirectX::Keyboard>              m_keyboard;
-    std::unique_ptr<DirectX::Mouse>                 m_mouse;
-
-    DirectX::Keyboard::KeyboardStateTracker         m_kbStateTracker;
-
     // Golf Character Texture
     std::unique_ptr<AnimatedTexture>                m_character;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterTexture;
@@ -184,10 +185,22 @@ private:
     float                                           m_powerMeterImpactPoint;
     float                                           m_powerMeterBarScale;
 
+    // WLJ Intro screen logos
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bmwLogoTexture;
+    DirectX::SimpleMath::Vector2 m_bmwLogoPos;
+    DirectX::SimpleMath::Vector2 m_bmwLogoOrigin;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_jiLogoTexture;
+    DirectX::SimpleMath::Vector2 m_jiLogoPos;
+    DirectX::SimpleMath::Vector2 m_jiLogoOrigin;
+
+
+    // WLJ variable to hold selected menu item
     int                                             m_menuSelect = 0;
 
     enum class GameState
     {
+        GAMESTATE_INTROSCREEN,
         GAMESTATE_STARTSCREEN,
         GAMESTATE_MAINMENU,
         GAMESTATE_CHARACTERSELECT,

@@ -81,6 +81,12 @@
     <Image Include="EnvironmentSelectCalm.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="logoBMW.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="logoJI.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">

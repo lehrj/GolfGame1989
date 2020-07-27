@@ -208,6 +208,8 @@
     <Image Include="EnvironmentSelectBreezy.png" />
     <Image Include="EnvironmentSelectCalm.png" />
     <Image Include="Icon.ico" />
+    <Image Include="logoBMW.png" />
+    <Image Include="logoJI.png" />
     <Image Include="PowerbarBackswing.png" />
     <Image Include="PowerbarFrame.png" />
     <Image Include="PowerbarImpact.png" />
