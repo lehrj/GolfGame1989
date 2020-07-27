@@ -39,873 +39,6 @@ Game::~Game()
     delete pCamera;
 }
 
-// Initialize the Direct3D resources required to run.
-void Game::Initialize(HWND window, int width, int height)
-{
-    m_window = window;
-    m_outputWidth = std::max(width, 1);
-    m_outputHeight = std::max(height, 1);
-
-    CreateDevice();
-
-    CreateResources();
-
-    // TODO: Change the timer settings if you want something other than the default variable timestep mode.
-    // e.g. for 60 FPS fixed timestep update logic, call:
-    /*
-    m_timer.SetFixedTimeStep(true);
-    m_timer.SetTargetElapsedSeconds(1.0 / 60);
-    */
-
-    // WLJ add for mouse and keybord interface
-    m_keyboard = std::make_unique<DirectX::Keyboard>();
-    //m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
-
-    m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(window);
-}
-
-// Executes the basic game loop.
-void Game::Tick()
-{
-    m_timer.Tick([&]()
-    {
-        Update(m_timer);
-    });
-
-    m_flightStepTimer.Tick([&]()
-    {
-    });
-
-    Render();
-}
-
-// Updates the world.
-void Game::Update(DX::StepTimer const& timer)
-{
-    float elapsedTime = float(timer.GetElapsedSeconds());
-    m_projectileTimer += elapsedTime;
-    // TODO: Add your game logic here.
-
-    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-    {
-        if (m_menuSelect == 0)
-        {
-            m_character0->Update(elapsedTime);
-        }
-        if (m_menuSelect == 1)
-        {
-            m_character1->Update(elapsedTime);
-        }
-        if (m_menuSelect == 2)
-        {
-            m_character2->Update(elapsedTime);
-        }
-    }
-
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
-    {
-        pPlay->Swing();
-
-        if (pPlay->UpdateSwing() == true)
-        {
-            pPlay->ResetSwingUpdateReady();
-            pGolf->UpdateImpact(pPlay->GetImpactData());
-        }
-    }
-    UpdateCamera(timer);
-
-    UpdateInput();
-
-    elapsedTime;
-}
-
-void Game::UpdateCamera(DX::StepTimer const& timer)
-{
-    if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
-    {
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
-    {
-
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
-    {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(90));
-        m_effect->SetView(m_view);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
-    {
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(6.f, 0.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
-        m_effect->SetView(m_view);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
-    {
-        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , DirectX::SimpleMath::Vector3::UnitY);
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z), DirectX::SimpleMath::Vector3::UnitY);
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
-        
-        m_effect->SetView(m_view);
-        m_effect->SetProjection(m_proj);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
-    {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-6.f, 1.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        m_effect->SetView(m_view);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
-    {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-
-        m_effect->SetView(m_view);
-        m_effect->SetProjection(m_proj);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_TOSWINGVIEW)
-    {
-        //pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
-        DirectX::SimpleMath::Vector3 swingViewPos(-2.f, 0.02f, 1.2f);
-
-        pCamera->TranslateAtSpeed(swingViewPos);
-
-        m_effect->SetView(pCamera->GetViewMatrix());
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERACLASS)
-    {
-        pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
-        m_effect->SetView(pCamera->GetViewMatrix());
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_PRESWINGVIEW)
-    {
-        DirectX::SimpleMath::Vector3 cameraPos = m_shootOrigin;
-        cameraPos.x -= .9f;
-        cameraPos.y += .5f;
-        DirectX::SimpleMath::Vector3 cameraLookAt = m_shootOrigin;
-        cameraLookAt.y += .3f;
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(cameraPos, cameraLookAt, DirectX::SimpleMath::Vector3::UnitY);
-        m_world = DirectX::SimpleMath::Matrix::Identity;
-        m_effect->SetView(m_view);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
-    {
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f), m_shootOrigin, DirectX::SimpleMath::Vector3::UnitY);
-        m_world = DirectX::SimpleMath::Matrix::Identity;
-        m_effect->SetView(m_view);
-    }
-    if (m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
-    {  
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.3f, 2.f), m_ballPos, DirectX::SimpleMath::Vector3::UnitY);
-        m_world = DirectX::SimpleMath::Matrix::Identity;
-        m_effect->SetView(m_view);
-    }
-}
-
-void Game::UpdateInput()
-{
-    // WLJ add for mouse and keybord interface   
-    auto kb = m_keyboard->GetState();
-    m_kbStateTracker.Update(kb);
-
-    if (kb.Escape)
-    {
-        m_currentState = GameState::GAMESTATE_MAINMENU;
-    }
-    if (m_kbStateTracker.pressed.Enter)
-    {
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-        {
-            if (m_menuSelect == 0)
-            {
-                pGolf->LoadEnvironment(0);
-            }
-            if (m_menuSelect == 1)
-            {
-                pGolf->LoadEnvironment(1);
-            }
-            if (m_menuSelect == 2)
-            {
-                pGolf->LoadEnvironment(2);
-            }
-            m_menuSelect = 0;
-            m_currentState = GameState::GAMESTATE_STARTSCREEN;
-        }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-        {
-            if (m_menuSelect == 0)
-            {
-                pGolf->SetCharacter(0);
-            }
-            if (m_menuSelect == 1)
-            {
-                pGolf->SetCharacter(1);
-            }
-            if (m_menuSelect == 2)
-            {
-                pGolf->SetCharacter(2);
-            }
-            m_menuSelect = 0;
-            //m_currentState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
-            m_currentState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
-        }
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
-        {
-            if (m_menuSelect == 0) // GoTo Game State
-            {
-                m_currentState = GameState::GAMESTATE_GAMEPLAY;
-            }
-            if (m_menuSelect == 1) // GoTo Character Select State
-            {
-                m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
-            }
-            if (m_menuSelect == 2) // GoTo Environment Select State
-            {
-                m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
-            }
-            if (m_menuSelect == 3) // Quit Game
-            {
-                ExitGame();
-            }
-            m_menuSelect = 0;
-        }
-        if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
-        {
-            m_currentState = GameState::GAMESTATE_MAINMENU;
-        }
-    }
-    if (m_kbStateTracker.pressed.Up)
-    {
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
-        {
-            --m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-        {
-            --m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-        {
-            --m_menuSelect;
-        }
-    }
-    if (m_kbStateTracker.pressed.Down)
-    {
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
-        {
-            ++m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-        {
-            ++m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-        {
-            ++m_menuSelect;
-        }
-    }
-    if (m_kbStateTracker.pressed.Left)
-    {
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-        {
-            --m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-        {
-            --m_menuSelect;
-        }
-    }
-    if (m_kbStateTracker.pressed.Right)
-    {
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-        {
-            ++m_menuSelect;
-        }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-        {
-            ++m_menuSelect;
-        }
-    }
-    if (kb.D1)
-    {
-        pGolf->SelectInputClub(1);
-    }
-    if (kb.D2)
-    {
-        pGolf->SelectInputClub(2);
-    }
-    if (kb.D3)
-    {
-        pGolf->SelectInputClub(3);
-    }
-    if (kb.D4)
-    {
-        pGolf->SelectInputClub(4);
-    }
-    if (kb.D5)
-    {
-        pGolf->SelectInputClub(5);
-    }
-    if (kb.D6)
-    {
-        pGolf->SelectInputClub(6);
-    }
-    if (kb.D7)
-    {
-        pGolf->SelectInputClub(7);
-    }
-    if (kb.D8)
-    {
-        pGolf->SelectInputClub(8);
-    }
-    if (kb.D9)
-    {
-        pGolf->SelectInputClub(9);
-    }
-    if (kb.D0)
-    {
-        pGolf->SelectInputClub(10);
-    }
-    if (kb.Z)
-    {
-        pPlay->StartSwing();
-    }
-    if (kb.X)
-    {
-        pPlay->SetPower();
-    }
-    if (kb.C)
-    {
-        pPlay->SetImpact();
-    }
-    if (kb.V)
-    {
-        pPlay->ResetPlayData();
-        ResetPowerMeter();
-    }
-    if (kb.A)
-    {
-        if (pPlay->GetIsGameplayButtonReady() == true)
-        {
-            pPlay->UpdateSwingState();
-            pPlay->SetGameplayButtonReadyFalse();
-        }
-    }
-    if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
-    {
-        pPlay->ResetGamePlayButton();
-    }
-    if (m_kbStateTracker.pressed.Space)
-    {
-        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
-        {
-            pPlay->UpdateSwingState();
-        }
-    }
-    if (kb.F1)
-    {
-        SetGameCamera(1);
-    }
-    if (kb.F2)
-    {
-        SetGameCamera(2);
-    }
-    if (kb.F3)
-    {
-        SetGameCamera(4);
-    }
-    if (kb.F4)
-    {
-        SetGameCamera(4);
-    }
-    if (kb.NumPad6)
-    {
-        m_cameraRotationX -= m_cameraMovementSpeed;
-    }
-    if (kb.NumPad4)
-    {
-        m_cameraRotationX += m_cameraMovementSpeed;
-    }
-    if (kb.NumPad2)
-    {
-        m_cameraRotationY -= m_cameraMovementSpeed;
-    }
-    if (kb.NumPad8)
-    {
-        m_cameraRotationY += m_cameraMovementSpeed;
-    }
-    if (kb.NumPad7)
-    {
-        m_cameraTarget.x += m_cameraMovementSpeed;
-    }
-    if (kb.NumPad9)
-    {
-        m_cameraTarget.x -= m_cameraMovementSpeed;
-    }
-    if (kb.NumPad1)
-    {
-        m_cameraTarget.z += m_cameraMovementSpeed;
-    }
-    if (kb.NumPad3)
-    {
-        m_cameraTarget.z -= m_cameraMovementSpeed;
-    }
-    if (kb.OemMinus)
-    {
-        m_cameraZoom -= m_cameraMovementSpeed + .3f;
-    }
-    if (kb.OemPlus)
-    {
-        m_cameraZoom += m_cameraMovementSpeed + .3f;
-    }
-    if (m_kbStateTracker.pressed.U)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERACLASS;
-    }
-    if (m_kbStateTracker.pressed.I)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
-    }
-    if (m_kbStateTracker.pressed.O)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
-    }
-    if (m_kbStateTracker.pressed.P)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-    }
-    if (kb.R)
-    {
-        pCamera->RotateCounterClockWise();
-    }
-    if (m_kbStateTracker.pressed.Y)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_TOSWINGVIEW;
-    }
-
-    auto mouse = m_mouse->GetState();
-}
-
-// Draws the scene.
-void Game::Render()
-{
-    // Don't try to render anything before the first Update.
-    if (m_timer.GetFrameCount() == 0)
-    {
-        return;
-    }
-
-    Clear();
-
-    // TODO: Add your rendering code here.
-    // WLJ start
-    m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-    m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
-    //m_d3dContext->RSSetState(m_states->CullNone());
-
-    //world start
-    m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing
-    m_effect->SetWorld(m_world);
-    //world end
-    m_effect->Apply(m_d3dContext.Get());
-
-    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-
-    m_batch->Begin();
-
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
-    {
-        DrawWorld();
-        
-        DrawProjectile();
-        DrawSwing();
-        DrawCameraFocus();
-        //DrawProjectileRealTime();
-    }
-
-    m_batch->End();
-
-    m_spriteBatch->Begin();
-
-    //DrawShotTimerUI();
-
-    if (m_currentState == GameState::GAMESTATE_INTROSCREEN)
-    {
-        DrawIntroScreen();
-    }
-    if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
-    {
-        DrawStartScreen();
-    }
-    if (m_currentState == GameState::GAMESTATE_MAINMENU)
-    {
-        DrawMenuMain();
-    }
-    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
-    {
-        DrawMenuCharacterSelect();
-    }
-    if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
-    {
-        DrawMenuEnvironmentSelect();
-    }
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
-    {
-        DrawPowerBarUI();
-        //DrawSwingUI();
-        DrawUI();
-    }
-
-    m_spriteBatch->End();
-
-    Present();
-}
-
-void Game::DrawSwing()
-{
-    std::vector<DirectX::SimpleMath::Vector3> angles;
-    angles = pGolf->GetRawSwingAngles();
-    DirectX::SimpleMath::Vector3 origin;
-    origin.Zero;
-    origin += m_swingOrigin;
-    DirectX::SimpleMath::Vector3 thetaOrigin;
-    thetaOrigin.Zero;
-    thetaOrigin.y = -.02;
-
-    int swingStepCount = angles.size();
-    if (m_swingPathStep >= swingStepCount)
-    {
-        m_swingPathStep = 0;
-    }
-    ++m_swingPathStep;
-
-    int impactPoint = pGolf->GetImpactStep();
-    DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-    DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-    DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
-    for (int i = 0; i < m_swingPathStep; ++i)
-    {
-        if (i > impactPoint)
-        {
-            shoulderColor = DirectX::Colors::Gray;
-            handColor = DirectX::Colors::Black;
-            clubHeadColor = DirectX::Colors::Green;
-        }
-        DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-        DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-        theta += m_swingOrigin;
-        beta += theta;
-        VertexPositionColor shoulder(origin, shoulderColor);
-        VertexPositionColor thetaColor(theta, handColor);
-        VertexPositionColor betaColor(beta, clubHeadColor);
-        m_batch->DrawLine(shoulder, thetaColor);
-        m_batch->DrawLine(thetaColor, betaColor);    
-    }
-}
-
-void Game::DrawSwingUI()
-{
-    std::vector<std::string> uiString = pPlay->GetDebugData();
-
-    float fontOriginPosX = m_fontPosDebug.x;
-    float fontOriginPosY = m_fontPosDebug.y;
-
-    for (int i = 0; i < uiString.size(); ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
-        m_fontPosDebug.y += 35;
-    }
-    m_fontPosDebug.y = fontOriginPosY;
-}
-
-void Game::DrawUI()
-{
-    std::vector<std::string> uiString = pGolf->GetUIstrings();
-
-    std::string output = uiString[0];
-
-    float fontOriginPosX = m_fontPos2.x;
-    float fontOriginPosY = m_fontPos2.y;
-
-    for (int i = 0; i < uiString.size(); ++i)
-    {
-        std::string uiLine = std::string(uiString[i]);
-        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
-        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-    }
-    m_fontPos2.y = fontOriginPosY;
-}
-
-void Game::DrawPowerBarUI()
-{
-    if (pPlay->GetMeterPower() >= 0.0)
-    {
-        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
-    }
-    else
-    {
-        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
-    }
-    if (pPlay->GetIsBackswingSet() == false)
-    {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
-    }
-    else
-    {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01));
-    }
-
-    m_spriteBatch->Draw(m_powerBackswingTexture.Get(), m_powerMeterBackswingRect, nullptr, Colors::White);
-    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
-
-    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
-    m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
-}
-
-// working old version prior to impmenting real time match update
-void Game::DrawProjectile()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    //draw tee box
-    double originX = shotPath[0].x;
-    double originZ = shotPath[0].z;
-    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-    // end tee box draw
-
-    int stepCount = shotPath.size();
-
-    if (m_projectilePathStep >= stepCount)
-    {
-        m_flightStepTimer.ResetElapsedTime();
-        m_projectilePathStep = 0;
-    }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
-
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < m_projectilePathStep; ++i)
-    {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        //VertexPositionColor aVRed(p1, Colors::Red);
-        //VertexPositionColor bVRed(p2, Colors::Red);
-        VertexPositionColor aVRed(p1, Colors::White);
-        VertexPositionColor bVRed(p2, Colors::White);
-        VertexPositionColor aVBlue(p1, Colors::Blue);
-        VertexPositionColor bVBlue(p2, Colors::Blue);
-        VertexPositionColor aVYellow(p1, Colors::Yellow);
-        VertexPositionColor bVYellow(p2, Colors::Yellow);
-        std::vector<int> colorVec = pGolf->GetDrawColorVector();
-        int vecIndex = pGolf->GetDrawColorIndex();
-
-        // this is causing an exception, reenable after debuging
-        /*
-        if (vecIndex > 0)
-        {
-            if (i > colorVec[0])
-            {
-                aV = aVRed;
-                bV = bVRed;
-            }
-        }
-        if (vecIndex > 1)
-        {
-            if (i > colorVec[1])
-            {
-                aV = aVBlue;
-                bV = bVBlue;
-            }
-        }
-        if (vecIndex > 2)
-        {
-            if (i > colorVec[2])
-            {
-                aV = aVYellow;
-                bV = bVYellow;
-            }
-        }
-        */
-        m_batch->DrawLine(aV, bV);
-        prevPos = shotPath[i];
-
-    }
-
-
-    //bool toggleGetNextClub = 0;
-    ///// Landing explosion
-    //if (arcCount == stepCount)
-    //{
-        /*
-        Vector3 f1(prevPos);
-        Vector3 f2(prevX, prevY + 0.2f, prevZ);
-        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        VertexPositionColor ft1(f1, Colors::Red);
-        VertexPositionColor ft2(f2, Colors::Red);
-        VertexPositionColor ft3(f3, Colors::Red);
-        VertexPositionColor ft4(f4, Colors::Red);
-        VertexPositionColor ft5(f5, Colors::Red);
-        VertexPositionColor ft6(f6, Colors::Red);
-        VertexPositionColor ft7(f7, Colors::Red);
-        VertexPositionColor ft8(f8, Colors::Red);
-        VertexPositionColor ft9(f9, Colors::Red);
-        VertexPositionColor ft10(f10, Colors::Red);
-        m_batch->DrawLine(ft1, ft2);
-        m_batch->DrawLine(ft1, ft3);
-        m_batch->DrawLine(ft1, ft4);
-        m_batch->DrawLine(ft1, ft5);
-        m_batch->DrawLine(ft1, ft6);
-        m_batch->DrawLine(ft1, ft7);
-        m_batch->DrawLine(ft1, ft8);
-        m_batch->DrawLine(ft1, ft9);
-        m_batch->DrawLine(ft1, ft10);
-        */
-        //toggleGetNextClub = 1;
-    //}
-    // end landing explosion
-}
-
-void Game::DrawProjectileRealTime()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-    int stepCount = shotPath.size();
-    float shotTimeTotal = shotTimeStep.back();
-
-    if (m_projectilePathStep >= stepCount)
-    {
-        m_projectilePathStep = 0;
-    }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
-
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < shotPath.size(); ++i)
-    {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-
-        if (shotTimeStep[i] < m_projectileTimer)
-        {
-            m_batch->DrawLine(aV, bV);
-        }
-        prevPos = shotPath[i];
-    }
-
-    if (m_projectileTimer > shotTimeStep.back())
-    {
-        m_projectileTimer = 0.0;
-    }
-}
-
-void Game::DrawWorld()
-{
-    // draw world grid
-    DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
-    //DirectX::SimpleMath::Vector3 yAxis(0.f, 2.f, 0.f);
-    DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
-    size_t divisions = 50;
-    size_t extention = 50;
-    DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
-    for (size_t i = 0; i <= divisions + extention; ++i)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
-        if (scale.x == 0.0f)
-        {
-            VertexPositionColor v1(scale - zAxis, gridColor);
-            VertexPositionColor v2(scale + zAxis, gridColor);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - zAxis, gridColor);
-            VertexPositionColor v2(scale + zAxis, gridColor);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-    for (size_t i = 0; i <= divisions; i++)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-
-        DirectX::SimpleMath::Vector3 scale = zAxis * fPercent + origin;
-
-        if (scale.z == 0.0f)
-        {
-            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
-            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - xAxis, gridColor);
-            VertexPositionColor v2(scale + xFarAxis, gridColor);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-}
-
-void Game::SetGameCamera(int aCamera)
-{
-    if (aCamera == 1)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA1;
-    }
-    if (aCamera == 2)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA2;
-    }
-    if (aCamera == 3)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
-    }
-    if (aCamera == 4)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
-    }
-    if (aCamera == 5)
-    {
-        m_currentCamera = GameCamera::GAMECAMERA_CAMERA5;
-    }
-}
-
 // Helper method to clear the back buffers.
 void Game::Clear()
 {
@@ -917,73 +50,6 @@ void Game::Clear()
     // Set the viewport.
     CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(m_outputWidth), static_cast<float>(m_outputHeight));
     m_d3dContext->RSSetViewports(1, &viewport);
-}
-
-// Presents the back buffer contents to the screen.
-void Game::Present()
-{
-    // The first argument instructs DXGI to block until VSync, putting the application
-    // to sleep until the next VSync. This ensures we don't waste any cycles rendering
-    // frames that will never be displayed to the screen.
-    HRESULT hr = m_swapChain->Present(1, 0);
-
-    // If the device was reset we must completely reinitialize the renderer.
-    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
-    {
-        OnDeviceLost();
-    }
-    else
-    {
-        DX::ThrowIfFailed(hr);
-    }
-}
-
-// Message handlers
-void Game::OnActivated()
-{
-    // TODO: Game is becoming active window.
-    m_kbStateTracker.Reset();
-}
-
-void Game::OnDeactivated()
-{
-    // TODO: Game is becoming background window.
-
-}
-
-void Game::OnSuspending()
-{
-    // TODO: Game is being power-suspended (or minimized).
-
-}
-
-void Game::OnResuming()
-{
-    m_timer.ResetElapsedTime();
-    m_kbStateTracker.Reset();
-    // TODO: Game is being power-resumed (or returning from minimize).
-}
-
-void Game::OnWindowSizeChanged(int width, int height)
-{
-    m_outputWidth = std::max(width, 1);
-    m_outputHeight = std::max(height, 1);
-
-    CreateResources();
-
-    // TODO: Game window is being resized.
-    pCamera->OnResize(m_outputWidth, m_outputHeight);
-    m_proj = pCamera->GetProjectionMatrix();
-    m_effect->SetProjection(m_proj);
-    
-}
-
-// Properties
-void Game::GetDefaultSize(int& width, int& height) const noexcept
-{
-    // TODO: Change to desired default window size (note minimum size is 320x200).
-    width = 800;
-    height = 600;
 }
 
 // These are the resources that depend on the device.
@@ -1082,7 +148,7 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", nullptr, m_powerMeterTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", nullptr, m_powerImpactTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarBackswing.png", nullptr, m_powerBackswingTexture.ReleaseAndGetAddressOf()));
-    
+
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarFrame.png", resource.GetAddressOf(), m_powerFrameTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarMeter.png", resource.GetAddressOf(), m_powerMeterTexture.ReleaseAndGetAddressOf()));
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"PowerbarImpact.png", resource.GetAddressOf(), m_powerImpactTexture.ReleaseAndGetAddressOf()));
@@ -1290,7 +356,7 @@ void Game::CreateResources()
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
     // world end
-    
+
     // UI font positions
     m_fontPos.x = backBufferWidth / 2.f;
     m_fontPos.y = backBufferHeight / 2.f;
@@ -1428,7 +494,7 @@ void Game::DrawMenuCharacterSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
-    
+
     float posY0 = 250.0f;
     float ySpacing = 50.f;
 
@@ -1439,7 +505,7 @@ void Game::DrawMenuCharacterSelect()
     DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
     float half = m_characterBackgroundOrigin.x / 2.f;
-    
+
     m_characterBackgroundPos.x = posX0 + half + 25.f;
     m_characterBackgroundPos.y = m_character0Pos.y + 10;
     m_characterBackgroundOrigin = menuObj0Origin;
@@ -1449,7 +515,7 @@ void Game::DrawMenuCharacterSelect()
 
     posY0 += ySpacing;
     int i = 0;
-    
+
     std::string dataString = "Data: ";
     DirectX::SimpleMath::Vector2 dataOrigin = m_bitwiseFont->MeasureString(dataString.c_str()) / 2.f;
     posY0 += ySpacing;
@@ -1465,7 +531,7 @@ void Game::DrawMenuCharacterSelect()
     armLengthPos0.x = posX0;
     armLengthPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), armLengthString0.c_str(), armLengthPos0, Colors::White, 0.f, armLengthOrigin0);
-    
+
     std::string armMassString0 = pGolf->GetCharacterArmMass(i);
     DirectX::SimpleMath::Vector2 armMassOrigin0 = m_bitwiseFont->MeasureString(armMassString0.c_str()) / 2.f;
     DirectX::SimpleMath::Vector2 armMassPos0;
@@ -1537,8 +603,8 @@ void Game::DrawMenuCharacterSelect()
     bioLine3Pos0.x = posX0;
     bioLine3Pos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String0.c_str(), bioLine3Pos0, Colors::White, 0.f, bioLine3Origin0);
-    
- ///////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////
 
     if (m_menuSelect == 0)
     {
@@ -1844,7 +910,7 @@ void Game::DrawMenuCharacterSelect()
     else
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
-    } 
+    }
 }
 
 void Game::DrawMenuEnvironmentSelect()
@@ -1866,7 +932,7 @@ void Game::DrawMenuEnvironmentSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
     std::vector<std::vector<std::string>> environData = pGolf->GetEnvironSelectStrings();
- 
+
     float ySpacing = 50.f;
     float posX0 = backBufferWidth * .20f;
     float posY0 = 250.0f;
@@ -1921,7 +987,7 @@ void Game::DrawMenuEnvironmentSelect()
     windZPos0.y = posY0;
     m_bitwiseFont->DrawString(m_spriteBatch.get(), windZString0.c_str(), windZPos0, Colors::White, 0.f, windZOrigin0);
 
-    posY0 += ySpacing + ySpacing  + ySpacing + ySpacing + ySpacing;
+    posY0 += ySpacing + ySpacing + ySpacing + ySpacing + ySpacing;
     m_environSelectCalmPos.x = posX0;
     m_environSelectCalmPos.y = posY0;
     m_spriteBatch->Draw(m_environSelectCalmTexture.Get(), m_environSelectCalmPos, nullptr, Colors::White, 0.f, m_environSelectCalmOrigin);
@@ -1984,7 +1050,7 @@ void Game::DrawMenuEnvironmentSelect()
     m_spriteBatch->Draw(m_environSelectBreezyTexture.Get(), m_environSelectBreezyPos, nullptr, Colors::White, 0.f, m_environSelectBreezyOrigin);
 
     //////// next environment point
-    
+
     float posX2 = backBufferWidth * .80f;
     float posY2 = 250.0f;
 
@@ -2117,11 +1183,11 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(3.f,3.f), Colors::Green, 0.f, menuOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(1.f, 1.f), Colors::Green, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);  
+    m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
     lineDrawY += menuTitlePosY + lineDrawSpacingY;
     std::string menuObj0String = "Play!";
@@ -2133,12 +1199,12 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
-    
+
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = "Environment Select";
     DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
-    
+
 
     lineDrawY += menuObj0Pos.y;
     std::string menuObj3String = "Quit";
@@ -2226,6 +1292,192 @@ void Game::DrawMenuMain()
     }
 }
 
+void Game::DrawPowerBarUI()
+{
+    if (pPlay->GetMeterPower() >= 0.0)
+    {
+        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+    }
+    else
+    {
+        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+    }
+    if (pPlay->GetIsBackswingSet() == false)
+    {
+        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+    }
+    else
+    {
+        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01));
+    }
+
+    m_spriteBatch->Draw(m_powerBackswingTexture.Get(), m_powerMeterBackswingRect, nullptr, Colors::White);
+    m_spriteBatch->Draw(m_powerMeterTexture.Get(), m_powerMeterBarRect, nullptr, Colors::White);
+
+    m_spriteBatch->Draw(m_powerFrameTexture.Get(), m_powerMeterFrameRect, nullptr, Colors::White);
+    m_spriteBatch->Draw(m_powerImpactTexture.Get(), m_powerMeterImpactRect, nullptr, Colors::White);
+}
+
+// working old version prior to impmenting real time match update
+void Game::DrawProjectile()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    //draw tee box
+    double originX = shotPath[0].x;
+    double originZ = shotPath[0].z;
+    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
+    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
+
+    int stepCount = shotPath.size();
+
+    if (m_projectilePathStep >= stepCount)
+    {
+        m_flightStepTimer.ResetElapsedTime();
+        m_projectilePathStep = 0;
+    }
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
+
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+    for (int i = 0; i < m_projectilePathStep; ++i)
+    {
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+        //VertexPositionColor aVRed(p1, Colors::Red);
+        //VertexPositionColor bVRed(p2, Colors::Red);
+        VertexPositionColor aVRed(p1, Colors::White);
+        VertexPositionColor bVRed(p2, Colors::White);
+        VertexPositionColor aVBlue(p1, Colors::Blue);
+        VertexPositionColor bVBlue(p2, Colors::Blue);
+        VertexPositionColor aVYellow(p1, Colors::Yellow);
+        VertexPositionColor bVYellow(p2, Colors::Yellow);
+        std::vector<int> colorVec = pGolf->GetDrawColorVector();
+        int vecIndex = pGolf->GetDrawColorIndex();
+
+        // this is causing an exception, reenable after debuging
+        /*
+        if (vecIndex > 0)
+        {
+            if (i > colorVec[0])
+            {
+                aV = aVRed;
+                bV = bVRed;
+            }
+        }
+        if (vecIndex > 1)
+        {
+            if (i > colorVec[1])
+            {
+                aV = aVBlue;
+                bV = bVBlue;
+            }
+        }
+        if (vecIndex > 2)
+        {
+            if (i > colorVec[2])
+            {
+                aV = aVYellow;
+                bV = bVYellow;
+            }
+        }
+        */
+        m_batch->DrawLine(aV, bV);
+        prevPos = shotPath[i];
+
+    }
+
+
+    //bool toggleGetNextClub = 0;
+    ///// Landing explosion
+    //if (arcCount == stepCount)
+    //{
+        /*
+        Vector3 f1(prevPos);
+        Vector3 f2(prevX, prevY + 0.2f, prevZ);
+        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
+        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
+        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
+        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
+        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
+        VertexPositionColor ft1(f1, Colors::Red);
+        VertexPositionColor ft2(f2, Colors::Red);
+        VertexPositionColor ft3(f3, Colors::Red);
+        VertexPositionColor ft4(f4, Colors::Red);
+        VertexPositionColor ft5(f5, Colors::Red);
+        VertexPositionColor ft6(f6, Colors::Red);
+        VertexPositionColor ft7(f7, Colors::Red);
+        VertexPositionColor ft8(f8, Colors::Red);
+        VertexPositionColor ft9(f9, Colors::Red);
+        VertexPositionColor ft10(f10, Colors::Red);
+        m_batch->DrawLine(ft1, ft2);
+        m_batch->DrawLine(ft1, ft3);
+        m_batch->DrawLine(ft1, ft4);
+        m_batch->DrawLine(ft1, ft5);
+        m_batch->DrawLine(ft1, ft6);
+        m_batch->DrawLine(ft1, ft7);
+        m_batch->DrawLine(ft1, ft8);
+        m_batch->DrawLine(ft1, ft9);
+        m_batch->DrawLine(ft1, ft10);
+        */
+        //toggleGetNextClub = 1;
+    //}
+    // end landing explosion
+}
+
+void Game::DrawProjectileRealTime()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+    int stepCount = shotPath.size();
+    float shotTimeTotal = shotTimeStep.back();
+
+    if (m_projectilePathStep >= stepCount)
+    {
+        m_projectilePathStep = 0;
+    }
+    m_ballPos = shotPath[m_projectilePathStep];
+    ++m_projectilePathStep;
+
+    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+    for (int i = 0; i < shotPath.size(); ++i)
+    {
+        DirectX::SimpleMath::Vector3 p1(prevPos);
+        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+        VertexPositionColor aV(p1, Colors::White);
+        VertexPositionColor bV(p2, Colors::White);
+
+        if (shotTimeStep[i] < m_projectileTimer)
+        {
+            m_batch->DrawLine(aV, bV);
+        }
+        prevPos = shotPath[i];
+    }
+
+    if (m_projectileTimer > shotTimeStep.back())
+    {
+        m_projectileTimer = 0.0;
+    }
+}
+
 /* Testing different start screen designs
 void Game::DrawStartScreen()
 {
@@ -2238,7 +1490,7 @@ void Game::DrawStartScreen()
 
 
     Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
-    
+
     float space = 35;
 
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
@@ -2583,13 +1835,13 @@ void Game::DrawStartScreen()
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-2.f, -2.f), Colors::LawnGreen, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
     */
-//////////////////////////////////////////////////////////////////////
-    /*
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(11.f, 11.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(10.f, 10.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(9.f, 9.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::Green, 0.f, titleOrigin);
-    */
+    //////////////////////////////////////////////////////////////////////
+        /*
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(11.f, 11.f), Colors::Green, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(10.f, 10.f), Colors::Green, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(9.f, 9.f), Colors::Green, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::Green, 0.f, titleOrigin);
+        */
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
     //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
@@ -2601,23 +1853,23 @@ void Game::DrawStartScreen()
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
-    
-/////////////////////////////////////////////////////////////
-    /*
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
-    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
-    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
-    //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::DarkOliveGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::White, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
-    */
-/////////////////////////////////////////////////////////////////////////////////////////////////////    
+
+    /////////////////////////////////////////////////////////////
+        /*
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(8.f, 8.f), Colors::DarkGreen, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(7.f, 7.f), Colors::DarkGreen, 0.f, titleOrigin);
+        //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::White, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(6.f, 6.f), Colors::ForestGreen, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(5.f, 5.f), Colors::ForestGreen, 0.f, titleOrigin);
+        //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Black, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+        //m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::LawnGreen, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(2.f, 2.f), Colors::DarkOliveGreen, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + Vector2(-1.f, -1.f), Colors::White, 0.f, titleOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+        */
+        /////////////////////////////////////////////////////////////////////////////////////////////////////    
 
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
@@ -2628,6 +1880,186 @@ void Game::DrawShotTimerUI()
     std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
     DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
+}
+
+void Game::DrawSwing()
+{
+    std::vector<DirectX::SimpleMath::Vector3> angles;
+    angles = pGolf->GetRawSwingAngles();
+    DirectX::SimpleMath::Vector3 origin;
+    origin.Zero;
+    origin += m_swingOrigin;
+    DirectX::SimpleMath::Vector3 thetaOrigin;
+    thetaOrigin.Zero;
+    thetaOrigin.y = -.02;
+
+    int swingStepCount = angles.size();
+    if (m_swingPathStep >= swingStepCount)
+    {
+        m_swingPathStep = 0;
+    }
+    ++m_swingPathStep;
+
+    int impactPoint = pGolf->GetImpactStep();
+    DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
+    DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
+    DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
+
+    for (int i = 0; i < m_swingPathStep; ++i)
+    {
+        if (i > impactPoint)
+        {
+            shoulderColor = DirectX::Colors::Gray;
+            handColor = DirectX::Colors::Black;
+            clubHeadColor = DirectX::Colors::Green;
+        }
+        DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+        DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+        theta += m_swingOrigin;
+        beta += theta;
+        VertexPositionColor shoulder(origin, shoulderColor);
+        VertexPositionColor thetaColor(theta, handColor);
+        VertexPositionColor betaColor(beta, clubHeadColor);
+        m_batch->DrawLine(shoulder, thetaColor);
+        m_batch->DrawLine(thetaColor, betaColor);
+    }
+}
+
+void Game::DrawSwingUI()
+{
+    std::vector<std::string> uiString = pPlay->GetDebugData();
+
+    float fontOriginPosX = m_fontPosDebug.x;
+    float fontOriginPosY = m_fontPosDebug.y;
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
+        m_fontPosDebug.y += 35;
+    }
+    m_fontPosDebug.y = fontOriginPosY;
+}
+
+void Game::DrawUI()
+{
+    std::vector<std::string> uiString = pGolf->GetUIstrings();
+
+    std::string output = uiString[0];
+
+    float fontOriginPosX = m_fontPos2.x;
+    float fontOriginPosY = m_fontPos2.y;
+
+    for (int i = 0; i < uiString.size(); ++i)
+    {
+        std::string uiLine = std::string(uiString[i]);
+        //Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str()) / 2.f;
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //m_font->DrawString(m_spriteBatch.get(), output.c_str(), m_fontPos, Colors::White, 0.f, originText);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+    }
+    m_fontPos2.y = fontOriginPosY;
+}
+
+void Game::DrawWorld()
+{
+    // draw world grid
+    DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
+    //DirectX::SimpleMath::Vector3 yAxis(0.f, 2.f, 0.f);
+    DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
+    size_t divisions = 50;
+    size_t extention = 50;
+    DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
+    for (size_t i = 0; i <= divisions + extention; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - zAxis, gridColor);
+            VertexPositionColor v2(scale + zAxis, gridColor);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - zAxis, gridColor);
+            VertexPositionColor v2(scale + zAxis, gridColor);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+    for (size_t i = 0; i <= divisions; i++)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        DirectX::SimpleMath::Vector3 scale = zAxis * fPercent + origin;
+
+        if (scale.z == 0.0f)
+        {
+            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
+            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xAxis, gridColor);
+            VertexPositionColor v2(scale + xFarAxis, gridColor);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+}
+
+// Properties
+void Game::GetDefaultSize(int& width, int& height) const noexcept
+{
+    // TODO: Change to desired default window size (note minimum size is 320x200).
+    width = 800;
+    height = 600;
+}
+
+// Initialize the Direct3D resources required to run.
+void Game::Initialize(HWND window, int width, int height)
+{
+    m_window = window;
+    m_outputWidth = std::max(width, 1);
+    m_outputHeight = std::max(height, 1);
+
+    CreateDevice();
+
+    CreateResources();
+
+    // TODO: Change the timer settings if you want something other than the default variable timestep mode.
+    // e.g. for 60 FPS fixed timestep update logic, call:
+    /*
+    m_timer.SetFixedTimeStep(true);
+    m_timer.SetTargetElapsedSeconds(1.0 / 60);
+    */
+
+    // WLJ add for mouse and keybord interface
+    m_keyboard = std::make_unique<DirectX::Keyboard>();
+    //m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
+
+    m_mouse = std::make_unique<Mouse>();
+    m_mouse->SetWindow(window);
+}
+
+// Message handlers
+void Game::OnActivated()
+{
+    // TODO: Game is becoming active window.
+    m_kbStateTracker.Reset();
+}
+
+void Game::OnDeactivated()
+{
+    // TODO: Game is becoming background window.
+
 }
 
 void Game::OnDeviceLost()
@@ -2677,4 +2109,572 @@ void Game::OnDeviceLost()
 
     CreateDevice();
     CreateResources();
+}
+
+void Game::OnSuspending()
+{
+    // TODO: Game is being power-suspended (or minimized).
+
+}
+
+void Game::OnResuming()
+{
+    m_timer.ResetElapsedTime();
+    m_kbStateTracker.Reset();
+    // TODO: Game is being power-resumed (or returning from minimize).
+}
+
+void Game::OnWindowSizeChanged(int width, int height)
+{
+    m_outputWidth = std::max(width, 1);
+    m_outputHeight = std::max(height, 1);
+
+    CreateResources();
+
+    // TODO: Game window is being resized.
+    pCamera->OnResize(m_outputWidth, m_outputHeight);
+    m_proj = pCamera->GetProjectionMatrix();
+    m_effect->SetProjection(m_proj);
+    
+}
+
+// Presents the back buffer contents to the screen.
+void Game::Present()
+{
+    // The first argument instructs DXGI to block until VSync, putting the application
+    // to sleep until the next VSync. This ensures we don't waste any cycles rendering
+    // frames that will never be displayed to the screen.
+    HRESULT hr = m_swapChain->Present(1, 0);
+
+    // If the device was reset we must completely reinitialize the renderer.
+    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+    {
+        OnDeviceLost();
+    }
+    else
+    {
+        DX::ThrowIfFailed(hr);
+    }
+}
+
+// Draws the scene.
+void Game::Render()
+{
+    // Don't try to render anything before the first Update.
+    if (m_timer.GetFrameCount() == 0)
+    {
+        return;
+    }
+
+    Clear();
+
+    // TODO: Add your rendering code here.
+    // WLJ start
+    m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+    m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
+    //m_d3dContext->RSSetState(m_states->CullNone());
+
+    //world start
+    m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing
+    m_effect->SetWorld(m_world);
+    //world end
+    m_effect->Apply(m_d3dContext.Get());
+
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
+
+    m_batch->Begin();
+
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    {
+        DrawWorld();
+
+        DrawProjectile();
+        DrawSwing();
+        DrawCameraFocus();
+        //DrawProjectileRealTime();
+    }
+
+    m_batch->End();
+
+    m_spriteBatch->Begin();
+
+    //DrawShotTimerUI();
+
+    if (m_currentState == GameState::GAMESTATE_INTROSCREEN)
+    {
+        DrawIntroScreen();
+    }
+    if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
+    {
+        DrawStartScreen();
+    }
+    if (m_currentState == GameState::GAMESTATE_MAINMENU)
+    {
+        DrawMenuMain();
+    }
+    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+    {
+        DrawMenuCharacterSelect();
+    }
+    if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+    {
+        DrawMenuEnvironmentSelect();
+    }
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    {
+        DrawPowerBarUI();
+        //DrawSwingUI();
+        DrawUI();
+    }
+
+    m_spriteBatch->End();
+
+    Present();
+}
+
+void Game::SetGameCamera(int aCamera)
+{
+    if (aCamera == 1)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA1;
+    }
+    if (aCamera == 2)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA2;
+    }
+    if (aCamera == 3)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
+    }
+    if (aCamera == 4)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
+    }
+    if (aCamera == 5)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERA5;
+    }
+}
+
+// Executes the basic game loop.
+void Game::Tick()
+{
+    m_timer.Tick([&]()
+        {
+            Update(m_timer);
+        });
+
+    m_flightStepTimer.Tick([&]()
+        {
+        });
+
+    Render();
+}
+
+// Updates the world.
+void Game::Update(DX::StepTimer const& timer)
+{
+    float elapsedTime = float(timer.GetElapsedSeconds());
+    m_projectileTimer += elapsedTime;
+    // TODO: Add your game logic here.
+
+    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+    {
+        if (m_menuSelect == 0)
+        {
+            m_character0->Update(elapsedTime);
+        }
+        if (m_menuSelect == 1)
+        {
+            m_character1->Update(elapsedTime);
+        }
+        if (m_menuSelect == 2)
+        {
+            m_character2->Update(elapsedTime);
+        }
+    }
+
+    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    {
+        pPlay->Swing();
+
+        if (pPlay->UpdateSwing() == true)
+        {
+            pPlay->ResetSwingUpdateReady();
+            pGolf->UpdateImpact(pPlay->GetImpactData());
+        }
+    }
+    UpdateCamera(timer);
+
+    UpdateInput();
+
+    elapsedTime;
+}
+
+void Game::UpdateCamera(DX::StepTimer const& timer)
+{
+    if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
+    {
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
+    {
+
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
+    {
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(90));
+        m_effect->SetView(m_view);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
+    {
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(6.f, 0.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+        //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
+        m_effect->SetView(m_view);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
+    {
+        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
+        //m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , DirectX::SimpleMath::Vector3::UnitY);
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z), DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
+
+        m_effect->SetView(m_view);
+        m_effect->SetProjection(m_proj);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA5)
+    {
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-6.f, 1.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+        m_effect->SetView(m_view);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA6)
+    {
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
+
+        m_effect->SetView(m_view);
+        m_effect->SetProjection(m_proj);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_TOSWINGVIEW)
+    {
+        //pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
+        DirectX::SimpleMath::Vector3 swingViewPos(-2.f, 0.02f, 1.2f);
+
+        pCamera->TranslateAtSpeed(swingViewPos);
+
+        m_effect->SetView(pCamera->GetViewMatrix());
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_CAMERACLASS)
+    {
+        pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
+        m_effect->SetView(pCamera->GetViewMatrix());
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_PRESWINGVIEW)
+    {
+        DirectX::SimpleMath::Vector3 cameraPos = m_shootOrigin;
+        cameraPos.x -= .9f;
+        cameraPos.y += .5f;
+        DirectX::SimpleMath::Vector3 cameraLookAt = m_shootOrigin;
+        cameraLookAt.y += .3f;
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(cameraPos, cameraLookAt, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
+        m_effect->SetView(m_view);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
+    {
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f), m_shootOrigin, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
+        m_effect->SetView(m_view);
+    }
+    if (m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+    {
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(-2.f, 0.3f, 2.f), m_ballPos, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
+        m_effect->SetView(m_view);
+    }
+}
+
+void Game::UpdateInput()
+{
+    // WLJ add for mouse and keybord interface   
+    auto kb = m_keyboard->GetState();
+    m_kbStateTracker.Update(kb);
+
+    if (kb.Escape)
+    {
+        m_currentState = GameState::GAMESTATE_MAINMENU;
+    }
+    if (m_kbStateTracker.pressed.Enter)
+    {
+        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        {
+            if (m_menuSelect == 0)
+            {
+                pGolf->LoadEnvironment(0);
+            }
+            if (m_menuSelect == 1)
+            {
+                pGolf->LoadEnvironment(1);
+            }
+            if (m_menuSelect == 2)
+            {
+                pGolf->LoadEnvironment(2);
+            }
+            m_menuSelect = 0;
+            m_currentState = GameState::GAMESTATE_STARTSCREEN;
+        }
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            if (m_menuSelect == 0)
+            {
+                pGolf->SetCharacter(0);
+            }
+            if (m_menuSelect == 1)
+            {
+                pGolf->SetCharacter(1);
+            }
+            if (m_menuSelect == 2)
+            {
+                pGolf->SetCharacter(2);
+            }
+            m_menuSelect = 0;
+            //m_currentState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+            m_currentState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+        }
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        {
+            if (m_menuSelect == 0) // GoTo Game State
+            {
+                m_currentState = GameState::GAMESTATE_GAMEPLAY;
+            }
+            if (m_menuSelect == 1) // GoTo Character Select State
+            {
+                m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
+            }
+            if (m_menuSelect == 2) // GoTo Environment Select State
+            {
+                m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
+            }
+            if (m_menuSelect == 3) // Quit Game
+            {
+                ExitGame();
+            }
+            m_menuSelect = 0;
+        }
+        if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
+        {
+            m_currentState = GameState::GAMESTATE_MAINMENU;
+        }
+    }
+    if (m_kbStateTracker.pressed.Up)
+    {
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        {
+            --m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            --m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        {
+            --m_menuSelect;
+        }
+    }
+    if (m_kbStateTracker.pressed.Down)
+    {
+        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        {
+            ++m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            ++m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        {
+            ++m_menuSelect;
+        }
+    }
+    if (m_kbStateTracker.pressed.Left)
+    {
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            --m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        {
+            --m_menuSelect;
+        }
+    }
+    if (m_kbStateTracker.pressed.Right)
+    {
+        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        {
+            ++m_menuSelect;
+        }
+        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        {
+            ++m_menuSelect;
+        }
+    }
+    if (kb.D1)
+    {
+        pGolf->SelectInputClub(1);
+    }
+    if (kb.D2)
+    {
+        pGolf->SelectInputClub(2);
+    }
+    if (kb.D3)
+    {
+        pGolf->SelectInputClub(3);
+    }
+    if (kb.D4)
+    {
+        pGolf->SelectInputClub(4);
+    }
+    if (kb.D5)
+    {
+        pGolf->SelectInputClub(5);
+    }
+    if (kb.D6)
+    {
+        pGolf->SelectInputClub(6);
+    }
+    if (kb.D7)
+    {
+        pGolf->SelectInputClub(7);
+    }
+    if (kb.D8)
+    {
+        pGolf->SelectInputClub(8);
+    }
+    if (kb.D9)
+    {
+        pGolf->SelectInputClub(9);
+    }
+    if (kb.D0)
+    {
+        pGolf->SelectInputClub(10);
+    }
+    if (kb.Z)
+    {
+        pPlay->StartSwing();
+    }
+    if (kb.X)
+    {
+        pPlay->SetPower();
+    }
+    if (kb.C)
+    {
+        pPlay->SetImpact();
+    }
+    if (kb.V)
+    {
+        pPlay->ResetPlayData();
+        ResetPowerMeter();
+    }
+    if (kb.A)
+    {
+        if (pPlay->GetIsGameplayButtonReady() == true)
+        {
+            pPlay->UpdateSwingState();
+            pPlay->SetGameplayButtonReadyFalse();
+        }
+    }
+    if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
+    {
+        pPlay->ResetGamePlayButton();
+    }
+    if (m_kbStateTracker.pressed.Space)
+    {
+        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        {
+            pPlay->UpdateSwingState();
+        }
+    }
+    if (kb.F1)
+    {
+        SetGameCamera(1);
+    }
+    if (kb.F2)
+    {
+        SetGameCamera(2);
+    }
+    if (kb.F3)
+    {
+        SetGameCamera(4);
+    }
+    if (kb.F4)
+    {
+        SetGameCamera(4);
+    }
+    if (kb.NumPad6)
+    {
+        m_cameraRotationX -= m_cameraMovementSpeed;
+    }
+    if (kb.NumPad4)
+    {
+        m_cameraRotationX += m_cameraMovementSpeed;
+    }
+    if (kb.NumPad2)
+    {
+        m_cameraRotationY -= m_cameraMovementSpeed;
+    }
+    if (kb.NumPad8)
+    {
+        m_cameraRotationY += m_cameraMovementSpeed;
+    }
+    if (kb.NumPad7)
+    {
+        m_cameraTarget.x += m_cameraMovementSpeed;
+    }
+    if (kb.NumPad9)
+    {
+        m_cameraTarget.x -= m_cameraMovementSpeed;
+    }
+    if (kb.NumPad1)
+    {
+        m_cameraTarget.z += m_cameraMovementSpeed;
+    }
+    if (kb.NumPad3)
+    {
+        m_cameraTarget.z -= m_cameraMovementSpeed;
+    }
+    if (kb.OemMinus)
+    {
+        m_cameraZoom -= m_cameraMovementSpeed + .3f;
+    }
+    if (kb.OemPlus)
+    {
+        m_cameraZoom += m_cameraMovementSpeed + .3f;
+    }
+    if (m_kbStateTracker.pressed.U)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_CAMERACLASS;
+    }
+    if (m_kbStateTracker.pressed.I)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    }
+    if (m_kbStateTracker.pressed.O)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+    }
+    if (m_kbStateTracker.pressed.P)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
+    }
+    if (kb.R)
+    {
+        pCamera->RotateCounterClockWise();
+    }
+    if (m_kbStateTracker.pressed.Y)
+    {
+        m_currentCamera = GameCamera::GAMECAMERA_TOSWINGVIEW;
+    }
+
+    auto mouse = m_mouse->GetState();
 }
