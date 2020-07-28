@@ -453,10 +453,10 @@ void Game::DrawIntroScreen()
 {
     float startDelay = 3.f;
     float logoDisplayGap = 2.f;
-    float logoDisplayDuration = 6.f;
+    float logoDisplayDuration = 8.f;
     //float timeStamp = m_timer.GetTotalSeconds() - startDelay;
     float timeStamp = m_timer.GetTotalSeconds();
-    float fadeDuration = 2.f;
+    float fadeDuration = 3.f;
 
     float fadeInStart1 = startDelay;
     float fadeInStart2 = startDelay + logoDisplayDuration + logoDisplayGap;
@@ -530,42 +530,55 @@ void Game::DrawIntroScreen()
         if (timeStamp < fadeInEnd2)  // fade in
         {
             //float colorIntensity = (timeStamp - logoDisplayDuration) / fadeDuration;
-            float colorIntensity = (timeStamp - startDelay - logoDisplayDuration - logoDisplayGap) / fadeDuration;
+            //float colorIntensity = (timeStamp - startDelay - logoDisplayDuration - logoDisplayGap) / fadeDuration;
+
+            //float colorIntensity = (fadeInEnd2 - timeStamp) / (fadeDuration);
+            float colorIntensity = (timeStamp - fadeInStart2) / (fadeDuration);
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
             fadeColor.f[2] = colorIntensity;
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
         }
+        /*
         //else if (timeStamp < fadeOutStart2)// display at full intesity
-
-        //else if (timeStamp > fadeOutStart2) // fade out
-        else if (timeStamp < fadeOutEnd2) // fade out
- 
+        else if (timeStamp < fadeOutStart2)
+        {
+            m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
+            m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
+        }
+        */
+        else if (timeStamp > fadeOutStart2) // fade out
+        //else if (timeStamp < fadeOutEnd2) // fade out
         {
             //float startFade = startDelay + logoDisplayGap + logoDisplayDuration + logoDisplayGap - fadeDuration;
             float startFade = logoDisplayGap + logoDisplayDuration + fadeDuration;
+            startFade = logoDisplayGap + logoDisplayDuration + logoDisplayGap + fadeDuration;
             //float colorIntensity = (timeStamp - startFade) / (logoDisplayDuration + logoDisplayDuration - startFade);
             //float colorIntensity = (timeStamp - startFade - startDelay - logoDisplayGap) / (logoDisplayDuration + logoDisplayDuration - startFade);
             //float colorIntensity = (timeStamp - startFade) / (logoDisplayDuration + logoDisplayDuration - startFade) - 4.f;
 
             //float colorIntensity = (timeStamp - startFade - startDelay - logoDisplayGap) / (logoDisplayDuration + logoDisplayDuration - startFade);
             //float colorIntensity = (timeStamp - startFade - startDelay - logoDisplayGap) / (logoDisplayDuration - startFade);
-            float colorIntensity = (timeStamp - startFade - startDelay) / (logoDisplayDuration - startFade);
-            colorIntensity = 1.f + colorIntensity;
+            //float colorIntensity = (timeStamp - startFade - startDelay) / (logoDisplayDuration - startFade);
+            //float colorIntensity = (fadeOutEnd2 - timeStamp) / (fadeOutEnd2 - fadeDuration);
+            float colorIntensity = (fadeOutEnd2 - timeStamp) / (fadeDuration);
+            //colorIntensity = 1.f - colorIntensity;
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
             fadeColor.f[2] = colorIntensity;
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
-        }
+        }       
         else
         {
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
         }
+        
     }
     //else if (timeStamp > logoDisplayDuration + logoDisplayDuration + startDelay + logoDisplayGap)
+    //if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
 
