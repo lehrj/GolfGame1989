@@ -92,5 +92,5 @@ private:
     DirectX::SimpleMath::Vector3                m_landingCordinates;
     double                                      m_maxHeight;
     DirectX::SimpleMath::Vector3                m_shotOrigin;
-    int                                         m_bounceCount = 0.0;
+    int                                         m_bounceCount = 0;
 };

@@ -248,22 +248,22 @@ void GolfBall::LandProjectileOld()
 
     float phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
     //?c = 15.4?(vi / (impact speed))(? / (impact angle))
-    float thetaC = 15.4;
+    float thetaC = 15.4f;
     
     float vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
     float absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
 
     float e;
-    if (absViyPrime <= 20.0)
+    if (absViyPrime <= 20.0f)
     {
-        e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
+        e = 0.510f - 0.0375f * absViyPrime + 0.000903f * absViyPrime * absViyPrime;
     }
     else
     {
-        e = 0.120;
+        e = 0.120f;
     }
-    float mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
-    float muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
+    float mu = 0.43f; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
+    float muC = (2.f * (vixPrime + (m_ball.radius * m_ball.omega))) / (7.f * (1.0f + e) * absViyPrime);
 
     float vrxPrime, vryPrime, omegaR;
 
@@ -271,13 +271,13 @@ void GolfBall::LandProjectileOld()
     // If mu is great than muC the ball will roll out of the collision
     if (mu < muC) 
     {
-        vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
+        vrxPrime = vixPrime - mu * absViyPrime * (1.0f + e);
         vryPrime = e * absViyPrime;
-        omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        omegaR = m_ball.omega - ((5.0f * mu) / (2.0f * m_ball.radius)) * absViyPrime * (1.0f + e);
     }
     else
     {
-        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * (m_ball.radius * m_ball.omega);
+        vrxPrime = (5.0f / 7.0f) * vixPrime - (2.0f / 7.0f) * (m_ball.radius * m_ball.omega);
         vryPrime = e * absViyPrime;
         omegaR = -vrxPrime / m_ball.radius;
     }
@@ -288,7 +288,7 @@ void GolfBall::LandProjectileOld()
 
     m_ball.q.velocity.x = vrx;
     m_ball.q.velocity.y = vry;
-    m_ball.q.velocity.z = 0.0;
+    m_ball.q.velocity.z = 0.0f;
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
     m_ball.omega = omegaR;
@@ -539,7 +539,7 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
 
     DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
-    omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
+    omegaBall = ((5.0f * absVhP) / (7.0f * m_ball.radius)) * crossVheadvFace;
 
     float absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
         + (omegaBall.y * omegaBall.y)
@@ -548,10 +548,10 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
         + (vBall.y * vBall.y)
         + (vBall.z * vBall.z));
 
-    double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
+    double cL = -0.05f + sqrt(0.0025f + 0.36f * ((m_ball.radius * absOmegaBall) / absvBall));
     DirectX::SimpleMath::Vector3 fMangus;
     fMangus.Zero;
-    fMangus = (.5 * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
+    fMangus = (.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
 
     DirectX::SimpleMath::Vector3 normfManus = fMangus;
     DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;

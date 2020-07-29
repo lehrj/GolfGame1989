@@ -13,6 +13,7 @@ void GolfCharacter::LoadCharacterData()
 
     int i = 0;
     
+    /*
     m_characters[i].name = "Grace Jones";
     m_characters[i].bioLine0 = "If you saw Conan then you ";
     m_characters[i].bioLine1 = "just know she can swing the ";
@@ -24,7 +25,33 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].armMassMoI = 1.15;
     m_characters[i].clubLengthModifier = 1.0;
     ++i;
-    
+    */
+    /*
+    m_characters[i].name = "Bo Jackson";
+    m_characters[i].bioLine0 = "Bo knows golf";
+    m_characters[i].bioLine1 = "";
+    m_characters[i].bioLine2 = "";
+    m_characters[i].bioLine3 = "";
+    m_characters[i].armBalancePoint = 0.5;
+    m_characters[i].armLength = 0.62;
+    m_characters[i].armMass = 7.3;
+    m_characters[i].armMassMoI = 1.15;
+    m_characters[i].clubLengthModifier = 1.0;
+    ++i;
+    */
+
+    m_characters[i].name = "Mike Tyson";
+    m_characters[i].bioLine0 = "From golf balls to";
+    m_characters[i].bioLine1 = "Little Mack, Mike can";
+    m_characters[i].bioLine2 = "punch them out. So";
+    m_characters[i].bioLine3 = "dont steal his tiger";
+    m_characters[i].armBalancePoint = 0.5;
+    m_characters[i].armLength = 0.62;
+    m_characters[i].armMass = 7.3;
+    m_characters[i].armMassMoI = 1.15;
+    m_characters[i].clubLengthModifier = 1.0;
+    ++i;
+
     m_characters[i].name = "Larry Leisureson";
     m_characters[i].bioLine0 = "Although he is a big fan of";
     m_characters[i].bioLine1 = "leisure suits and flirting";

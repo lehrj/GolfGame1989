@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -360,7 +360,7 @@ void Game::CreateResources()
     // UI font positions
     m_fontPos.x = backBufferWidth / 2.f;
     m_fontPos.y = backBufferHeight / 2.f;
-    m_fontPos2.x = backBufferWidth - 5;
+    m_fontPos2.x = backBufferWidth - 5.f;
     m_fontPos2.y = 35;
     m_fontPosDebug.x = 480;
     m_fontPosDebug.y = 35;
@@ -370,10 +370,10 @@ void Game::CreateResources()
     m_bitwiseFontPos.y = backBufferHeight / 2.f;
 
     // Start swing power bar
-    m_powerMeterFrameRect.left = (backBufferWidth / 2) - m_powerBarFrameOrigin.x;
-    m_powerMeterFrameRect.right = (backBufferWidth / 2) + m_powerBarFrameOrigin.x;
-    m_powerMeterFrameRect.top = (backBufferHeight / 1.08) - m_powerBarFrameOrigin.y;
-    m_powerMeterFrameRect.bottom = (backBufferHeight / 1.08) + m_powerBarFrameOrigin.y;
+    m_powerMeterFrameRect.left = (backBufferWidth / 2.f) - m_powerBarFrameOrigin.x;
+    m_powerMeterFrameRect.right = (backBufferWidth / 2.f) + m_powerBarFrameOrigin.x;
+    m_powerMeterFrameRect.top = (backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y;
+    m_powerMeterFrameRect.bottom = (backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y;
 
     m_powerMeterSize = m_powerMeterFrameRect.right - m_powerMeterFrameRect.left;
 
@@ -395,7 +395,7 @@ void Game::CreateResources()
     m_powerMeterBackswingRect.left = m_powerMeterBarRect.left;
     m_powerMeterBackswingRect.right = m_powerMeterBarRect.right;
 
-    m_powerMeterBarScale = 1.0 - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
+    m_powerMeterBarScale = 1.0f - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
     // Character textures
     m_characterPos.x = 200.f;
@@ -550,10 +550,10 @@ void Game::DrawMenuCharacterSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawSpacingY = 15;
+    float lineDrawSpacingY = 15.f;
     std::string menuTitle = "Character Select";
     float menuTitlePosX = m_fontMenuPos.x;
-    float menuTitlePosY = m_fontMenuPos.y + 25;
+    float menuTitlePosY = m_fontMenuPos.y + 25.f;
     DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, menuOrigin);
@@ -691,7 +691,7 @@ void Game::DrawMenuCharacterSelect()
     m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos, nullptr, Colors::White, 0.f, m_characterBackgroundOrigin);
     m_character0->Draw(m_spriteBatch.get(), m_character0Pos);
 
-    float posX1 = backBufferWidth / 2.0;
+    float posX1 = backBufferWidth / 2.0f;
     float posY1 = 250.0f;
     std::string menuObj1String = pGolf->GetCharacterName(1);
 
@@ -986,7 +986,7 @@ void Game::DrawMenuEnvironmentSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawSpacingY = 15;
+    float lineDrawSpacingY = 15.f;
     std::string menuTitle = "Environment Select";
     float menuTitlePosX = m_fontMenuPos.x;
     float menuTitlePosY = m_fontMenuPos.y + 25;;
@@ -1062,7 +1062,7 @@ void Game::DrawMenuEnvironmentSelect()
 
     //////// next environment point
 
-    float posX1 = backBufferWidth / 2.0;
+    float posX1 = backBufferWidth / 2.0f;
     float posY1 = 250.0f;
 
     i = 0;
@@ -1364,19 +1364,19 @@ void Game::DrawPowerBarUI()
 {
     if (pPlay->GetMeterPower() >= 0.0)
     {
-        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
     }
     else
     {
-        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
     }
     if (pPlay->GetIsBackswingSet() == false)
     {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01));
+        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
     }
     else
     {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01));
+        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01f));
     }
 
     m_spriteBatch->Draw(m_powerBackswingTexture.Get(), m_powerMeterBackswingRect, nullptr, Colors::White);
@@ -1390,24 +1390,7 @@ void Game::DrawPowerBarUI()
 void Game::DrawProjectile()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    //draw tee box
-    double originX = shotPath[0].x;
-    double originZ = shotPath[0].z;
-    DirectX::SimpleMath::Vector3 t1(originX - .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t2(originX + .05, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t3(originX - 0.05, 0.0f, 0.1f);
-    DirectX::SimpleMath::Vector3 t4(originX + .05, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-    // end tee box draw
-
+    
     int stepCount = shotPath.size();
 
     if (m_projectilePathStep >= stepCount)
@@ -1468,46 +1451,6 @@ void Game::DrawProjectile()
         prevPos = shotPath[i];
 
     }
-
-
-    //bool toggleGetNextClub = 0;
-    ///// Landing explosion
-    //if (arcCount == stepCount)
-    //{
-        /*
-        Vector3 f1(prevPos);
-        Vector3 f2(prevX, prevY + 0.2f, prevZ);
-        Vector3 f3(prevX + 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f4(prevX - 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f5(prevX + 0.1f, prevY + 0.1f, prevZ - 0.1f);
-        Vector3 f6(prevX - 0.1f, prevY + 0.1f, prevZ + 0.1f);
-        Vector3 f7(prevX + 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        Vector3 f8(prevX - 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f9(prevX + 0.01f, prevY + 0.1f, prevZ - 0.01f);
-        Vector3 f10(prevX - 0.01f, prevY + 0.1f, prevZ + 0.01f);
-        VertexPositionColor ft1(f1, Colors::Red);
-        VertexPositionColor ft2(f2, Colors::Red);
-        VertexPositionColor ft3(f3, Colors::Red);
-        VertexPositionColor ft4(f4, Colors::Red);
-        VertexPositionColor ft5(f5, Colors::Red);
-        VertexPositionColor ft6(f6, Colors::Red);
-        VertexPositionColor ft7(f7, Colors::Red);
-        VertexPositionColor ft8(f8, Colors::Red);
-        VertexPositionColor ft9(f9, Colors::Red);
-        VertexPositionColor ft10(f10, Colors::Red);
-        m_batch->DrawLine(ft1, ft2);
-        m_batch->DrawLine(ft1, ft3);
-        m_batch->DrawLine(ft1, ft4);
-        m_batch->DrawLine(ft1, ft5);
-        m_batch->DrawLine(ft1, ft6);
-        m_batch->DrawLine(ft1, ft7);
-        m_batch->DrawLine(ft1, ft8);
-        m_batch->DrawLine(ft1, ft9);
-        m_batch->DrawLine(ft1, ft10);
-        */
-        //toggleGetNextClub = 1;
-    //}
-    // end landing explosion
 }
 
 void Game::DrawProjectileRealTime()
@@ -2082,6 +2025,25 @@ void Game::DrawWorld()
             m_batch->DrawLine(v1, v2);
         }
     }
+
+    //draw tee box
+    //double originX = shotPath[0].x;
+    double originX = m_shootOrigin.x;
+    //double originZ = shotPath[0].z;
+    double originZ = m_shootOrigin.z;
+    DirectX::SimpleMath::Vector3 t1(originX - .05f, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t2(originX + .05f, 0.0f, -0.1f);
+    DirectX::SimpleMath::Vector3 t3(originX - 0.05f, 0.0f, 0.1f);
+    DirectX::SimpleMath::Vector3 t4(originX + .05f, 0.0f, 0.1f);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
 }
 
 // Properties
