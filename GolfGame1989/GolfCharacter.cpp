@@ -40,7 +40,7 @@ void GolfCharacter::LoadCharacterData()
     ++i;
     */
 
-    m_characters[i].name = "Mike Tyson";
+    m_characters[i].name = "Mr Punchout";
     m_characters[i].bioLine0 = "From golf balls to";
     m_characters[i].bioLine1 = "Little Mack, Mike can";
     m_characters[i].bioLine2 = "punch them out. So";
