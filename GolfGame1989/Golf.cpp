@@ -18,10 +18,11 @@ Golf::Golf()
     pBall->SetDefaultBallValues(pEnvironment);
     pPlay = new GolfPlay();
     SetCharacter(0);
-    BuildVector();
+    pSwing->ZeroDataForUI();
+    pBall->ZeroDataForUI();
+    //BuildVector();
     BuildUIstrings();
     BuildEnvironSelectStrings();
-
 }
 
 Golf::~Golf()

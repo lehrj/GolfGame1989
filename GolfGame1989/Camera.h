@@ -21,7 +21,7 @@ class Camera
 {
 public:
     Camera();
-    Camera(float aWidth, float aHeight);
+    Camera(int aWidth, int aHeight);
 
     //Camera(DirectX::XMFLOAT3 aHomePos = { 0.0f,0.0f,0.0f }, float aHomePitch = 0.0f, float aHomeYaw = 0.0f) noexcept; //Chili
     //Camera(DirectX::XMFLOAT3 aHomePos, DirectX::XMFLOAT3 
@@ -79,7 +79,7 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 0.0000005f;
+    const float                     m_posTravelSpeed = 0.0005f;
     const float                     m_rotationTravelSpeed = 0.004f;
 
     bool                            m_isCameraAtDestination;

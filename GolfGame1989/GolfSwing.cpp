@@ -503,3 +503,10 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     UpdateGolfSwingValues();
     //CalculateLaunchVector2();
 }
+
+void GolfSwing::ZeroDataForUI()
+{
+    m_backSwingPercentage = 0.0;
+    m_launchAngle = 0.0;
+    m_launchVelocity = 0.0;
+}

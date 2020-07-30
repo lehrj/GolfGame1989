@@ -11,9 +11,9 @@ Camera::Camera()
 	Reset();
 }
 
-Camera::Camera(float aWidth, float aHeight)
+Camera::Camera(int aWidth, int aHeight)
 {
-	m_clientWidth = aWidth;
+	m_clientWidth = (int)aWidth;
 	m_clientHeight = aHeight;
 	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 1.0f, 0.0f);
 	m_target.Zero;
@@ -43,7 +43,7 @@ Camera::Camera(DirectX::XMFLOAT3 aHomePos, float aHomePitch, float aHomeYaw) noe
 
 void Camera::InitializeOrthoganalMatrix()
 {
-	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic(m_clientWidth, m_clientHeight, m_nearPlane, m_farPlane);
+	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic((float)m_clientWidth, (float)m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::InitializeProjectionMatrix()
@@ -202,12 +202,12 @@ void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
 
 void Camera::UpdateOrthoganalMatrix()
 {
-	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic(m_clientWidth, m_clientHeight, m_nearPlane, m_farPlane);
+	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic((float)m_clientWidth, (float)m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::UpdateProjectionMatrix()
 {
-	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, m_clientWidth / m_clientHeight, m_nearPlane, m_farPlane);
+	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, (float)m_clientWidth / (float)m_clientHeight, m_nearPlane, m_farPlane);
 }
 
 void Camera::UpdateUp()

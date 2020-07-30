@@ -59,6 +59,8 @@ public:
     void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
 
+    void ZeroDataForUI();
+
 private:
     void LandProjectile();
     void LandProjectileOld();

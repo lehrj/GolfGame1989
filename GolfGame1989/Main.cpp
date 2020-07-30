@@ -15,6 +15,8 @@ using namespace std;
 #endif
 
 #pragma warning(disable : 4061)
+#pragma warning(disable : 4189)
+#pragma warning(disable : 4244)
 
 namespace
 {

@@ -1391,65 +1391,67 @@ void Game::DrawProjectile()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
     
-    int stepCount = shotPath.size();
-
-    if (m_projectilePathStep >= stepCount)
+    if (shotPath.size() > 2)
     {
-        m_flightStepTimer.ResetElapsedTime();
-        m_projectilePathStep = 0;
-    }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
+        int stepCount = (int)shotPath.size();
 
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < m_projectilePathStep; ++i)
-    {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-        //VertexPositionColor aVRed(p1, Colors::Red);
-        //VertexPositionColor bVRed(p2, Colors::Red);
-        VertexPositionColor aVRed(p1, Colors::White);
-        VertexPositionColor bVRed(p2, Colors::White);
-        VertexPositionColor aVBlue(p1, Colors::Blue);
-        VertexPositionColor bVBlue(p2, Colors::Blue);
-        VertexPositionColor aVYellow(p1, Colors::Yellow);
-        VertexPositionColor bVYellow(p2, Colors::Yellow);
-        std::vector<int> colorVec = pGolf->GetDrawColorVector();
-        int vecIndex = pGolf->GetDrawColorIndex();
-
-        // this is causing an exception, reenable after debuging
-        /*
-        if (vecIndex > 0)
+        if (m_projectilePathStep >= stepCount)
         {
-            if (i > colorVec[0])
-            {
-                aV = aVRed;
-                bV = bVRed;
-            }
+            m_flightStepTimer.ResetElapsedTime();
+            m_projectilePathStep = 0;
         }
-        if (vecIndex > 1)
-        {
-            if (i > colorVec[1])
-            {
-                aV = aVBlue;
-                bV = bVBlue;
-            }
-        }
-        if (vecIndex > 2)
-        {
-            if (i > colorVec[2])
-            {
-                aV = aVYellow;
-                bV = bVYellow;
-            }
-        }
-        */
-        m_batch->DrawLine(aV, bV);
-        prevPos = shotPath[i];
+        m_ballPos = shotPath[m_projectilePathStep];
+        ++m_projectilePathStep;
 
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        for (int i = 0; i < m_projectilePathStep; ++i)
+        {
+            DirectX::SimpleMath::Vector3 p1(prevPos);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+
+            VertexPositionColor aV(p1, Colors::White);
+            VertexPositionColor bV(p2, Colors::White);
+            //VertexPositionColor aVRed(p1, Colors::Red);
+            //VertexPositionColor bVRed(p2, Colors::Red);
+            VertexPositionColor aVRed(p1, Colors::White);
+            VertexPositionColor bVRed(p2, Colors::White);
+            VertexPositionColor aVBlue(p1, Colors::Blue);
+            VertexPositionColor bVBlue(p2, Colors::Blue);
+            VertexPositionColor aVYellow(p1, Colors::Yellow);
+            VertexPositionColor bVYellow(p2, Colors::Yellow);
+            std::vector<int> colorVec = pGolf->GetDrawColorVector();
+            int vecIndex = pGolf->GetDrawColorIndex();
+
+            // this is causing an exception, reenable after debuging
+            /*
+            if (vecIndex > 0)
+            {
+                if (i > colorVec[0])
+                {
+                    aV = aVRed;
+                    bV = bVRed;
+                }
+            }
+            if (vecIndex > 1)
+            {
+                if (i > colorVec[1])
+                {
+                    aV = aVBlue;
+                    bV = bVBlue;
+                }
+            }
+            if (vecIndex > 2)
+            {
+                if (i > colorVec[2])
+                {
+                    aV = aVYellow;
+                    bV = bVYellow;
+                }
+            }
+            */
+            m_batch->DrawLine(aV, bV);
+            prevPos = shotPath[i];
+        }
     }
 }
 
@@ -1458,7 +1460,7 @@ void Game::DrawProjectileRealTime()
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
 
     std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-    int stepCount = shotPath.size();
+    int stepCount = (int)shotPath.size();
     float shotTimeTotal = shotTimeStep.back();
 
     if (m_projectilePathStep >= stepCount)
@@ -1895,44 +1897,47 @@ void Game::DrawShotTimerUI()
 
 void Game::DrawSwing()
 {
-    std::vector<DirectX::SimpleMath::Vector3> angles;
-    angles = pGolf->GetRawSwingAngles();
-    DirectX::SimpleMath::Vector3 origin;
-    origin.Zero;
-    origin += m_swingOrigin;
-    DirectX::SimpleMath::Vector3 thetaOrigin;
-    thetaOrigin.Zero;
-    thetaOrigin.y = -.02;
+    std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
 
-    int swingStepCount = angles.size();
-    if (m_swingPathStep >= swingStepCount)
+    if (angles.size() > 2)
     {
-        m_swingPathStep = 0;
-    }
-    ++m_swingPathStep;
+        DirectX::SimpleMath::Vector3 origin;
+        origin.Zero;
+        origin += m_swingOrigin;
+        DirectX::SimpleMath::Vector3 thetaOrigin;
+        thetaOrigin.Zero;
+        thetaOrigin.y = -.02;
 
-    int impactPoint = pGolf->GetImpactStep();
-    DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-    DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-    DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
-    for (int i = 0; i < m_swingPathStep; ++i)
-    {
-        if (i > impactPoint)
+        int swingStepCount = (int)angles.size();
+        if (m_swingPathStep >= swingStepCount)
         {
-            shoulderColor = DirectX::Colors::Gray;
-            handColor = DirectX::Colors::Black;
-            clubHeadColor = DirectX::Colors::Green;
+            m_swingPathStep = 0;
         }
-        DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-        DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-        theta += m_swingOrigin;
-        beta += theta;
-        VertexPositionColor shoulder(origin, shoulderColor);
-        VertexPositionColor thetaColor(theta, handColor);
-        VertexPositionColor betaColor(beta, clubHeadColor);
-        m_batch->DrawLine(shoulder, thetaColor);
-        m_batch->DrawLine(thetaColor, betaColor);
+        ++m_swingPathStep;
+
+        int impactPoint = pGolf->GetImpactStep();
+        DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
+        DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
+        DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
+
+        for (int i = 0; i < m_swingPathStep; ++i)
+        {
+            if (i > impactPoint)
+            {
+                shoulderColor = DirectX::Colors::Gray;
+                handColor = DirectX::Colors::Black;
+                clubHeadColor = DirectX::Colors::Green;
+            }
+            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+            theta += m_swingOrigin;
+            beta += theta;
+            VertexPositionColor shoulder(origin, shoulderColor);
+            VertexPositionColor thetaColor(theta, handColor);
+            VertexPositionColor betaColor(beta, clubHeadColor);
+            m_batch->DrawLine(shoulder, thetaColor);
+            m_batch->DrawLine(thetaColor, betaColor);
+        }
     }
 }
 
@@ -2028,9 +2033,9 @@ void Game::DrawWorld()
 
     //draw tee box
     //double originX = shotPath[0].x;
-    double originX = m_shootOrigin.x;
+    float originX = m_shootOrigin.x;
     //double originZ = shotPath[0].z;
-    double originZ = m_shootOrigin.z;
+    float originZ = m_shootOrigin.z;
     DirectX::SimpleMath::Vector3 t1(originX - .05f, 0.0f, -0.1f);
     DirectX::SimpleMath::Vector3 t2(originX + .05f, 0.0f, -0.1f);
     DirectX::SimpleMath::Vector3 t3(originX - 0.05f, 0.0f, 0.1f);
