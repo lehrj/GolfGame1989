@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -34,6 +34,13 @@ Game::Game() noexcept :
 
 Game::~Game()
 {
+    if (m_audioEngine)
+    {
+        m_audioEngine->Suspend();
+    }
+    m_audioStream.reset();
+    m_musicLoop.reset();
+
     delete pGolf;
     delete pPlay;
     delete pCamera;
@@ -1391,7 +1398,7 @@ void Game::DrawProjectile()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
     
-    if (shotPath.size() > 2)
+    if (shotPath.size() > 1)
     {
         int stepCount = (int)shotPath.size();
 
@@ -1899,7 +1906,7 @@ void Game::DrawSwing()
 {
     std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
 
-    if (angles.size() > 2)
+    if (angles.size() > 1)
     {
         DirectX::SimpleMath::Vector3 origin;
         origin.Zero;
@@ -2079,10 +2086,41 @@ void Game::Initialize(HWND window, int width, int height)
 
     // WLJ add for mouse and keybord interface
     m_keyboard = std::make_unique<DirectX::Keyboard>();
-    //m_kbStateTracker = std::make_unique< Keyboard::KeyboardStateTracker>();
 
     m_mouse = std::make_unique<Mouse>();
     m_mouse->SetWindow(window);
+
+    // Audio
+    AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
+    #ifdef DEBUG  //#ifdef _DEBUG
+    eflags |= AudioEngine_Debug;
+    #endif
+    m_audioEngine = std::make_unique<AudioEngine>(eflags);
+    m_retryAudio = false;
+    //m_coinAudio = std::make_unique<SoundEffect>(m_audioEngine.get(), L"Music01.wav");
+    //m_music = std::make_unique<SoundEffect>(m_audioEngine.get(), L"Music01.wav");
+    //m_musicLoop = m_music->CreateInstance();
+    //m_musicLoop->Play(true);
+    //m_musicVolume = 1.f;
+    //m_musicSlide = -0.1f;
+
+    /*
+    m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
+    m_musicLoop = m_audioBank->CreateInstance("Music01");
+    if (m_musicLoop)
+    {
+        m_musicLoop->Play(true);
+    }
+    */
+    m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
+    //m_audioStream = m_audioBank->CreateStreamInstance(0u);
+    m_audioStream = m_audioBank->CreateStreamInstance(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
+
+    if (m_audioStream)
+    {
+        m_audioStream->SetVolume(0.5f);
+        m_audioStream->Play(true);
+    }
 }
 
 // Message handlers
@@ -2150,14 +2188,15 @@ void Game::OnDeviceLost()
 void Game::OnSuspending()
 {
     // TODO: Game is being power-suspended (or minimized).
-
+    m_audioEngine->Suspend();
 }
 
 void Game::OnResuming()
 {
+    // TODO: Game is being power-resumed (or returning from minimize).
     m_timer.ResetElapsedTime();
     m_kbStateTracker.Reset();
-    // TODO: Game is being power-resumed (or returning from minimize).
+    m_audioEngine->Resume();
 }
 
 void Game::OnWindowSizeChanged(int width, int height)
@@ -2340,10 +2379,34 @@ void Game::Update(DX::StepTimer const& timer)
             pGolf->UpdateImpact(pPlay->GetImpactData());
         }
     }
+
+    // audio
+    if (m_retryAudio)
+    {
+        m_retryAudio = false;
+        if (m_audioEngine->Reset())
+        {
+            // ToDo: restart any looped sounds here
+            if (m_musicLoop)
+            {
+                m_musicLoop->Play(true);
+            }
+            if (m_audioStream)
+            {
+                m_audioStream->Play(true);
+            }
+        }
+    }
+    else if (!m_audioEngine->Update())
+    {
+        if (m_audioEngine->IsCriticalError())
+        {
+            m_retryAudio = true;
+        }
+    }
+
     UpdateCamera(timer);
-
     UpdateInput();
-
     elapsedTime;
 }
 

@@ -10,7 +10,7 @@
 #include "SpriteSheet.h"
 #include "WICTextureLoader.h"
 #include "Camera.h"
-
+#include "sounds.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -43,6 +43,9 @@ public:
     // Properties
     void GetDefaultSize(int& width, int& height) const noexcept;
 
+    // Audio
+    void OnNewAudioDevice() { m_retryAudio = true; };
+
 private:
     void Clear();
     void CreateDevice();
@@ -50,7 +53,6 @@ private:
 
     void DrawCameraFocus();
     void DrawIntroScreen();
-    void DrawIntroScreen2();
     void DrawMenuCharacterSelect();
     void DrawMenuEnvironmentSelect();
     void DrawMenuMain();
@@ -244,45 +246,16 @@ private:
     DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;
     DirectX::SimpleMath::Vector3                m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
     DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
+
+    // audio 
+    std::unique_ptr<DirectX::AudioEngine> m_audioEngine;
+    bool m_retryAudio;
+    std::unique_ptr<DirectX::SoundEffect> m_coinAudio;
+    std::unique_ptr<DirectX::SoundEffect> m_music;
+    std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
+    //float m_musicVolume;
+    //float m_musicSlide;
+
+    std::unique_ptr<DirectX::WaveBank> m_audioBank;
+    std::unique_ptr<DirectX::SoundStreamInstance> m_audioStream;
 };
-
-
-
-/*
-void Game::DrawProjectileRealTime()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-    int stepCount = shotPath.size();
-    float shotTimeTotal = shotTimeStep.back();
-
-    if (m_projectilePathStep >= stepCount)
-    {
-        m_projectilePathStep = 0;
-    }
-    m_ballPos = shotPath[m_projectilePathStep];
-    ++m_projectilePathStep;
-
-    DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-    for (int i = 0; i < shotPath.size(); ++i)
-    {
-        DirectX::SimpleMath::Vector3 p1(prevPos);
-        DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-        VertexPositionColor aV(p1, Colors::White);
-        VertexPositionColor bV(p2, Colors::White);
-
-        if (shotTimeStep[i] < m_projectileTimer)
-        {
-            m_batch->DrawLine(aV, bV);
-        }
-        prevPos = shotPath[i];
-    }
-
-    if (m_projectileTimer > shotTimeStep.back())
-    {
-        m_projectileTimer = 0.0;
-    }
-}
-
-*/

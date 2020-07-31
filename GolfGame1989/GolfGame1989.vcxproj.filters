@@ -22,6 +22,7 @@
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="sounds.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -97,8 +98,17 @@
     <None Include="packages.config" />
     <None Include="myfile.spritefont" />
     <None Include="bitwise16.spritefont" />
+    <None Include="audioBank.xwb" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CharacterSpriteSheetData.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="AudioCoinPlay.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Music01.wav">
+      <Filter>Assets</Filter>
+    </Media>
   </ItemGroup>
 </Project>

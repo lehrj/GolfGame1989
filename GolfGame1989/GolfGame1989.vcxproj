@@ -171,6 +171,7 @@
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="sounds.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Utility.h" />
@@ -220,12 +221,17 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="audioBank.xwb" />
     <None Include="bitwise16.spritefont" />
     <None Include="myfile.spritefont" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CharacterSpriteSheetData.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="AudioCoinPlay.wav" />
+    <Media Include="Music01.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

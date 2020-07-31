@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "Keyboard.h"
+#include <Dbt.h>
 
 using namespace DirectX;
 using namespace std;
@@ -39,15 +40,20 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     if (!XMVerifyCPUSupport())
+    {
         return 1;
+    }
 
     HRESULT hr = CoInitializeEx(nullptr, COINITBASE_MULTITHREADED);
     if (FAILED(hr))
+    {
         return 1;
+    }
 
     g_game = std::make_unique<Game>();
 
     // Register class and create window
+    HDEVNOTIFY hNewAudio = nullptr;
     {
         // Register class
         WNDCLASSEXW wcex = {};
@@ -61,7 +67,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         wcex.lpszClassName = L"GolfGame1989WindowClass";
         wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
         if (!RegisterClassExW(&wcex))
+        {
             return 1;
+        }
 
         // Create window
         int w, h;
@@ -78,7 +86,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         // to default to fullscreen.
 
         if (!hwnd)
+        {
             return 1;
+        }
 
         ShowWindow(hwnd, nCmdShow);
         // TODO: Change nCmdShow to SW_SHOWMAXIMIZED to default to fullscreen.
@@ -88,6 +98,14 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         GetClientRect(hwnd, &rc);
 
         g_game->Initialize(hwnd, rc.right - rc.left, rc.bottom - rc.top);
+
+        // listen for new audio devices
+        DEV_BROADCAST_DEVICEINTERFACE filter = {};
+        filter.dbcc_size = sizeof(filter);
+        filter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+        filter.dbcc_classguid = KSCATEGORY_AUDIO;
+
+        hNewAudio = RegisterDeviceNotification(hwnd, &filter, DEVICE_NOTIFY_WINDOW_HANDLE);
     }
 
     // Main message loop
@@ -106,6 +124,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     }
 
     g_game.reset();
+
+    if (hNewAudio)
+    {
+        UnregisterDeviceNotification(hNewAudio);
+    }
 
     CoUninitialize();
 
@@ -277,14 +300,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_KEYDOWN:
-    //case WM_SYSKEYDOWN:
     case WM_KEYUP:
     case WM_SYSKEYUP:
         Keyboard::ProcessMessage(message, wParam, lParam);
         break;
     // WLJ end keyboard and mouse add
+    // for if Audio device is added after startup
+    case WM_DEVICECHANGE:
+        if (wParam == DBT_DEVICEARRIVAL)
+        {
+            auto pDev = reinterpret_cast<PDEV_BROADCAST_HDR>(lParam);
+            if (pDev)
+            {
+                if (pDev->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+                {
+                    auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
+                    if (pInter->dbcc_classguid == KSCATEGORY_AUDIO);
+                    {
+                        if (game)
+                        {
+                            game->OnNewAudioDevice();
+                        }
+                    }
+                }
+            }
+        }
     }
-    return DefWindowProc(hWnd, message, wParam, lParam);
+    return DefWindowProc(hWnd, message, wParam, lParam); 
 }
 
 // Exit helper
