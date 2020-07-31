@@ -47,6 +47,9 @@ public:
     void OnNewAudioDevice() { m_retryAudio = true; };
 
 private:
+    void AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX);
+    void AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK aSFX);
+
     void Clear();
     void CreateDevice();
     void CreateResources();
@@ -248,14 +251,16 @@ private:
     DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
 
     // audio 
-    std::unique_ptr<DirectX::AudioEngine> m_audioEngine;
-    bool m_retryAudio;
-    std::unique_ptr<DirectX::SoundEffect> m_coinAudio;
-    std::unique_ptr<DirectX::SoundEffect> m_music;
-    std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
-    //float m_musicVolume;
-    //float m_musicSlide;
 
-    std::unique_ptr<DirectX::WaveBank> m_audioBank;
+    std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
+    bool                                        m_retryAudio;
+    std::unique_ptr<DirectX::SoundEffect>       m_coinAudio;
+    std::unique_ptr<DirectX::SoundEffect>       m_music;
+    std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
+    float                                       m_musicVolume = 0.9f;
+    //float m_musicSlide;
+    float                                       m_sfxVolume = 0.5f;
+    std::unique_ptr<DirectX::WaveBank>          m_audioBank;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioStream;
+    std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 };

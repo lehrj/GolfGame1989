@@ -39,11 +39,34 @@ Game::~Game()
         m_audioEngine->Suspend();
     }
     m_audioStream.reset();
+    m_audioEffectStream.reset();
     m_musicLoop.reset();
 
     delete pGolf;
     delete pPlay;
     delete pCamera;
+}
+
+
+
+void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
+{
+    m_audioEffectStream = m_audioBank->CreateStreamInstance(aSFX);
+    if (m_audioEffectStream)
+    {
+        m_audioEffectStream->SetVolume(m_musicVolume);
+        m_audioEffectStream->Play(true);
+    }
+}
+
+void Game::AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK aSFX)
+{
+    m_audioEffectStream = m_audioBank->CreateStreamInstance(aSFX);
+    if (m_audioEffectStream)
+    {
+        m_audioEffectStream->SetVolume(m_sfxVolume);
+        m_audioEffectStream->Play();
+    }
 }
 
 // Helper method to clear the back buffers.
@@ -458,10 +481,10 @@ void Game::DrawCameraFocus()
 
 void Game::DrawIntroScreen()
 {
-    float fadeDuration = 3.f;
-    float logoDisplayDuration = 8.f;
-    float logoDisplayGap = 2.f;
-    float startDelay = 3.f;  
+    float fadeDuration = 1.5f;
+    float logoDisplayDuration = 6.f;
+    float logoDisplayGap = 1.f;
+    float startDelay = 1.5f;  
     float timeStamp = m_timer.GetTotalSeconds();
     
     float fadeInStart1 = startDelay;
@@ -524,6 +547,9 @@ void Game::DrawIntroScreen()
         DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
         if (timeStamp < fadeInEnd2)  // fade in
         {
+            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_COINSFX);
+
+
             float colorIntensity = (timeStamp - fadeInStart2) / (fadeDuration);
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
@@ -548,6 +574,7 @@ void Game::DrawIntroScreen()
     }
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
+        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
         m_currentState = GameState::GAMESTATE_STARTSCREEN;
     }
 }
@@ -2119,7 +2146,7 @@ void Game::Initialize(HWND window, int width, int height)
     if (m_audioStream)
     {
         m_audioStream->SetVolume(0.5f);
-        m_audioStream->Play(true);
+        //m_audioStream->Play(true);
     }
 }
 
@@ -2375,6 +2402,8 @@ void Game::Update(DX::StepTimer const& timer)
 
         if (pPlay->UpdateSwing() == true)
         {
+            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
+
             pPlay->ResetSwingUpdateReady();
             pGolf->UpdateImpact(pPlay->GetImpactData());
         }
@@ -2404,7 +2433,7 @@ void Game::Update(DX::StepTimer const& timer)
             m_retryAudio = true;
         }
     }
-
+    m_audioEngine->Update(); // WLJ ? if needed
     UpdateCamera(timer);
     UpdateInput();
     elapsedTime;
@@ -2563,7 +2592,7 @@ void Game::UpdateInput()
         }
         if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
         {
-            m_currentState = GameState::GAMESTATE_MAINMENU;
+            m_currentState = GameState::GAMESTATE_MAINMENU;            
         }
     }
     if (m_kbStateTracker.pressed.Up)
