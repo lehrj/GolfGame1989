@@ -38,24 +38,22 @@ Game::~Game()
     {
         m_audioEngine->Suspend();
     }
-    m_audioStream.reset();
+    m_audioMusicStream.reset();
     m_audioEffectStream.reset();
-    m_musicLoop.reset();
+    //m_musicLoop.reset();
 
     delete pGolf;
     delete pPlay;
     delete pCamera;
 }
 
-
-
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
 {
-    m_audioEffectStream = m_audioBank->CreateStreamInstance(aSFX);
-    if (m_audioEffectStream)
+    m_audioMusicStream = m_audioBank->CreateStreamInstance(aSFX);
+    if (m_audioMusicStream)
     {
-        m_audioEffectStream->SetVolume(m_musicVolume);
-        m_audioEffectStream->Play(true);
+        m_audioMusicStream->SetVolume(m_musicVolume);
+        m_audioMusicStream->Play(true);
     }
 }
 
@@ -2124,30 +2122,7 @@ void Game::Initialize(HWND window, int width, int height)
     #endif
     m_audioEngine = std::make_unique<AudioEngine>(eflags);
     m_retryAudio = false;
-    //m_coinAudio = std::make_unique<SoundEffect>(m_audioEngine.get(), L"Music01.wav");
-    //m_music = std::make_unique<SoundEffect>(m_audioEngine.get(), L"Music01.wav");
-    //m_musicLoop = m_music->CreateInstance();
-    //m_musicLoop->Play(true);
-    //m_musicVolume = 1.f;
-    //m_musicSlide = -0.1f;
-
-    /*
     m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
-    m_musicLoop = m_audioBank->CreateInstance("Music01");
-    if (m_musicLoop)
-    {
-        m_musicLoop->Play(true);
-    }
-    */
-    m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
-    //m_audioStream = m_audioBank->CreateStreamInstance(0u);
-    m_audioStream = m_audioBank->CreateStreamInstance(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
-
-    if (m_audioStream)
-    {
-        m_audioStream->SetVolume(0.5f);
-        //m_audioStream->Play(true);
-    }
 }
 
 // Message handlers
@@ -2236,8 +2211,7 @@ void Game::OnWindowSizeChanged(int width, int height)
     // TODO: Game window is being resized.
     pCamera->OnResize(m_outputWidth, m_outputHeight);
     m_proj = pCamera->GetProjectionMatrix();
-    m_effect->SetProjection(m_proj);
-    
+    m_effect->SetProjection(m_proj);   
 }
 
 // Presents the back buffer contents to the screen.
@@ -2416,13 +2390,13 @@ void Game::Update(DX::StepTimer const& timer)
         if (m_audioEngine->Reset())
         {
             // ToDo: restart any looped sounds here
-            if (m_musicLoop)
+            if (m_audioMusicStream)
             {
-                m_musicLoop->Play(true);
+                m_audioMusicStream->Play(true);
             }
-            if (m_audioStream)
+            if (m_audioEffectStream)
             {
-                m_audioStream->Play(true);
+                m_audioEffectStream->Play(); // WLJ this could lead to problems and might not be needed, maybe cause unwanted effect to play after reset?
             }
         }
     }
@@ -2433,7 +2407,6 @@ void Game::Update(DX::StepTimer const& timer)
             m_retryAudio = true;
         }
     }
-    m_audioEngine->Update(); // WLJ ? if needed
     UpdateCamera(timer);
     UpdateInput();
     elapsedTime;

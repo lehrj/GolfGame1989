@@ -254,13 +254,13 @@ private:
 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;
-    std::unique_ptr<DirectX::SoundEffect>       m_coinAudio;
-    std::unique_ptr<DirectX::SoundEffect>       m_music;
-    std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
+    //std::unique_ptr<DirectX::SoundEffect>       m_coinAudio;
+    //std::unique_ptr<DirectX::SoundEffect>       m_music;
+    //std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
     float                                       m_musicVolume = 0.9f;
     //float m_musicSlide;
     float                                       m_sfxVolume = 0.5f;
     std::unique_ptr<DirectX::WaveBank>          m_audioBank;
-    std::unique_ptr<DirectX::SoundStreamInstance> m_audioStream;
+    std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 };
