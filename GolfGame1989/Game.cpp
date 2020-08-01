@@ -480,7 +480,7 @@ void Game::DrawCameraFocus()
 void Game::DrawIntroScreen()
 {
     float fadeDuration = 1.5f;
-    float logoDisplayDuration = 6.f;
+    float logoDisplayDuration = 5.f;
     float logoDisplayGap = 1.f;
     float startDelay = 1.5f;  
     float timeStamp = m_timer.GetTotalSeconds();
@@ -545,7 +545,7 @@ void Game::DrawIntroScreen()
         DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
         if (timeStamp < fadeInEnd2)  // fade in
         {
-            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_COINSFX);
+            
 
 
             float colorIntensity = (timeStamp - fadeInStart2) / (fadeDuration);
@@ -557,6 +557,8 @@ void Game::DrawIntroScreen()
         }
         else if (timeStamp > fadeOutStart2) // fade out
         {
+            
+
             float colorIntensity = (fadeOutEnd2 - timeStamp) / (fadeDuration);
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
@@ -566,6 +568,7 @@ void Game::DrawIntroScreen()
         }       
         else
         {
+            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_COINSFX);
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
         }

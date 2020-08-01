@@ -20,7 +20,7 @@ Golf::Golf()
     SetCharacter(0);
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
-    //BuildVector();
+    //BuildVector(); // WLJ turn off to disable auto draw of projectile without powerbar input 
     BuildUIstrings();
     BuildEnvironSelectStrings();
 }
