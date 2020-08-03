@@ -48,8 +48,8 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Club Mass = " + std::to_string(pSwing->GetClubMass()) + " kg");
     m_uiStrings.push_back("Launch Angle = " + std::to_string(pSwing->GetLaunchAngle()) + " degrees");
     m_uiStrings.push_back("Launch Velocity = " + std::to_string(pSwing->GetLaunchVelocity()) + " m/s");
-    m_uiStrings.push_back("Initial Spin Rate = " + std::to_string(pBall->GetInitialSpinRate()) + " m/s");
-    m_uiStrings.push_back("Landing Spin Rate = " + std::to_string(pBall->GetLandingSpinRate()) + " m/s");
+    m_uiStrings.push_back("Initial Spin Rate = " + std::to_string(pBall->GetInitialSpinRate()) + " rads per s");
+    m_uiStrings.push_back("Landing Spin Rate = " + std::to_string(pBall->GetLandingSpinRate()) + " rads per s");
     m_uiStrings.push_back("Travel Distance = " + std::to_string(pBall->GetShotDistance()) + " meters");
     m_uiStrings.push_back("Max Height = " + std::to_string(pBall->GetMaxHeight()) + " meters");
     m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
@@ -312,4 +312,13 @@ void Golf::UpdateImpact(Utility::ImpactData aImpact)
     pSwing->UpdateGolfSwingValues();
     BuildVector();
     BuildUIstrings();
+}
+
+void Golf::ZeroUIandRenderData()
+{
+    m_shotPath.clear();
+    pBall->ResetBallData();
+    pSwing->ResetAlphaBeta();
+    pSwing->ZeroDataForUI();
+    pBall->ZeroDataForUI();
 }

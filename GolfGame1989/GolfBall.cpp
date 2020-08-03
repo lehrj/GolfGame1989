@@ -20,7 +20,7 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData, Environment* pEnv
 {   
     PrepProjectileLaunch(aImpactData);
     LaunchProjectile();
-    LandProjectile();
+    //LandProjectile();
 }
 
 void GolfBall::LandProjectileEdit()
@@ -132,7 +132,7 @@ void GolfBall::LandProjectile()
     double direction = GetImpactDirection();
     double impactAngle = GetImpactAngle();
     double impactVelocity = GetImpactVelocity();
-    //float vix = m_ball.q[0];
+    //double impactSpinRate = m_ball.omega * 9.5493; // conversion from rad per s to rpm
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
 
@@ -160,6 +160,7 @@ void GolfBall::LandProjectile()
     }
     double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
     double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
+    //double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
 
     double vrxPrime, vryPrime, omegaR;
 
@@ -170,17 +171,20 @@ void GolfBall::LandProjectile()
         vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
         vryPrime = e * absViyPrime;
         omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        //omegaR = impactSpinRate - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
     }
     else
     {
         vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
+        //vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * impactSpinRate;
         vryPrime = e * absViyPrime;
         omegaR = -vrxPrime / m_ball.radius;
     }
 
     double vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
-    //float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
-    double vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
+    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC); 
+    // WLJ ToDo: sort out unit conversion errors with RPM vs Rad per S or what ever units are getting used due to multiple sources for equations and attempts to counter problem
+    //double vry = vrxPrime * cos(thetaC) + vryPrime * cos(thetaC);
 
     // WLJ dirty calculation for z velocity update until I convert 2d equations into 3d;
     DirectX::SimpleMath::Vector3 directionOfTravel = m_ball.q.velocity;
@@ -199,6 +203,7 @@ void GolfBall::LandProjectile()
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
     m_ball.omega = omegaR;
+    //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 
     /*
     float minSpeed = .1;
@@ -755,6 +760,10 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
 
 void GolfBall::ResetBallData()
 {
+    m_shotPath.clear();
+    m_drawColorVector.clear();
+    m_shotPathTimeStep.clear();
+    m_landingCordinates = m_shotOrigin;
     m_bounceCount = 0;
     m_drawColorIndex = 0;
     m_drawColorVector.clear();

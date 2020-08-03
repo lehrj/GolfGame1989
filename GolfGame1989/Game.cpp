@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -2327,7 +2327,7 @@ void Game::Render()
 
     m_spriteBatch->Begin();
 
-    DrawShotTimerUI();
+    //DrawShotTimerUI();
 
     if (m_currentState == GameState::GAMESTATE_INTROSCREEN)
     {
@@ -2809,6 +2809,8 @@ void Game::UpdateInput()
     }
     if (kb.V)
     {
+        m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
+        pGolf->ZeroUIandRenderData();
         pPlay->ResetPlayData();
         ResetPowerMeter();
     }
@@ -2828,6 +2830,7 @@ void Game::UpdateInput()
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
+
             pPlay->UpdateSwingState();
         }
     }

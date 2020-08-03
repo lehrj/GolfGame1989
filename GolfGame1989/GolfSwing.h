@@ -52,6 +52,7 @@ public:
     void UpdateGravityDependants(const double aGravity);
     void UpdateImpactData(Utility::ImpactData aImpactData);
     void ZeroDataForUI();
+
 private:
     double ComputeAlphaDotDot(void);
     double ComputeBetaDotDot(void);

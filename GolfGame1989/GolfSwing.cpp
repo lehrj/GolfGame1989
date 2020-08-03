@@ -317,6 +317,11 @@ void GolfSwing::ReadInSwingValues()
 
 void GolfSwing::ResetAlphaBeta()
 {
+    m_alphaBetaThetaVec.clear();
+    m_alphaCord.clear();
+    m_betaCord.clear();
+    m_thetaCord.clear();
+
     m_club.length = m_club.lengthBase * m_clubLengthModifier;
     // Input Variables
     m_alpha = 0.0; // Angle swept by arm rod from initial backswing position in radians

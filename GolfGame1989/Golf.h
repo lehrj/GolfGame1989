@@ -47,7 +47,9 @@ public:
     void SetCharacter(const int aCharacterIndex);    
     void SetEnvironment(const int aEnvironmentIndex);
     void UpdateImpact(Utility::ImpactData aImpact);
-    
+
+    void ZeroUIandRenderData();
+
 private:
     void BuildVector();
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
