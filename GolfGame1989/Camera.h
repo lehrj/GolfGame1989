@@ -8,10 +8,10 @@ enum class CameraState
     CAMERASTATE_CAMERA1,
     CAMERASTATE_CAMERA2,
     CAMERASTATE_CAMERA3,
-    CAMERASTATECAMERA4,
+    CAMERASTATE_CAMERA4,
     CAMERASTATE_CAMERA5,
     CAMERASTATE_CAMERA6,
-    CAMERASTATECAMERACLASS,
+    CAMERASTATE_CAMERACLASS,
     CAMERASTATE_PRESWINGVIEW,
     CAMERASTATE_PROJECTILEFLIGHTVIEW,
     CAMERASTATE_SWINGVIEW,
@@ -49,7 +49,7 @@ public:
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
 
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
-
+    void UpdateCam();
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel

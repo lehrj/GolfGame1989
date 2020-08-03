@@ -760,7 +760,7 @@ void GolfBall::ResetBallData()
     m_drawColorVector.clear();
     m_shotPath.clear();
     m_shotPathTimeStep.clear();
-    m_timeStep = 0.1;
+    //m_timeStep = 0.1;
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;
     m_ball.q.velocity.x = 0.0;   //  vx = 0.0
@@ -967,7 +967,7 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
     m_drawColorVector.clear();
     //m_timeStep = 0.1f;
-    m_timeStep = 0.05f;
+    //m_timeStep = 0.05f;
     m_ball.airDensity = pEnviron->GetAirDensity();
     m_ball.area = 0.001432;
     m_ball.dragCoefficient = 0.22;

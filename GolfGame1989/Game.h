@@ -61,6 +61,7 @@ private:
     void DrawMenuMain();
     void DrawPowerBarUI();
     void DrawProjectile();
+    void DrawProjectile2();
     void DrawProjectileRealTime();
     void DrawShotTimerUI();
     void DrawStartScreen();
@@ -223,8 +224,8 @@ private:
         GAMECAMERA_CAMERA2,
         GAMECAMERA_CAMERA3,
         GAMECAMERA_CAMERA4,
-        GAMECAMERA_CAMERA5,
-        GAMECAMERA_CAMERA6,
+        GAMECAMERA_MOVETOBEHIND,
+        GAMECAMERA_MOVETOSIDE,
         GAMECAMERA_TOSWINGVIEW,
         GAMECAMERA_CAMERACLASS,
         GAMECAMERA_PRESWINGVIEW,
@@ -234,6 +235,7 @@ private:
 
     CameraState                                 m_cState;
     GameCamera                                  m_currentCamera;
+    DirectX::SimpleMath::Vector3                m_cameraPosition = DirectX::SimpleMath::Vector3::Zero; // place holder until convertion to use Camera class
     void                                        SetGameCamera(GameCamera aCameraState);
     float                                       m_cameraRotationX = 2.0;
     float                                       m_cameraRotationY = 2.0;
@@ -264,3 +266,100 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 };
+
+
+
+
+
+
+
+
+
+/*
+
+// working old version prior to impmenting real time match update
+void Game::DrawProjectile()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    if (shotPath.size() > 1)
+    {
+        int stepCount = (int)shotPath.size();
+
+        if (m_projectilePathStep >= stepCount)
+        {
+            m_flightStepTimer.ResetElapsedTime();
+            m_projectilePathStep = 0;
+        }
+        m_ballPos = shotPath[m_projectilePathStep];
+        ++m_projectilePathStep;
+
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        for (int i = 0; i < m_projectilePathStep; ++i)
+        {
+            DirectX::SimpleMath::Vector3 p1(prevPos);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+
+            VertexPositionColor aV(p1, Colors::White);
+            VertexPositionColor bV(p2, Colors::White);
+            //VertexPositionColor aVRed(p1, Colors::Red);
+            //VertexPositionColor bVRed(p2, Colors::Red);
+            VertexPositionColor aVRed(p1, Colors::White);
+            VertexPositionColor bVRed(p2, Colors::White);
+            VertexPositionColor aVBlue(p1, Colors::Blue);
+            VertexPositionColor bVBlue(p2, Colors::Blue);
+            VertexPositionColor aVYellow(p1, Colors::Yellow);
+            VertexPositionColor bVYellow(p2, Colors::Yellow);
+            std::vector<int> colorVec = pGolf->GetDrawColorVector();
+            int vecIndex = pGolf->GetDrawColorIndex();
+
+            m_batch->DrawLine(aV, bV);
+            prevPos = shotPath[i];
+        }
+    }
+}
+
+
+
+
+/*
+void Game::DrawProjectileRealTime()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    if (shotPath.size() > 1)
+    {
+        std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+        int stepCount = (int)shotPath.size();
+        float shotTimeTotal = shotTimeStep.back();
+
+        if (m_projectilePathStep >= stepCount)
+        {
+            m_projectilePathStep = 0;
+        }
+        m_ballPos = shotPath[m_projectilePathStep];
+        ++m_projectilePathStep;
+
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        for (int i = 0; i < shotPath.size(); ++i)
+        {
+            DirectX::SimpleMath::Vector3 p1(prevPos);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+            VertexPositionColor aV(p1, Colors::White);
+            VertexPositionColor bV(p2, Colors::White);
+
+            if (shotTimeStep[i] < m_projectileTimer)
+            {
+                m_batch->DrawLine(aV, bV);
+            }
+            prevPos = shotPath[i];
+        }
+
+        if (m_projectileTimer > shotTimeStep.back())
+        {
+            m_projectileTimer = 0.0;
+        }
+    }
+}
+
+*/
