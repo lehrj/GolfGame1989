@@ -16,6 +16,7 @@ public:
     float GetSwingPower() const { return m_swingPower; };
     float GetMeterLength() const { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };
+    bool IsSwingStateAtImpact() const;
     void ResetGamePlayButton() { m_isGameplayButtonReady = true; };
     void ResetPlayData();
     void ResetSwingUpdateReady();   

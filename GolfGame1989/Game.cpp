@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -545,9 +545,6 @@ void Game::DrawIntroScreen()
         DirectX::SimpleMath::Vector2 textLineOrigin = m_bitwiseFont->MeasureString(textLine.c_str()) / 2.f;
         if (timeStamp < fadeInEnd2)  // fade in
         {
-            
-
-
             float colorIntensity = (timeStamp - fadeInStart2) / (fadeDuration);
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
@@ -557,8 +554,6 @@ void Game::DrawIntroScreen()
         }
         else if (timeStamp > fadeOutStart2) // fade out
         {
-            
-
             float colorIntensity = (fadeOutEnd2 - timeStamp) / (fadeDuration);
             fadeColor.f[0] = colorIntensity;
             fadeColor.f[1] = colorIntensity;
@@ -2830,7 +2825,11 @@ void Game::UpdateInput()
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
+            if (pPlay->IsSwingStateAtImpact() == true)
+            {
 
+                m_currentCamera = GameCamera::GAMECAMERA_MOVETOSIDE;
+            }
             pPlay->UpdateSwingState();
         }
     }

@@ -96,3 +96,5 @@ private:
     DirectX::SimpleMath::Vector3                m_shotOrigin;
     int                                         m_bounceCount = 0;
 };
+
+

@@ -1,9 +1,42 @@
+
 #include "pch.h"
 #include "GolfCharacter.h"
+#include <sstream>
 
 GolfCharacter::GolfCharacter()
 {
     LoadCharacterData();
+    CreateDataStrings();
+}
+
+void GolfCharacter::CreateDataStrings()
+{
+    int precisionVal = 2;
+    std::stringstream inVal;
+    inVal.precision(precisionVal);
+
+    for (int i = 0; i < m_characters.size(); ++i)
+    {
+        inVal.str(std::string());
+        inVal << std::fixed << m_characters[i].armBalancePoint;
+        m_characters[i].armBalancePointStr = inVal.str();
+
+        inVal.str(std::string());
+        inVal << std::fixed << m_characters[i].armLength;
+        m_characters[i].armLengthStr = inVal.str();
+
+        inVal.str(std::string());
+        inVal << std::fixed << m_characters[i].armMass;
+        m_characters[i].armMassStr = inVal.str();
+
+        inVal.str(std::string());
+        inVal << std::fixed << m_characters[i].armMassMoI;
+        m_characters[i].armMassMoIStr = inVal.str();
+
+        inVal.str(std::string());
+        inVal << std::fixed << m_characters[i].clubLengthModifier;
+        m_characters[i].clubLengthModifierStr = inVal.str();
+    }
 }
 
 void GolfCharacter::LoadCharacterData()

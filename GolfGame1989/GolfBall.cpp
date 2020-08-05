@@ -132,7 +132,7 @@ void GolfBall::LandProjectile()
     double direction = GetImpactDirection();
     double impactAngle = GetImpactAngle();
     double impactVelocity = GetImpactVelocity();
-    //double impactSpinRate = m_ball.omega * 9.5493; // conversion from rad per s to rpm
+    double impactSpinRate = m_ball.omega * 9.5493; // conversion from rad per s to rpm
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
 
@@ -159,8 +159,8 @@ void GolfBall::LandProjectile()
         e = 0.120;
     }
     double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
-    double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
-    //double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
+    //double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
+    double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
 
     double vrxPrime, vryPrime, omegaR;
 
@@ -170,13 +170,13 @@ void GolfBall::LandProjectile()
     {
         vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
         vryPrime = e * absViyPrime;
-        omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
-        //omegaR = impactSpinRate - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        //omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        omegaR = impactSpinRate - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
     }
     else
     {
-        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
-        //vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * impactSpinRate;
+        //vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
+        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * impactSpinRate;
         vryPrime = e * absViyPrime;
         omegaR = -vrxPrime / m_ball.radius;
     }
@@ -202,103 +202,9 @@ void GolfBall::LandProjectile()
     m_ball.q.velocity.z = 0.0;
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
-    m_ball.omega = omegaR;
-    //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
+    //m_ball.omega = omegaR;
+    m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 
-    /*
-    float minSpeed = .1;
-    if (m_ball.q.velocity.x > minSpeed || m_ball.q.velocity.y > minSpeed)
-    {
-        LaunchProjectile2();
-    }
-    */
-}
-
-void GolfBall::LandProjectileOld()
-{
-    /*
-    if (m_drawColorIndex == 0)
-    {
-        m_drawColorVector.push_back(m_shotPath.size());
-    }
-    if (m_drawColorIndex == 1)
-    {
-        m_drawColorVector.push_back(m_shotPath.size());
-    }
-    if (m_drawColorIndex == 2)
-    {
-        m_drawColorVector.push_back(m_shotPath.size());
-    }
-    if (m_drawColorIndex == 3)
-    {
-        m_drawColorVector.push_back(m_shotPath.size());
-    }
-    m_drawColorIndex++;
-    */
-    //DirectX::SimpleMath::Vector3 impactAngle = GetImpactAngle();
-    DirectX::SimpleMath::Vector3 xPreVelocity = m_ball.q.velocity;
-    double xPreOmega = m_ball.omega;
-    double direction = GetImpactDirection();
-    double impactAngle = GetImpactAngle();
-    double impactVelocity = GetImpactVelocity();
-    //float vix = m_ball.q[0];
-    double vix = m_ball.q.velocity.x;
-    double viy = m_ball.q.velocity.y;
-    
-    Vector4d impactVector{ m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z, 0.0 }; // vx, vy, vz
-
-    double impactSpeed = impactVector.Magnitude3();
-    //printf("Impact Speed = %lf (m/s) \n", impactSpeed);
-    impactVector.NormalizeVector(impactVector);
-
-    double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
-    //?c = 15.4?(vi / (impact speed))(? / (impact angle))
-    double thetaC = 15.4f;
-    
-    double vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
-    double absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
-
-    double e;
-    if (absViyPrime <= 20.0)
-    {
-        e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
-    }
-    else
-    {
-        e = 0.120;
-    }
-    double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
-    double muC = (2. * (vixPrime + (m_ball.radius * m_ball.omega))) / (7. * (1.0 + e) * absViyPrime);
-
-    double vrxPrime, vryPrime, omegaR;
-
-    // If mu is less than the critical value muC the ball will slide throughout the impact
-    // If mu is great than muC the ball will roll out of the collision
-    if (mu < muC) 
-    {
-        vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
-        vryPrime = e * absViyPrime;
-        omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
-    }
-    else
-    {
-        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * (m_ball.radius * m_ball.omega);
-        vryPrime = e * absViyPrime;
-        omegaR = -vrxPrime / m_ball.radius;
-    }
-
-    double vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
-    //float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
-    double vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
-
-    m_ball.q.velocity.x = vrx;
-    m_ball.q.velocity.y = vry;
-    m_ball.q.velocity.z = 0.0f;
-
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
-    m_ball.omega = omegaR;
-    
-    DirectX::SimpleMath::Vector3 xPostVelocity = m_ball.q.velocity;
     /*
     float minSpeed = .1;
     if (m_ball.q.velocity.x > minSpeed || m_ball.q.velocity.y > minSpeed)

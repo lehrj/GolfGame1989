@@ -25,6 +25,18 @@ std::vector<std::string> GolfPlay::GetDebugData()
     return m_debugData; 
 };
 
+bool GolfPlay::IsSwingStateAtImpact() const
+{
+    if (m_isSwingStart == true && m_isSwingPowerSet == true && m_isOnDownSwing == true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void GolfPlay::UpdateSwingState()
 {
     if (m_isSwingStart == false && m_isSwingPowerSet == false && m_isOnDownSwing == false)

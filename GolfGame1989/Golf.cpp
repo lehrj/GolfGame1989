@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Golf.h"
 #include <fstream>
+#include <sstream>
 
 Golf::Golf()
 {
@@ -37,22 +38,55 @@ Golf::~Golf()
 void Golf::BuildUIstrings()
 {
     m_uiStrings.clear();
-    m_uiStrings.push_back("Air Density = " + std::to_string(pEnvironment->GetAirDensity()) + " kg/m cubed"); // WLJ need to find sweet font that supports "^"
-    m_uiStrings.push_back("Wind X = " + std::to_string(pEnvironment->GetWindX()) + " m/s");
-    m_uiStrings.push_back("Wind Y = " + std::to_string(pEnvironment->GetWindY()) + " m/s");
-    m_uiStrings.push_back("Wind Z = " + std::to_string(pEnvironment->GetWindZ()) + " m/s");
-    m_uiStrings.push_back("Shot Power = " + std::to_string(pSwing->GetBackSwingPercentage()) + " percent");
+    int precisionVal = 2;
+    std::stringstream inVal;
+    inVal.precision(precisionVal);
+    inVal << std::fixed << pEnvironment->GetAirDensity();
+  
+    m_uiStrings.push_back("Air Density = " + inVal.str() + " kg/m cubed");
+    inVal.str(std::string());
+    inVal << std::fixed << pEnvironment->GetWindX();
+    m_uiStrings.push_back("Wind X = " + inVal.str() + " m/s");
+    inVal.str(std::string());
+    inVal << std::fixed << pEnvironment->GetWindY();
+    m_uiStrings.push_back("Wind Y = " + inVal.str() + " m/s");
+    inVal.str(std::string());
+    inVal << std::fixed << pEnvironment->GetWindZ();
+    m_uiStrings.push_back("Wind Z = " + inVal.str() + " m/s");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetBackSwingPercentage();
+    m_uiStrings.push_back("Shot Power = " + inVal.str() + " percent");
     m_uiStrings.push_back("Club Name = " + pSwing->GetClubName());
-    m_uiStrings.push_back("Club Angle = " + std::to_string(pSwing->GetClubAngle()) + " degrees");
-    m_uiStrings.push_back("Club Length = " + std::to_string(pSwing->GetClubLength()) + " meters");
-    m_uiStrings.push_back("Club Mass = " + std::to_string(pSwing->GetClubMass()) + " kg");
-    m_uiStrings.push_back("Launch Angle = " + std::to_string(pSwing->GetLaunchAngle()) + " degrees");
-    m_uiStrings.push_back("Launch Velocity = " + std::to_string(pSwing->GetLaunchVelocity()) + " m/s");
-    m_uiStrings.push_back("Initial Spin Rate = " + std::to_string(pBall->GetInitialSpinRate()) + " rads per s");
-    m_uiStrings.push_back("Landing Spin Rate = " + std::to_string(pBall->GetLandingSpinRate()) + " rads per s");
-    m_uiStrings.push_back("Travel Distance = " + std::to_string(pBall->GetShotDistance()) + " meters");
-    m_uiStrings.push_back("Max Height = " + std::to_string(pBall->GetMaxHeight()) + " meters");
-    m_uiStrings.push_back("Landing Height = " + std::to_string(pBall->GetLandingHeight()) + " meters");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetClubLength();
+    m_uiStrings.push_back("Club Length = " + inVal.str() + " meters");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetClubMass();
+    m_uiStrings.push_back("Club Mass = " + inVal.str() + " kg");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetClubAngle();
+    m_uiStrings.push_back("Club Angle = " + inVal.str() + " degrees");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetLaunchAngle();
+    m_uiStrings.push_back("Launch Angle = " + inVal.str() + " degrees");
+    inVal.str(std::string());
+    inVal << std::fixed << pSwing->GetLaunchVelocity();
+    m_uiStrings.push_back("Launch Velocity = " + inVal.str() + " m/s");
+    inVal.str(std::string());
+    inVal << std::fixed << pBall->GetInitialSpinRate();
+    m_uiStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
+    inVal.str(std::string());
+    inVal << std::fixed << std::to_string(pBall->GetLandingSpinRate());
+    //m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
+    inVal.str(std::string());
+    inVal << std::fixed << pBall->GetShotDistance();
+    m_uiStrings.push_back("Travel Distance = " + inVal.str() + " meters");
+    inVal.str(std::string());
+    inVal << std::fixed << pBall->GetMaxHeight();
+    m_uiStrings.push_back("Max Height = " + inVal.str() + " meters");
+    inVal.str(std::string());
+    inVal << std::fixed << pBall->GetLandingHeight();
+    //m_uiStrings.push_back("Landing Height = " + inVal.str() + " meters");
     //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 }
@@ -81,7 +115,8 @@ void Golf::BuildEnvironSelectStrings()
 
     for (int i = 0; i < environCount; ++i)
     {
-        std::string inString = "Air Density = " + std::to_string(pEnvironment->GetAirDensity(i)) + " kg/m^3";
+        //std::string inString = "Air Density = " + std::to_string(pEnvironment->GetAirDensity(i)) + " kg/m^3";
+        std::string inString = "Air Density = " + pEnvironment->GetAirDensityString(i) + " kg/m^3";
         strVec.push_back(inString);
     }
     m_environSelectStrings.push_back(strVec);
@@ -89,7 +124,7 @@ void Golf::BuildEnvironSelectStrings()
 
     for (int i = 0; i < environCount; ++i)
     {
-        std::string inString = "Gravity = " + std::to_string(pEnvironment->GetGravity(i)) + " m/s^2";
+        std::string inString = "Gravity = " + pEnvironment->GetGravityString(i) + " m/s^2";
         strVec.push_back(inString);
     }
     m_environSelectStrings.push_back(strVec);
@@ -97,7 +132,7 @@ void Golf::BuildEnvironSelectStrings()
 
     for (int i = 0; i < environCount; ++i)
     {
-        std::string inString = "Wind X = " + std::to_string(pEnvironment->GetWindX(i)) + " m/s ";
+        std::string inString = "Wind X = " + pEnvironment->GetWindXString(i) + " m/s ";
         strVec.push_back(inString);
     }
     m_environSelectStrings.push_back(strVec);
@@ -105,7 +140,7 @@ void Golf::BuildEnvironSelectStrings()
 
     for (int i = 0; i < environCount; ++i)
     {
-        std::string inString = "Wind Z = " + std::to_string(pEnvironment->GetWindZ(i)) + " m/s ";
+        std::string inString = "Wind Z = " + pEnvironment->GetWindZString(i) + " m/s ";
         strVec.push_back(inString);
     }
     m_environSelectStrings.push_back(strVec);
@@ -124,30 +159,35 @@ void Golf::InputData()
 
 std::string Golf::GetCharacterArmBalancePoint(const int aCharacterIndex) const
 {
-    std::string armBalancePointString = "Arm Balance Point = " + std::to_string(pCharacter->GetArmBalancePoint(aCharacterIndex)) + " %";
+    std::string armBalancePointString = "Arm Balance Point = " + pCharacter->GetArmBalancePointString(aCharacterIndex) + " %";
+    //std::string armBalancePointString = "Arm Balance Point = " + std::to_string(pCharacter->GetArmBalancePoint(aCharacterIndex)) + " %";
     return armBalancePointString;
 }
 std::string Golf::GetCharacterArmLength(const int aCharacterIndex) const
 {
-    std::string armLengthString = "Arm Length = " + std::to_string(pCharacter->GetArmLength(aCharacterIndex)) + " m";
+    std::string armLengthString = "Arm Length = " + pCharacter->GetArmLengthString(aCharacterIndex) + " m";
+    //std::string armLengthString = "Arm Length = " + std::to_string(pCharacter->GetArmLength(aCharacterIndex)) + " m";
     return armLengthString;
 }
 
 std::string Golf::GetCharacterArmMass(const int aCharacterIndex) const
 {
-    std::string armMassString = "Arm Mass = " + std::to_string(pCharacter->GetArmMass(aCharacterIndex)) + " kg";
+    std::string armMassString = "Arm Mass = " + pCharacter->GetArmMassString(aCharacterIndex) + " kg";
+    //std::string armMassString = "Arm Mass = " + std::to_string(pCharacter->GetArmMass(aCharacterIndex)) + " kg";
     return armMassString;
 }
 
 std::string Golf::GetCharacterClubLengthMod(const int aCharacterIndex) const
 {
-    std::string clubLengthModString = "Club Length = x" + std::to_string(pCharacter->GetClubLenghtModifier(aCharacterIndex)) + " m";
+    std::string clubLengthModString = "Club Length = x" + pCharacter->GetClubLenghtModifierString(aCharacterIndex) + " m";
+    //std::string clubLengthModString = "Club Length = x" + std::to_string(pCharacter->GetClubLenghtModifier(aCharacterIndex)) + " m";
     return clubLengthModString;
 }
 
 std::string Golf::GetCharacterArmMassMoI(const int aCharacterIndex) const
 {
-    std::string armMassMoIString = "Arm MoI = " + std::to_string(pCharacter->GetArmMassMoI(aCharacterIndex)) + " kg Squared";
+    std::string armMassMoIString = "Arm MoI = " + pCharacter->GetArmMassMoIString(aCharacterIndex) + " kg Squared";
+    //std::string armMassMoIString = "Arm MoI = " + std::to_string(pCharacter->GetArmMassMoI(aCharacterIndex)) + " kg Squared";
     return armMassMoIString;
 }
 
