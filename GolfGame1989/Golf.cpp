@@ -7,7 +7,6 @@ Golf::Golf()
 {
     //BuildVector();
     pEnvironment = new Environment();
-    pEnvironment->SetDefaultEnvironment();
 
     pCharacter = new GolfCharacter();
     pSwing = new GolfSwing();
@@ -115,7 +114,6 @@ void Golf::BuildEnvironSelectStrings()
 
     for (int i = 0; i < environCount; ++i)
     {
-        //std::string inString = "Air Density = " + std::to_string(pEnvironment->GetAirDensity(i)) + " kg/m^3";
         std::string inString = "Air Density = " + pEnvironment->GetAirDensityString(i) + " kg/m^3";
         strVec.push_back(inString);
     }
@@ -160,34 +158,29 @@ void Golf::InputData()
 std::string Golf::GetCharacterArmBalancePoint(const int aCharacterIndex) const
 {
     std::string armBalancePointString = "Arm Balance Point = " + pCharacter->GetArmBalancePointString(aCharacterIndex) + " %";
-    //std::string armBalancePointString = "Arm Balance Point = " + std::to_string(pCharacter->GetArmBalancePoint(aCharacterIndex)) + " %";
     return armBalancePointString;
 }
 std::string Golf::GetCharacterArmLength(const int aCharacterIndex) const
 {
     std::string armLengthString = "Arm Length = " + pCharacter->GetArmLengthString(aCharacterIndex) + " m";
-    //std::string armLengthString = "Arm Length = " + std::to_string(pCharacter->GetArmLength(aCharacterIndex)) + " m";
     return armLengthString;
 }
 
 std::string Golf::GetCharacterArmMass(const int aCharacterIndex) const
 {
     std::string armMassString = "Arm Mass = " + pCharacter->GetArmMassString(aCharacterIndex) + " kg";
-    //std::string armMassString = "Arm Mass = " + std::to_string(pCharacter->GetArmMass(aCharacterIndex)) + " kg";
     return armMassString;
 }
 
 std::string Golf::GetCharacterClubLengthMod(const int aCharacterIndex) const
 {
     std::string clubLengthModString = "Club Length = x" + pCharacter->GetClubLenghtModifierString(aCharacterIndex) + " m";
-    //std::string clubLengthModString = "Club Length = x" + std::to_string(pCharacter->GetClubLenghtModifier(aCharacterIndex)) + " m";
     return clubLengthModString;
 }
 
 std::string Golf::GetCharacterArmMassMoI(const int aCharacterIndex) const
 {
     std::string armMassMoIString = "Arm MoI = " + pCharacter->GetArmMassMoIString(aCharacterIndex) + " kg Squared";
-    //std::string armMassMoIString = "Arm MoI = " + std::to_string(pCharacter->GetArmMassMoI(aCharacterIndex)) + " kg Squared";
     return armMassMoIString;
 }
 
@@ -238,11 +231,22 @@ void Golf::LoadCharacterTraits()
 
 void Golf::LoadEnvironment(const int aIndex)
 {
-    m_selectedEnvironment = aIndex;
-    pEnvironment->UpdateEnvironment(m_selectedEnvironment);
-    pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
-    pBall->SetDefaultBallValues(pEnvironment);   
-    BuildUIstrings();
+    if (aIndex < 0 || aIndex > pEnvironment->GetNumerOfEnvirons() - 1)
+    {
+        m_selectedEnvironment = 0;
+        pEnvironment->UpdateEnvironment(0);
+        pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
+        pBall->SetDefaultBallValues(pEnvironment);
+        BuildUIstrings();
+    }
+    else
+    {
+        m_selectedEnvironment = aIndex;
+        pEnvironment->UpdateEnvironment(m_selectedEnvironment);
+        pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
+        pBall->SetDefaultBallValues(pEnvironment);
+        BuildUIstrings();
+    }
 }
 
 void Golf::ScaleCordinates()

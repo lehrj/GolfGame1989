@@ -25,10 +25,10 @@ class Environment
 public:
     Environment();
 
-    double GetAirDensity() const { return m_airDensity; };
+    double GetAirDensity() const { return m_currentEnviron.airDensity; };
     std::string GetAirDensityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensityStr; };
     double GetAirDensity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensity; };
-    double GetGravity() const { return m_gravity; };
+    double GetGravity() const { return m_currentEnviron.gravity; };
     std::string GetGravityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravityStr; };
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
     double GetLandingHeight() const { return m_landingHeight; };
@@ -37,41 +37,25 @@ public:
     std::string GetEnvironName(const int aEnvironmentIndex) const {return m_environs[aEnvironmentIndex].name;};
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
     int GetNumberOfEnvironSelectDisplayVariables() const { return m_environSelectDisplayDataPoints; };
-    double GetWindX() const { return m_windX; };
+    double GetWindX() const { return m_currentEnviron.windX; };
     std::string GetWindXString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windXStr; };
     double GetWindX(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windX; };
-    double GetWindY() const { return m_windY; };
+    double GetWindY() const { return m_currentEnviron.windY; };
     std::string GetWindYString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windYStr; };
     double GetWindY(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windY; };
-    double GetWindZ() const { return m_windZ; };
+    double GetWindZ() const { return m_currentEnviron.windZ; };
     std::string GetWindZString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZStr; };
     double GetWindZ(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZ; };
-
-    void PrintEnvironmentData();
-    void ReadInEnvironmentData();
-    void SetDefaultEnvironment();
     void UpdateEnvironment(const int aIndex);
 
 private:
     void CreateDataStrings();
-    void InputEnvironmentData();
-    void InputEnvironmentDataBasic();
     void LoadEnvironmentData();
-    void SetAirDensity(double aDensity);   
-    void SetGravity(double aGravity);
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
-    void SetWindX(const double& aWindX);
-    void SetWindY(const double& aWindY);
-    void SetWindZ(const double& aWindZ);
 
-    double                              m_airDensity = 1.225;        // in kg/m^3
-    double                              m_gravity = -9.8;           // in m/s^2
     double                              m_landingHeight = 0.0;     // in meters
     double                              m_launchHeight = 0.0;      // in meters
-    double                              m_windX = 0.0;             // in m/s
-    double                              m_windY = 0.0;             // in m/s
-    double                              m_windZ = 0.0;             // in m/s
 
     // variables for bounce and roll functionality not yet implemented
     double                              m_landingFriction;

@@ -906,6 +906,9 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.windSpeed.x = pEnviron->GetWindX();
     m_ball.windSpeed.y = pEnviron->GetWindY();
     m_ball.windSpeed.z = pEnviron->GetWindZ();
+
+    int test = 0;
+    test++;
 }
 
 void GolfBall::SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord)
