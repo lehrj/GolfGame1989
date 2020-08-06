@@ -37,11 +37,9 @@ Golf::~Golf()
 void Golf::BuildUIstrings()
 {
     m_uiStrings.clear();
-    int precisionVal = 2;
     std::stringstream inVal;
-    inVal.precision(precisionVal);
-    inVal << std::fixed << pEnvironment->GetAirDensity();
-  
+    inVal.precision(Utility::GetNumericalPrecisionForUI());
+    inVal << std::fixed << pEnvironment->GetAirDensity(); 
     m_uiStrings.push_back("Air Density = " + inVal.str() + " kg/m cubed");
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindX();

@@ -11,9 +11,8 @@ GolfCharacter::GolfCharacter()
 
 void GolfCharacter::CreateDataStrings()
 {
-    int precisionVal = 2;
     std::stringstream inVal;
-    inVal.precision(precisionVal);
+    inVal.precision(Utility::GetNumericalPrecisionForUI());
 
     for (int i = 0; i < m_characters.size(); ++i)
     {
