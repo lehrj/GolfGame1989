@@ -84,7 +84,7 @@ private:
     SpinProjectile                              m_ball;
     const double                                m_faceRoll = 0.7142857142857143; // <== 5/7, represents the ball moving up the club face to impart spin
     const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
-    const float                                 m_timeStep = 0.05f;
+    const float                                 m_timeStep = 0.03f;
     int                                         m_drawColorIndex = 0;
     std::vector<int>                            m_drawColorVector;
     std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;

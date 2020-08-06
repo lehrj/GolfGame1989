@@ -2634,6 +2634,13 @@ void Game::UpdateInput()
 
     if (kb.Escape)
     {
+        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        {
+            m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
+            pGolf->ZeroUIandRenderData();
+            pPlay->ResetPlayData();
+            ResetPowerMeter();
+        }
         m_currentState = GameState::GAMESTATE_MAINMENU;
     }
     if (m_kbStateTracker.pressed.Enter)
