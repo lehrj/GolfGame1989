@@ -73,7 +73,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
-    m_environs[i].windX = 0.0;
+    m_environs[i].windX = 0.69;
     m_environs[i].windY = 0.0;
     m_environs[i].windZ = 5.0;
     m_environs[i].landingFrictionScale = 1.0;
@@ -85,8 +85,8 @@ void Environment::LoadEnvironmentData()
     m_environs[i].airDensity = 11.2;
     m_environs[i].gravity = -5.8;
     m_environs[i].windX = 3.0;
-    m_environs[i].windY = 1.0;
-    m_environs[i].windZ = 0.0;
+    m_environs[i].windY = 0.0;
+    m_environs[i].windZ = 0.69;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
 }

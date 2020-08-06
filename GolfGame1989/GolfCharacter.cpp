@@ -80,8 +80,8 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].bioLine3 = "dont steal his tiger";
     m_characters[i].armBalancePoint = 0.5;
     m_characters[i].armLength = 0.62;
-    m_characters[i].armMass = 7.3;
-    m_characters[i].armMassMoI = 1.15;
+    m_characters[i].armMass = 9.1;
+    m_characters[i].armMassMoI = 1.10;
     m_characters[i].clubLengthModifier = 1.0;
     ++i;
 
@@ -90,7 +90,7 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].bioLine1 = "leisure suits and flirting";
     m_characters[i].bioLine2 = "he still knows that a drink";
     m_characters[i].bioLine3 = "tossed in his face means no";
-    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armBalancePoint = 0.460069;
     m_characters[i].armLength = 0.740069;
     m_characters[i].armMass = 5.200069;
     m_characters[i].armMassMoI = 1.150069;
@@ -102,10 +102,10 @@ void GolfCharacter::LoadCharacterData()
     m_characters[i].bioLine1 = "to many glowing flowers and ";
     m_characters[i].bioLine2 = "then got hit by some kind ";
     m_characters[i].bioLine3 = "of drunk turtle thing";
-    m_characters[i].armBalancePoint = 0.500069;
+    m_characters[i].armBalancePoint = 0.530069;
     m_characters[i].armLength = 0.510069;
     m_characters[i].armMass = 8.600069;
-    m_characters[i].armMassMoI = 1.150069;
+    m_characters[i].armMassMoI = 1.260069;
     m_characters[i].clubLengthModifier = .900069;
 }
 
