@@ -1,6 +1,5 @@
 # GolfGame1989
-This is golf game based on the double pendulum model in professor Theodore P. Jorgensen’s “The Physics of Golf” using the DirectX Tool Kit.  
-The games features that have been implemented include character select, environment select, a full golf bag with 14 clubs to select
+This is golf game based on the double pendulum model in professor Theodore P. Jorgensen’s “The Physics of Golf” using the DirectX Tool Kit. The games features that have been implemented include character select, environment select, a full golf bag with 14 clubs to select
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
@@ -34,3 +33,21 @@ Future mechanics:
 Currently the ball placement angle respective to the player is hard coded, future update will include the ability to position the player forward or back along the swing plane which will result an adjustment in the vertical club face angle at impact.
 Future update will allow the adjustment of the direction of travel of the club’s swing plan to be from out to in, in to in, and in to out which will result in adjustments to the ball flight path. This combined with the impact face angle will result in all 9 traditional golf flight paths to be simulated.
 Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. 
+
+
+Works Cited:
+
+Bourg and Baywalec. (2013). Physics for Game Developers. CA USA. O’Reilly
+
+Gardiner, M. P. The Physics of Golf. https://www.golf-simulators.com/physics.htm
+
+Jorgensen, T. P. (1999). The Physics of Golf. NY. Springer Science+Business Media
+
+Palmer, G. (2005). Physics for Game Programmers. NY NY. Springer-Verlag
+
+Penner, A. R. (2003). The Physics of Golf, Reports on Progress in Physics vol 66 p 131 – 171
+
+Penner, A.R. (2002). The Run of a Golf Ball, NRC Research Press Web Site http://cjp.nrc.ca/, p 931 - 940
+
+Roh, W.J., Lee, C.W. (2010). Golf Ball Landing, Bounce and Roll on Turf. 8th Conference of the International Sports Engineering Association. P 3237 - 3242
+
