@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -1485,6 +1485,80 @@ void Game::DrawProjectile()
     }
 }
 
+void Game::DrawProjectile2()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    if (shotPath.size() > 1)
+    {
+        int stepCount = (int)shotPath.size();
+
+        /*
+        if (m_projectilePathStep >= stepCount)
+        {
+            m_flightStepTimer.ResetElapsedTime();
+            m_projectilePathStep = 0;
+        }
+        */
+        m_ballPos = shotPath[m_projectilePathStep];
+
+        if (m_projectilePathStep < stepCount-1 )
+        {
+            ++m_projectilePathStep;
+        }
+
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        for (int i = 0; i < m_projectilePathStep; ++i)
+        {
+            DirectX::SimpleMath::Vector3 p1(prevPos);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+
+            VertexPositionColor aV(p1, Colors::White);
+            VertexPositionColor bV(p2, Colors::White);
+            //VertexPositionColor aVRed(p1, Colors::Red);
+            //VertexPositionColor bVRed(p2, Colors::Red);
+            VertexPositionColor aVRed(p1, Colors::White);
+            VertexPositionColor bVRed(p2, Colors::White);
+            VertexPositionColor aVBlue(p1, Colors::Blue);
+            VertexPositionColor bVBlue(p2, Colors::Blue);
+            VertexPositionColor aVYellow(p1, Colors::Yellow);
+            VertexPositionColor bVYellow(p2, Colors::Yellow);
+            std::vector<int> colorVec = pGolf->GetDrawColorVector();
+            int vecIndex = pGolf->GetDrawColorIndex();
+
+            // this is causing an exception, reenable after debuging
+            /*
+            if (vecIndex > 0)
+            {
+                if (i > colorVec[0])
+                {
+                    aV = aVRed;
+                    bV = bVRed;
+                }
+            }
+            if (vecIndex > 1)
+            {
+                if (i > colorVec[1])
+                {
+                    aV = aVBlue;
+                    bV = bVBlue;
+                }
+            }
+            if (vecIndex > 2)
+            {
+                if (i > colorVec[2])
+                {
+                    aV = aVYellow;
+                    bV = bVYellow;
+                }
+            }
+            */
+            m_batch->DrawLine(aV, bV);
+            prevPos = shotPath[i];
+        }
+    }
+}
+
 void Game::DrawProjectileRealTime()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
@@ -1492,17 +1566,18 @@ void Game::DrawProjectileRealTime()
     if (shotPath.size() > 1)
     {
         std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-        int stepCount = (int)shotPath.size();
-        float shotTimeTotal = shotTimeStep.back();
+        //int stepCount = (int)shotPath.size();
 
+        /*
         if (m_projectilePathStep >= stepCount)
         {
             m_projectilePathStep = 0;
         }
         m_ballPos = shotPath[m_projectilePathStep];
         ++m_projectilePathStep;
-
+        */
         DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        int ballPosIndex = 0;
         for (int i = 0; i < shotPath.size(); ++i)
         {
             DirectX::SimpleMath::Vector3 p1(prevPos);
@@ -1513,10 +1588,11 @@ void Game::DrawProjectileRealTime()
             if (shotTimeStep[i] < m_projectileTimer)
             {
                 m_batch->DrawLine(aV, bV);
+                ballPosIndex = i;
             }
             prevPos = shotPath[i];
         }
-
+        m_ballPos = shotPath[ballPosIndex];
         if (m_projectileTimer > shotTimeStep.back())
         {
             m_projectileTimer = 0.0;
@@ -1968,6 +2044,8 @@ void Game::DrawSwing()
                 {
                     AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
                     m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+                    m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
+                    //m_projectileTimer = 0.0;
                 }
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
@@ -2280,7 +2358,11 @@ void Game::Render()
         }
         if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
         {
-            DrawProjectile();
+            
+            m_flightStepTimer.ResetElapsedTime();
+            //m_projectileTimer = 0.0;
+            //DrawProjectile2();
+            DrawProjectileRealTime();
         }
         //DrawProjectile();
         //DrawCameraFocus();
@@ -2373,7 +2455,7 @@ void Game::Tick()
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
-    float elapsedTime = float(timer.GetElapsedSeconds());
+    double elapsedTime = double(timer.GetElapsedSeconds());
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
 
@@ -2433,7 +2515,6 @@ void Game::Update(DX::StepTimer const& timer)
     
     UpdateCamera(timer);
     UpdateInput();
-    elapsedTime;
 }
 
 void Game::UpdateCamera(DX::StepTimer const& timer)

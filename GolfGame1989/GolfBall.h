@@ -9,6 +9,7 @@ struct BallMotion
 {
     DirectX::SimpleMath::Vector3 position;
     DirectX::SimpleMath::Vector3 velocity;
+    float                        time;
 };
 
 struct SpinProjectile

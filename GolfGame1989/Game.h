@@ -61,6 +61,7 @@ private:
     void DrawMenuMain();
     void DrawPowerBarUI();
     void DrawProjectile();
+    void DrawProjectile2();
     void DrawProjectileRealTime();
     void DrawShotTimerUI();
     void DrawStartScreen();
@@ -96,7 +97,7 @@ private:
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
     DX::StepTimer                                   m_flightStepTimer;
-    float                                           m_projectileTimer = 0.0f;
+    double                                          m_projectileTimer = 0.0;
 
     // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
