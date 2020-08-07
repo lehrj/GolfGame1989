@@ -268,4 +268,3 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 };
-

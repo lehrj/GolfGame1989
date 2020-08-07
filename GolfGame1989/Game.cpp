@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -279,7 +279,6 @@ void Game::CreateDevice()
     logoJI->GetDesc(&logoJIDesc);
     m_jiLogoOrigin.x = float(logoJIDesc.Width / 2);
     m_jiLogoOrigin.y = float(logoJIDesc.Height / 2);
-
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -425,31 +424,28 @@ void Game::CreateResources()
 
     m_powerMeterBarScale = 1.0f - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
-    // Character textures
-    m_characterPos.x = 200.f;
-    m_characterPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-    m_character0Pos.x = 200.f;
-    m_character0Pos.y = float((backBufferHeight * .25f));
-
-    m_character1Pos.x = 200.f;
-    m_character1Pos.y = float((backBufferHeight * .5f));
-
-    m_character2Pos.x = 200.f;
-    m_character2Pos.y = float((backBufferHeight * .75f));
-
+    // Character textures  
+    m_characterPos.x = backBufferWidth / 2.f;
+    m_characterPos.y = backBufferHeight / 2.f;
+    m_character0Pos.x = backBufferWidth / 2.f;
+    m_character0Pos.y = backBufferHeight / 2.f;
+    m_character1Pos.x = backBufferWidth / 2.f;
+    m_character1Pos.y = backBufferHeight / 2.f;
+    m_character2Pos.x = backBufferWidth / 2.f;
+    m_character2Pos.y = backBufferHeight / 2.f;   
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
     m_characterBackgroundPos.x = backBufferWidth / 2.f;
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
 
     // Environment select textures
     m_environSelectCalmPos.x = backBufferWidth / 2.f;
-    m_environSelectCalmPos.y = backBufferWidth / 2.f;
+    m_environSelectCalmPos.y = backBufferHeight / 2.f;
 
     m_environSelectBreezyPos.x = backBufferWidth / 2.f;
-    m_environSelectBreezyPos.y = backBufferWidth / 2.f;
+    m_environSelectBreezyPos.y = backBufferHeight / 2.f;
 
     m_environSelectAlienPos.x = backBufferWidth / 2.f;
-    m_environSelectAlienPos.y = backBufferWidth / 2.f;
+    m_environSelectAlienPos.y = backBufferHeight / 2.f;
 
     // Intro Sceen textures
     m_bmwLogoPos.x = backBufferWidth / 2.f;
@@ -593,23 +589,22 @@ void Game::DrawMenuCharacterSelect()
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, menuOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), menuTitle.c_str(), menuTitlePos, Colors::White, 0.f, menuOrigin);
 
-    float posY0 = 250.0f;
     float ySpacing = 50.f;
+    float posY0 = 250.0f;
+    float posX0 = backBufferWidth * .20f;
 
     std::string menuObj0String = pGolf->GetCharacterName(0);
 
-    float posX0 = backBufferWidth * .20f;
     DirectX::SimpleMath::Vector2 menuObj0Pos(posX0, posY0);
     DirectX::SimpleMath::Vector2 menuObj0Origin = m_font->MeasureString(menuObj0String.c_str()) / 2.f;
 
+    m_characterBackgroundOrigin = menuObj0Origin;
     float half = m_characterBackgroundOrigin.x / 2.f;
 
+    m_character0Pos.x = posX0 + half + 25.f - menuObj0Origin.x;
+    m_character0Pos.y = m_fontMenuPos.y + menuTitlePosY + 20;
     m_characterBackgroundPos.x = posX0 + half + 25.f;
     m_characterBackgroundPos.y = m_character0Pos.y + 10;
-    m_characterBackgroundOrigin = menuObj0Origin;
-
-    m_character0Pos.x = m_characterBackgroundPos.x - menuObj0Origin.x;
-    m_character0Pos.y = m_fontMenuPos.y + menuTitlePosY + 20;
 
     posY0 += ySpacing;
     int i = 0;
@@ -703,7 +698,6 @@ void Game::DrawMenuCharacterSelect()
     m_bitwiseFont->DrawString(m_spriteBatch.get(), bioLine3String0.c_str(), bioLine3Pos0, Colors::White, 0.f, bioLine3Origin0);
 
     ///////////////////////////////////////////////////////////
-
     if (m_menuSelect == 0)
     {
         m_spriteBatch->Draw(m_characterBackgroundTexture.Get(), m_characterBackgroundPos + DirectX::SimpleMath::Vector2(4.f, 4.f), nullptr, Colors::LawnGreen, 0.f, m_characterBackgroundOrigin);
@@ -842,7 +836,7 @@ void Game::DrawMenuCharacterSelect()
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
     m_characterBackgroundPos.x = posX2 + half;
-    m_character2Pos.x = m_characterBackgroundPos.x - 125.f;
+    m_character2Pos.x = m_characterBackgroundPos.x - 125.f;;
     m_character2Pos.y = m_character0Pos.y;
 
     ++i;
@@ -1276,7 +1270,6 @@ void Game::DrawMenuMain()
     float lineDrawSpacingY = 15;
     std::string menuTitle = "Main Menu";
     float menuTitlePosX = m_fontMenuPos.x;
-    //float menuTitlePosY = m_fontPos.y / 2.f;
     float menuTitlePosY = lineDrawY;
     DirectX::SimpleMath::Vector2 menuTitlePos(menuTitlePosX, menuTitlePosY);
     DirectX::SimpleMath::Vector2 menuOrigin = m_titleFont->MeasureString(menuTitle.c_str()) / 2.f;
@@ -1297,12 +1290,10 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj1Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj1Origin = m_font->MeasureString(menuObj1String.c_str()) / 2.f;
 
-
     lineDrawY += menuObj0Pos.y;
     std::string menuObj2String = "Environment Select";
     DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
-
 
     lineDrawY += menuObj0Pos.y;
     std::string menuObj3String = "Quit";
