@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
@@ -1485,53 +1485,6 @@ void Game::DrawProjectile()
     }
 }
 
-void Game::DrawProjectile2()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    if (shotPath.size() > 1)
-    {
-        int stepCount = (int)shotPath.size();
-        std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-        float shotTimeTotal = shotTimeStep.back();
-        /*
-        if (m_projectilePathStep >= stepCount)
-        {
-            m_flightStepTimer.ResetElapsedTime();
-            m_projectilePathStep = 0;
-        }
-        //m_ballPos = shotPath[m_projectilePathStep];
-        ++m_projectilePathStep;
-        */
-        if (m_projectilePathStep < stepCount)
-        {
-            ++m_projectilePathStep;
-        }
-
-        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-        for (int i = 0; i < m_projectilePathStep; ++i)
-        {
-            DirectX::SimpleMath::Vector3 p1(prevPos);
-            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-            VertexPositionColor aV(p1, Colors::White);
-            VertexPositionColor bV(p2, Colors::White);
-
-            if (shotTimeStep[i] < m_projectileTimer)
-            {
-                m_batch->DrawLine(aV, bV);
-                prevPos = shotPath[i];
-                m_ballPos = shotPath[i];
-            }
-        }
-        
-        if (m_projectileTimer > shotTimeStep.back())
-        {
-            m_projectileTimer = 0.0;
-        }
-        
-    }
-}
-
 void Game::DrawProjectileRealTime()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
@@ -1999,7 +1952,7 @@ void Game::DrawSwing()
         DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
         DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
         DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
+        bool isBallHit = false;
         for (int i = 0; i < m_swingPathStep; ++i)
         {
             if (i > impactPoint)
@@ -2007,6 +1960,15 @@ void Game::DrawSwing()
                 shoulderColor = DirectX::Colors::Gray;
                 handColor = DirectX::Colors::Black;
                 clubHeadColor = DirectX::Colors::Green;
+                isBallHit = true;
+            }
+            if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
+            {
+                if (isBallHit == true)
+                {
+                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
+                    m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+                }
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
@@ -2312,8 +2274,15 @@ void Game::Render()
     {
         DrawWorld();
 
-        DrawProjectile();
-        DrawSwing();
+        if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+        {
+            DrawSwing();
+        }
+        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+        {
+            DrawProjectile();
+        }
+        //DrawProjectile();
         //DrawCameraFocus();
         //DrawProjectileRealTime();
     }
@@ -2374,6 +2343,16 @@ void Game::SetGameCamera(int aCamera)
     {
         m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     }
+}
+
+void Game::ResetGamePlay()
+{
+    pGolf->ZeroUIandRenderData();
+    pPlay->ResetPlayData();
+    ResetPowerMeter();
+    m_projectileTimer = 0;
+    m_swingPathStep = 0;
+    m_projectilePathStep = 0;
 }
 
 // Executes the basic game loop.
@@ -2637,9 +2616,7 @@ void Game::UpdateInput()
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
             m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
-            pGolf->ZeroUIandRenderData();
-            pPlay->ResetPlayData();
-            ResetPowerMeter();
+            ResetGamePlay();
         }
         m_currentState = GameState::GAMESTATE_MAINMENU;
     }
@@ -2812,9 +2789,7 @@ void Game::UpdateInput()
     if (kb.V)
     {
         m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
-        pGolf->ZeroUIandRenderData();
-        pPlay->ResetPlayData();
-        ResetPowerMeter();
+        ResetGamePlay();
     }
     if (kb.A)
     {

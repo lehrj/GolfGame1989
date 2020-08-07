@@ -29,7 +29,7 @@ public:
     // Initialization and management
     void Initialize(HWND window, int width, int height);
 
-    void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
+    
     // Basic game loop
     void Tick();
 
@@ -61,7 +61,6 @@ private:
     void DrawMenuMain();
     void DrawPowerBarUI();
     void DrawProjectile();
-    void DrawProjectile2();
     void DrawProjectileRealTime();
     void DrawShotTimerUI();
     void DrawStartScreen();
@@ -73,6 +72,8 @@ private:
     void OnDeviceLost();
     void Present();
     void Render();
+    void ResetGamePlay();
+    void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
     void SetGameCamera(int aCamera);
 
     void Update(DX::StepTimer const& timer);
