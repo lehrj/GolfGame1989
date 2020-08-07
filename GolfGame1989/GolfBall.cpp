@@ -238,6 +238,7 @@ void GolfBall::RollBall()
         velocity -= decelFactor * velocity * m_timeStep;
         m_ball.q.velocity = directionVec * velocity;
         m_ball.q.position += m_ball.q.velocity * m_timeStep;
+        m_ball.flightTime = m_ball.flightTime + m_timeStep;
         PushFlightData();
         ++i;
     }

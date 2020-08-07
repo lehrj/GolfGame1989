@@ -1593,10 +1593,13 @@ void Game::DrawProjectileRealTime()
             prevPos = shotPath[i];
         }
         m_ballPos = shotPath[ballPosIndex];
+
+        /*
         if (m_projectileTimer > shotTimeStep.back())
         {
             m_projectileTimer = 0.0;
         }
+        */
     }
 }
 
