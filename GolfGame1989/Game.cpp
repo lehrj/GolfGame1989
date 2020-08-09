@@ -21,8 +21,8 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
     //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
@@ -2350,7 +2350,8 @@ void Game::Render()
         {
             DrawSwing();
         }
-        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+        //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
         {
             
             m_flightStepTimer.ResetElapsedTime();
@@ -2519,7 +2520,13 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
     {
+        DirectX::SimpleMath::Vector3 cameraPos = m_ballPos;
+        cameraPos.y += .1;
+        cameraPos.z += .7;
 
+        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(cameraPos, m_ballPos, DirectX::SimpleMath::Vector3::UnitY);
+        m_world = DirectX::SimpleMath::Matrix::Identity;
+        m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA2)
     {

@@ -107,6 +107,91 @@ void GolfBall::LandProjectileEdit()
     */
 }
 
+void GolfBall::TestImpactCollisions()
+{
+
+    double direction = GetImpactDirection();
+    double impactAngle = GetImpactAngle();
+    double impactVelocity = GetImpactVelocity();
+    double impactSpinRate = m_ball.omega * 9.5493; // conversion from rad per s to rpm
+
+
+
+
+    double vix = m_ball.q.velocity.x;
+    double viy = m_ball.q.velocity.y;
+
+    Vector4d impactVector{ m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z, 0.0 }; // vx, vy, vz
+
+    double impactSpeed = impactVector.Magnitude3();
+    //printf("Impact Speed = %lf (m/s) \n", impactSpeed);
+    impactVector.NormalizeVector(impactVector);
+
+    double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
+    //?c = 15.4?(vi / (impact speed))(? / (impact angle))
+    double thetaC = 15.4;
+
+    double vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
+    double absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
+    //absViyPrime = abs(absViyPrime);
+    double e;
+    if (absViyPrime <= 20.0)
+    {
+        e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
+    }
+    else
+    {
+        e = 0.120;
+    }
+    double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
+    //double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
+    double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
+
+    double vrxPrime, vryPrime, omegaR;
+
+    // If mu is less than the critical value muC the ball will slide throughout the impact
+    // If mu is great than muC the ball will roll out of the collision
+    if (mu < muC)
+    {
+        vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
+        vryPrime = e * absViyPrime;
+        //omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        omegaR = impactSpinRate - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+    }
+    else
+    {
+        //vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
+        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * impactSpinRate;
+        vryPrime = e * absViyPrime;
+        omegaR = -vrxPrime / m_ball.radius;
+    }
+
+    double vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
+    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC);
+    // WLJ ToDo: sort out unit conversion errors with RPM vs Rad per S or what ever units are getting used due to multiple sources for equations and attempts to counter problem
+    //double vry = vrxPrime * cos(thetaC) + vryPrime * cos(thetaC);
+
+    // WLJ dirty calculation for z velocity update until I convert 2d equations into 3d;
+    DirectX::SimpleMath::Vector3 directionOfTravel = m_ball.q.velocity;
+    directionOfTravel.y = 0.0f;
+
+    double ratioX = vrx / m_ball.q.velocity.x;
+    double ratioY = vry / m_ball.q.velocity.y;
+    double ratioZ = ratioX + ratioY;
+    double preZ = m_ball.q.velocity.z;
+    double vrz = m_ball.q.velocity.z * ratioZ;
+
+    m_ball.q.velocity.x = vrx;
+    m_ball.q.velocity.y = vry;
+    //m_ball.q.velocity.z = vrz;
+    m_ball.q.velocity.z = 0.0;
+
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
+    //m_ball.omega = omegaR;
+    m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
+
+}
+
 void GolfBall::LandProjectile()
 {
     /*
@@ -136,15 +221,27 @@ void GolfBall::LandProjectile()
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
 
-    Vector4d impactVector{ m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z, 0.0 }; // vx, vy, vz
+    Vector4d impactVector4D{ m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z, 0.0 }; // vx, vy, vz
+    DirectX::SimpleMath::Vector3 vi(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
+    
 
-    double impactSpeed = impactVector.Magnitude3();
+    double impactSpeed4D = impactVector4D.Magnitude3();
+    double impactSpeed1 = vi.Length();
+    double impactSpeed2 = (sqrt(vi.x * vi.x + vi.y * vi.y + vi.z * vi.z));
+    //return (sqrt(v.x * v.x + v.y * v.y + v.z * v.z));
     //printf("Impact Speed = %lf (m/s) \n", impactSpeed);
-    impactVector.NormalizeVector(impactVector);
+
+    vi.Normalize();
+
+
+    impactVector4D.NormalizeVector(impactVector4D);
 
     double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
     //?c = 15.4?(vi / (impact speed))(? / (impact angle))
+    //double newThetaC = 15.4f * (vi / impactSpeed2) * (phi / (impactAngle));
+    //double test = (vi / impactSpeed2) * (phi / impactAngle);
     double thetaC = 15.4;
+    double phiDegrees = Utility::ToDegrees(phi);
 
     double vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
     double absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
@@ -288,6 +385,81 @@ void GolfBall::LaunchProjectile()
             ProjectileRungeKutta4(&m_ball, dt);
             UpdateSpinRate(dt);
             flightData = this->m_ball.q;
+            PushFlightData();
+            time = m_ball.flightTime;
+        }
+
+        double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
+        ProjectileRungeKutta4(&m_ball, -rollBackTime);
+
+        m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+
+        SetLandingSpinRate(m_ball.omega);
+        
+        ++m_bounceCount;
+        
+        LandProjectile();
+
+        ++count;
+        if (m_ball.q.velocity.y < .01 || count > 9)
+        {
+            isBallFlyOrBounce = false;
+        } 
+    }
+    SetMaxHeight(maxHeight);
+    m_drawColorVector.push_back(m_shotPath.size());  
+    m_drawColorIndex++;
+
+    this->m_ball.q.velocity.y = 0.0;
+    m_ball.q.position.y = 0.0;
+    RollBall();
+    SetLandingCordinates(m_ball.q.position);
+}
+
+void GolfBall::LaunchProjectileOld()
+{
+    PushFlightData();
+
+    // Fly ball on an upward trajectory until it stops climbing
+    BallMotion flightData;
+    double dt = m_timeStep;
+    double maxHeight = m_ball.launchHeight;
+    double time = 0.0;
+    SetInitialSpinRate(m_ball.omega);
+
+    int count = 0;
+    bool isBallFlyOrBounce = true;
+    while (isBallFlyOrBounce == true)
+    {
+        bool isBallAscending = true;
+        while (isBallAscending == true)
+        {
+            ProjectileRungeKutta4(&m_ball, dt);
+            UpdateSpinRate(dt);
+            flightData = this->m_ball.q;
+            PushFlightData();
+
+            if (m_ball.q.velocity.y < 0.0)
+            {
+                if (m_ball.q.position.y > maxHeight)
+                {
+                    maxHeight = m_ball.q.position.y;
+                }
+                isBallAscending = false;
+            }
+        }
+
+        double previousY = flightData.position.y;
+        double previousTime = m_ball.flightTime;
+
+        //  Calculate ball decent path until it reaches landing area height
+        while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
+        {
+            previousY = flightData.position.y;
+            previousTime = m_ball.flightTime;
+            ProjectileRungeKutta4(&m_ball, dt);
+            UpdateSpinRate(dt);
+            flightData = this->m_ball.q;
             //PrintFlightData();
             PushFlightData();
             time = m_ball.flightTime;
@@ -311,9 +483,9 @@ void GolfBall::LaunchProjectile()
         */
         //SetLandingCordinates(m_ball.q.position);
         SetLandingSpinRate(m_ball.omega);
-        
+
         ++m_bounceCount;
-        
+
         //LandProjectileOld();
         //LandProjectileEdit();
         LandProjectile();
@@ -322,10 +494,10 @@ void GolfBall::LaunchProjectile()
         if (m_ball.q.velocity.y < .01 || count > 5)
         {
             isBallFlyOrBounce = false;
-        } 
+        }
     }
     SetMaxHeight(maxHeight);
-    m_drawColorVector.push_back(m_shotPath.size());  
+    m_drawColorVector.push_back(m_shotPath.size());
     m_drawColorIndex++;
 
     this->m_ball.q.velocity.y = 0.0;
@@ -337,7 +509,7 @@ void GolfBall::LaunchProjectile()
     {
 
         RollRungeKutta4(&m_ball, dt);
-        
+
         m_ball.q.velocity.y = 0.0;
         m_ball.q.position.y = 0.0;
         //m_ball.q.velocity.z = 0.0;
@@ -945,11 +1117,85 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
 const float GolfBall::GetImpactAngle()
 {
     DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
+    DirectX::SimpleMath::Vector3 impactVector(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
+
+
+    DirectX::SimpleMath::Vector3 aaVec(1.f, 0.f, 0.f);
+    aaVec.Normalize();
+    //impactVector = DirectX::SimpleMath::Vector3::Transform(aaVec, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-50.f)));
+
+
+
+    impactVector.Normalize();
+    DirectX::SimpleMath::Vector3 planeNormal = impactPlane.Normal();
+    double angle = acos(impactVector.Dot(planeNormal));
+
+    angle = Utility::ToDegrees(angle);
+    angle = 180.0 - angle;
+
+    return angle;
+
+    /*
+    double angleDegrees = Utility::ToDegrees(angle);
+
+    double answer = 180.0 - angleDegrees;
+
+    return angle;
+    /*
+    DirectX::SimpleMath::Vector3 bbVec = impactPlane.Normal();
+
+    //DirectX::SimpleMath::Vector3 aaVec(1.f,0.f,0.f);
+    aaVec.Normalize();
+    //DirectX::SimpleMath::Vector3 aNewVec = DirectX::SimpleMath::Vector3::Transform(aaVec, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(10.f)));
+
+    float dot = aaVec.Dot(bbVec);
+    float azAngle = acos(dot);
+    float azAngleDeg = Utility::ToDegrees(azAngle);
+
+    DirectX::SimpleMath::Vector3 abVec = DirectX::SimpleMath::Vector3::Transform(aaVec, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.f)));
+    float aAngle = impactPlane.DotNormal(abVec);
+    float aAngleDeg = Utility::ToDegrees(aAngle);
+    float abAngle = acos(aAngle);
+
     
+
+    DirectX::SimpleMath::Vector3 vi(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
+
+    vi.Normalize();
+
+    DirectX::SimpleMath::Vector3 pointA, pointB, pointC;
+    pointA.Zero;
+    pointB.Zero;
+    pointC.Zero;
+    pointB.x = 1.f;
+    pointC.z = 1.f;
+
+    DirectX::SimpleMath::Plane testPlane(pointA, pointB, pointC);
+
+    DirectX::SimpleMath::Vector3 testVector;
+    testVector.Zero;
+    DirectX::SimpleMath::Vector3 testVector2;
+    testVector2.Zero;
+    testVector2.y = 1.f;
+    testVector.x = 1.f;
+    //testVector.y = 1.f;
+
+    //testVector.z = 1.f;
+    testVector.Normalize();
+    //DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
+    DirectX::SimpleMath::Vector3 newVec = DirectX::SimpleMath::Vector3::Transform(testVector, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.f)));
+
+    //float test1 = impactPlane.DotNormal(testVector);
+    float test1 = testPlane.DotNormal(testVector);
+    float test1Degrees = Utility::ToDegrees(test1);
+
+    DirectX::SimpleMath::Vector3 vNorm = impactPlane.Normal();
+
     if (m_shotPath.size() < 2)
     {
         std::cerr << "GolfBall::GetImpactAngle() error, m_xVals.size < 2, cannont process impact";
     }
+
     DirectX::SimpleMath::Vector3 impactPoint;
     impactPoint = m_landingCordinates;
     DirectX::SimpleMath::Vector3 impactMinus1;
@@ -973,6 +1219,7 @@ const float GolfBall::GetImpactAngle()
     float g = Utility::ToDegrees(f);
 
     return g;
+    */
 }
 
 const float GolfBall::GetImpactDirection()
@@ -999,8 +1246,15 @@ const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
     b.Cross(a, c);
 
     DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(c, a);
-
-    return impactPlane;
+    
+    // create a default horizontal plane at 0,0,0
+    DirectX::SimpleMath::Vector3 d, e;
+    d.Zero;
+    e.Zero;
+    e.y = 1.0f;
+    DirectX::SimpleMath::Plane zeroPlane = DirectX::SimpleMath::Plane(d, e);
+    //return impactPlane;
+    return zeroPlane;
 }
 
 const float GolfBall::GetImpactVelocity()
@@ -1044,5 +1298,4 @@ void GolfBall::ZeroDataForUI()
     m_shotOrigin.Zero;
     m_landingCordinates.Zero;
     m_maxHeight = 0.0;
-    
 }

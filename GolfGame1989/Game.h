@@ -222,7 +222,7 @@ private:
     enum class GameCamera
     {
         GAMECAMERA_DEFAULT,
-        GAMECAMERA_CAMERA1,
+        GAMECAMERA_CAMERA1,  // Side profile of ball view to debug landing mechanics
         GAMECAMERA_CAMERA2,
         GAMECAMERA_CAMERA3,
         GAMECAMERA_CAMERA4,

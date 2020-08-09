@@ -9,7 +9,6 @@ struct BallMotion
 {
     DirectX::SimpleMath::Vector3 position;
     DirectX::SimpleMath::Vector3 velocity;
-    float                        time;
 };
 
 struct SpinProjectile
@@ -62,11 +61,14 @@ public:
 
     void ZeroDataForUI();
 
+    void TestImpactCollisions();
+
 private:
     void LandProjectile();
     void LandProjectileOld();
     void LandProjectileEdit();
     void LaunchProjectile();
+    void LaunchProjectileOld();
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
     void SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord);

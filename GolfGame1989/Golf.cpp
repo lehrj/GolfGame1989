@@ -84,7 +84,7 @@ void Golf::BuildUIstrings()
     inVal.str(std::string());
     inVal << std::fixed << pBall->GetLandingHeight();
     //m_uiStrings.push_back("Landing Height = " + inVal.str() + " meters");
-    //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+    m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 }
 
