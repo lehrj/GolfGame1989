@@ -68,9 +68,9 @@ private:
     const double                        m_minAirDensity = 0.0;
     const double                        m_maxAirDensity = 68.0; // just above the air density of Venus
     const double                        m_minGravity = 0.1;
-    const double                        m_maxGravity = 28.0; // approximate value for the mass of the sun
+    const double                        m_maxGravity = 28.0;    // approximate value for the mass of the sun
     const double                        m_minMaxHeight = 450.0; // Launch & Landing min/max heights is just above the largest elevation change (>400 meters) of any real golf course which is the Extreme 19 in Limpopo Province South Africa
-    const double                        m_minMaxWind = 667.0;// highest know wind speed on Neptune
+    const double                        m_minMaxWind = 667.0;   // highest know wind speed on Neptune
 
     std::vector<Environ>                m_environs;
     Environ                             m_currentEnviron;

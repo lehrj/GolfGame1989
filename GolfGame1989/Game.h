@@ -61,7 +61,6 @@ private:
     void DrawMenuMain();
     void DrawPowerBarUI();
     void DrawProjectile();
-    void DrawProjectile2();
     void DrawProjectileRealTime();
     void DrawShotTimerUI();
     void DrawStartScreen();

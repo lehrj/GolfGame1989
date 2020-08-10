@@ -69,7 +69,6 @@ void GolfBall::LandProjectile()
 
     double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
 
-    mu = .1;
     //double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
     double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
 
@@ -110,7 +109,7 @@ void GolfBall::LandProjectile()
     m_ball.q.velocity.x = vrx;
     m_ball.q.velocity.y = vry;
     //m_ball.q.velocity.z = vrz;
-    m_ball.q.velocity.z = 0.0;
+    m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
     //m_ball.omega = omegaR;
@@ -118,8 +117,6 @@ void GolfBall::LandProjectile()
 
     double impactAnglePostCollision = GetImpactAngle();
 
-    int testBreak = 0;
-    testBreak++;
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 }
 
@@ -225,7 +222,6 @@ void GolfBall::LaunchProjectile()
         double aaAceleration = aaVelocityDelta / m_timeStep;
         double aaAcelerationFull = aaVelocityDeltaFull / m_timeStep;
 
-
         ++count;
         if (m_ball.q.velocity.y < .5 || count > 19 || bounceHeight < .5) // WLJ bounce height threshold is just a guess at this point
         {
@@ -295,13 +291,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     double vx0 = cosL * vbp - sinL * vbn;
     double vy0 = sinL * vbp + cosL * vbn;
     double vz0 = 0.0;
-    /*
-    double velocity = aImpactData.velocity;
-    double ballMass = m_ball.mass;
-    double clubMass = aImpactData.mass;
-    double e = aImpactData.cor; //  coefficient of restitution of club face striking the ball
-    double radius = m_ball.radius;
-    */
 
     double div1 = ((1.0 + e) * clubMass) / (clubMass + ballMass);
     double div2 = (2 * clubMass) / (7 * (clubMass + ballMass));

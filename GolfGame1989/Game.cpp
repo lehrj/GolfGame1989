@@ -40,7 +40,6 @@ Game::~Game()
     }
     m_audioMusicStream.reset();
     m_audioEffectStream.reset();
-    //m_musicLoop.reset();
 
     delete pGolf;
     delete pPlay;
@@ -1476,80 +1475,6 @@ void Game::DrawProjectile()
     }
 }
 
-void Game::DrawProjectile2()
-{
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
-    if (shotPath.size() > 1)
-    {
-        int stepCount = (int)shotPath.size();
-
-        /*
-        if (m_projectilePathStep >= stepCount)
-        {
-            m_flightStepTimer.ResetElapsedTime();
-            m_projectilePathStep = 0;
-        }
-        */
-        m_ballPos = shotPath[m_projectilePathStep];
-
-        if (m_projectilePathStep < stepCount-1 )
-        {
-            ++m_projectilePathStep;
-        }
-
-        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-        for (int i = 0; i < m_projectilePathStep; ++i)
-        {
-            DirectX::SimpleMath::Vector3 p1(prevPos);
-            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-
-            VertexPositionColor aV(p1, Colors::White);
-            VertexPositionColor bV(p2, Colors::White);
-            //VertexPositionColor aVRed(p1, Colors::Red);
-            //VertexPositionColor bVRed(p2, Colors::Red);
-            VertexPositionColor aVRed(p1, Colors::White);
-            VertexPositionColor bVRed(p2, Colors::White);
-            VertexPositionColor aVBlue(p1, Colors::Blue);
-            VertexPositionColor bVBlue(p2, Colors::Blue);
-            VertexPositionColor aVYellow(p1, Colors::Yellow);
-            VertexPositionColor bVYellow(p2, Colors::Yellow);
-            std::vector<int> colorVec = pGolf->GetDrawColorVector();
-            int vecIndex = pGolf->GetDrawColorIndex();
-
-            // this is causing an exception, reenable after debuging
-            /*
-            if (vecIndex > 0)
-            {
-                if (i > colorVec[0])
-                {
-                    aV = aVRed;
-                    bV = bVRed;
-                }
-            }
-            if (vecIndex > 1)
-            {
-                if (i > colorVec[1])
-                {
-                    aV = aVBlue;
-                    bV = bVBlue;
-                }
-            }
-            if (vecIndex > 2)
-            {
-                if (i > colorVec[2])
-                {
-                    aV = aVYellow;
-                    bV = bVYellow;
-                }
-            }
-            */
-            m_batch->DrawLine(aV, bV);
-            prevPos = shotPath[i];
-        }
-    }
-}
-
 void Game::DrawProjectileRealTime()
 {
     std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
@@ -1557,16 +1482,7 @@ void Game::DrawProjectileRealTime()
     if (shotPath.size() > 1)
     {
         std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-        //int stepCount = (int)shotPath.size();
 
-        /*
-        if (m_projectilePathStep >= stepCount)
-        {
-            m_projectilePathStep = 0;
-        }
-        m_ballPos = shotPath[m_projectilePathStep];
-        ++m_projectilePathStep;
-        */
         DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
         int ballPosIndex = 0;
         for (int i = 0; i < shotPath.size(); ++i)
@@ -1584,20 +1500,13 @@ void Game::DrawProjectileRealTime()
             prevPos = shotPath[i];
         }
         m_ballPos = shotPath[ballPosIndex];
-
-        /*
-        if (m_projectileTimer > shotTimeStep.back())
-        {
-            m_projectileTimer = 0.0;
-        }
-        */
     }
 }
 
 /* Testing different start screen designs
 void Game::DrawStartScreen()
 {
-    std::string title = "Golf Gm 1989";
+    std::string title = "Golf Game 1989";
     float lineDraw = m_fontMenuPos.y + 10;
     float fontTitlePosX = m_fontPosDebug.x - 100;
     //float fontTitlePosX = m_fontPos.x;
@@ -2100,7 +2009,6 @@ void Game::DrawWorld()
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
-    //DirectX::SimpleMath::Vector3 yAxis(0.f, 2.f, 0.f);
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
     size_t extention = 50;
@@ -2146,9 +2054,7 @@ void Game::DrawWorld()
     }
 
     //draw tee box
-    //double originX = shotPath[0].x;
     float originX = m_shootOrigin.x;
-    //double originZ = shotPath[0].z;
     float originZ = m_shootOrigin.z;
     DirectX::SimpleMath::Vector3 t1(originX - .05f, 0.0f, -0.1f);
     DirectX::SimpleMath::Vector3 t2(originX + .05f, 0.0f, -0.1f);
@@ -2538,13 +2444,10 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     {
         m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
         m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(6.f, 0.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        //m_world = Matrix::CreateRotationY(Utility::ToRadians(90));
         m_effect->SetView(m_view);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
     {
-        //m_view = Matrix::CreateLookAt(Vector3(2.f, m_cameraRotationY, 2.f), Vector3::Zero, Vector3::UnitY);
-        //m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTargetX, 0.0, m_cameraTargetZ) , DirectX::SimpleMath::Vector3::UnitY);
         m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, m_cameraRotationY, 2.f), DirectX::SimpleMath::Vector3(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z), DirectX::SimpleMath::Vector3::UnitY);
         m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
 
@@ -2570,7 +2473,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
         targetDirection.Normalize();
   
-        
         float elapsedTime = float(timer.GetElapsedSeconds());
         float cameraSpeed = 0.9f;
         float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
@@ -2609,7 +2511,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
         targetDirection.Normalize();
   
-        
         float elapsedTime = float(timer.GetElapsedSeconds());
         float cameraSpeed = 0.9f;
         float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
@@ -2631,17 +2532,6 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_TOSWINGVIEW)
     {
-        /*
-        //pCamera->SetHomePos(DirectX::SimpleMath::Vector3(-1.0f, 1.0f, .0f));
-        DirectX::SimpleMath::Vector3 swingViewPos(-2.f, 0.02f, 1.2f);
-        pCamera->TranslateAtSpeed(swingViewPos);
-        m_effect->SetView(pCamera->GetViewMatrix());
-        */
-
-        DirectX::SimpleMath::Vector3 aaswingViewPos(-2.f, 0.02f, 1.2f);
-        DirectX::SimpleMath::Vector3 aacameraViewPos = m_cameraPosition;
-
-
         DirectX::SimpleMath::Vector3 cameraLookAt = m_shootOrigin;
         cameraLookAt.y += .3f;
         m_view = DirectX::SimpleMath::Matrix::CreateLookAt(m_cameraPosition, cameraLookAt, DirectX::SimpleMath::Vector3::UnitY);
