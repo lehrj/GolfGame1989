@@ -30,12 +30,12 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     double Vc = 0.0;
     double time = 0.0;
     double dt = 0.0025; // Time delta between frames in seconds
-    double    a, at; // stores previous time steps results for alpha and its first derivative
-    double    b, bt; // stores previous time steps results for beta and its first derivative
-    double    phi; // stores value of theta + beta
-    double    Vc2; // square of club head velocity 
-    double  ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
-    double  bk1, bk2, bk3, bk4; // stores intermediate results of Runge-Kutta integration scheme
+    double a, at; // stores previous time steps results for alpha and its first derivative
+    double b, bt; // stores previous time steps results for beta and its first derivative
+    double phi; // stores value of theta + beta
+    double Vc2; // square of club head velocity 
+    double ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
+    double bk1, bk2, bk3, bk4; // stores intermediate results of Runge-Kutta integration scheme
     double velocityCapture = 0;
     double launchAngle = 0.0;
     bool isVcFound = false;
@@ -100,11 +100,9 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         {
             if (isVcFound == false)
             {
-                //PrintSwingMechanics(Vc, time);
                 m_swingImpactStep = i;
                 velocityCapture = Vc;
                 isVcFound = true;
-                //launchAngle = m_club.angle - Utility::ToDegrees(phi);
                 launchAngle = m_club.angle - Utility::ToDegrees(phi);
             }
         }
@@ -125,12 +123,12 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     m_impactData.vFaceNormal.z = 0.0; // WLJ ToDo: update with value from play mechanics
 
     m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(m_impactData.impactMissOffSet)));
-    //m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(10.5)));
 
     m_impactData.vFaceNormal.Normalize();
 
     m_impactData.vHeadNormal = m_impactData.vHead.Dot(m_impactData.vFaceNormal) * m_impactData.vFaceNormal;
     m_impactData.vHeadParallel = m_impactData.vHead - m_impactData.vHeadNormal;
+
     return m_impactData;
 }
 
@@ -160,7 +158,6 @@ void GolfSwing::InputClub(int aInput)
 {
     m_club = m_pBag->GetClub(aInput);
     UpdateGolfSwingValues();
-    //CalculateLaunchVector();
 }
 
 void GolfSwing::PrintSwingInputData()
@@ -506,7 +503,6 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     m_backSwingPercentage = aImpactData.power;
     m_impactData.power = aImpactData.power;
     UpdateGolfSwingValues();
-    //CalculateLaunchVector2();
 }
 
 void GolfSwing::ZeroDataForUI()

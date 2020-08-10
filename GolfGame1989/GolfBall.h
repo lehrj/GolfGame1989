@@ -23,7 +23,7 @@ struct SpinProjectile
     double          mass;
     int             numEqns;  // number of equations to solve
     double          omega;  //  angular velocity, m/s
-    BallMotion      q;
+    BallMotion      q;      //  ball position and velocities
     DirectX::SimpleMath::Vector3 rotationAxis;
     double          radius; //  sphere radius, m
     DirectX::SimpleMath::Vector3 windSpeed;
@@ -55,29 +55,20 @@ public:
   
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
-    void PrintFlightData();  
     void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
 
     void ZeroDataForUI();
 
-    void TestImpactCollisions();
-
 private:
     void LandProjectile();
-    void LandProjectileOld();
-    void LandProjectileEdit();
     void LaunchProjectile();
-    void LaunchProjectileOld();
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
     void SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord);
     void SetMaxHeight(const double aMaxHeight) { m_maxHeight = aMaxHeight; };
     void SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis);
     void RollBall();
-    void RollRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
-    void RollRightHandSideOld(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
-    void RollRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aDs);
     void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aDs);
