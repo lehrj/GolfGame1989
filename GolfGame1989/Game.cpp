@@ -20,9 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 

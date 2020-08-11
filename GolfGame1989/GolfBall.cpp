@@ -28,7 +28,11 @@ void GolfBall::LandProjectile()
     double impactAngle = GetImpactAngle();
     double impactVelocity = GetImpactVelocity();
     double impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
+    
+    //impactSpinRate = -1000.;
+    impactSpinRate = impactSpinRate * -1;
     //impactSpinRate = impactSpinRate * 9.5493;
+    //impactSpinRate = impactSpinRate / m_ball.radius;
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
 
@@ -40,12 +44,15 @@ void GolfBall::LandProjectile()
 
     double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
 
-    phi = Utility::ToDegrees(phi);
+    //phi = Utility::ToDegrees(phi);
 
     //?c = 15.4?(vi / (impact speed))(? / (impact angle))
-    double newThetaC = 15.4f * (impactSpeed) * (phi);
+    //double newThetaC = 15.4f * (impactSpeed) * (phi);
+    double newThetaC = Utility::ToRadians(15.4) * (impactSpeed) * (phi);
     //double test = (vi / impactSpeed2) * (phi / impactAngle);
     double thetaC = Utility::ToRadians(15.4);
+    //thetaC = 15.4;
+    //thetaC = newThetaC;
     //double thetaC = 15.4;
     //thetaC = 15.4f * (impactSpeed) * (phi);
     //thetaC = Utility::ToRadians(thetaC);
@@ -67,8 +74,10 @@ void GolfBall::LandProjectile()
         e = 0.120;
     }
 
-    double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
+    double muMin = (2.0 * (vix + m_ball.radius * impactSpinRate)) / (7.0 * (1.0 + e) * viy);
 
+
+    double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
     //double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
     double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
 
@@ -106,6 +115,19 @@ void GolfBall::LandProjectile()
     double preZ = m_ball.q.velocity.z;
     double vrz = m_ball.q.velocity.z * ratioZ;
 
+    double backwardsBounceCheck = (impactSpeed / (2. * m_ball.radius)) * (5. * sin(impactAngle - thetaC) - 7. * e * tan(thetaC) * cos(impactAngle - thetaC));
+    //backwardsBounceCheck = backwardsBounceCheck * -1;
+    
+    if (impactSpinRate > backwardsBounceCheck)
+    {
+        //direction -= Utility::ToRadians(180.);
+    }
+    
+    if (muMin > muC)
+    {
+        //direction += Utility::ToRadians(180.);
+    }
+    
     m_ball.q.velocity.x = vrx;
     m_ball.q.velocity.y = vry;
     //m_ball.q.velocity.z = vrz;
@@ -113,7 +135,10 @@ void GolfBall::LandProjectile()
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
     //m_ball.omega = omegaR;
+    //m_ball.omega = omegaR * m_ball.radius;
+    omegaR = omegaR * -1;
     m_ball.omega = omegaR;
+    //m_ball.omega = omegaR;
 
     double impactAnglePostCollision = GetImpactAngle();
 
@@ -223,7 +248,7 @@ void GolfBall::LaunchProjectile()
         double aaAcelerationFull = aaVelocityDeltaFull / m_timeStep;
 
         ++count;
-        if (m_ball.q.velocity.y < .5 || count > 19 || bounceHeight < .5) // WLJ bounce height threshold is just a guess at this point
+        if (m_ball.q.velocity.y < .1 || count > 19 || bounceHeight < .1) // WLJ bounce height threshold is just a guess at this point
         {
             isBallFlyOrBounce = false;
         } 
