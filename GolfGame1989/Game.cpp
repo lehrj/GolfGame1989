@@ -52,7 +52,8 @@ void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
     if (m_audioMusicStream)
     {
         m_audioMusicStream->SetVolume(m_musicVolume);
-        m_audioMusicStream->Play(true);
+        //m_audioMusicStream->Play(true);
+        m_audioMusicStream->Play();
     }
 }
 
@@ -158,10 +159,16 @@ void Game::CreateDevice()
 
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
 
+    
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
-
+    
+    /*
+    CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
+        D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
+        D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, TRUE, TRUE); // Multisampling
+    */
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc, m_raster.ReleaseAndGetAddressOf()));
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
@@ -335,6 +342,7 @@ void Game::CreateResources()
         swapChainDesc.Height = backBufferHeight;
         swapChainDesc.Format = backBufferFormat;
         swapChainDesc.SampleDesc.Count = 1;
+        //swapChainDesc.SampleDesc.Count = 8; // multisampling  RenderTesting
         swapChainDesc.SampleDesc.Quality = 0;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         swapChainDesc.BufferCount = backBufferCount;
@@ -366,11 +374,14 @@ void Game::CreateResources()
     // Allocate a 2-D surface as the depth/stencil buffer and
     // create a DepthStencil view on this surface to use on bind.
     CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL);
+    //CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL, D3D11_USAGE_DEFAULT, 0, 8, 0);  // multisampling
 
     ComPtr<ID3D11Texture2D> depthStencil;
     DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, depthStencil.GetAddressOf()));
 
     CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+    //CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2DMS);  //multisampling RenderTesting
+
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
@@ -477,7 +488,7 @@ void Game::DrawIntroScreen()
     float fadeDuration = 1.5f;
     float logoDisplayDuration = 5.f;
     float logoDisplayGap = 1.f;
-    float startDelay = 1.5f;  
+    float startDelay = 4.2f;  
     float timeStamp = m_timer.GetTotalSeconds();
     
     float fadeInStart1 = startDelay;
@@ -565,7 +576,7 @@ void Game::DrawIntroScreen()
     }
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
-        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
+        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC03);
         m_currentState = GameState::GAMESTATE_STARTSCREEN;
     }
 }
@@ -2129,6 +2140,8 @@ void Game::OnDeactivated()
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+    m_raster.Reset(); // anti-aliased lines
+
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
@@ -2239,7 +2252,7 @@ void Game::Render()
     //m_d3dContext->RSSetState(m_states->CullNone());
 
     //world start
-    m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing
+    m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
     m_effect->SetWorld(m_world);
     //world end
     m_effect->Apply(m_d3dContext.Get());
@@ -2456,9 +2469,13 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_MOVETOBEHIND)
     {
+        
         DirectX::SimpleMath::Vector3 cameraStartPos = m_shootOrigin;
         cameraStartPos.y += 0.02f;
         cameraStartPos.z += 0.2f;
+        
+        //DirectX::SimpleMath::Vector3 cameraStartPos = m_cameraPosition;
+
         DirectX::SimpleMath::Vector3 cameraEndPos = m_shootOrigin;
         cameraEndPos.x -= .9f;
         cameraEndPos.y += .5f;
@@ -2469,6 +2486,9 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 targetStartPos = m_shootOrigin;
         DirectX::SimpleMath::Vector3 targetEndPos = m_shootOrigin;
         targetStartPos.y += .3f;
+
+        //DirectX::SimpleMath::Vector3 targetStartPos = m_ballPos;
+        //targetStartPos.y += .3f;
         float targetDistance = DirectX::SimpleMath::Vector3::Distance(targetStartPos, targetEndPos);
         DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
         targetDirection.Normalize();

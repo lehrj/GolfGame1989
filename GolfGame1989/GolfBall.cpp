@@ -64,8 +64,8 @@ void GolfBall::LandProjectile()
     absViyPrime = abs(absViyPrime);
     double e;
 
-    if (absViyPrime <= 20.0)
-    //if(impactSpeed <= 20.0)
+   // if (absViyPrime <= 20.0)
+    if(impactSpeed <= 20.0)
     {
         e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
     }
