@@ -51,3 +51,13 @@ Penner, A.R. (2002). The Run of a Golf Ball, NRC Research Press Web Site http://
 
 Roh, W.J., Lee, C.W. (2010). Golf Ball Landing, Bounce and Roll on Turf. 8th Conference of the International Sports Engineering Association. P 3237 - 3242
 
+Music Credits:
+
+Music01 = Techno DRIVE!!! by Centurion_of_war. https://opengameart.org/content/techno-drive
+
+Music02 = Snabish Tunes 8 Bit Version by Snabisch. https://opengameart.org/content/snabisch-tunes-8-bit-version
+
+Music03 = In Summer, NES Version by Snabisch. https://opengameart.org/content/in-summer-nes-version
+
+Music04 = Retroracing Beach by Bogart VGM. https://opengameart.org/content/retroracing-beach
+
