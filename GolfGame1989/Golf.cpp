@@ -207,16 +207,6 @@ std::string Golf::GetCharacterName(const int aCharacterIndex) const
     return pCharacter->GetName(aCharacterIndex);
 }
 
-int Golf::GetDrawColorIndex()
-{
-    return pBall->GetColorIndex();
-}
-
-std::vector<int> Golf::GetDrawColorVector()
-{
-    return pBall->GetColorVector();
-}
-
 void Golf::LoadCharacterTraits()
 {
     pSwing->SetArmBalancePoint(pCharacter->GetArmBalancePoint(m_selectedCharacter));

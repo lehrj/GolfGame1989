@@ -266,27 +266,11 @@ void GolfBall::LaunchProjectile()
     }
 
     SetMaxHeight(maxHeight);
-    m_drawColorVector.push_back(m_shotPath.size());  
-    m_drawColorIndex++;
 
     this->m_ball.q.velocity.y = 0.0;
     m_ball.q.position.y = 0.0;
     RollBall();
     SetLandingCordinates(m_ball.q.position);
-}
-
-DirectX::SimpleMath::Vector4 GolfBall::CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation)
-{
-    DirectX::SimpleMath::Vector4 impactNormal = DirectX::SimpleMath::Vector4::Zero;
-    impactNormal.x = cos(aFaceAngle);
-    impactNormal.y = sin(aFaceAngle);
-    impactNormal.w = 1.0;
-    impactNormal.Normalize();
-    //impactNormal.w = 1.0;
-    aFaceRotation = Utility::ToRadians(-15.0);
-
-    impactNormal = DirectX::SimpleMath::Vector4::Transform(impactNormal, DirectX::SimpleMath::Matrix::CreateRotationY(aFaceRotation));
-    return impactNormal;
 }
 
 void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
@@ -368,10 +352,7 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     normfManus.Normalize();
     normOmegaBall.Normalize();
 
-    //SetSpinAxis(omegaBall);
-
     m_ball.omega = omega;
-    //m_ball.omega = omegaBall.z;
    
     m_ball.q.velocity.x = vBall.x;   //  vx 
     m_ball.q.velocity.y = vBall.y;   //  vy 
@@ -493,7 +474,6 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
 {
     int numEqns = pBall->numEqns;
     //  Allocate memory for the arrays.
-
     BallMotion vecQ;
     BallMotion vecDq1;
     BallMotion vecDq2;
@@ -556,12 +536,9 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
 void GolfBall::ResetBallData()
 {
     m_shotPath.clear();
-    m_drawColorVector.clear();
     m_shotPathTimeStep.clear();
     m_landingCordinates = m_shotOrigin;
     m_bounceCount = 0;
-    m_drawColorIndex = 0;
-    m_drawColorVector.clear();
     m_shotPath.clear();
     m_shotPathTimeStep.clear();
     m_ball.flightTime = 0.0;
@@ -576,7 +553,6 @@ void GolfBall::ResetBallData()
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
-    m_drawColorVector.clear();
     m_ball.airDensity = pEnviron->GetAirDensity();
     m_ball.area = 0.001432;
     m_ball.dragCoefficient = 0.22;

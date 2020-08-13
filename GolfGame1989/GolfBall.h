@@ -33,16 +33,11 @@ class GolfBall
 {
 public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
-    DirectX::SimpleMath::Vector4 CalculateImpactVector(double aVelocity, double aFaceAngle, double aFaceRotation);
     void FireProjectile(Utility::ImpactData aImpact, Environment* pEnviron);
 
     int GetBounceCount() const { return m_bounceCount; };
-    int GetColorIndex() const { return m_drawColorIndex; };
-    std::vector<int> GetColorVector() const { return m_drawColorVector; };
-
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
-    double GetMaxHeight() const { return m_maxHeight; };
-    
+    double GetMaxHeight() const { return m_maxHeight; };   
     double GetImpactAngle() const;
     double GetImpactDirection() const;
     DirectX::SimpleMath::Plane GetImpactPlane() const;
@@ -79,8 +74,6 @@ private:
     const double                                m_faceRoll = 0.7142857142857143; // <== 5/7, represents the ball moving up the club face to impart spin
     const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
     const float                                 m_timeStep = 0.01f;
-    int                                         m_drawColorIndex = 0;
-    std::vector<int>                            m_drawColorVector;
     std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
     std::vector<float>                          m_shotPathTimeStep;
     double                                      m_initialSpinRate;
