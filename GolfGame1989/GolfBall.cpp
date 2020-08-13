@@ -43,7 +43,16 @@ void GolfBall::LandProjectile()
 
     vi.Normalize();
 
-    double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
+    //double phi = atan(abs(m_ball.q.velocity.x / m_ball.q.velocity.y));
+
+    DirectX::SimpleMath::Vector3 phiVec(m_ball.q.velocity.x, m_ball.q.velocity.y, 0.0);
+    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
+
+    double phi = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(phiVec), DirectX::XMVector3Normalize(zeroDirection)));
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(phiVec, zeroDirection)) < 0.0f)
+    {
+        phi = -phi;
+    }
 
     //phi = Utility::ToDegrees(phi);
 
@@ -639,7 +648,15 @@ const float GolfBall::GetImpactAngle()
 
 const float GolfBall::GetImpactDirection()
 {
-    float direction = atan(m_ball.q.velocity.z / m_ball.q.velocity.x);
+    DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
+    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
+
+    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
+    {
+        direction = -direction;
+    }
+
     return direction;
 }
 
