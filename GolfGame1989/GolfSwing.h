@@ -16,17 +16,17 @@ public:
     void InputClub(int aInput);
     const double GetArmLength() const { return m_armLength; };
     
-    const double GetBackSwingPercentage() const { return m_impactData.power; };
-    const double GetClubAngle() const { return m_club.angle; };
-    const double GetClubLength() const { return m_club.length; };
-    const double GetClubMass() const { return m_club.mass; };
-    const std::string GetClubName() const { return m_club.clubName; };
-    const double GetLaunchAngle() const { return m_launchAngle; };
+    double GetBackSwingPercentage() const { return m_impactData.power; };
+    double GetClubAngle() const { return m_club.angle; };
+    double GetClubLength() const { return m_club.length; };
+    double GetClubMass() const { return m_club.mass; };
+    std::string GetClubName() const { return m_club.clubName; };
+    double GetLaunchAngle() const { return m_launchAngle; };
     
-    const double GetLaunchVelocity() const { return m_impactData.velocity; };
+    double GetLaunchVelocity() const { return m_impactData.velocity; };
     std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta() const { return m_alphaBetaThetaVec; };
-    const int GetSwingImpactStep() const { return m_swingImpactStep; };
-    const int GetSwingStepIncrementCount() const { return m_swingStepIncrementCount; };
+    int GetSwingImpactStep() const { return m_swingImpactStep; };
+    int GetSwingStepIncrementCount() const { return m_swingStepIncrementCount; };
 
     void PrintSwingInputData();
     void PrintSwingMechanics(const double aClubVelocity, const double aTime);
@@ -54,8 +54,8 @@ public:
     void ZeroDataForUI();
 
 private:
-    double ComputeAlphaDotDot(void);
-    double ComputeBetaDotDot(void);
+    double ComputeAlphaDotDot(void) const;
+    double ComputeBetaDotDot(void) const;
     void SetBeta(double aBeta);
     void SetQalpha(double aQalpha);
     void SetQbeta(double aQbeta);

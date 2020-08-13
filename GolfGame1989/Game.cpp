@@ -20,9 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
@@ -516,7 +516,7 @@ void Game::DrawIntroScreen()
     float fadeDuration = 1.5f;
     float logoDisplayDuration = 5.f;
     float logoDisplayGap = 1.f;
-    float startDelay = 4.2f;  
+    float startDelay = 2.f;  
     float timeStamp = m_timer.GetTotalSeconds();
     
     float fadeInStart1 = startDelay;

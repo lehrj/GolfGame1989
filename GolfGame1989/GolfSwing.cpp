@@ -132,7 +132,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     return m_impactData;
 }
 
-double GolfSwing::ComputeAlphaDotDot(void)
+double GolfSwing::ComputeAlphaDotDot(void) const
 {
     double A = (m_armMassMoI + m_club.massMoI + m_club.mass * m_armLength * m_armLength + 2 * m_armLength * m_club.firstMoment * cos(m_beta));
     double B = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
@@ -145,7 +145,7 @@ double GolfSwing::ComputeAlphaDotDot(void)
     return (F - (B * G / D)) / (A - (B * B / D));
 }
 
-double GolfSwing::ComputeBetaDotDot(void)
+double GolfSwing::ComputeBetaDotDot(void) const
 {
     double C = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
     double D = m_club.massMoI;

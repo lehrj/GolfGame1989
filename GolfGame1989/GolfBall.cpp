@@ -258,7 +258,7 @@ void GolfBall::LaunchProjectile()
         double aaAcelerationFull = aaVelocityDeltaFull / m_timeStep;
 
         ++count;
-        if (m_ball.q.velocity.y < .1 || count > 19 || bounceHeight < .1) // WLJ bounce height threshold is just a guess at this point
+        if (m_ball.q.velocity.y < .3 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
         {
             isBallFlyOrBounce = false;
         } 
@@ -631,7 +631,7 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
-const float GolfBall::GetImpactAngle()
+double GolfBall::GetImpactAngle() const
 {
     DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
     DirectX::SimpleMath::Vector3 impactVector(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
@@ -646,12 +646,12 @@ const float GolfBall::GetImpactAngle()
     return angle;
 }
 
-const float GolfBall::GetImpactDirection()
+double GolfBall::GetImpactDirection() const
 {
     DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
     DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
 
-    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
+    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
     if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
     {
         direction = -direction;
@@ -660,7 +660,7 @@ const float GolfBall::GetImpactDirection()
     return direction;
 }
 
-const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
+DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
 {
     // create a default horizontal plane at 0,0,0. fill in later for non-horizontal plane gameplay
     DirectX::SimpleMath::Vector3 a = DirectX::SimpleMath::Vector3::Zero;
@@ -671,7 +671,7 @@ const DirectX::SimpleMath::Plane GolfBall::GetImpactPlane()
     return impactPlane;
 }
 
-const float GolfBall::GetImpactVelocity()
+float GolfBall::GetImpactVelocity() const
 {
     DirectX::SimpleMath::Vector3 impactPoint;
     impactPoint.x = m_ball.q.velocity.x;
@@ -683,7 +683,7 @@ const float GolfBall::GetImpactVelocity()
     return velocity;
 }
 
-const double GolfBall::GetShotDistance()
+double GolfBall::GetShotDistance() const
 {
     DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
     DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
@@ -693,7 +693,7 @@ const double GolfBall::GetShotDistance()
     return distance;
 }
 
-const double GolfBall::GetLandingHeight()
+double GolfBall::GetLandingHeight() const
 {
     if (m_shotPath.size() < 2)
     {

@@ -41,16 +41,16 @@ public:
     std::vector<int> GetColorVector() const { return m_drawColorVector; };
 
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
-    const double GetMaxHeight() const { return m_maxHeight; };
+    double GetMaxHeight() const { return m_maxHeight; };
     
-    const float GetImpactAngle();
-    const float GetImpactDirection();
-    const DirectX::SimpleMath::Plane GetImpactPlane();
-    const float GetImpactVelocity();
+    double GetImpactAngle() const;
+    double GetImpactDirection() const;
+    DirectX::SimpleMath::Plane GetImpactPlane() const;
+    float GetImpactVelocity() const;
     double GetInitialSpinRate() const { return m_initialSpinRate; };
     double GetLandingSpinRate() const { return m_landingSpinRate; };
-    const double GetLandingHeight();
-    const double GetShotDistance();
+    double GetLandingHeight() const;
+    double GetShotDistance() const;
     std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
   
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
