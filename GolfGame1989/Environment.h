@@ -38,6 +38,7 @@ public:
     std::string GetEnvironName(const int aEnvironmentIndex) const {return m_environs[aEnvironmentIndex].name;};
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
     int GetNumberOfEnvironSelectDisplayVariables() const { return m_environSelectDisplayDataPoints; };
+    double GetWindDirection() const;
     double GetWindX() const { return m_currentEnviron.windX; };
     std::string GetWindXString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windXStr; };
     double GetWindX(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windX; };

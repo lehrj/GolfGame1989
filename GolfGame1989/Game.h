@@ -55,6 +55,7 @@ private:
     void CreateResources();
 
     void DrawCameraFocus();
+    void DrawFlag(DirectX::SimpleMath::Vector3 aPos);
     void DrawIntroScreen();
     void DrawMenuCharacterSelect();
     void DrawMenuEnvironmentSelect();

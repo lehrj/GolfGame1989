@@ -41,6 +41,7 @@ public:
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
+    double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
     void InputData();
     void LoadEnvironment(const int aIndex);
     void SelectInputClub(int aInput);

@@ -463,7 +463,6 @@ void Game::CreateResources()
 
     m_jiLogoPos.x = backBufferWidth / 2.f;
     m_jiLogoPos.y = backBufferHeight / 2.f;
-
     // End Texture
 }
 
@@ -481,6 +480,35 @@ void Game::DrawCameraFocus()
     m_batch->DrawLine(origin, yOffset);
     m_batch->DrawLine(origin, xOffset);
     m_batch->DrawLine(origin, zOffset);
+}
+
+void Game::DrawFlag(DirectX::SimpleMath::Vector3 aPos)
+{
+    const float poleHeight = .1;
+    const float flagWidth = .02;
+    const float flagHeight = .01;
+    
+
+    DirectX::SimpleMath::Vector3 poleBase = aPos;
+    DirectX::SimpleMath::Vector3 poleTop = poleBase;
+    poleTop.y += poleHeight;
+    DirectX::SimpleMath::Vector3 flagTip = poleTop;
+    flagTip.y -= flagHeight;
+    flagTip.z -= flagWidth;
+    double windDirection = pGolf->GetWindDirectionRad();
+    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(windDirection));
+
+    DirectX::SimpleMath::Vector3 flagBottom = poleTop;
+    flagBottom.y -= flagHeight + flagHeight;
+
+    VertexPositionColor poleBaseVertex(poleBase, Colors::White);
+    VertexPositionColor poleTopVertex(poleTop, Colors::White);
+    VertexPositionColor flagTopVertex(poleTop, Colors::Red);
+    VertexPositionColor flagTipVertex(flagTip, Colors::Red);
+    VertexPositionColor flagBottomVertex(flagBottom, Colors::Red);
+    
+    m_batch->DrawTriangle(flagTopVertex, flagTipVertex, flagBottomVertex);
+    m_batch->DrawLine(poleBaseVertex, poleTopVertex);
 }
 
 void Game::DrawIntroScreen()
@@ -576,7 +604,7 @@ void Game::DrawIntroScreen()
     }
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
-        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC03);
+        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
         m_currentState = GameState::GAMESTATE_STARTSCREEN;
     }
 }
@@ -2080,6 +2108,9 @@ void Game::DrawWorld()
     m_batch->DrawLine(vt3, vt4);
     m_batch->DrawLine(vt4, vt2);
     // end tee box draw
+
+    DrawFlag(origin);
+
 }
 
 // Properties

@@ -22,6 +22,7 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData, Environment* pEnv
     LaunchProjectile();
 }
 
+// WIP: Tweeking equations and measurement units and other voodoo hotness to get something that looks legit 
 void GolfBall::LandProjectile()
 {
     double direction = GetImpactDirection();

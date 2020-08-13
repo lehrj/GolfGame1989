@@ -50,6 +50,23 @@ void Environment::CreateDataStrings()
     }
 }
 
+// While this could be done once per environment update, future updates could have moment to moment wind changes
+double Environment::GetWindDirection() const
+{ 
+    DirectX::SimpleMath::Vector3 windVec(m_currentEnviron.windX, 0.0, m_currentEnviron.windZ);
+    DirectX::SimpleMath::Vector3 zeroDirection(0.0, 0.0, -1.0);
+
+    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(windVec), DirectX::XMVector3Normalize(zeroDirection)));
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(windVec, zeroDirection)) > 0.0f)
+    {
+        direction = -direction;
+    }
+
+    double directionDegrees = Utility::ToDegrees(direction);
+
+    return direction;
+}
+
 void Environment::LoadEnvironmentData()
 {
     m_environs.clear();
