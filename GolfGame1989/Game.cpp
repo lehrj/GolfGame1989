@@ -20,9 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
@@ -482,33 +482,18 @@ void Game::DrawCameraFocus()
     m_batch->DrawLine(origin, zOffset);
 }
 
-void Game::DrawFlag(DirectX::SimpleMath::Vector3 aPos)
+void Game::DrawFlagAndHole()
 {
-    const float poleHeight = .1;
-    const float flagWidth = .02;
-    const float flagHeight = .01;
+    std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
+    std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
     
-
-    DirectX::SimpleMath::Vector3 poleBase = aPos;
-    DirectX::SimpleMath::Vector3 poleTop = poleBase;
-    poleTop.y += poleHeight;
-    DirectX::SimpleMath::Vector3 flagTip = poleTop;
-    flagTip.y -= flagHeight;
-    flagTip.z -= flagWidth;
-    double windDirection = pGolf->GetWindDirectionRad();
-    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(windDirection));
-
-    DirectX::SimpleMath::Vector3 flagBottom = poleTop;
-    flagBottom.y -= flagHeight + flagHeight;
-
-    VertexPositionColor poleBaseVertex(poleBase, Colors::White);
-    VertexPositionColor poleTopVertex(poleTop, Colors::White);
-    VertexPositionColor flagTopVertex(poleTop, Colors::Red);
-    VertexPositionColor flagTipVertex(flagTip, Colors::Red);
-    VertexPositionColor flagBottomVertex(flagBottom, Colors::Red);
+    for (int i = 0; i < holeVert.size() - 1; ++i)
+    {
+        m_batch->DrawLine(holeVert[i], holeVert[i + 1]);
+    }
     
-    m_batch->DrawTriangle(flagTopVertex, flagTipVertex, flagBottomVertex);
-    m_batch->DrawLine(poleBaseVertex, poleTopVertex);
+    m_batch->DrawLine(flagVert[0], flagVert[1]);
+    m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
 }
 
 void Game::DrawIntroScreen()
@@ -1702,8 +1687,7 @@ void Game::DrawWorld()
     m_batch->DrawLine(vt4, vt2);
     // end tee box draw
 
-    DrawFlag(origin);
-
+    DrawFlagAndHole();
 }
 
 // Properties

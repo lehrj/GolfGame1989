@@ -28,12 +28,12 @@ public:
     std::string GetCharacterBioLine2(const int aCharacterIndex) const;
     std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
-    int GetDrawColorIndex();
-    std::vector<int> GetDrawColorVector();
+
     std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
-    std::vector<std::string> GetUIstrings() { return m_uiStrings; };
-;
-    const int GetImpactStep() { return pSwing->GetSwingImpactStep(); };
+
+    std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
+    std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
+    int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
@@ -41,6 +41,7 @@ public:
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
+    std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
     void InputData();
     void LoadEnvironment(const int aIndex);

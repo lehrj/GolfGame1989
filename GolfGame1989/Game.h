@@ -28,7 +28,6 @@ public:
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
-
     
     // Basic game loop
     void Tick();
@@ -55,7 +54,7 @@ private:
     void CreateResources();
 
     void DrawCameraFocus();
-    void DrawFlag(DirectX::SimpleMath::Vector3 aPos);
+    void DrawFlagAndHole();
     void DrawIntroScreen();
     void DrawMenuCharacterSelect();
     void DrawMenuEnvironmentSelect();
