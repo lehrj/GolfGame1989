@@ -20,9 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
@@ -1694,8 +1694,10 @@ void Game::DrawWorld()
 void Game::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
-    width = 800;
-    height = 600;
+    //width = 800;
+    //height = 600;
+    width = 1600;
+    height = 900;
 }
 
 // Initialize the Direct3D resources required to run.

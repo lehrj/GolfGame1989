@@ -77,6 +77,7 @@ private:
     double                                      m_launchAngle;
     double                                      m_launchImpact;
     
+    const double                                m_timeDelta = 0.0025; // WLJ removed magic number from CalculateLaunchVector(), ToDo: Search through code to elimnate and replace others and factor with m_swingStepIncrementCount below
     const int                                   m_swingStepIncrementCount = 200;
     int                                         m_swingImpactStep = 0;
     double                                      m_alpha; // Angle swept by arm rod from initial backswing position in radians

@@ -29,7 +29,8 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     double Vc = 0.0;
     double time = 0.0;
-    double dt = 0.0025; // Time delta between frames in seconds
+    //double dt = 0.0025; // Time delta between frames in seconds
+    double dt = m_timeDelta; // Time delta between frames in seconds
     double a, at; // stores previous time steps results for alpha and its first derivative
     double b, bt; // stores previous time steps results for beta and its first derivative
     double phi; // stores value of theta + beta
