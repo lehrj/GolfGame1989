@@ -10,9 +10,7 @@
 
 GolfSwing::GolfSwing()
 {
-    //this->SetDefaultSwingValues(9.8);
     m_pBag = new GolfBag();
-    //Utility::ZeroImpactData(m_impactData);
     InputClub(m_clubIndex);
 }
 
@@ -29,7 +27,6 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     double Vc = 0.0;
     double time = 0.0;
-    //double dt = 0.0025; // Time delta between frames in seconds
     double dt = m_timeDelta; // Time delta between frames in seconds
     double a, at; // stores previous time steps results for alpha and its first derivative
     double b, bt; // stores previous time steps results for beta and its first derivative
@@ -161,158 +158,6 @@ void GolfSwing::InputClub(int aInput)
     UpdateGolfSwingValues();
 }
 
-void GolfSwing::PrintSwingInputData()
-{
-    printf("======================================= Swing Values =======================================\n");
-    printf(" Arm Length                                        : %g m \n", m_armLength);
-    printf(" Ball Placement Angle                              : %g degrees \n", m_ballPlacementAngle);
-    printf(" Club Face Angle                                   : %g degrees\n", m_club.angle);
-    printf(" Club Length                                       : %g m \n", m_club.length);
-    printf(" Club Mass                                         : %g kg \n", m_club.mass);
-    printf(" Swing Power                                       : %g percent \n", m_backSwingPercentage);
-    printf("============================================================================================\n");
-}
-
-void GolfSwing::PrintSwingMechanics(const double aClubVelocity, const double aTime)
-{
-    double phiInDegrees = Utility::ToDegrees(m_theta + m_beta);
-    printf("==================================== Swing Mechanics =======================================\n");
-    printf(" Time                                                         : %g sec \n", aTime);
-    printf(" Theta (angle betwen arm rod and verticle axis)               : %g degrees \n", Utility::ToDegrees(m_theta));
-    printf(" Alpha (arm Rod angle sweep from initial backswing position)  : %g degrees \n", Utility::ToDegrees(m_alpha));
-    printf(" Beta (wrist cock angle                                       : %g degrees \n", Utility::ToDegrees(m_beta));
-    printf(" Phi (theta + beta)                                           : %g degrees \n", phiInDegrees);
-    printf(" Club Head Velocity                                           : %g m/s \n", aClubVelocity);
-    printf(" Club Face Angle at Moment                                    : %g degrees \n", m_club.angle - phiInDegrees);
-    printf("============================================================================================\n");
-}
-
-void GolfSwing::ReadInSwingValues()
-{
-    double armLength;
-    double backSwingPercentage;
-    double ballPlacement;
-    double clubAngle;
-    double clubCoR; //  coefficient of restitution of club face
-    double clubLength;
-    double clubMass;
-    double shoulderAcceleration; //= 0.1 * g; // Horizontal acceleration of the shoulder in  m/s^2
-    double shoulderTorque; //= 100; // Torque applied at the shoulder to the arm rod in N m
-    double wristCockAngle; //= RADIANS(120.0); // Wrist cock angle in radians
-    double wristTorque; //= -10; // Torque applied at the wrist joint to the club rod in N m
-
-    std::cout << "Warning: If there are any errors in SwingInputData.txt all values will be purged and default values used!\n";
-    std::ifstream inFile("SwingInputData.txt");
-    inFile >> armLength >> backSwingPercentage >> ballPlacement >> clubAngle >> clubCoR >> clubLength >> clubMass >> shoulderAcceleration >> shoulderTorque >> wristCockAngle >> wristTorque;
-    inFile.close();
-
-    std::vector<std::string> errorList;
-    bool isInputValid = true;
-    if (armLength < m_minArmLength || armLength > m_maxArmLength)
-    {
-        isInputValid = false;
-        std::string errorString = "1 armLength";
-        errorList.push_back(errorString);
-    }
-
-    if (backSwingPercentage < m_minBackSwingPercentage || backSwingPercentage > m_maxBackSwingPercentage)
-    {
-        isInputValid = false;
-        std::string errorString = "2 backSwingPercentage";
-        errorList.push_back(errorString);
-    }
-
-    if (ballPlacement < m_minBallPlacementAngle || ballPlacement > m_maxBallPlacementAngle)
-    {
-        isInputValid = false;
-        std::string errorString = "3 ballPlacement ";
-        errorList.push_back(errorString);
-    }
-
-    if (clubAngle < m_minClubAngle || clubAngle > m_maxClubAngle)
-    {
-        isInputValid = false;
-        std::string errorString = "4 clubAngle ";
-        errorList.push_back(errorString);
-    }
-
-    if (clubCoR < m_minClubCoR || clubCoR > m_maxClubCoR)
-    {
-        isInputValid = false;
-        std::string errorString = "5 clubCoR";
-        errorList.push_back(errorString);
-    }
-
-    if (clubLength < m_minClubLength || clubLength > m_maxClubLength)
-    {
-        isInputValid = false;
-        std::string errorString = "6 clubLength ";
-        errorList.push_back(errorString);
-    }
-
-    if (clubMass < m_minClubMass || clubMass > m_maxClubMass)
-    {
-        isInputValid = false;
-        std::string errorString = "7 clubMass ";
-        errorList.push_back(errorString);
-    }
-
-    if (shoulderAcceleration < m_minShoulderAccel || shoulderAcceleration > m_maxShoulderAccel)
-    {
-        isInputValid = false;
-        std::string errorString = "8 shoulderAcceleration ";
-        errorList.push_back(errorString);
-    }
-
-    if (shoulderTorque < m_minQalpha || shoulderTorque > m_maxQalpha)
-    {
-        isInputValid = false;
-        std::string errorString = "9 shoulderTorque ";
-        errorList.push_back(errorString);
-    }
-
-    if (wristCockAngle < m_minBeta || wristCockAngle > m_maxBeta)
-    {
-        isInputValid = false;
-        std::string errorString = "10 wristCockAngle ";
-        errorList.push_back(errorString);
-    }
-
-    if (wristTorque < m_minQbeta || wristTorque > m_maxQbeta)
-    {
-        isInputValid = false;
-        std::string errorString = "11 wristTorque ";
-        errorList.push_back(errorString);
-    }
-
-    if (isInputValid == false)
-    {
-        std::cout << "Error in SwingInputData.txt, data invalid\n";
-        std::cerr << "Error in SwingInputData.txt, data invalid\n";
-        for (unsigned int i = 0; i < errorList.size(); i++)
-        {
-            std::cout << "Error in line : " << errorList[i] << "\n";
-            std::cerr << "Error in line : " << errorList[i] << "\n";
-        }
-        std::cout << "Reverting to default Swing data \n";
-        SetDefaultSwingValues(m_defaultGravity);
-    }
-    else
-    {
-        SetArmLength(armLength);
-        SetBackSwingPercentage(backSwingPercentage);
-        SetBallPlacementAngle(ballPlacement);
-        SetClubAngle(clubAngle);
-        SetClubCoR(clubCoR);
-        SetClubLength(clubLength);
-        SetClubMass(clubMass);
-        SetShoulderAccel(shoulderAcceleration);
-        SetQalpha(shoulderTorque);
-        SetBeta(Utility::ToRadians(wristCockAngle));
-        SetQbeta(wristTorque);
-    }
-}
-
 void GolfSwing::ResetAlphaBeta()
 {
     m_alphaBetaThetaVec.clear();
@@ -442,8 +287,7 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
     m_impactData.cor = 0.78;
 
-    m_club.length = 1.1; // length of club in m
-    //m_club.length = m_club.lengthBase * m_clubLengthModifier;
+    m_club.length = m_club.lengthBase * m_clubLengthModifier;
     m_club.mass = 0.4;
     m_impactData.mass = 0.4;
     m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2

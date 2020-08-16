@@ -49,7 +49,9 @@ public:
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
 
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
-    void UpdateCam();
+
+    void UpdateCamera();
+
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
@@ -85,5 +87,17 @@ private:
     bool                            m_isCameraAtDestination;
 
     CameraState                     m_cameraState;
+
+    //////////////////////////////////////////////////////////////
+
+    DirectX::SimpleMath::Matrix     m_rotationMatrix;
+    DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::XMVECTOR               m_forward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::XMVECTOR               m_defaultRight = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::XMVECTOR               m_right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+
+    float                           m_moveLeftRight = 0.0f;
+    float                           m_moveBackForward = 0.0f;
+
 };
 

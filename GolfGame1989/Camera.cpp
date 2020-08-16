@@ -200,6 +200,33 @@ void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
 	m_position = { m_position.x + aTranslation.x, m_position.y + aTranslation.y, m_position.z + aTranslation.z };
 }
 
+void Camera::UpdateCamera()
+{
+	m_rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0);
+	m_target = DirectX::XMVector3TransformCoord(m_defaultForward, m_rotationMatrix);
+	m_target.Normalize();
+
+	DirectX::XMMATRIX rotateYTempMatrix;
+	rotateYTempMatrix = DirectX::XMMatrixRotationY(m_yaw);
+
+	m_right = DirectX::XMVector3TransformCoord(m_defaultRight, rotateYTempMatrix);
+	m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
+	m_forward = DirectX::XMVector3TransformCoord(m_defaultForward, rotateYTempMatrix);
+
+	//m_position += m_moveLeftRight * m_right;
+	//camPosition += m_moveBackForward * m_forward;
+	m_position += DirectX::operator*(m_moveLeftRight, m_right);
+	m_position += DirectX::operator*(m_moveBackForward, m_forward);
+
+	m_moveLeftRight = 0.0f;
+	m_moveBackForward = 0.0f;
+
+	m_target = m_position + m_target;
+	m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
+
+}
+
+
 void Camera::UpdateOrthoganalMatrix()
 {
 	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic((float)m_clientWidth, (float)m_clientHeight, m_nearPlane, m_farPlane);

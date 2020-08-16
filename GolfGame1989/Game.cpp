@@ -2065,9 +2065,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(m_cameraRotationX);
-        m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(6.f, 0.f, 0.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-        m_effect->SetView(m_view);
+        m_effect->SetView(pCamera->GetViewMatrix());
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
     {
@@ -2330,43 +2328,43 @@ void Game::UpdateInput()
             ++m_menuSelect;
         }
     }
-    if (kb.D1)
+    if (m_kbStateTracker.pressed.D1)
     {
         pGolf->SelectInputClub(1);
     }
-    if (kb.D2)
+    if (m_kbStateTracker.pressed.D2)
     {
         pGolf->SelectInputClub(2);
     }
-    if (kb.D3)
+    if (m_kbStateTracker.pressed.D3)
     {
         pGolf->SelectInputClub(3);
     }
-    if (kb.D4)
+    if (m_kbStateTracker.pressed.D4)
     {
         pGolf->SelectInputClub(4);
     }
-    if (kb.D5)
+    if (m_kbStateTracker.pressed.D5)
     {
         pGolf->SelectInputClub(5);
     }
-    if (kb.D6)
+    if (m_kbStateTracker.pressed.D6)
     {
         pGolf->SelectInputClub(6);
     }
-    if (kb.D7)
+    if (m_kbStateTracker.pressed.D7)
     {
         pGolf->SelectInputClub(7);
     }
-    if (kb.D8)
+    if (m_kbStateTracker.pressed.D8)
     {
         pGolf->SelectInputClub(8);
     }
-    if (kb.D9)
+    if (m_kbStateTracker.pressed.D9)
     {
         pGolf->SelectInputClub(9);
     }
-    if (kb.D0)
+    if (m_kbStateTracker.pressed.D0)
     {
         pGolf->SelectInputClub(10);
     }
@@ -2421,7 +2419,7 @@ void Game::UpdateInput()
     }
     if (kb.F3)
     {
-        SetGameCamera(4);
+        SetGameCamera(3);
     }
     if (kb.F4)
     {

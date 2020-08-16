@@ -28,9 +28,6 @@ public:
     int GetSwingImpactStep() const { return m_swingImpactStep; };
     int GetSwingStepIncrementCount() const { return m_swingStepIncrementCount; };
 
-    void PrintSwingInputData();
-    void PrintSwingMechanics(const double aClubVelocity, const double aTime);
-    void ReadInSwingValues();
     void ResetAlphaBeta();
 
     void SetArmBalancePoint(double aBalancePoint);
@@ -104,29 +101,4 @@ private:
     double                                      m_Qbeta; // Torque applied at the wrist joint to the club rod in N m   
     double                                      m_shoulderHorizAccel; // Horizontal acceleration of the shoulder in  m/s^2
     double                                      m_theta;// = m_gamma - m_alpha, Angle between arm rod and vertical axis in radians
-
-    // min, max, and default consts
-    const double                                m_defaultGravity = 9.8;
-    const double                                m_minArmLength = 0.1;
-    const double                                m_maxArmLength = 5.0;
-    const double                                m_minBackSwingPercentage = 0.1;
-    const double                                m_maxBackSwingPercentage = 110.0; // not 100.0 because sometimes you just gotta swing to hard
-    const double                                m_minBallPlacementAngle = -10.0;
-    const double                                m_maxBallPlacementAngle = 10.0;
-    const double                                m_minBeta = 0.0;
-    const double                                m_maxBeta = 180.0;
-    const double                                m_minClubAngle = 0.0;
-    const double                                m_maxClubAngle = 80.0;
-    const double                                m_minClubCoR = 0.1;
-    const double                                m_maxClubCoR = 1.0;
-    const double                                m_minClubLength = 0.1;
-    const double                                m_maxClubLength = 5.0;
-    const double                                m_minClubMass = 0.0;
-    const double                                m_maxClubMass = 10.0;
-    const double                                m_minShoulderAccel = 0.00001;
-    const double                                m_maxShoulderAccel = 10.0;
-    const double                                m_minQalpha = 1.0;
-    const double                                m_maxQalpha = 100.0;
-    const double                                m_minQbeta = -0.01;
-    const double                                m_maxQbeta = 100;
 };
