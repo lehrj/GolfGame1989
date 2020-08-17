@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include "StepTimer.h"
 #include "Utility.h"
 
 enum class CameraState
@@ -36,7 +37,7 @@ public:
     bool IsCameraAtDestination();
     void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
-    void ResetIsCameraAtDestination() { m_isCameraAtDestination; };
+    void ResetIsCameraAtDestination() { m_isCameraAtDestination = false; };
     void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
     void RotateAtSpeed(float aDx, float aDy);  //Chili
     void RotateCounterClockWise();
@@ -51,6 +52,14 @@ public:
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
 
     void UpdateCamera();
+    void UpdatePitchYaw(const float aPitch, const float aYaw);
+    void UpdatePos(const float aX, const float aY, const float aZ);
+    void SetCameraEndPos(DirectX::SimpleMath::Vector3 aEndPos);   
+    void SetCameraStartPos(DirectX::SimpleMath::Vector3 aStartPos);
+    void SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos);
+    void SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos);
+    
+    void TransitionCameraBetweenPos(DX::StepTimer const& aTimer);
 
 private:
     void InitializeOrthoganalMatrix(); //Pavel
@@ -81,8 +90,8 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 0.0005f;
-    const float                     m_rotationTravelSpeed = 0.004f;
+    const float                     m_posTravelSpeed = 0.4f;
+    const float                     m_rotationTravelSpeed = 1.4f;
 
     bool                            m_isCameraAtDestination;
 
@@ -92,12 +101,18 @@ private:
 
     DirectX::SimpleMath::Matrix     m_rotationMatrix;
     DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR               m_forward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR               m_defaultRight = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-    DirectX::XMVECTOR               m_right = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::XMVECTOR               m_forward =        DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::XMVECTOR               m_defaultRight =   DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::XMVECTOR               m_right =          DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
-    float                           m_moveLeftRight = 0.0f;
     float                           m_moveBackForward = 0.0f;
+    float                           m_moveLeftRight = 0.0f;
+    float                           m_moveUpDown = 0.0f;
 
+    DirectX::SimpleMath::Vector3    m_cameraStartPos;
+    DirectX::SimpleMath::Vector3    m_cameraEndPos;
+    DirectX::SimpleMath::Vector3    m_targetStartPos;
+    DirectX::SimpleMath::Vector3    m_targetEndPos;
+    const float                     m_cameraTransitionSpeed = .5f;
 };
 

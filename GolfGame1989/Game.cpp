@@ -26,6 +26,7 @@ Game::Game() noexcept :
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
+    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
     //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
@@ -52,8 +53,7 @@ void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
     if (m_audioMusicStream)
     {
         m_audioMusicStream->SetVolume(m_musicVolume);
-        //m_audioMusicStream->Play(true);
-        m_audioMusicStream->Play();
+        m_audioMusicStream->Play(true);
     }
 }
 
@@ -164,7 +164,7 @@ void Game::CreateDevice()
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
     
-    /*
+    /* // For multisampling rendering
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, TRUE, TRUE); // Multisampling
@@ -374,13 +374,13 @@ void Game::CreateResources()
     // Allocate a 2-D surface as the depth/stencil buffer and
     // create a DepthStencil view on this surface to use on bind.
     CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL);
-    //CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL, D3D11_USAGE_DEFAULT, 0, 8, 0);  // multisampling
+    //CD3D11_TEXTURE2D_DESC depthStencilDesc(depthBufferFormat, backBufferWidth, backBufferHeight, 1, 1, D3D11_BIND_DEPTH_STENCIL, D3D11_USAGE_DEFAULT, 0, 8, 0);  // For multisampling rendering
 
     ComPtr<ID3D11Texture2D> depthStencil;
     DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, depthStencil.GetAddressOf()));
 
     CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
-    //CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2DMS);  //multisampling RenderTesting
+    //CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2DMS);  //for multisampling RenderTesting
 
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
@@ -1875,12 +1875,12 @@ void Game::Render()
     {
         DrawWorld();
 
-        if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
+        if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
         {
             DrawSwing();
         }
         //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
-        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
+        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1 || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
         {
             
             m_flightStepTimer.ResetElapsedTime();
@@ -1977,9 +1977,9 @@ void Game::Tick()
 }
 
 // Updates the world.
-void Game::Update(DX::StepTimer const& timer)
+void Game::Update(DX::StepTimer const& aTimer)
 {
-    double elapsedTime = double(timer.GetElapsedSeconds());
+    double elapsedTime = double(aTimer.GetElapsedSeconds());
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
 
@@ -2037,15 +2037,15 @@ void Game::Update(DX::StepTimer const& timer)
         }
     }
     
-    UpdateCamera(timer);
-    UpdateInput();
+    UpdateCamera(aTimer);
+    UpdateInput(aTimer);
 }
 
-void Game::UpdateCamera(DX::StepTimer const& timer)
+void Game::UpdateCamera(DX::StepTimer const& aTimer)
 {
     if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
-        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(timer.GetTotalSeconds())));
+        m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(aTimer.GetTotalSeconds())));
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA1)
     {
@@ -2065,6 +2065,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
+        pCamera->UpdateCamera();
         m_effect->SetView(pCamera->GetViewMatrix());
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
@@ -2076,8 +2077,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         m_effect->SetProjection(m_proj);
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_MOVETOBEHIND)
-    {
-        
+    {        
         DirectX::SimpleMath::Vector3 cameraStartPos = m_shootOrigin;
         cameraStartPos.y += 0.02f;
         cameraStartPos.z += 0.2f;
@@ -2085,6 +2085,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 cameraEndPos = m_shootOrigin;
         cameraEndPos.x -= .9f;
         cameraEndPos.y += .5f;
+
         float cameraDistance = DirectX::SimpleMath::Vector3::Distance(cameraStartPos, cameraEndPos);
         DirectX::SimpleMath::Vector3 cameraDirection = cameraEndPos - cameraStartPos;
         cameraDirection.Normalize();
@@ -2097,7 +2098,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
         targetDirection.Normalize();
   
-        float elapsedTime = float(timer.GetElapsedSeconds());
+        float elapsedTime = float(aTimer.GetElapsedSeconds());
         float cameraSpeed = 0.9f;
         float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
 
@@ -2135,7 +2136,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
         DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
         targetDirection.Normalize();
   
-        float elapsedTime = float(timer.GetElapsedSeconds());
+        float elapsedTime = float(aTimer.GetElapsedSeconds());
         float cameraSpeed = 0.9f;
         float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
 
@@ -2199,7 +2200,7 @@ void Game::UpdateCamera(DX::StepTimer const& timer)
     }
 }
 
-void Game::UpdateInput()
+void Game::UpdateInput(DX::StepTimer const& aTimer)
 {
     // WLJ add for mouse and keybord interface   
     auto kb = m_keyboard->GetState();
@@ -2368,31 +2369,47 @@ void Game::UpdateInput()
     {
         pGolf->SelectInputClub(10);
     }
-    if (kb.Z)
+    if (kb.D)
     {
-        pPlay->StartSwing();
+        pCamera->UpdatePos(0.0f + aTimer.GetElapsedSeconds(), 0.0f, 0.0f);
     }
-    if (kb.X)
+    if (kb.S)
+    {        
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f + aTimer.GetElapsedSeconds());
+    }
+    if (kb.A)
     {
-        pPlay->SetPower();
+        pCamera->UpdatePos(0.0f - aTimer.GetElapsedSeconds(), 0.0f, 0.0f);
+    }
+    if (kb.W)
+    {
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f - aTimer.GetElapsedSeconds());
+    }
+    if (kb.Q)
+    {
+        pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
+    }
+    if (kb.E)
+    {
+        pCamera->UpdatePitchYaw(0.0f, 0.0 - aTimer.GetElapsedSeconds());
+    }
+    if (kb.F)
+    {
+        //pCamera->UpdatePitchYaw(0.0 + aTimer.GetElapsedSeconds(), 0.0f);
+        pCamera->UpdatePos(0.0f, 0.0f + aTimer.GetElapsedSeconds(), 0.0f);
     }
     if (kb.C)
     {
-        pPlay->SetImpact();
+        //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
+        pCamera->UpdatePos(0.0f, 0.0f - aTimer.GetElapsedSeconds(), 0.0f);
     }
     if (kb.V)
     {
         m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
         ResetGamePlay();
     }
-    if (kb.A)
-    {
-        if (pPlay->GetIsGameplayButtonReady() == true)
-        {
-            pPlay->UpdateSwingState();
-            pPlay->SetGameplayButtonReadyFalse();
-        }
-    }
+
+
     if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
     {
         pPlay->ResetGamePlayButton();
@@ -2503,4 +2520,38 @@ void Game::UpdateInput()
     }
 
     auto mouse = m_mouse->GetState();
+
+    if (mouse.positionMode == Mouse::MODE_RELATIVE)
+    //if (mouse.positionMode == Mouse::MODE_ABSOLUTE)
+    {
+        const float ROTATION_GAIN = 0.004f;
+        DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f) * ROTATION_GAIN;
+
+        //m_pitch -= delta.y;
+        //m_yaw -= delta.x;
+        float m_pitch = delta.y;
+        float m_yaw = -delta.x;
+        // limit pitch to straight up or straight down
+        // with a little fudge-factor to avoid gimbal lock
+        float limit = XM_PI / 2.0f - 0.01f;
+        m_pitch = std::max(-limit, m_pitch);
+        m_pitch = std::min(+limit, m_pitch);
+
+        // keep longitude in sane range by wrapping
+        if (m_yaw > XM_PI)
+        {
+            m_yaw -= XM_PI * 2.0f;
+        }
+        else if (m_yaw < -XM_PI)
+        {
+            m_yaw += XM_PI * 2.0f;
+        }
+
+        //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
+        //pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
+        pCamera->UpdatePitchYaw(m_pitch, m_yaw);
+    }
+
+    m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+    //m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_ABSOLUTE : Mouse::MODE_RELATIVE);
 }

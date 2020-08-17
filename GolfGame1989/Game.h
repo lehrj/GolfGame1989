@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "StepTimer.h"
+//#include "StepTimer.h"
 #include "Golf.h"
 #include "Keyboard.h"
 #include "AnimatedTexture.h"
@@ -76,9 +76,9 @@ private:
     void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
     void SetGameCamera(int aCamera);
 
-    void Update(DX::StepTimer const& timer);
-    void UpdateCamera(DX::StepTimer const& timer);
-    void UpdateInput();
+    void Update(DX::StepTimer const& aTimer);
+    void UpdateCamera(DX::StepTimer const& aTimer);
+    void UpdateInput(DX::StepTimer const& aTimer);
 
     // Device resources.
     HWND                                            m_window;
@@ -266,4 +266,10 @@ private:
     std::unique_ptr<DirectX::WaveBank>          m_audioBank;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
+
+
+    //float yaw = 0.f;
+    //float pitch = 0.f;
+    //float m_pitch = 0.0f;
+    //float m_yaw = 0.0f;
 };

@@ -15,8 +15,9 @@ Camera::Camera(int aWidth, int aHeight)
 {
 	m_clientWidth = (int)aWidth;
 	m_clientHeight = aHeight;
-	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 1.0f, 0.0f);
-	m_target.Zero;
+	m_homePosition = DirectX::SimpleMath::Vector3(0.0f, 0.4f, 0.0f);
+	//m_homePosition = DirectX::SimpleMath::Vector3::Zero;
+	m_target = DirectX::SimpleMath::Vector3(1.0f, 0.0f, 0.0f);
 	m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
 	m_homePitch = 0.0f;
 	m_homeYaw = 0.0f;
@@ -138,6 +139,16 @@ void Camera::RotateClockWise()
 	UpdateViewMatrix();
 }
 
+void Camera::SetCameraEndPos(DirectX::SimpleMath::Vector3 aEndPos)
+{
+	m_cameraEndPos = aEndPos;
+}
+
+void Camera::SetCameraStartPos(DirectX::SimpleMath::Vector3 aStartPos)
+{
+	m_cameraStartPos = aStartPos;
+}
+
 void Camera::SetCameraState(const CameraState aCameraState)
 {
 	m_cameraState = aCameraState;
@@ -178,6 +189,16 @@ void Camera::SetPos(DirectX::SimpleMath::Vector3 aPos)
 	UpdateUp();
 }
 
+void Camera::SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos)
+{
+	m_targetEndPos = aEndPos;
+}
+
+void Camera::SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos)
+{
+	m_targetStartPos = aStartPos;
+}
+
 void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
 {
 	if (aTarget == m_position)
@@ -188,6 +209,45 @@ void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
 	}
 	m_target = aTarget;
 	this->InitializeViewMatrix();
+}
+
+void Camera::TransitionCameraBetweenPos(DX::StepTimer const& aTimer)
+{
+	DirectX::SimpleMath::Vector3 cameraStartPos = m_cameraStartPos;
+
+	DirectX::SimpleMath::Vector3 cameraEndPos = m_cameraEndPos;
+
+	float cameraDistance = DirectX::SimpleMath::Vector3::Distance(cameraStartPos, cameraEndPos);
+	DirectX::SimpleMath::Vector3 cameraDirection = cameraEndPos - cameraStartPos;
+
+	cameraDirection.Normalize();
+
+	DirectX::SimpleMath::Vector3 targetStartPos = m_targetStartPos;
+	DirectX::SimpleMath::Vector3 targetEndPos = m_targetEndPos;
+
+	float targetDistance = DirectX::SimpleMath::Vector3::Distance(targetStartPos, targetEndPos);
+	DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
+	targetDirection.Normalize();
+
+	float elapsedTime = float(aTimer.GetElapsedSeconds());
+	float cameraSpeed = m_cameraTransitionSpeed;
+	float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
+
+	m_position += cameraDirection * cameraSpeed * elapsedTime;
+	m_target += targetDirection * targetSpeed * elapsedTime;
+
+	if (DirectX::SimpleMath::Vector3::Distance(cameraStartPos, m_position) >= cameraDistance)
+	{
+		m_position = cameraEndPos;
+		m_isCameraAtDestination = true;
+		m_cameraState = CameraState::CAMERASTATE_DEFAULT; // WLJ switch to non-trasition camera
+	}
+	else
+	{
+		m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, DirectX::SimpleMath::Vector3::UnitY);
+		//m_world = DirectX::SimpleMath::Matrix::Identity;
+		//m_effect->SetView(m_view);
+	}
 }
 
 void Camera::TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation)
@@ -210,22 +270,38 @@ void Camera::UpdateCamera()
 	rotateYTempMatrix = DirectX::XMMatrixRotationY(m_yaw);
 
 	m_right = DirectX::XMVector3TransformCoord(m_defaultRight, rotateYTempMatrix);
-	m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
+	
 	m_forward = DirectX::XMVector3TransformCoord(m_defaultForward, rotateYTempMatrix);
-
-	//m_position += m_moveLeftRight * m_right;
-	//camPosition += m_moveBackForward * m_forward;
+	m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
+	
 	m_position += DirectX::operator*(m_moveLeftRight, m_right);
 	m_position += DirectX::operator*(m_moveBackForward, m_forward);
+	m_position += DirectX::operator*(m_moveUpDown, m_up);
+
+	//m_up = m_position;
+	//m_up.y += 1.f;
 
 	m_moveLeftRight = 0.0f;
 	m_moveBackForward = 0.0f;
+	m_moveUpDown = 0.0f;
 
 	m_target = m_position + m_target;
 	m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
 
 }
 
+void Camera::UpdatePitchYaw(const float aPitch, const float aYaw)
+{
+	m_pitch += aPitch * m_rotationTravelSpeed;
+	m_yaw += aYaw * m_rotationTravelSpeed;
+}
+
+void Camera::UpdatePos(const float aX, const float aY, const float aZ)
+{
+	m_moveLeftRight += aX * m_posTravelSpeed;
+	m_moveBackForward += aZ * m_posTravelSpeed;
+	m_moveUpDown += aY * m_posTravelSpeed;
+}
 
 void Camera::UpdateOrthoganalMatrix()
 {
