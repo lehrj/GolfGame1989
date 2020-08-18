@@ -10,8 +10,8 @@ enum class CameraState
     CAMERASTATE_CAMERA2,
     CAMERASTATE_CAMERA3,
     CAMERASTATE_CAMERA4,
-    CAMERASTATE_CAMERA5,
-    CAMERASTATE_CAMERA6,
+    CAMERASTATE_TRANSITION,
+    CAMERASTATE_FIRSTPERSON,
     CAMERASTATE_CAMERACLASS,
     CAMERASTATE_PRESWINGVIEW,
     CAMERASTATE_PROJECTILEFLIGHTVIEW,
@@ -23,9 +23,6 @@ class Camera
 public:
     Camera();
     Camera(int aWidth, int aHeight);
-
-    //Camera(DirectX::XMFLOAT3 aHomePos = { 0.0f,0.0f,0.0f }, float aHomePitch = 0.0f, float aHomeYaw = 0.0f) noexcept; //Chili
-    //Camera(DirectX::XMFLOAT3 aHomePos, DirectX::XMFLOAT3 
 
     CameraState GetCameraState() const { return m_cameraState; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
@@ -48,19 +45,26 @@ public:
     void SetHomePos(const DirectX::SimpleMath::Vector3 aHomePos);
     void SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget);
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
+    void SetUpPos(const DirectX::SimpleMath::Vector3 aPos);
 
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
 
-    void UpdateCamera();
+    void UpdateCamera(DX::StepTimer const& aTimer);
+    void UpdateFirstPersonCamera();
     void UpdatePitchYaw(const float aPitch, const float aYaw);
     void UpdatePos(const float aX, const float aY, const float aZ);
+    void UpdateTrackCamera();
+    void UpdateTransitionCamera();
     void SetCameraEndPos(DirectX::SimpleMath::Vector3 aEndPos);   
     void SetCameraStartPos(DirectX::SimpleMath::Vector3 aStartPos);
     void SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos);
     void SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos);
     
-    void TransitionCameraBetweenPos(DX::StepTimer const& aTimer);
+    
+    void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };
+    DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
 
+    
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
@@ -114,5 +118,6 @@ private:
     DirectX::SimpleMath::Vector3    m_targetStartPos;
     DirectX::SimpleMath::Vector3    m_targetEndPos;
     const float                     m_cameraTransitionSpeed = .5f;
+    DX::StepTimer                   m_cameraTimer;
 };
 

@@ -20,6 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
+    StartupLoadCoordinates();
+
     m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
@@ -1931,6 +1933,16 @@ void Game::Render()
     Present();
 }
 
+void Game::ResetGamePlay()
+{
+    pGolf->ZeroUIandRenderData();
+    pPlay->ResetPlayData();
+    ResetPowerMeter();
+    m_projectileTimer = 0;
+    m_swingPathStep = 0;
+    m_projectilePathStep = 0;
+}
+
 void Game::SetGameCamera(int aCamera)
 {
     if (aCamera == 1)
@@ -1951,14 +1963,30 @@ void Game::SetGameCamera(int aCamera)
     }
 }
 
-void Game::ResetGamePlay()
+// Load default coordinates, will need to be extended upon when gameplay is expanded past a single position the ball can be hit from
+void Game::StartupLoadCoordinates()
 {
-    pGolf->ZeroUIandRenderData();
-    pPlay->ResetPlayData();
-    ResetPowerMeter();
-    m_projectileTimer = 0;
-    m_swingPathStep = 0;
-    m_projectilePathStep = 0;
+    m_ballPos = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
+    m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
+    m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
+
+    DirectX::SimpleMath::Vector3 cameraPos = m_shootOrigin;
+    cameraPos.x -= .9f;
+    cameraPos.y += .5f;
+    //cameraPos = DirectX::SimpleMath::Vector3::Zero;
+    pCamera->SetPos(cameraPos);
+
+    DirectX::SimpleMath::Vector3 targetPos = m_shootOrigin;
+    targetPos.y += .3f;
+    targetPos = DirectX::SimpleMath::Vector3::Zero;
+    //targetPos.z += 1.0f;
+    pCamera->SetTargetPos(targetPos);
+
+    DirectX::SimpleMath::Vector3 upPos = cameraPos;
+    upPos = DirectX::SimpleMath::Vector3::Zero;
+    upPos.y += 1.f;
+    pCamera->SetUpPos(upPos);
+
 }
 
 // Executes the basic game loop.
@@ -2043,6 +2071,10 @@ void Game::Update(DX::StepTimer const& aTimer)
 
 void Game::UpdateCamera(DX::StepTimer const& aTimer)
 {
+    ///////////////////////////////////////////////
+    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;  /////// force to camera class to test implementation
+    ///////////////////////////////////////////////
+
     if (m_currentCamera == GameCamera::GAMECAMERA_DEFAULT)
     {
         m_world = DirectX::SimpleMath::Matrix::CreateRotationY(cosf(static_cast<float>(aTimer.GetTotalSeconds())));
@@ -2065,7 +2097,7 @@ void Game::UpdateCamera(DX::StepTimer const& aTimer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
-        pCamera->UpdateCamera();
+        pCamera->UpdateCamera(aTimer);
         m_effect->SetView(pCamera->GetViewMatrix());
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4)
@@ -2408,8 +2440,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
         ResetGamePlay();
     }
-
-
     if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
     {
         pPlay->ResetGamePlayButton();
@@ -2518,40 +2548,53 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     {
         m_projectileTimer = 0.0f;
     }
+    if (m_kbStateTracker.pressed.Y)
+    {
+        int test1 = 0;
+        pCamera->SetCameraState(CameraState::CAMERASTATE_FIRSTPERSON);
+        test1++;
+    }
+    if (m_kbStateTracker.pressed.T)
+    {
+        pCamera->SetCameraState(CameraState::CAMERASTATE_CAMERA1);
+    }
 
     auto mouse = m_mouse->GetState();
 
-    if (mouse.positionMode == Mouse::MODE_RELATIVE)
-    //if (mouse.positionMode == Mouse::MODE_ABSOLUTE)
+    if (pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
     {
-        const float ROTATION_GAIN = 0.004f;
-        DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f) * ROTATION_GAIN;
-
-        //m_pitch -= delta.y;
-        //m_yaw -= delta.x;
-        float m_pitch = delta.y;
-        float m_yaw = -delta.x;
-        // limit pitch to straight up or straight down
-        // with a little fudge-factor to avoid gimbal lock
-        float limit = XM_PI / 2.0f - 0.01f;
-        m_pitch = std::max(-limit, m_pitch);
-        m_pitch = std::min(+limit, m_pitch);
-
-        // keep longitude in sane range by wrapping
-        if (m_yaw > XM_PI)
+        if (mouse.positionMode == Mouse::MODE_RELATIVE)
+            //if (mouse.positionMode == Mouse::MODE_ABSOLUTE)
         {
-            m_yaw -= XM_PI * 2.0f;
-        }
-        else if (m_yaw < -XM_PI)
-        {
-            m_yaw += XM_PI * 2.0f;
+            const float ROTATION_GAIN = 0.004f;
+            DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f) * ROTATION_GAIN;
+
+            //m_pitch -= delta.y;
+            //m_yaw -= delta.x;
+            float m_pitch = delta.y;
+            float m_yaw = -delta.x;
+            // limit pitch to straight up or straight down
+            // with a little fudge-factor to avoid gimbal lock
+            float limit = XM_PI / 2.0f - 0.01f;
+            m_pitch = std::max(-limit, m_pitch);
+            m_pitch = std::min(+limit, m_pitch);
+
+            // keep longitude in sane range by wrapping
+            if (m_yaw > XM_PI)
+            {
+                m_yaw -= XM_PI * 2.0f;
+            }
+            else if (m_yaw < -XM_PI)
+            {
+                m_yaw += XM_PI * 2.0f;
+            }
+
+            //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
+            //pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
+            pCamera->UpdatePitchYaw(m_pitch, m_yaw);
         }
 
-        //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
-        //pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
-        pCamera->UpdatePitchYaw(m_pitch, m_yaw);
+        m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
+        //m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_ABSOLUTE : Mouse::MODE_RELATIVE);
     }
-
-    m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
-    //m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_ABSOLUTE : Mouse::MODE_RELATIVE);
 }

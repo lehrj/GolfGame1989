@@ -75,7 +75,7 @@ private:
     void ResetGamePlay();
     void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
     void SetGameCamera(int aCamera);
-
+    void StartupLoadCoordinates();  
     void Update(DX::StepTimer const& aTimer);
     void UpdateCamera(DX::StepTimer const& aTimer);
     void UpdateInput(DX::StepTimer const& aTimer);

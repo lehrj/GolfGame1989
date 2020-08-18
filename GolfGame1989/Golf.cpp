@@ -158,6 +158,7 @@ std::string Golf::GetCharacterArmBalancePoint(const int aCharacterIndex) const
     std::string armBalancePointString = "Arm Balance Point = " + pCharacter->GetArmBalancePointString(aCharacterIndex) + " %";
     return armBalancePointString;
 }
+
 std::string Golf::GetCharacterArmLength(const int aCharacterIndex) const
 {
     std::string armLengthString = "Arm Length = " + pCharacter->GetArmLengthString(aCharacterIndex) + " m";
