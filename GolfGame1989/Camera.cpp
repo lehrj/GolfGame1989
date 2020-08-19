@@ -4,8 +4,9 @@
 Camera::Camera()
 {
 	m_homePosition = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f);
-	m_target.Zero;
-	m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	m_target = DirectX::SimpleMath::Vector3::Zero;
+	//m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	m_up = DirectX::SimpleMath::Vector3::UnitY;
 	m_homePitch = 0.0f;
 	m_homeYaw = 0.0f;
 	Reset();
@@ -19,11 +20,11 @@ Camera::Camera(int aWidth, int aHeight)
 	//m_homePosition = DirectX::SimpleMath::Vector3::Zero;
 	m_target = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 	//m_up = m_homePosition + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
-	m_up = DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	m_up = DirectX::SimpleMath::Vector3::UnitY;
 	m_position = DirectX::SimpleMath::Vector3(-2.0f, 0.2f, 0.0f);
 	m_homePitch = 0.0f;
 	m_homeYaw = 0.0f;
-	m_homeYaw = Utility::ToRadians(-90.0);
+	//m_homeYaw = Utility::ToRadians(-90.0);
 
 	m_nearPlane = 0.1f;
 	m_farPlane = 10.0f;
@@ -96,9 +97,16 @@ void Camera::OnResize(uint32_t aWidth, uint32_t aHeight)
 void Camera::Reset()
 {
 	m_position = m_homePosition;
-	m_up = m_position + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	//m_up = m_position + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
+	m_up = DirectX::SimpleMath::Vector3::UnitY;   //(0.0f, 1.0f, 0.0f);
 	m_pitch = m_homePitch;
 	m_yaw = m_homeYaw;
+}
+
+void Camera::ReverseTransitionDirection()
+{
+	std::swap(m_cameraStartPos, m_cameraEndPos);
+	std::swap(m_targetStartPos, m_targetEndPos);
 }
 
 void Camera::Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees)
@@ -214,7 +222,7 @@ void Camera::SetTargetPos(const DirectX::SimpleMath::Vector3 aTarget)
 		return;
 	}
 	m_target = aTarget;
-	this->InitializeViewMatrix();
+	//this->InitializeViewMatrix();
 }
 
 void Camera::SetUpPos(const DirectX::SimpleMath::Vector3 aPos)
@@ -222,8 +230,9 @@ void Camera::SetUpPos(const DirectX::SimpleMath::Vector3 aPos)
 	m_up = aPos;
 }
 
-void Camera::UpdateTransitionCamera()
+void Camera::UpdateTransitionCamera(DX::StepTimer const& aTimer)
 {
+	DirectX::SimpleMath::Vector3 testVec = m_target;
 	DirectX::SimpleMath::Vector3 cameraStartPos = m_cameraStartPos;
 
 	DirectX::SimpleMath::Vector3 cameraEndPos = m_cameraEndPos;
@@ -240,7 +249,8 @@ void Camera::UpdateTransitionCamera()
 	DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
 	targetDirection.Normalize();
 
-	double elapsedTime = double(m_cameraTimer.GetElapsedSeconds());
+	//double elapsedTime = double(m_cameraTimer.GetElapsedSeconds());
+	double elapsedTime = double(aTimer.GetElapsedSeconds());
 	float cameraSpeed = m_cameraTransitionSpeed;
 	float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
 
@@ -250,8 +260,12 @@ void Camera::UpdateTransitionCamera()
 	if (DirectX::SimpleMath::Vector3::Distance(cameraStartPos, m_position) >= cameraDistance)
 	{
 		m_position = cameraEndPos;
+		//m_target = targetEndPos;
+
 		m_isCameraAtDestination = true;
-		m_cameraState = CameraState::CAMERASTATE_DEFAULT; // WLJ switch to non-trasition camera
+		//m_cameraState = CameraState::CAMERASTATE_DEFAULT; // WLJ switch to non-trasition camera
+		//m_cameraState = CameraState::CAMERASTATE_CAMERA2;
+		ReverseTransitionDirection();
 	}
 	else
 	{
@@ -280,18 +294,32 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_TRANSITION)
 	{
-		UpdateTransitionCamera();
+		UpdateTransitionCamera(aTimer);
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_DEFAULT)
 	{
-		m_position = DirectX::SimpleMath::Vector3(-2.f, .2f, 0.0);
-		m_target = DirectX::SimpleMath::Vector3::Zero;
+		//m_position = DirectX::SimpleMath::Vector3(-2.f, .2f, 0.0);
+		//m_target = DirectX::SimpleMath::Vector3::Zero;
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_CAMERA1)
 	{
 		UpdateFirstPersonCamera();
 	}
-	m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
+	if (m_cameraState == CameraState::CAMERASTATE_CAMERA2)
+	{
+
+	}
+	if (m_cameraState == CameraState::CAMERASTATE_SWINGVIEW)
+	{
+
+	}
+	if (m_cameraState == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+	{
+
+	}
+
+	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
+	//m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
 }
 
 void Camera::UpdateFirstPersonCamera()

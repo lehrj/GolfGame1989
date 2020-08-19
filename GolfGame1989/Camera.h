@@ -35,6 +35,7 @@ public:
     void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
     void ResetIsCameraAtDestination() { m_isCameraAtDestination = false; };
+    void ReverseTransitionDirection();
     void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
     void RotateAtSpeed(float aDx, float aDy);  //Chili
     void RotateCounterClockWise();
@@ -47,6 +48,11 @@ public:
     void SetPos(const DirectX::SimpleMath::Vector3 aPos);
     void SetUpPos(const DirectX::SimpleMath::Vector3 aPos);
 
+    void SetCameraEndPos(DirectX::SimpleMath::Vector3 aEndPos);   
+    void SetCameraStartPos(DirectX::SimpleMath::Vector3 aStartPos);
+    void SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos);
+    void SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos);
+
     void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
 
     void UpdateCamera(DX::StepTimer const& aTimer);
@@ -54,12 +60,7 @@ public:
     void UpdatePitchYaw(const float aPitch, const float aYaw);
     void UpdatePos(const float aX, const float aY, const float aZ);
     void UpdateTrackCamera();
-    void UpdateTransitionCamera();
-    void SetCameraEndPos(DirectX::SimpleMath::Vector3 aEndPos);   
-    void SetCameraStartPos(DirectX::SimpleMath::Vector3 aStartPos);
-    void SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos);
-    void SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos);
-    
+    void UpdateTransitionCamera(DX::StepTimer const& aTimer);
     
     void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };
     DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
@@ -102,12 +103,18 @@ private:
     CameraState                     m_cameraState;
 
     //////////////////////////////////////////////////////////////
-
+    
     DirectX::SimpleMath::Matrix     m_rotationMatrix;
+    /*
     DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
     DirectX::XMVECTOR               m_forward =        DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
     DirectX::XMVECTOR               m_defaultRight =   DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
     DirectX::XMVECTOR               m_right =          DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    */
+    DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::XMVECTOR               m_forward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::XMVECTOR               m_defaultRight = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::XMVECTOR               m_right = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
     float                           m_moveBackForward = 0.0f;
     float                           m_moveLeftRight = 0.0f;
