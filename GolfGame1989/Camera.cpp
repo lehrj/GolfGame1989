@@ -30,8 +30,8 @@ Camera::Camera(int aWidth, int aHeight)
 	m_farPlane = 10.0f;
 
 	//m_cameraState = CameraState::CAMERASTATE_DEFAULT;
-	m_cameraState = CameraState::CAMERASTATE_FIRSTPERSON;
-
+	//m_cameraState = CameraState::CAMERASTATE_FIRSTPERSON;
+	m_cameraState = CameraState::CAMERASTATE_TRANSITION,
 	Reset();
 	InitializeViewMatrix();
 	InitializeProjectionMatrix();
@@ -257,6 +257,8 @@ void Camera::UpdateTransitionCamera(DX::StepTimer const& aTimer)
 	m_position += cameraDirection * cameraSpeed * elapsedTime;
 	m_target += targetDirection * targetSpeed * elapsedTime;
 
+	m_up = DirectX::SimpleMath::Vector3::UnitY;
+
 	if (DirectX::SimpleMath::Vector3::Distance(cameraStartPos, m_position) >= cameraDistance)
 	{
 		m_position = cameraEndPos;
@@ -269,7 +271,7 @@ void Camera::UpdateTransitionCamera(DX::StepTimer const& aTimer)
 	}
 	else
 	{
-		m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, DirectX::SimpleMath::Vector3::UnitY);
+		//m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, DirectX::SimpleMath::Vector3::UnitY);
 		//m_world = DirectX::SimpleMath::Matrix::Identity;
 		//m_effect->SetView(m_view);
 	}

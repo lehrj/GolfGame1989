@@ -28,7 +28,7 @@ Game::Game() noexcept :
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
-    m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
+    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
     //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
@@ -1967,10 +1967,10 @@ void Game::SetGameCamera(int aCamera)
 void Game::StartupLoadCoordinates()
 {
 
-    DirectX::SimpleMath::Vector3 testCameraStart(-2.0f, 0.2f, 0.0f);
-    DirectX::SimpleMath::Vector3 testCameraEnd(-2.0f, 0.3f, 0.0f);
-    DirectX::SimpleMath::Vector3 testTargetStart(0.0f, 0.0f, 0.0f);
-    DirectX::SimpleMath::Vector3 testTargetEnd(-2.0f, 0.0f, -2.0f);
+    DirectX::SimpleMath::Vector3 testCameraStart(-2.9f, 0.5f, 0.0f);
+    DirectX::SimpleMath::Vector3 testCameraEnd(-2.0f, 0.0f, 1.2f);    
+    DirectX::SimpleMath::Vector3 testTargetStart(-2.0f, 0.0f, 0.0f);
+    DirectX::SimpleMath::Vector3 testTargetEnd(-2.0f, 0.0f, 0.0f);
 
     pCamera->SetUpPos(DirectX::SimpleMath::Vector3::UnitY);
 
@@ -1982,6 +1982,8 @@ void Game::StartupLoadCoordinates()
     pCamera->SetTargetEndPos(testTargetEnd);
 
     ////////////////////////////////////////////////////
+
+    /*
 
     m_ballPos = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
     m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
@@ -2024,6 +2026,11 @@ void Game::StartupLoadCoordinates()
     DirectX::SimpleMath::Vector3 endTargetPos = m_shootOrigin;
     pCamera->SetTargetEndPos(endTargetPos);
     pCamera->SetTargetEndPos(testTargetEnd);
+
+    
+
+
+    */
 
     ///////////////////////////////////////////////////////////////
 
