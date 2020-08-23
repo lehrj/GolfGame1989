@@ -26,7 +26,7 @@ Game::Game() noexcept :
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
-    m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
+    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
     //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
@@ -1495,6 +1495,12 @@ void Game::DrawProjectileRealTime()
             prevPos = shotPath[i];
         }
         m_ballPos = shotPath[ballPosIndex];
+
+        // Set camera targe on ball position if using projectile tracking camera
+        if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        {
+            pCamera->SetTargetPos(m_ballPos);
+        }
     }
 }
 
@@ -2046,7 +2052,10 @@ void Game::Update(DX::StepTimer const& aTimer)
         }
     }
     
-    UpdateCamera(aTimer);
+    pCamera->UpdateCamera(aTimer);
+    m_effect->SetView(pCamera->GetViewMatrix());
+    
+    //UpdateCamera(aTimer);
     UpdateInput(aTimer);
 }
 
