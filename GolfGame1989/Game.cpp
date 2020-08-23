@@ -20,19 +20,17 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    StartupLoadCoordinates();
-
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
     //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
     //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
 
-    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
+    m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
     //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
     //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
-    m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    //m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
 }
 
 Game::~Game()
@@ -471,10 +469,18 @@ void Game::CreateResources()
 void Game::DrawCameraFocus()
 {
     float line = .25f;
-    DirectX::SimpleMath::Vector3 focalPoint(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z);
-    DirectX::SimpleMath::Vector3 yLine(m_cameraTarget.x, m_cameraTarget.y + line, m_cameraTarget.z);
-    DirectX::SimpleMath::Vector3 xLine(m_cameraTarget.x + line, m_cameraTarget.y, m_cameraTarget.z);
-    DirectX::SimpleMath::Vector3 zLine(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z + line);
+    //DirectX::SimpleMath::Vector3 focalPoint(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z);
+    DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
+    //DirectX::SimpleMath::Vector3 yLine(m_cameraTarget.x, m_cameraTarget.y + line, m_cameraTarget.z);
+    DirectX::SimpleMath::Vector3 yLine = focalPoint;
+    yLine.y += line;
+    //DirectX::SimpleMath::Vector3 xLine(m_cameraTarget.x + line, m_cameraTarget.y, m_cameraTarget.z);
+    DirectX::SimpleMath::Vector3 xLine = focalPoint;
+    xLine.x += line;
+    //DirectX::SimpleMath::Vector3 zLine(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z + line);
+    DirectX::SimpleMath::Vector3 zLine = focalPoint;
+    zLine.z += line;
+
     VertexPositionColor origin(focalPoint, Colors::Yellow);
     VertexPositionColor yOffset(yLine, Colors::Yellow);
     VertexPositionColor xOffset(xLine, Colors::Yellow);
@@ -1563,12 +1569,14 @@ void Game::DrawSwing()
                 clubHeadColor = DirectX::Colors::Green;
                 isBallHit = true;
             }
-            if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
+            //if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
+            if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
             {
                 if (isBallHit == true)
                 {
                     AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
-                    m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+                    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
+                    pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
                     m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
                 }
             }
@@ -1877,22 +1885,21 @@ void Game::Render()
     {
         DrawWorld();
 
-        if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
+        //if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
+        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
         {
             DrawSwing();
         }
         //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
-        if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1 || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
-        {
-            
+        //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1 || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
+        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        {         
             m_flightStepTimer.ResetElapsedTime();
             //m_projectileTimer = 0.0;
-            //DrawProjectile2();
             DrawProjectileRealTime();
+            pCamera->SetTargetPos(m_ballPos);
         }
-        //DrawProjectile();
-        //DrawCameraFocus();
-        //DrawProjectileRealTime();
+        DrawCameraFocus();
     }
 
     m_batch->End();
@@ -1961,137 +1968,6 @@ void Game::SetGameCamera(int aCamera)
     {
         m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
     }
-}
-
-// Load default coordinates, will need to be extended upon when gameplay is expanded past a single position the ball can be hit from
-void Game::StartupLoadCoordinates()
-{
-
-    DirectX::SimpleMath::Vector3 testCameraStart(-2.9f, 0.5f, 0.0f);
-    DirectX::SimpleMath::Vector3 testCameraEnd(-2.0f, 0.0f, 1.2f);    
-    DirectX::SimpleMath::Vector3 testTargetStart(-2.0f, 0.0f, 0.0f);
-    DirectX::SimpleMath::Vector3 testTargetEnd(-2.0f, 0.0f, 0.0f);
-
-    pCamera->SetUpPos(DirectX::SimpleMath::Vector3::UnitY);
-
-    pCamera->SetPos(testCameraStart);
-    pCamera->SetTargetPos(testTargetStart);
-    pCamera->SetCameraStartPos(testCameraStart);
-    pCamera->SetCameraEndPos(testCameraEnd);
-    pCamera->SetTargetStartPos(testTargetStart);
-    pCamera->SetTargetEndPos(testTargetEnd);
-
-    ////////////////////////////////////////////////////
-
-    /*
-
-    m_ballPos = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
-    m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
-    m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
-  
-    DirectX::SimpleMath::Vector3 cameraPos = m_shootOrigin;
-    cameraPos.x -= .9f;
-    cameraPos.y += .5f;
-    pCamera->SetPos(cameraPos);
-    pCamera->SetPos(testCameraStart);
-
-    DirectX::SimpleMath::Vector3 targetPos = m_shootOrigin;
-    targetPos.y += .3f;
-    pCamera->SetTargetPos(targetPos);
-    pCamera->SetTargetPos(testTargetStart);
-
-    //DirectX::SimpleMath::Vector3 upPos = cameraPos;  
-    //upPos = DirectX::SimpleMath::Vector3::Zero;
-    //upPos.y += 1.f;
-    DirectX::SimpleMath::Vector3 upPos = DirectX::SimpleMath::Vector3::UnitY;
-    pCamera->SetUpPos(upPos);
-
-    DirectX::SimpleMath::Vector3 startCamPos = m_shootOrigin;
-    startCamPos.x -= .9f;
-    startCamPos.y += .5f;
-    pCamera->SetCameraStartPos(startCamPos);
-    pCamera->SetCameraStartPos(testCameraStart);
-
-    DirectX::SimpleMath::Vector3 endCamPos = m_shootOrigin;
-    endCamPos.y += 0.02f;
-    endCamPos.z += .5f;
-    pCamera->SetCameraEndPos(endCamPos);
-    pCamera->SetCameraEndPos(testCameraEnd);
-
-    DirectX::SimpleMath::Vector3 startTargetPos = m_shootOrigin;
-    startTargetPos.y += .3f;
-    pCamera->SetTargetStartPos(startTargetPos);
-    pCamera->SetTargetStartPos(testTargetStart);
-
-    DirectX::SimpleMath::Vector3 endTargetPos = m_shootOrigin;
-    pCamera->SetTargetEndPos(endTargetPos);
-    pCamera->SetTargetEndPos(testTargetEnd);
-
-    
-
-
-    */
-
-    ///////////////////////////////////////////////////////////////
-
-    /*
-    DirectX::SimpleMath::Vector3 testCameraStart(-2.0f, 0.0f, 0.0f);
-    DirectX::SimpleMath::Vector3 testCameraEnd(0.0f, 0.0f, -2.0f);
-    DirectX::SimpleMath::Vector3 testTargetStart(0.0f, 0.0f, 0.0f);
-    DirectX::SimpleMath::Vector3 testTargetEnd(0.0f, 0.0f, 0.0f);
-
-    pCamera->SetUpPos(DirectX::SimpleMath::Vector3::UnitY);
-
-    pCamera->SetPos(testCameraStart);
-    pCamera->SetTargetPos(testTargetStart);
-    pCamera->SetCameraStartPos(testCameraStart);
-    pCamera->SetCameraEndPos(testCameraEnd);
-    pCamera->SetTargetStartPos(testTargetStart);
-    pCamera->SetTargetEndPos(testTargetEnd);
-    */
-
-    ///////////////////////////////////////////////////
-    /*
-    if (m_currentCamera == GameCamera::GAMECAMERA_MOVETOSIDE)
-    {
-        DirectX::SimpleMath::Vector3 cameraStartPos = m_shootOrigin;
-        cameraStartPos.x -= .9f;
-        cameraStartPos.y += .5f;
-        DirectX::SimpleMath::Vector3 cameraEndPos = m_shootOrigin;
-        cameraEndPos.y += 0.02f;
-        cameraEndPos.z += .2f;
-        float cameraDistance = DirectX::SimpleMath::Vector3::Distance(cameraStartPos, cameraEndPos);
-        DirectX::SimpleMath::Vector3 cameraDirection = cameraEndPos - cameraStartPos;
-        cameraDirection.Normalize();
-
-        DirectX::SimpleMath::Vector3 targetStartPos = m_shootOrigin;
-        targetStartPos.y += .3f;
-        DirectX::SimpleMath::Vector3 targetEndPos = m_shootOrigin;
-        float targetDistance = DirectX::SimpleMath::Vector3::Distance(targetStartPos, targetEndPos);
-        DirectX::SimpleMath::Vector3 targetDirection = targetEndPos - targetStartPos;
-        targetDirection.Normalize();
-
-        float elapsedTime = float(aTimer.GetElapsedSeconds());
-        float cameraSpeed = 0.9f;
-        float targetSpeed = cameraSpeed * (targetDistance / cameraDistance);
-
-        m_cameraPosition += cameraDirection * cameraSpeed * elapsedTime;
-        m_cameraTarget += targetDirection * targetSpeed * elapsedTime;
-
-        if (DirectX::SimpleMath::Vector3::Distance(cameraStartPos, m_cameraPosition) >= cameraDistance)
-        {
-            m_cameraPosition = cameraEndPos;
-            m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-        }
-        else
-        {
-            m_view = DirectX::SimpleMath::Matrix::CreateLookAt(m_cameraPosition, m_cameraTarget, DirectX::SimpleMath::Vector3::UnitY);
-            m_world = DirectX::SimpleMath::Matrix::Identity;
-            m_effect->SetView(m_view);
-        }
-    }
-    */
-    ////////////////////////////////////////////////////////
 }
 
 // Executes the basic game loop.
@@ -2202,6 +2078,10 @@ void Game::UpdateCamera(DX::StepTimer const& aTimer)
     }
     if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
     {
+        if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        {
+            pCamera->SetTargetPos(m_ballPos);
+        }
         pCamera->UpdateCamera(aTimer);
         m_effect->SetView(pCamera->GetViewMatrix());
     }
@@ -2335,11 +2215,6 @@ void Game::UpdateCamera(DX::StepTimer const& aTimer)
         m_world = DirectX::SimpleMath::Matrix::Identity;
         m_effect->SetView(m_view);
     }
-}
-
-void UpdateCameraClass(DX::StepTimer const& aTimer)
-{
-
 }
 
 void Game::UpdateInput(DX::StepTimer const& aTimer)
@@ -2547,7 +2422,14 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.V)
     {
-        m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
+        //m_currentCamera = GameCamera::GAMECAMERA_MOVETOBEHIND;
+        pCamera->SetCameraStartPos(pCamera->GetPos());
+        pCamera->SetCameraEndPos(pGolf->GetCameraPreSwingPos());
+        pCamera->SetTargetStartPos(pCamera->GetTargetPos());
+        pCamera->SetTargetEndPos(pGolf->GetCameraTargetPreSwingPos());
+
+
+        pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         ResetGamePlay();
     }
     if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
@@ -2559,10 +2441,14 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
             if (pPlay->IsSwingStateAtImpact() == true)
-            {
+            {              
+                pCamera->SetCameraStartPos(pCamera->GetPos());
+                pCamera->SetCameraEndPos(pGolf->GetCameraSwingPos());
+                pCamera->SetTargetStartPos(pCamera->GetTargetPos());
+                pCamera->SetTargetEndPos(pGolf->GetCameraTargetSwingPos());
 
-                m_currentCamera = GameCamera::GAMECAMERA_MOVETOSIDE;
-                
+                pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
+                //m_currentCamera = GameCamera::GAMECAMERA_MOVETOSIDE;            
             }
             pPlay->UpdateSwingState();
         }
@@ -2714,12 +2600,9 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
                 m_yaw += XM_PI * 2.0f;
             }
 
-            //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
-            //pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
             pCamera->UpdatePitchYaw(m_pitch, m_yaw);
         }
 
         m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
-        //m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_ABSOLUTE : Mouse::MODE_RELATIVE);
     }
 }

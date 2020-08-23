@@ -16,6 +16,7 @@ enum class CameraState
     CAMERASTATE_PRESWINGVIEW,
     CAMERASTATE_PROJECTILEFLIGHTVIEW,
     CAMERASTATE_SWINGVIEW,
+    CAMERASTATE_RESET
 };
 
 class Camera
@@ -34,6 +35,7 @@ public:
     bool IsCameraAtDestination();
     void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
+    void ResetCameraTransition(DX::StepTimer const& aTimer);
     void ResetIsCameraAtDestination() { m_isCameraAtDestination = false; };
     void ReverseTransitionDirection();
     void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
