@@ -3,7 +3,6 @@
 //
 
 #pragma once
-//#include "StepTimer.h"
 #include "Golf.h"
 #include "Keyboard.h"
 #include "AnimatedTexture.h"
@@ -74,9 +73,7 @@ private:
     void Render();
     void ResetGamePlay();
     void ResetPowerMeter() { m_powerMeterBarRect.left = m_powerMeterImpactPoint; m_powerMeterBarRect.right = m_powerMeterImpactPoint; };
-    void SetGameCamera(int aCamera);
     void Update(DX::StepTimer const& aTimer);
-    void UpdateCamera(DX::StepTimer const& aTimer);
     void UpdateInput(DX::StepTimer const& aTimer);
 
     // Device resources.
@@ -194,13 +191,12 @@ private:
 
     // WLJ Intro screen logos
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bmwLogoTexture;
-    DirectX::SimpleMath::Vector2 m_bmwLogoPos;
-    DirectX::SimpleMath::Vector2 m_bmwLogoOrigin;
+    DirectX::SimpleMath::Vector2                    m_bmwLogoPos;
+    DirectX::SimpleMath::Vector2                    m_bmwLogoOrigin;
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_jiLogoTexture;
-    DirectX::SimpleMath::Vector2 m_jiLogoPos;
-    DirectX::SimpleMath::Vector2 m_jiLogoOrigin;
-
+    DirectX::SimpleMath::Vector2                    m_jiLogoPos;
+    DirectX::SimpleMath::Vector2                    m_jiLogoOrigin;
 
     // WLJ variable to hold selected menu item
     int                                             m_menuSelect = 0;
@@ -215,37 +211,8 @@ private:
         GAMESTATE_ENVIRONTMENTSELECT,
         GAMESTATE_GAMEPLAY
     };
-    GameState                                       m_currentState;
+    GameState                                   m_currentState;
 
-    enum class GameCamera
-    {
-        GAMECAMERA_DEFAULT,
-        GAMECAMERA_CAMERA1,  // Side profile of ball view to debug landing mechanics
-        GAMECAMERA_CAMERA2,
-        GAMECAMERA_CAMERA3,
-        GAMECAMERA_CAMERA4,
-        GAMECAMERA_MOVETOBEHIND,
-        GAMECAMERA_MOVETOSIDE,
-        GAMECAMERA_TOSWINGVIEW,
-        GAMECAMERA_CAMERACLASS,
-        GAMECAMERA_PRESWINGVIEW,
-        GAMECAMERA_PROJECTILEFLIGHTVIEW,
-        GAMECAMERA_SWINGVIEW,
-    };
-
-    CameraState                                 m_cState;
-    GameCamera                                  m_currentCamera;
-    DirectX::SimpleMath::Vector3                m_cameraPosition = DirectX::SimpleMath::Vector3::Zero; // place holder until convertion to use Camera class
-    void                                        SetGameCamera(GameCamera aCameraState);
-    float                                       m_cameraRotationX = 2.0;
-    float                                       m_cameraRotationY = 2.0;
-    DirectX::SimpleMath::Vector3                m_cameraTarget = DirectX::SimpleMath::Vector3::Zero;
-    //float                                       m_cameraTargetX = 0.0;
-    //float                                       m_cameraTargetY = 0.0;
-    //float                                       m_cameraTargetZ = 0.0;
-    float                                       m_cameraZoom = 0.0f;
-    float                                       m_cameraMovementSpeed = 0.01;
-    
     Camera*                                     pCamera;
 
     DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;
@@ -254,22 +221,12 @@ private:
     DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
 
     // audio 
-
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;
-    //std::unique_ptr<DirectX::SoundEffect>       m_coinAudio;
-    //std::unique_ptr<DirectX::SoundEffect>       m_music;
-    //std::unique_ptr <DirectX::SoundEffectInstance> m_musicLoop;
     float                                       m_musicVolume = 0.9f;
-    //float m_musicSlide;
     float                                       m_sfxVolume = 0.5f;
     std::unique_ptr<DirectX::WaveBank>          m_audioBank;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
-
-    //float yaw = 0.f;
-    //float pitch = 0.f;
-    //float m_pitch = 0.0f;
-    //float m_yaw = 0.0f;
 };
