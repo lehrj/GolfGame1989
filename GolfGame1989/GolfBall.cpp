@@ -16,7 +16,7 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
     return dt;
 }
 
-void GolfBall::FireProjectile(Utility::ImpactData aImpactData, Environment* pEnviron)
+void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 {   
     PrepProjectileLaunch(aImpactData);
     LaunchProjectile();
@@ -27,7 +27,6 @@ void GolfBall::LandProjectile()
 {
     double direction = GetImpactDirection();
     double impactAngle = GetImpactAngle();
-    double impactVelocity = GetImpactVelocity();
     double impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
     
     //impactSpinRate = -1000.;
@@ -58,7 +57,7 @@ void GolfBall::LandProjectile()
 
     //?c = 15.4?(vi / (impact speed))(? / (impact angle))
     //double newThetaC = 15.4f * (impactSpeed) * (phi);
-    double newThetaC = Utility::ToRadians(15.4) * (impactSpeed) * (phi);
+    //double newThetaC = Utility::ToRadians(15.4) * (impactSpeed) * (phi);
     //double test = (vi / impactSpeed2) * (phi / impactAngle);
     double thetaC = Utility::ToRadians(15.4);
     //thetaC = 15.4;
@@ -67,7 +66,6 @@ void GolfBall::LandProjectile()
     //thetaC = 15.4f * (impactSpeed) * (phi);
     //thetaC = Utility::ToRadians(thetaC);
     //thetaC = thetaC * (impactSpeed) * (phi);
-    double phiDegrees = Utility::ToDegrees(phi);
 
     double vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
     double absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
@@ -111,7 +109,7 @@ void GolfBall::LandProjectile()
     }
 
     double vrx = vrxPrime * cos(thetaC) - vryPrime * sin(thetaC);
-    float vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC); 
+    double vry = vrxPrime * sin(thetaC) + vryPrime * cos(thetaC); 
     // WLJ ToDo: sort out unit conversion errors with RPM vs Rad per S or what ever units are getting used due to multiple sources for equations and attempts to counter problem
     //double vry = vrxPrime * cos(thetaC) + vryPrime * cos(thetaC);
 
@@ -119,11 +117,11 @@ void GolfBall::LandProjectile()
     DirectX::SimpleMath::Vector3 directionOfTravel = m_ball.q.velocity;
     directionOfTravel.y = 0.0f;
 
-    double ratioX = vrx / m_ball.q.velocity.x;
-    double ratioY = vry / m_ball.q.velocity.y;
-    double ratioZ = ratioX + ratioY;
-    double preZ = m_ball.q.velocity.z;
-    double vrz = m_ball.q.velocity.z * ratioZ;
+    //double ratioX = vrx / m_ball.q.velocity.x;
+    //double ratioY = vry / m_ball.q.velocity.y;
+    //double ratioZ = ratioX + ratioY;
+    //double preZ = m_ball.q.velocity.z;
+    //double vrz = m_ball.q.velocity.z * ratioZ;
 
     double backwardsBounceCheck = (impactSpeed / (2. * m_ball.radius)) * (5. * sin(impactAngle - thetaC) - 7. * e * tan(thetaC) * cos(impactAngle - thetaC));
     //backwardsBounceCheck = backwardsBounceCheck * -1;
@@ -138,19 +136,17 @@ void GolfBall::LandProjectile()
         //direction += Utility::ToRadians(180.);
     }
     
-    m_ball.q.velocity.x = vrx;
-    m_ball.q.velocity.y = vry;
+    m_ball.q.velocity.x = static_cast<float>(vrx);
+    m_ball.q.velocity.y = static_cast<float>(vry);
     //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(-direction));
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
     //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
     m_ball.omega = omegaR;
     //m_ball.omega = omegaR;
-
-    double impactAnglePostCollision = GetImpactAngle();
 
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 }
@@ -163,8 +159,6 @@ void GolfBall::RollBall()
 
     //double decelFactor = 0.65;
     double decelFactor = a;
-    double aStartVelX = m_ball.q.velocity.x;
-    double aStartVelZ = m_ball.q.velocity.z;
     double stopTolerance = 0.1;
     int overflowTolerance = 350;
 
@@ -178,7 +172,7 @@ void GolfBall::RollBall()
         double velocity = m_ball.q.velocity.Length();
 
         velocity -= decelFactor * velocity * m_timeStep;
-        m_ball.q.velocity = directionVec * velocity;
+        m_ball.q.velocity = directionVec * static_cast<float>(velocity);
         m_ball.q.position += m_ball.q.velocity * m_timeStep;
         m_ball.flightTime = m_ball.flightTime + m_timeStep;
         PushFlightData();
@@ -248,14 +242,7 @@ void GolfBall::LaunchProjectile()
         
         ++m_bounceCount;
         
-        double aaPreImpactVelocity = m_ball.q.velocity.Length();
         LandProjectile();
-        double aaPostImpactVelocity = m_ball.q.velocity.Length();
-
-        double aaVelocityDelta = aaPreImpactVelocity - aaPostImpactVelocity;
-        double aaVelocityDeltaFull = aaPreImpactVelocity + aaPostImpactVelocity;
-        double aaAceleration = aaVelocityDelta / m_timeStep;
-        double aaAcelerationFull = aaVelocityDeltaFull / m_timeStep;
 
         ++count;
         if (m_ball.q.velocity.y < .3 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
@@ -278,13 +265,13 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     //  Convert the loft angle from degrees to radians and
     //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aImpactData.angleY);
-    double cosL = cos(loft);
+    //double cosL = cos(loft);
     double sinL = sin(loft);
 
     //  Calculate the pre-collision velocities normal
     //  and parallel to the line of action.
     double velocity = aImpactData.velocity;
-    double vcp = cosL * velocity;
+    //double vcp = cosL * velocity;
     double vcn = -sinL * velocity;
 
     //  Compute the post-collision velocity of the ball
@@ -292,11 +279,11 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     double ballMass = m_ball.mass;
     double clubMass = aImpactData.mass;
     double e = aImpactData.cor; //  coefficient of restitution of club face striking the ball
-    double vbp = (1.0 + e) * clubMass * vcp / (clubMass + ballMass);
+    //double vbp = (1.0 + e) * clubMass * vcp / (clubMass + ballMass);
 
     //  Compute the post-collision velocity of the ball
     //  perpendicular to the line of action.
-    double vbn = (1.0 - m_faceRoll) * clubMass * vcn / (clubMass + ballMass);
+    //double vbn = (1.0 - m_faceRoll) * clubMass * vcn / (clubMass + ballMass);
 
     //  Compute the initial spin rate assuming ball is
     //  rolling without sliding.
@@ -307,17 +294,14 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     //  standard Cartesian frame of reference. Because the
     //  line-of-action was in the xy plane, the z-velocity
     //  is zero.
-    double vx0 = cosL * vbp - sinL * vbn;
-    double vy0 = sinL * vbp + cosL * vbn;
-    double vz0 = 0.0;
+    //double vx0 = cosL * vbp - sinL * vbn;
+    //double vy0 = sinL * vbp + cosL * vbn;
+    //double vz0 = 0.0;
 
-    double div1 = ((1.0 + e) * clubMass) / (clubMass + ballMass);
-    double div2 = (2 * clubMass) / (7 * (clubMass + ballMass));
-
-    DirectX::SimpleMath::Vector4 vBall = ((((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vHeadNormal)
-        + (((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
-    DirectX::SimpleMath::Vector4 vBall1 = (((1.0 + e) * clubMass) / (clubMass + ballMass) * aImpactData.vHeadNormal);
-    DirectX::SimpleMath::Vector4 vBall2 = ((2 * clubMass) / (7 * (clubMass + ballMass)) * aImpactData.vHeadParallel);
+    DirectX::SimpleMath::Vector4 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
+        + (static_cast<float>(((2 * clubMass) / (7 * (clubMass + ballMass)))) * aImpactData.vHeadParallel);
+    DirectX::SimpleMath::Vector4 vBall1 = (static_cast<float>(((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vHeadNormal);
+    DirectX::SimpleMath::Vector4 vBall2 = (static_cast<float>((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
     DirectX::SimpleMath::Vector4 vBall3 = vBall1 + vBall2;
 
     DirectX::SimpleMath::Vector3 unitVHead = aImpactData.vHead;
@@ -331,8 +315,9 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
 
-    DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
-    omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
+    //DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
+    //omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
+    DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
 
     double absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
         + (omegaBall.y * omegaBall.y)
@@ -344,7 +329,7 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
     DirectX::SimpleMath::Vector3 fMangus;
     fMangus.Zero;
-    fMangus = (.5 * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall) * (unitFaceNormal.Cross(unitVHead));
+    fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall)) * (unitFaceNormal.Cross(unitVHead));
 
     DirectX::SimpleMath::Vector3 normfManus = fMangus;
     DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;
@@ -365,7 +350,9 @@ void GolfBall::PushFlightData()
     if (m_ball.q.position.y >= m_ball.landingHeight)
     {
         m_shotPath.push_back(m_ball.q.position);
-        m_shotPathTimeStep.push_back(m_ball.flightTime);
+        float timeStep = static_cast<float>(m_ball.flightTime);
+        m_shotPathTimeStep.push_back(timeStep);
+        //m_shotPathTimeStep.push_back(m_ball.flightTime); //Error C4244
     }
 }
 
@@ -375,12 +362,12 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     //  Compute the intermediate values of the 
     //  dependent variables.
     BallMotion newQ;
-    newQ.position.x = q->position.x + qScale * deltaQ->position.x;
-    newQ.position.y = q->position.y + qScale * deltaQ->position.y;
-    newQ.position.z = q->position.z + qScale * deltaQ->position.z;
-    newQ.velocity.x = q->velocity.x + qScale * deltaQ->velocity.x;
-    newQ.velocity.y = q->velocity.y + qScale * deltaQ->velocity.y;
-    newQ.velocity.z = q->velocity.z + qScale * deltaQ->velocity.z;
+    newQ.position.x = q->position.x + static_cast<float>(qScale) * deltaQ->position.x;
+    newQ.position.y = q->position.y + static_cast<float>(qScale) * deltaQ->position.y;
+    newQ.position.z = q->position.z + static_cast<float>(qScale) * deltaQ->position.z;
+    newQ.velocity.x = q->velocity.x + static_cast<float>(qScale) * deltaQ->velocity.x;
+    newQ.velocity.y = q->velocity.y + static_cast<float>(qScale) * deltaQ->velocity.y;
+    newQ.velocity.z = q->velocity.z + static_cast<float>(qScale) * deltaQ->velocity.z;
 
     //  Declare some convenience variables representing
     //  the intermediate values of velocity.
@@ -417,12 +404,12 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
 
     //  Compute right-hand side values.
-    dq->velocity.x = ds * (Fdx + Fmx) / pBall->mass;
-    dq->position.x = ds * vx;
-    dq->velocity.y = ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass);
-    dq->position.y = ds * vy;
-    dq->velocity.z = ds * (Fdz + Fmz) / pBall->mass;
-    dq->position.z = ds * vz;
+    dq->velocity.x = static_cast<float>(ds * (Fdx + Fmx) / pBall->mass);
+    dq->position.x = static_cast<float>(ds * vx);
+    dq->velocity.y = static_cast<float>(ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass));
+    dq->position.y = static_cast<float>(ds * vy);
+    dq->velocity.z = static_cast<float>(ds * (Fdz + Fmz) / pBall->mass);
+    dq->position.z = static_cast<float>(ds * vz);
 }
 
 void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
@@ -456,17 +443,17 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
     //  values in the ODE object arrays.
     pBall->flightTime = pBall->flightTime + aTimeDelta;
 
-    pQ.position.x = pQ.position.x + (pQ1.position.x + 2.0 * pQ2.position.x + 2.0 * pQ3.position.x + pQ4.position.x) / numEqns;
+    pQ.position.x = static_cast<float>(pQ.position.x + (pQ1.position.x + 2.0 * pQ2.position.x + 2.0 * pQ3.position.x + pQ4.position.x) / numEqns);
     pBall->q.position.x = pQ.position.x;
-    pQ.position.y = pQ.position.y + (pQ1.position.y + 2.0 * pQ2.position.y + 2.0 * pQ3.position.y + pQ4.position.y) / numEqns;
+    pQ.position.y = static_cast<float>(pQ.position.y + (pQ1.position.y + 2.0 * pQ2.position.y + 2.0 * pQ3.position.y + pQ4.position.y) / numEqns);
     pBall->q.position.y = pQ.position.y;
-    pQ.position.z = pQ.position.z + (pQ1.position.z + 2.0 * pQ2.position.z + 2.0 * pQ3.position.z + pQ4.position.z) / numEqns;
+    pQ.position.z = static_cast<float>(pQ.position.z + (pQ1.position.z + 2.0 * pQ2.position.z + 2.0 * pQ3.position.z + pQ4.position.z) / numEqns);
     pBall->q.position.z = pQ.position.z;
-    pQ.velocity.x = pQ.velocity.x + (pQ1.velocity.x + 2.0 * pQ2.velocity.x + 2.0 * pQ3.velocity.x + pQ4.velocity.x) / numEqns;
+    pQ.velocity.x = static_cast<float>(pQ.velocity.x + (pQ1.velocity.x + 2.0 * pQ2.velocity.x + 2.0 * pQ3.velocity.x + pQ4.velocity.x) / numEqns);
     pBall->q.velocity.x = pQ.velocity.x;
-    pQ.velocity.y = pQ.velocity.y + (pQ1.velocity.y + 2.0 * pQ2.velocity.y + 2.0 * pQ3.velocity.y + pQ4.velocity.y) / numEqns;
+    pQ.velocity.y = static_cast<float>(pQ.velocity.y + (pQ1.velocity.y + 2.0 * pQ2.velocity.y + 2.0 * pQ3.velocity.y + pQ4.velocity.y) / numEqns);
     pBall->q.velocity.y = pQ.velocity.y;
-    pQ.velocity.z = pQ.velocity.z + (pQ1.velocity.z + 2.0 * pQ2.velocity.z + 2.0 * pQ3.velocity.z + pQ4.velocity.z) / numEqns;
+    pQ.velocity.z = static_cast<float>(pQ.velocity.z + (pQ1.velocity.z + 2.0 * pQ2.velocity.z + 2.0 * pQ3.velocity.z + pQ4.velocity.z) / numEqns);
     pBall->q.velocity.z = pQ.velocity.z;
 }
 
@@ -507,17 +494,17 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
     //  at the new dependent variable location and store the
     //  values in the ODE object arrays.
     pBall->flightTime = pBall->flightTime + aTimeDelta;
-    pQ->position.x = pQ->position.x + (pQ1->position.x + 2.0 * pQ2->position.x + 2.0 * pQ3->position.x + pQ4->position.x) / numEqns;
+    pQ->position.x = static_cast<float>(pQ->position.x + (pQ1->position.x + 2.0 * pQ2->position.x + 2.0 * pQ3->position.x + pQ4->position.x) / numEqns);
     pBall->q.position.x = pQ->position.x;
-    pQ->position.y = pQ->position.y + (pQ1->position.y + 2.0 * pQ2->position.y + 2.0 * pQ3->position.y + pQ4->position.y) / numEqns;
+    pQ->position.y = static_cast<float>(pQ->position.y + (pQ1->position.y + 2.0 * pQ2->position.y + 2.0 * pQ3->position.y + pQ4->position.y) / numEqns);
     pBall->q.position.y = pQ->position.y;
-    pQ->position.z = pQ->position.z + (pQ1->position.z + 2.0 * pQ2->position.z + 2.0 * pQ3->position.z + pQ4->position.z) / numEqns;
+    pQ->position.z = static_cast<float>(pQ->position.z + (pQ1->position.z + 2.0 * pQ2->position.z + 2.0 * pQ3->position.z + pQ4->position.z) / numEqns);
     pBall->q.position.z = pQ->position.z;
-    pQ->velocity.x = pQ->velocity.x + (pQ1->velocity.x + 2.0 * pQ2->velocity.x + 2.0 * pQ3->velocity.x + pQ4->velocity.x) / numEqns;
+    pQ->velocity.x = static_cast<float>(pQ->velocity.x + (pQ1->velocity.x + 2.0 * pQ2->velocity.x + 2.0 * pQ3->velocity.x + pQ4->velocity.x) / numEqns);
     pBall->q.velocity.x = pQ->velocity.x;
-    pQ->velocity.y = pQ->velocity.y + (pQ1->velocity.y + 2.0 * pQ2->velocity.y + 2.0 * pQ3->velocity.y + pQ4->velocity.y) / numEqns;
+    pQ->velocity.y = static_cast<float>(pQ->velocity.y + (pQ1->velocity.y + 2.0 * pQ2->velocity.y + 2.0 * pQ3->velocity.y + pQ4->velocity.y) / numEqns);
     pBall->q.velocity.y = pQ->velocity.y;
-    pQ->velocity.z = pQ->velocity.z + (pQ1->velocity.z + 2.0 * pQ2->velocity.z + 2.0 * pQ3->velocity.z + pQ4->velocity.z) / numEqns;
+    pQ->velocity.z = static_cast<float>(pQ->velocity.z + (pQ1->velocity.z + 2.0 * pQ2->velocity.z + 2.0 * pQ3->velocity.z + pQ4->velocity.z) / numEqns);
     pBall->q.velocity.z = pQ->velocity.z;
 
     //  Free up memory   
@@ -573,9 +560,9 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.rotationAxis.x = 0.0;
     m_ball.rotationAxis.y = 0.0;
     m_ball.rotationAxis.z = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices
-    m_ball.windSpeed.x = pEnviron->GetWindX();
-    m_ball.windSpeed.y = pEnviron->GetWindY();
-    m_ball.windSpeed.z = pEnviron->GetWindZ();
+    m_ball.windSpeed.x = static_cast<float>(pEnviron->GetWindX());
+    m_ball.windSpeed.y = static_cast<float>(pEnviron->GetWindY());
+    m_ball.windSpeed.z = static_cast<float>(pEnviron->GetWindZ());
 }
 
 void GolfBall::SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord)

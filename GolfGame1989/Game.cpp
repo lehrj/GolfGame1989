@@ -50,6 +50,8 @@ Game::~Game()
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
 {
     m_audioMusicStream = m_audioBank->CreateStreamInstance(aSFX);
+
+    //m_audioMusicStream = m_audioBank->CreateStreamInstance(aSFX);
     if (m_audioMusicStream)
     {
         m_audioMusicStream->SetVolume(m_musicVolume);
@@ -407,12 +409,12 @@ void Game::CreateResources()
     m_bitwiseFontPos.y = backBufferHeight / 2.f;
 
     // Start swing power bar
-    m_powerMeterFrameRect.left = (backBufferWidth / 2.f) - m_powerBarFrameOrigin.x;
-    m_powerMeterFrameRect.right = (backBufferWidth / 2.f) + m_powerBarFrameOrigin.x;
-    m_powerMeterFrameRect.top = (backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y;
-    m_powerMeterFrameRect.bottom = (backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y;
+    m_powerMeterFrameRect.left = static_cast<long>((backBufferWidth / 2.f) - m_powerBarFrameOrigin.x);
+    m_powerMeterFrameRect.right = static_cast<long>((backBufferWidth / 2.f) + m_powerBarFrameOrigin.x);
+    m_powerMeterFrameRect.top = static_cast<long>((backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y);
+    m_powerMeterFrameRect.bottom = static_cast<long>((backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y);
 
-    m_powerMeterSize = m_powerMeterFrameRect.right - m_powerMeterFrameRect.left;
+    m_powerMeterSize = static_cast<float>(m_powerMeterFrameRect.right - m_powerMeterFrameRect.left);
 
     float powerMeterScale = pPlay->GetMeterLength();
     float impactPointScale = pPlay->GetMeterImpactPoint();
@@ -421,12 +423,12 @@ void Game::CreateResources()
 
     m_powerMeterImpactRect.top = m_powerMeterFrameRect.top;
     m_powerMeterImpactRect.bottom = m_powerMeterFrameRect.bottom;
-    m_powerMeterImpactRect.right = m_powerMeterFrameRect.right - impactPointScale + 20;
-    m_powerMeterImpactRect.left = m_powerMeterFrameRect.right - impactPointScale - 20;
+    m_powerMeterImpactRect.right = m_powerMeterFrameRect.right - static_cast<long>(impactPointScale) + 20;
+    m_powerMeterImpactRect.left = m_powerMeterFrameRect.right - static_cast<long>(impactPointScale) - 20;
 
     m_powerMeterBarRect = m_powerMeterFrameRect;
-    m_powerMeterBarRect.left = m_powerMeterFrameRect.right - impactPointScale;
-    m_powerMeterBarRect.right = m_powerMeterFrameRect.right - impactPointScale;
+    m_powerMeterBarRect.left = m_powerMeterFrameRect.right - static_cast<long>(impactPointScale);
+    m_powerMeterBarRect.right = m_powerMeterFrameRect.right - static_cast<long>(impactPointScale);
 
     m_powerMeterBackswingRect = m_powerMeterFrameRect;
     m_powerMeterBackswingRect.left = m_powerMeterBarRect.left;
@@ -510,7 +512,7 @@ void Game::DrawIntroScreen()
     float logoDisplayDuration = 5.f;
     float logoDisplayGap = 1.f;
     float startDelay = 4.2f;  
-    float timeStamp = m_timer.GetTotalSeconds();
+    float timeStamp = static_cast<float>(m_timer.GetTotalSeconds());
     
     float fadeInStart1 = startDelay;
     float fadeInStart2 = startDelay + logoDisplayDuration + logoDisplayGap;
@@ -590,14 +592,14 @@ void Game::DrawIntroScreen()
         }       
         else
         {
-            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_COINSFX);
+            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_COINSFX);
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
         }
     }
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
-        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK_MUSIC01);
+        AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_MUSIC01);
         m_currentState = GameState::GAMESTATE_STARTSCREEN;
     }
 }
@@ -607,7 +609,6 @@ void Game::DrawMenuCharacterSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawSpacingY = 15.f;
     std::string menuTitle = "Character Select";
     float menuTitlePosX = m_fontMenuPos.x;
     float menuTitlePosY = m_fontMenuPos.y + 25.f;
@@ -1041,7 +1042,6 @@ void Game::DrawMenuEnvironmentSelect()
     const UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     const UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
 
-    float lineDrawSpacingY = 15.f;
     std::string menuTitle = "Environment Select";
     float menuTitlePosX = m_fontMenuPos.x;
     float menuTitlePosY = m_fontMenuPos.y + 25;;
@@ -1416,19 +1416,19 @@ void Game::DrawPowerBarUI()
 {
     if (pPlay->GetMeterPower() >= 0.0)
     {
-        m_powerMeterBarRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
+        m_powerMeterBarRect.left = static_cast<long>(m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f)));
     }
     else
     {
-        m_powerMeterBarRect.right = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
+        m_powerMeterBarRect.right = static_cast<long>(m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f)));
     }
     if (pPlay->GetIsBackswingSet() == false)
     {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f));
+        m_powerMeterBackswingRect.left = static_cast<long>(m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetMeterPower() * m_powerMeterBarScale) * 0.01f)));
     }
     else
     {
-        m_powerMeterBackswingRect.left = m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01f));
+        m_powerMeterBackswingRect.left = static_cast<long>(m_powerMeterImpactPoint - (m_powerMeterSize * ((pPlay->GetBackswingSet() * m_powerMeterBarScale) * 0.01f)));
     }
 
     m_spriteBatch->Draw(m_powerBackswingTexture.Get(), m_powerMeterBackswingRect, nullptr, Colors::White);
@@ -1580,7 +1580,7 @@ void Game::DrawSwing()
             {
                 if (isBallHit == true)
                 {
-                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
+                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
                     //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
                     pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
                     m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
@@ -1603,7 +1603,6 @@ void Game::DrawSwingUI()
 {
     std::vector<std::string> uiString = pPlay->GetDebugData();
 
-    float fontOriginPosX = m_fontPosDebug.x;
     float fontOriginPosY = m_fontPosDebug.y;
 
     for (int i = 0; i < uiString.size(); ++i)
@@ -1623,7 +1622,6 @@ void Game::DrawUI()
 
     std::string output = uiString[0];
 
-    float fontOriginPosX = m_fontPos2.x;
     float fontOriginPosY = m_fontPos2.y;
 
     for (int i = 0; i < uiString.size(); ++i)
@@ -1688,7 +1686,6 @@ void Game::DrawWorld()
 
     //draw tee box
     float originX = m_shootOrigin.x;
-    float originZ = m_shootOrigin.z;
     DirectX::SimpleMath::Vector3 t1(originX - .05f, 0.0f, -0.1f);
     DirectX::SimpleMath::Vector3 t2(originX + .05f, 0.0f, -0.1f);
     DirectX::SimpleMath::Vector3 t3(originX - 0.05f, 0.0f, 0.1f);
@@ -1982,15 +1979,15 @@ void Game::Update(DX::StepTimer const& aTimer)
     {
         if (m_menuSelect == 0)
         {
-            m_character0->Update(elapsedTime);
+            m_character0->Update(static_cast<float>(elapsedTime));
         }
         if (m_menuSelect == 1)
         {
-            m_character1->Update(elapsedTime);
+            m_character1->Update(static_cast<float>(elapsedTime));
         }
         if (m_menuSelect == 2)
         {
-            m_character2->Update(elapsedTime);
+            m_character2->Update(static_cast<float>(elapsedTime));
         }
     }
 
@@ -2000,7 +1997,7 @@ void Game::Update(DX::StepTimer const& aTimer)
 
         if (pPlay->UpdateSwing() == true)
         {
-            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
+            AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
 
             pPlay->ResetSwingUpdateReady();
             pGolf->UpdateImpact(pPlay->GetImpactData());
@@ -2209,27 +2206,27 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.D)
     {
-        pCamera->UpdatePos(0.0f + aTimer.GetElapsedSeconds(), 0.0f, 0.0f);
+        pCamera->UpdatePos(0.0f + static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f, 0.0f);
     }
     if (kb.S)
     {        
-        pCamera->UpdatePos(0.0f, 0.0f, 0.0f + aTimer.GetElapsedSeconds());
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f + static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.A)
     {
-        pCamera->UpdatePos(0.0f - aTimer.GetElapsedSeconds(), 0.0f, 0.0f);
+        pCamera->UpdatePos(0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f, 0.0f);
     }
     if (kb.W)
     {
-        pCamera->UpdatePos(0.0f, 0.0f, 0.0f - aTimer.GetElapsedSeconds());
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.Q)
     {
-        pCamera->UpdatePitchYaw(0.0f, 0.0 + aTimer.GetElapsedSeconds());
+        pCamera->UpdatePitchYaw(0.0f, 0.0f + static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.E)
     {
-        pCamera->UpdatePitchYaw(0.0f, 0.0 - aTimer.GetElapsedSeconds());
+        pCamera->UpdatePitchYaw(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.F)
     {
@@ -2238,7 +2235,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (kb.C)
     {
         //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
-        pCamera->UpdatePos(0.0f, 0.0f - aTimer.GetElapsedSeconds(), 0.0f);
+        pCamera->UpdatePos(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f);
     }
     if (kb.V)
     {

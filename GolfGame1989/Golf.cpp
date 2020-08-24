@@ -90,7 +90,7 @@ void Golf::BuildUIstrings()
 
 void Golf::BuildVector()
 {
-    pBall->FireProjectile(pSwing->CalculateLaunchVector(), pEnvironment);
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
 }
@@ -241,10 +241,11 @@ void Golf::LoadEnvironment(const int aIndex)
 void Golf::ScaleCordinates()
 {
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
-    double scaleFactor = .02;
-    double sX = scaleFactor;
-    double sY = scaleFactor;
-    double sZ = scaleFactor;
+
+    float scaleFactor = .02;
+    float sX = scaleFactor;
+    float sY = scaleFactor;
+    float sZ = scaleFactor;
     scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
 
     for (int i = 0; i < m_shotPath.size(); ++i)

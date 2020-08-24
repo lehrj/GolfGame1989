@@ -33,7 +33,7 @@ class GolfBall
 {
 public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
-    void FireProjectile(Utility::ImpactData aImpact, Environment* pEnviron);
+    void FireProjectile(Utility::ImpactData aImpact);
 
     int GetBounceCount() const { return m_bounceCount; };
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };

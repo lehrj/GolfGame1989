@@ -6,7 +6,7 @@ class GolfPlay
 public:
     GolfPlay();
 
-    float GetBackswingSet() const { return m_impactData.power; };
+    double GetBackswingSet() const { return m_impactData.power; };
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() const { return m_impactData; };
     float GetImpact() const { return m_swingImpactProcessed; };

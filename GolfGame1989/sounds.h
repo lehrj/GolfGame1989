@@ -1,7 +1,7 @@
 #pragma once
 
 // WLJ ToDo: sort out converting this to an enum class 
-enum XACT_WAVEBANK_AUDIOBANK : unsigned int
+enum XACT_WAVEBANK_AUDIOBANK
 {
     XACT_WAVEBANK_AUDIOBANK_MUSIC01 = 0,    // Racing Techno
     XACT_WAVEBANK_AUDIOBANK_MUSIC02 = 1,    // Snabich Tunes MXS
@@ -11,5 +11,5 @@ enum XACT_WAVEBANK_AUDIOBANK : unsigned int
     XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1 = 5, // Golf swing impact SFX
 };
 
-#define XACT_WAVEBANK_AUDIOBANK_ENTRY_COUNT 3
+#define XACT_WAVEBANK_AUDIOBANK_ENTRY_COUNT 6
 

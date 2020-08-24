@@ -34,7 +34,7 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
     flagTip.x -= flagWidth;
     flagTip.z -= flagWidth;
     double windDirection = GetWindDirection();
-    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(windDirection));
+    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
 
     DirectX::SimpleMath::Vector3 flagBottom = poleTop;
     flagBottom.y -= flagHeight + flagHeight;
@@ -62,7 +62,8 @@ void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
-        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3((radius * cos(t)), height, (radius * -sin(t))) + aPos, DirectX::Colors::White));
+        //m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3((radius * cos(t)), height, (radius * -sin(t))) + aPos, DirectX::Colors::White));
+        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((radius * cos(t))), static_cast<float>(height), static_cast<float>((radius * -sin(t)))) + aPos, DirectX::Colors::White));
     }
 }
 
@@ -118,8 +119,6 @@ double Environment::GetWindDirection() const
     {
         direction = -direction;
     }
-
-    double directionDegrees = Utility::ToDegrees(direction);
 
     return direction;
 }
