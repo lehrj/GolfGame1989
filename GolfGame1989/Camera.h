@@ -107,17 +107,18 @@ private:
     //////////////////////////////////////////////////////////////
     
     DirectX::SimpleMath::Matrix     m_rotationMatrix;
+
     /*
-    DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR               m_forward =        DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR               m_defaultRight =   DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-    DirectX::XMVECTOR               m_right =          DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-    */
     DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
     DirectX::XMVECTOR               m_forward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
     DirectX::XMVECTOR               m_defaultRight = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
     DirectX::XMVECTOR               m_right = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    
+    */
+
+    DirectX::SimpleMath::Vector4    m_defaultForward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::SimpleMath::Vector4    m_forward        = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    DirectX::SimpleMath::Vector4    m_defaultRight   = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    DirectX::SimpleMath::Vector4    m_right          = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
     float                           m_moveBackForward = 0.0f;
     float                           m_moveLeftRight = 0.0f;

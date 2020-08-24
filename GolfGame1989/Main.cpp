@@ -315,7 +315,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (pDev->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
                 {
                     auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
-                    if (pInter->dbcc_classguid == KSCATEGORY_AUDIO);
+                    if (pInter->dbcc_classguid == KSCATEGORY_AUDIO)
                     {
                         if (game)
                         {

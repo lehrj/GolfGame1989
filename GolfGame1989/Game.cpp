@@ -494,7 +494,6 @@ void Game::DrawCameraFocus()
 
 void Game::DrawFlagAndHole()
 {
-    std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
     std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
     
     for (int i = 0; i < holeVert.size() - 1; ++i)
@@ -502,8 +501,16 @@ void Game::DrawFlagAndHole()
         m_batch->DrawLine(holeVert[i], holeVert[i + 1]);
     }
     
-    m_batch->DrawLine(flagVert[0], flagVert[1]);
-    m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
+    std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
+    if (flagVert.size() == 5)
+    {
+        m_batch->DrawLine(flagVert[0], flagVert[1]);
+        m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
+    }
+    else
+    {
+        // error handle vector is of wrong size for needed inputs to draw
+    }
 }
 
 void Game::DrawIntroScreen()
@@ -2210,7 +2217,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.S)
     {        
-        pCamera->UpdatePos(0.0f, 0.0f, 0.0f + static_cast<float>(aTimer.GetElapsedSeconds()));
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.A)
     {
@@ -2218,7 +2225,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.W)
     {
-        pCamera->UpdatePos(0.0f, 0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()));
+        pCamera->UpdatePos(0.0f, 0.0f, 0.0f + static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.Q)
     {
@@ -2246,10 +2253,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         ResetGamePlay();
     }
-    if (kb.IsKeyUp(DirectX::Keyboard::Keys::A))
-    {
-        pPlay->ResetGamePlayButton();
-    }
+
     if (m_kbStateTracker.pressed.Space)
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
