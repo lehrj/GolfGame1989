@@ -61,7 +61,6 @@ public:
     void UpdateFirstPersonCamera();
     void UpdatePitchYaw(const float aPitch, const float aYaw);
     void UpdatePos(const float aX, const float aY, const float aZ);
-    void UpdateTrackCamera();
     void UpdateTransitionCamera(DX::StepTimer const& aTimer);
     
     void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };

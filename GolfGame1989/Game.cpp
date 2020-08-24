@@ -21,16 +21,8 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
     //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    m_currentState = GameState::GAMESTATE_GAMEPLAY;
-    //m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
-    //m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
-
-    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA3;
-    //m_currentCamera = GameCamera::GAMECAMERA_CAMERA4;
-    //m_currentCamera = GameCamera::GAMECAMERA_SWINGVIEW;
-    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
-    //m_currentCamera = GameCamera::GAMECAMERA_PRESWINGVIEW;
+    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
 Game::~Game()
@@ -51,7 +43,6 @@ void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
 {
     m_audioMusicStream = m_audioBank->CreateStreamInstance(aSFX);
 
-    //m_audioMusicStream = m_audioBank->CreateStreamInstance(aSFX);
     if (m_audioMusicStream)
     {
         m_audioMusicStream->SetVolume(m_musicVolume);
@@ -470,16 +461,12 @@ void Game::CreateResources()
 
 void Game::DrawCameraFocus()
 {
-    float line = .25f;
-    //DirectX::SimpleMath::Vector3 focalPoint(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z);
+    const float line = .25f;
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
-    //DirectX::SimpleMath::Vector3 yLine(m_cameraTarget.x, m_cameraTarget.y + line, m_cameraTarget.z);
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
     yLine.y += line;
-    //DirectX::SimpleMath::Vector3 xLine(m_cameraTarget.x + line, m_cameraTarget.y, m_cameraTarget.z);
     DirectX::SimpleMath::Vector3 xLine = focalPoint;
     xLine.x += line;
-    //DirectX::SimpleMath::Vector3 zLine(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z + line);
     DirectX::SimpleMath::Vector3 zLine = focalPoint;
     zLine.z += line;
 
@@ -1513,9 +1500,9 @@ void Game::DrawProjectileRealTime()
 
 void Game::DrawStartScreen()
 {
-    std::string title = "GolfGame1989";
-    std::string author = "By Lehr Jackson";
-    std::string startText = "Press Enter to Start";
+    const std::string title = "GolfGame1989";
+    const std::string author = "By Lehr Jackson";
+    const std::string startText = "Press Enter to Start";
     float fontTitlePosX = m_fontPos.x;
     float fontTitlePosY = m_fontPos.y / 2.f;
     DirectX::SimpleMath::Vector2 titlePos(fontTitlePosX, fontTitlePosY);
@@ -1535,7 +1522,7 @@ void Game::DrawStartScreen()
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
     m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::White, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
 
     m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
@@ -1582,13 +1569,11 @@ void Game::DrawSwing()
                 clubHeadColor = DirectX::Colors::Green;
                 isBallHit = true;
             }
-            //if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW)
             if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
             {
                 if (isBallHit == true)
                 {
                     AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
-                    //m_currentCamera = GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW;
                     pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
                     m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
                 }
@@ -1714,8 +1699,6 @@ void Game::DrawWorld()
 void Game::GetDefaultSize(int& width, int& height) const noexcept
 {
     // TODO: Change to desired default window size (note minimum size is 320x200).
-    //width = 800;
-    //height = 600;
     width = 1600;
     height = 900;
 }
@@ -1885,6 +1868,7 @@ void Game::Render()
     m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
     m_effect->SetWorld(m_world);
     //world end
+
     m_effect->Apply(m_d3dContext.Get());
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
@@ -1895,17 +1879,14 @@ void Game::Render()
     {
         DrawWorld();
 
-        //if (m_currentCamera == GameCamera::GAMECAMERA_SWINGVIEW || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
         {
             DrawSwing();
         }
-        //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW)
-        //if (m_currentCamera == GameCamera::GAMECAMERA_CAMERA4 || m_currentCamera == GameCamera::GAMECAMERA_PROJECTILEFLIGHTVIEW || m_currentCamera == GameCamera::GAMECAMERA_CAMERA1 || m_currentCamera == GameCamera::GAMECAMERA_CAMERA3)
+
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {         
             m_flightStepTimer.ResetElapsedTime();
-            //m_projectileTimer = 0.0;
             DrawProjectileRealTime();
             pCamera->SetTargetPos(m_ballPos);
         }

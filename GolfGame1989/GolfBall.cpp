@@ -29,7 +29,6 @@ void GolfBall::LandProjectile()
     double impactAngle = GetImpactAngle();
     double impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
     
-    //impactSpinRate = -1000.;
     impactSpinRate = impactSpinRate * -1;
     //impactSpinRate = impactSpinRate * 9.5493;
     //impactSpinRate = impactSpinRate / m_ball.radius;
@@ -83,8 +82,6 @@ void GolfBall::LandProjectile()
     }
 
     double muMin = (2.0 * (vix + m_ball.radius * impactSpinRate)) / (7.0 * (1.0 + e) * viy);
-
-
     double mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
     //double muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
     double muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
@@ -147,7 +144,6 @@ void GolfBall::LandProjectile()
     omegaR = omegaR * -1;
     m_ball.omega = omegaR;
     //m_ball.omega = omegaR;
-
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 }
 
@@ -157,7 +153,6 @@ void GolfBall::RollBall()
     double g = m_ball.gravity;
     double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
 
-    //double decelFactor = 0.65;
     double decelFactor = a;
     double stopTolerance = 0.1;
     int overflowTolerance = 350;
@@ -315,8 +310,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
 
-    //DirectX::SimpleMath::Vector4 omegaBall = DirectX::SimpleMath::Vector4::Zero;
-    //omegaBall = ((5.0 * absVhP) / (7.0 * m_ball.radius)) * crossVheadvFace;
     DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
 
     double absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
@@ -339,9 +332,9 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     m_ball.omega = omega;
    
-    m_ball.q.velocity.x = vBall.x;   //  vx 
-    m_ball.q.velocity.y = vBall.y;   //  vy 
-    m_ball.q.velocity.z = vBall.z;   //  vz 
+    m_ball.q.velocity.x = vBall.x;
+    m_ball.q.velocity.y = vBall.y;
+    m_ball.q.velocity.z = vBall.z;
 }
 
 void GolfBall::PushFlightData()
@@ -357,17 +350,17 @@ void GolfBall::PushFlightData()
 }
 
 //  This method loads the right-hand sides for the projectile ODEs
-void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion* q, BallMotion* deltaQ, double ds, double qScale, BallMotion* dq)
+void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion* q, BallMotion* deltaQ, double aTimeDelta, double aQScale, BallMotion* dq)
 {
     //  Compute the intermediate values of the 
     //  dependent variables.
     BallMotion newQ;
-    newQ.position.x = q->position.x + static_cast<float>(qScale) * deltaQ->position.x;
-    newQ.position.y = q->position.y + static_cast<float>(qScale) * deltaQ->position.y;
-    newQ.position.z = q->position.z + static_cast<float>(qScale) * deltaQ->position.z;
-    newQ.velocity.x = q->velocity.x + static_cast<float>(qScale) * deltaQ->velocity.x;
-    newQ.velocity.y = q->velocity.y + static_cast<float>(qScale) * deltaQ->velocity.y;
-    newQ.velocity.z = q->velocity.z + static_cast<float>(qScale) * deltaQ->velocity.z;
+    newQ.position.x = q->position.x + static_cast<float>(aQScale) * deltaQ->position.x;
+    newQ.position.y = q->position.y + static_cast<float>(aQScale) * deltaQ->position.y;
+    newQ.position.z = q->position.z + static_cast<float>(aQScale) * deltaQ->position.z;
+    newQ.velocity.x = q->velocity.x + static_cast<float>(aQScale) * deltaQ->velocity.x;
+    newQ.velocity.y = q->velocity.y + static_cast<float>(aQScale) * deltaQ->velocity.y;
+    newQ.velocity.z = q->velocity.z + static_cast<float>(aQScale) * deltaQ->velocity.z;
 
     //  Declare some convenience variables representing
     //  the intermediate values of velocity.
@@ -404,12 +397,12 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     double Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
 
     //  Compute right-hand side values.
-    dq->velocity.x = static_cast<float>(ds * (Fdx + Fmx) / pBall->mass);
-    dq->position.x = static_cast<float>(ds * vx);
-    dq->velocity.y = static_cast<float>(ds * (pBall->gravity + (Fdy + Fmy) / pBall->mass));
-    dq->position.y = static_cast<float>(ds * vy);
-    dq->velocity.z = static_cast<float>(ds * (Fdz + Fmz) / pBall->mass);
-    dq->position.z = static_cast<float>(ds * vz);
+    dq->velocity.x = static_cast<float>(aTimeDelta * (Fdx + Fmx) / pBall->mass);
+    dq->position.x = static_cast<float>(aTimeDelta * vx);
+    dq->velocity.y = static_cast<float>(aTimeDelta * (pBall->gravity + (Fdy + Fmy) / pBall->mass));
+    dq->position.y = static_cast<float>(aTimeDelta * vy);
+    dq->velocity.z = static_cast<float>(aTimeDelta * (Fdz + Fmz) / pBall->mass);
+    dq->position.z = static_cast<float>(aTimeDelta * vz);
 }
 
 void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeDelta)
@@ -530,12 +523,12 @@ void GolfBall::ResetBallData()
     m_shotPathTimeStep.clear();
     m_ball.flightTime = 0.0;
     m_ball.omega = 0.0;
-    m_ball.q.velocity.x = 0.0;   //  vx = 0.0
-    m_ball.q.position.x = 0.0;   //  x  = 0.0
-    m_ball.q.velocity.z = 0.0;   //  vz = 0.0
-    m_ball.q.position.z = 0.0;   //  z  = 0.0
-    m_ball.q.velocity.y = 0.0;   //  vy = 0.0
-    m_ball.q.position.y = 0.0;   //  y  = 0.0
+    m_ball.q.position.x = 0.0;
+    m_ball.q.position.y = 0.0;
+    m_ball.q.position.z = 0.0;
+    m_ball.q.velocity.x = 0.0;
+    m_ball.q.velocity.y = 0.0;
+    m_ball.q.velocity.z = 0.0;
 }
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
@@ -543,7 +536,7 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.airDensity = pEnviron->GetAirDensity();
     m_ball.area = 0.001432;
     m_ball.dragCoefficient = 0.22;
-    m_ball.flightTime = 0.0;      //  time = 0.0
+    m_ball.flightTime = 0.0;      
     m_ball.gravity = pEnviron->GetGravity();
     m_ball.launchHeight = pEnviron->GetLauchHeight();
     m_ball.landingHeight = pEnviron->GetLandingHeight();
@@ -551,12 +544,12 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.mass = 0.0459;
     m_ball.numEqns = 6;
     m_ball.omega = 0.0;
-    m_ball.q.velocity.x = 0.0;   //  vx = 0.0
-    m_ball.q.position.x = 0.0;   //  x  = 0.0
-    m_ball.q.velocity.z = 0.0;   //  vz = 0.0
-    m_ball.q.position.z = 0.0;   //  z  = 0.0
-    m_ball.q.velocity.y = 0.0;   //  vy = 0.0
-    m_ball.q.position.y = 0.0;   //  y  = 0.0
+    m_ball.q.position.x = 0.0;
+    m_ball.q.position.y = 0.0;
+    m_ball.q.position.z = 0.0;
+    m_ball.q.velocity.x = 0.0;
+    m_ball.q.velocity.y = 0.0;
+    m_ball.q.velocity.z = 0.0;
     m_ball.rotationAxis.x = 0.0;
     m_ball.rotationAxis.y = 0.0;
     m_ball.rotationAxis.z = 1.0; // ball will only be spinning about the z axis, this will need to be adjusted if/when imperfect impact mechanics added for hooks and slices

@@ -29,6 +29,7 @@ public:
     std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
 
+    // Future updates will process these from the environment once game moves past just a driving range
     DirectX::SimpleMath::Vector3 GetCameraPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.9f, 0.5f, 0.0f); };
     DirectX::SimpleMath::Vector3 GetCameraTargetPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.3f, 0.0f); };
     DirectX::SimpleMath::Vector3 GetCameraSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.02f, .2f); };

@@ -59,6 +59,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         bk1 = m_beta_dotdot * dt;
         m_alpha_dot = at + ak1 / 2;
         m_beta_dot = bt + bk1 / 2;
+
         // The K2 Step:
         m_alpha_dotdot = ComputeAlphaDotDot();
         m_beta_dotdot = ComputeBetaDotDot();
@@ -66,6 +67,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         bk2 = m_beta_dotdot * dt;
         m_alpha_dot = at + ak2 / 2;
         m_beta_dot = bt + bk2 / 2;
+
         // The K3 Step:
         m_alpha_dotdot = ComputeAlphaDotDot();
         m_beta_dotdot = ComputeBetaDotDot();
@@ -73,6 +75,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         bk3 = m_beta_dotdot * dt;
         m_alpha_dot = at + ak3;
         m_beta_dot = bt + bk3;
+
         // The K3 Step:
         m_alpha_dotdot = ComputeAlphaDotDot();
         m_beta_dotdot = ComputeBetaDotDot();
@@ -170,22 +173,9 @@ void GolfSwing::ResetAlphaBeta()
     m_alpha = 0.0; // Angle swept by arm rod from initial backswing position in radians
     m_alpha_dot = 0.0;
     m_alpha_dotdot = 0.0;
-    //m_armBalancePoint = 0.5;
-    //m_armLength = 0.62;
-    //m_armMass = 7.3;
-    //m_armMassMoI = 1.15; // Mass moment of inertia of the rod representing the arm in kg m^2
-    //m_backSwingPercentage = 100.0;
-    //m_ballPlacementAngle = 5.0;
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
-    //m_club.angle = 25.0;
-    //m_club.balancePoint = 0.75;
-    //m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
-    //m_club.length = 1.1; // length of club in m
-    //m_club.mass = 0.4;
-    //m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
-    //m_club.clubName = "Custom";
     m_Qalpha = 100; // Torque applied at the shoulder to the arm rod in N m
     m_Qbeta = -10; // Torque applied at the wrist joint to the club rod in N m
 
@@ -328,7 +318,6 @@ void GolfSwing::UpdateGolfSwingValues()
 {
     m_club.firstMoment = m_club.mass * m_club.length * m_club.balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
     m_armFirstMoment = m_armMass * m_armLength * m_armBalancePoint; // First moment of the arm rod about the shoulder axis kg m
-    //double swingFactor = m_backSwingPercentage * 0.01;
     double swingFactor = m_impactData.power * 0.01;
     m_beta = m_beta * swingFactor;
     m_gamma = m_gamma * swingFactor;

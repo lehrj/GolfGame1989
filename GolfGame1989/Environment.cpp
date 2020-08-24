@@ -25,7 +25,6 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
     const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
     const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
 
-    //DirectX::SimpleMath::Vector3 poleBase = aPos;
     DirectX::SimpleMath::Vector3 poleBase = DirectX::SimpleMath::Vector3::Zero;
     DirectX::SimpleMath::Vector3 poleTop = poleBase;
     poleTop.y += poleHeight;
@@ -62,7 +61,6 @@ void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
-        //m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3((radius * cos(t)), height, (radius * -sin(t))) + aPos, DirectX::Colors::White));
         m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((radius * cos(t))), static_cast<float>(height), static_cast<float>((radius * -sin(t)))) + aPos, DirectX::Colors::White));
     }
 }
@@ -83,17 +81,14 @@ void Environment::CreateDataStrings()
         m_environs[i].gravityStr = inVal.str();
 
         inVal.str(std::string());
-        //inVal << std::fixed << m_environs[i].windX;
         inVal << std::fixed << m_environs[i].wind.x;
         m_environs[i].windXStr = inVal.str();
 
         inVal.str(std::string());
-        //inVal << std::fixed << m_environs[i].windY;
         inVal << std::fixed << m_environs[i].wind.y;
         m_environs[i].windYStr = inVal.str();
 
         inVal.str(std::string());
-        //inVal << std::fixed << m_environs[i].windZ;
         inVal << std::fixed << m_environs[i].wind.z;
         m_environs[i].windZStr = inVal.str();
 
@@ -110,7 +105,6 @@ void Environment::CreateDataStrings()
 // While this could be done once per environment update, future updates could have moment to moment wind changes
 double Environment::GetWindDirection() const
 { 
-    //DirectX::SimpleMath::Vector3 windVec(m_currentEnviron.windX, 0.0, m_currentEnviron.windZ);
     DirectX::SimpleMath::Vector3 windVec = m_currentEnviron.wind;
     DirectX::SimpleMath::Vector3 zeroDirection(0.0, 0.0, -1.0);
 
@@ -138,9 +132,6 @@ void Environment::LoadEnvironmentData()
     m_environs[i].wind.x = 0.0;
     m_environs[i].wind.y = 0.0;
     m_environs[i].wind.z = 0.0;
-    //m_environs[i].windX = 0.0;
-    //m_environs[i].windY = 0.0;
-    //m_environs[i].windZ = 0.0;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
 
@@ -157,9 +148,6 @@ void Environment::LoadEnvironmentData()
     m_environs[i].wind.x = 0.69;
     m_environs[i].wind.y = 0.0;
     m_environs[i].wind.z = 5.0;
-    //m_environs[i].windX = 0.69;
-    //m_environs[i].windY = 0.0;
-    //m_environs[i].windZ = 5.0;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
 
@@ -172,9 +160,6 @@ void Environment::LoadEnvironmentData()
     m_environs[i].wind.x = 3.0;
     m_environs[i].wind.y = 0.0;
     m_environs[i].wind.z = 0.69;
-    //m_environs[i].windX = 3.0;
-    //m_environs[i].windY = 0.0;
-    //m_environs[i].windZ = 0.69;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
 }
