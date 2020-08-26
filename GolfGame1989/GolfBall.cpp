@@ -27,6 +27,8 @@ void GolfBall::LandProjectile()
 {
     double direction = GetImpactDirection();
     double impactAngle = GetImpactAngle();
+
+    impactAngle = Utility::ToRadians(impactAngle);
     double impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
     
     impactSpinRate = impactSpinRate * -1;
@@ -66,8 +68,11 @@ void GolfBall::LandProjectile()
     //thetaC = Utility::ToRadians(thetaC);
     //thetaC = thetaC * (impactSpeed) * (phi);
 
+    //thetaC = Utility::ToRadians(15.4) * impactSpeed * Utility::ToRadians(impactAngle);
+
     double vixPrime = vix * cos(thetaC) - abs(viy) * sin(thetaC);
     double absViyPrime = vix * sin(thetaC) + abs(viy) * cos(thetaC);
+
     absViyPrime = abs(absViyPrime);
     double e;
 
@@ -121,11 +126,11 @@ void GolfBall::LandProjectile()
     //double vrz = m_ball.q.velocity.z * ratioZ;
 
     double backwardsBounceCheck = (impactSpeed / (2. * m_ball.radius)) * (5. * sin(impactAngle - thetaC) - 7. * e * tan(thetaC) * cos(impactAngle - thetaC));
-    //backwardsBounceCheck = backwardsBounceCheck * -1;
+    backwardsBounceCheck = backwardsBounceCheck * -1;
     
     if (impactSpinRate > backwardsBounceCheck)
     {
-        //direction -= Utility::ToRadians(180.);
+        direction -= Utility::ToRadians(180.);
     }
     
     if (muMin > muC)

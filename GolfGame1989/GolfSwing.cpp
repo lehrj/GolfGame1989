@@ -155,10 +155,45 @@ double GolfSwing::ComputeBetaDotDot(void) const
     return (G - C * m_alpha_dotdot) / D;
 }
 
+void GolfSwing::CycleClub(const bool aIsCycleClubUp)
+{
+    int newClubIndex = m_clubIndex;
+    if (aIsCycleClubUp == true)
+    {
+        if (m_clubIndex < m_pBag->GetClubCount() && m_clubIndex >= 0)
+        {
+            newClubIndex++;
+        }
+        else
+        {
+            newClubIndex = 0;
+        }
+    }
+    else
+    {
+        if (m_clubIndex > 0 && m_clubIndex < m_pBag->GetClubCount())
+        {
+            newClubIndex--;
+        }
+        else
+        {
+            newClubIndex = m_pBag->GetClubCount();
+        }
+    }
+}
+
 void GolfSwing::InputClub(int aInput)
 {
-    m_club = m_pBag->GetClub(aInput);
-    UpdateGolfSwingValues();
+    if (aInput <= m_pBag->GetClubCount() || aInput > 0)
+    {
+        m_clubIndex = aInput;
+        m_club = m_pBag->GetClub(aInput);
+        UpdateGolfSwingValues();
+    }
+    else
+    {
+        // input error handling 
+    }
 }
 
 void GolfSwing::ResetAlphaBeta()

@@ -271,6 +271,7 @@ void Golf::SelectNextClub()
 
 void Golf::SelectInputClub(int aInput)
 {
+
     pBall->ResetBallData();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
 

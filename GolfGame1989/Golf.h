@@ -52,6 +52,9 @@ public:
     void InputData();
     void LoadEnvironment(const int aIndex);
     void SelectInputClub(int aInput);
+
+    void SelectNextClub();
+
     void SetCharacter(const int aCharacterIndex);    
     void SetEnvironment(const int aEnvironmentIndex);
     void UpdateImpact(Utility::ImpactData aImpact);

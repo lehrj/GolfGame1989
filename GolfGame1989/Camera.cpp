@@ -327,27 +327,14 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	{
 		UpdateFirstPersonCamera();
 	}
-	if (m_cameraState == CameraState::CAMERASTATE_DEFAULT)
-	{
-
-	}
-	if (m_cameraState == CameraState::CAMERASTATE_CAMERA1)
-	{
-		UpdateFirstPersonCamera();
-	}
-	if (m_cameraState == CameraState::CAMERASTATE_CAMERA2)
-	{
-
-	}
 	if (m_cameraState == CameraState::CAMERASTATE_SWINGVIEW)
 	{
 		m_target = DirectX::SimpleMath::Vector3(-2.f, 0.0, 0.0);
 		m_position = DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f);
-
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
 	{
-
+		// update needed in current state
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PRESWINGVIEW)
 	{
@@ -402,9 +389,6 @@ void Camera::UpdateFirstPersonCamera()
 	m_position += DirectX::operator*(m_moveLeftRight, m_right);
 	m_position += DirectX::operator*(m_moveBackForward, m_forward);
 	m_position += DirectX::operator*(m_moveUpDown, m_up);
-
-	//m_up = m_position;
-	//m_up.y += 1.f;
 
 	m_moveLeftRight = 0.0f;
 	m_moveBackForward = 0.0f;

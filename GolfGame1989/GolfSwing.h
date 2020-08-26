@@ -13,6 +13,8 @@ public:
 
     Utility::ImpactData CalculateLaunchVector();
 
+    void CycleClub(const bool aIsCycleClubUp);
+
     void InputClub(int aInput);
     const double GetArmLength() const { return m_armLength; };
     

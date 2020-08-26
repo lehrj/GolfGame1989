@@ -20,8 +20,8 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    m_currentState = GameState::GAMESTATE_STARTSCREEN;
+    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
     //m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
@@ -1884,7 +1884,7 @@ void Game::Render()
             DrawSwing();
         }
 
-        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {         
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
@@ -2250,13 +2250,13 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             pPlay->UpdateSwingState();
         }
     }
+    if (m_kbStateTracker.pressed.T)
+    {
+        pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
+    }
     if (m_kbStateTracker.pressed.Y)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_FIRSTPERSON);
-    }
-    if (m_kbStateTracker.pressed.T)
-    {
-        pCamera->SetCameraState(CameraState::CAMERASTATE_CAMERA1);
     }
     if (m_kbStateTracker.pressed.U)
     {
