@@ -20,9 +20,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    //m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    m_currentState = GameState::GAMESTATE_GAMEPLAY;
 }
 
 Game::~Game()
@@ -2097,7 +2097,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         }
         if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
         {
-            m_currentState = GameState::GAMESTATE_MAINMENU;            
+            m_currentState = GameState::GAMESTATE_MAINMENU;
         }
     }
     if (m_kbStateTracker.pressed.Up)
@@ -2192,6 +2192,14 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     {
         pGolf->SelectInputClub(10);
     }
+    if (m_kbStateTracker.pressed.OemOpenBrackets)
+    {
+        pGolf->CycleNextClub(false);
+    }
+    if (m_kbStateTracker.pressed.OemCloseBrackets)
+    {
+        pGolf->CycleNextClub(true);
+    }
     if (kb.D)
     {
         pCamera->UpdatePos(0.0f + static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f, 0.0f);
@@ -2234,7 +2242,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         ResetGamePlay();
     }
-
     if (m_kbStateTracker.pressed.Space)
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
@@ -2261,6 +2268,10 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (m_kbStateTracker.pressed.U)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
+    }
+    if (m_kbStateTracker.pressed.F1)
+    {
+        pCamera->SetCameraState(CameraState::CAMERASTATE_SWINGVIEW);
     }
 
     auto mouse = m_mouse->GetState();

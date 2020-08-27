@@ -130,7 +130,7 @@ void GolfBall::LandProjectile()
     
     if (impactSpinRate > backwardsBounceCheck)
     {
-        direction -= Utility::ToRadians(180.);
+        //direction -= Utility::ToRadians(180.);
     }
     
     if (muMin > muC)
@@ -160,7 +160,7 @@ void GolfBall::RollBall()
 
     double decelFactor = a;
     double stopTolerance = 0.1;
-    int overflowTolerance = 350;
+    int overflowTolerance = 650;
 
     DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
     directionVec.y = 0.0;
@@ -183,7 +183,7 @@ void GolfBall::RollBall()
 void GolfBall::LaunchProjectile()
 {
     PushFlightData();
-     
+
     // Fly ball on an upward trajectory until it stops climbing
     BallMotion flightData;
     double dt = m_timeStep;
@@ -233,19 +233,26 @@ void GolfBall::LaunchProjectile()
             time = m_ball.flightTime;
         }
 
-        double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
-        ProjectileRungeKutta4(&m_ball, -rollBackTime);
-
-        m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+        if (m_shotPath.size() > 1)
+        {
+            double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
+            ProjectileRungeKutta4(&m_ball, -rollBackTime);
+            m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+        }
 
         SetLandingSpinRate(m_ball.omega);
         
         ++m_bounceCount;
         
+        double angle1 = GetImpactAngle();
+
         LandProjectile();
 
+        double angle2 = GetImpactAngle();
+        double angle2post = angle2 - 90.0;
+
         ++count;
-        if (m_ball.q.velocity.y < .3 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
+        if (m_ball.q.velocity.y < 3.9 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
         {
             isBallFlyOrBounce = false;
         } 

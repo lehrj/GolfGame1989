@@ -160,7 +160,7 @@ void GolfSwing::CycleClub(const bool aIsCycleClubUp)
     int newClubIndex = m_clubIndex;
     if (aIsCycleClubUp == true)
     {
-        if (m_clubIndex < m_pBag->GetClubCount() && m_clubIndex >= 0)
+        if (m_clubIndex < m_pBag->GetClubCount() - 1 && m_clubIndex >= 0)
         {
             newClubIndex++;
         }
@@ -177,9 +177,10 @@ void GolfSwing::CycleClub(const bool aIsCycleClubUp)
         }
         else
         {
-            newClubIndex = m_pBag->GetClubCount();
+            newClubIndex = m_pBag->GetClubCount() - 1;
         }
     }
+    this->InputClub(newClubIndex);
 }
 
 void GolfSwing::InputClub(int aInput)
@@ -306,17 +307,17 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
-    m_club.angle = 25.0;
+    //m_club.angle = 25.0;
     m_impactData.angleX = 25.0;
-    m_club.balancePoint = 0.75;
-    m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
+    //m_club.balancePoint = 0.75;
+    //m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
     m_impactData.cor = 0.78;
 
     m_club.length = m_club.lengthBase * m_clubLengthModifier;
-    m_club.mass = 0.4;
-    m_impactData.mass = 0.4;
-    m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
-    m_club.clubName = "Custom";
+    //.mass = 0.4;
+    //m_impactData.mass = 0.4;
+    //m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
+    //m_club.clubName = "Custom";
     m_Qalpha = 100; // Torque applied at the shoulder to the arm rod in N m
     m_Qbeta = -10; // Torque applied at the wrist joint to the club rod in N m
 

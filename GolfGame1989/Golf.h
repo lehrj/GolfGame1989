@@ -53,7 +53,7 @@ public:
     void LoadEnvironment(const int aIndex);
     void SelectInputClub(int aInput);
 
-    void SelectNextClub();
+    void CycleNextClub(const bool aIsCycleClubUp);
 
     void SetCharacter(const int aCharacterIndex);    
     void SetEnvironment(const int aEnvironmentIndex);

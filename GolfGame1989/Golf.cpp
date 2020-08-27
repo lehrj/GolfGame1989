@@ -255,19 +255,18 @@ void Golf::ScaleCordinates()
     }  
 }
 
-/*
-void Golf::SelectNextClub()
+void Golf::CycleNextClub(const bool aIsCycleClubUp)
 {
+    pSwing->CycleClub(aIsCycleClubUp);
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
     pBall->ResetBallData();
-    pSwing->CycleClub();
+    
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildVector();
 
     BuildUIstrings();
 }
-*/
 
 void Golf::SelectInputClub(int aInput)
 {
