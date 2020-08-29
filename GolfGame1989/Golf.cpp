@@ -5,7 +5,6 @@
 
 Golf::Golf()
 {
-    //BuildVector();
     pEnvironment = new Environment();
 
     pCharacter = new GolfCharacter();
@@ -20,9 +19,11 @@ Golf::Golf()
     SetCharacter(0);
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
-    //BuildVector(); // WLJ turn off to disable auto draw of projectile without powerbar input 
+    //BuildTrajectoryData(); // WLJ turn off to disable auto draw of projectile without powerbar input 
     BuildUIstrings();
     BuildEnvironSelectStrings();
+    m_shotStartPos = pEnvironment->GetTeePosition();
+    
 }
 
 Golf::~Golf()
@@ -88,9 +89,10 @@ void Golf::BuildUIstrings()
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 }
 
-void Golf::BuildVector()
+void Golf::BuildTrajectoryData()
 {
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
+
     InputData();
     ScaleCordinates();
 }
@@ -145,6 +147,19 @@ void Golf::BuildEnvironSelectStrings()
 void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
 {
     m_shotPath = aPath;
+}
+
+void Golf::CycleNextClub(const bool aIsCycleClubUp)
+{
+    pSwing->CycleClub(aIsCycleClubUp);
+    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
+    pBall->ResetBallData();
+
+    pSwing->ResetAlphaBeta();
+    pSwing->UpdateGolfSwingValues();
+    BuildTrajectoryData();
+
+    BuildUIstrings();
 }
 
 void Golf::InputData()
@@ -227,6 +242,7 @@ void Golf::LoadEnvironment(const int aIndex)
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
         pBall->SetDefaultBallValues(pEnvironment);
         BuildUIstrings();
+        m_shotStartPos = pEnvironment->GetTeePosition();
     }
     else
     {
@@ -235,6 +251,7 @@ void Golf::LoadEnvironment(const int aIndex)
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
         pBall->SetDefaultBallValues(pEnvironment);
         BuildUIstrings();
+        m_shotStartPos = pEnvironment->GetTeePosition();
     }
 }
 
@@ -242,7 +259,7 @@ void Golf::ScaleCordinates()
 {
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
 
-    float scaleFactor = .02;
+    float scaleFactor = pEnvironment->GetScale();
     float sX = scaleFactor;
     float sY = scaleFactor;
     float sZ = scaleFactor;
@@ -255,29 +272,15 @@ void Golf::ScaleCordinates()
     }  
 }
 
-void Golf::CycleNextClub(const bool aIsCycleClubUp)
-{
-    pSwing->CycleClub(aIsCycleClubUp);
-    pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    pBall->ResetBallData();
-    
-    pSwing->ResetAlphaBeta();
-    pSwing->UpdateGolfSwingValues();
-    BuildVector();
-
-    BuildUIstrings();
-}
-
 void Golf::SelectInputClub(int aInput)
 {
-
     pBall->ResetBallData();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
 
     pSwing->InputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
-    BuildVector();
+    BuildTrajectoryData();
     BuildUIstrings();
 }
 
@@ -335,7 +338,7 @@ void Golf::SetShotCordMax()
 //Transform shotpath to start at edge of world grid
 void Golf::TransformCordinates(const int aIndex)
 {
-    m_shotPath[aIndex].x -= 2;
+    m_shotPath[aIndex] += m_shotStartPos;
 }
 
 void Golf::UpdateImpact(Utility::ImpactData aImpact)
@@ -344,7 +347,7 @@ void Golf::UpdateImpact(Utility::ImpactData aImpact)
     pBall->ResetBallData();
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
-    BuildVector();
+    BuildTrajectoryData();
     BuildUIstrings();
 }
 

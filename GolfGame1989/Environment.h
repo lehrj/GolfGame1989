@@ -4,20 +4,24 @@
 struct Environ
 {
     std::string                         name;
-    DirectX::XMVECTORF32                terrainColor;
+
     double                              airDensity;        // in kg/m^3
     std::string                         airDensityStr;
     DirectX::SimpleMath::Vector3        holePosition;
     double                              gravity;           // in m/s^2
     std::string                         gravityStr;
-    std::string                         windXStr;
-    std::string                         windYStr;
-    std::string                         windZStr;
     double                              landingFrictionScale;
     std::string                         landingFrictionScaleStr;
     double                              landingHardnessScale;
     std::string                         landingHardnessScaleStr;
+    float                               scale;
+    float                               teeDirection;       // start direction for first shot
+    DirectX::SimpleMath::Vector3        teePosition;        // start position for first shot
+    DirectX::XMVECTORF32                terrainColor;
     DirectX::SimpleMath::Vector3        wind;               // in m/s
+    std::string                         windXStr;
+    std::string                         windYStr;
+    std::string                         windZStr;
 };
 
 class Environment
@@ -40,6 +44,10 @@ public:
     double GetLauchHeight() const { return m_launchHeight; };
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
     int GetNumberOfEnvironSelectDisplayVariables() const { return m_environSelectDisplayDataPoints; };
+    float GetScale() const { return m_currentEnviron.scale; };
+    float GetTeeDirectionDegrees() const { return m_currentEnviron.teeDirection; };
+
+    DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
     double GetWindDirection() const;
     double GetWindX() const { return m_currentEnviron.wind.x; };
     std::string GetWindXString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windXStr; };

@@ -32,6 +32,7 @@ public:
     DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
     DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
     DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
+    void InintializePreSwingCamera(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     bool IsCameraAtDestination();
     void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
@@ -122,6 +123,8 @@ private:
     float                           m_moveBackForward = 0.0f;
     float                           m_moveLeftRight = 0.0f;
     float                           m_moveUpDown = 0.0f;
+
+    const DirectX::SimpleMath::Vector3 m_cameraPosOffset = DirectX::SimpleMath::Vector3(-0.9f, 0.5f, 0.0f);
 
     DirectX::SimpleMath::Vector3    m_cameraStartPos;
     DirectX::SimpleMath::Vector3    m_cameraEndPos;

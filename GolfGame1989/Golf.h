@@ -47,8 +47,11 @@ public:
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
+    DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
+    float GetTeeDirection() const { return pEnvironment->GetTeeDirectionDegrees(); };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
+
     void InputData();
     void LoadEnvironment(const int aIndex);
     void SelectInputClub(int aInput);
@@ -62,7 +65,7 @@ public:
     void ZeroUIandRenderData();
 
 private:
-    void BuildVector();
+    void BuildTrajectoryData();
     void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
     void LoadCharacterTraits();
 
@@ -76,6 +79,8 @@ private:
     GolfPlay*                                   pPlay;
     GolfSwing*                                  pSwing;
     Utility::ImpactData                         m_impactData;
+
+    DirectX::SimpleMath::Vector3                m_shotStartPos;
 
     double                                      m_maxX;
     double                                      m_maxY;

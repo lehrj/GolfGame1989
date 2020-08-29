@@ -42,6 +42,16 @@ void Camera::InitializeProjectionMatrix()
 	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, static_cast<float>(m_clientWidth) / static_cast<float>(m_clientHeight), m_nearPlane, m_farPlane);
 }
 
+void Camera::InintializePreSwingCamera(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+{
+	/*
+	DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
+	DirectX::SimpleMath::Matrix::CreateRotationY
+	DirectX::SimpleMath::Vector3 newCameraPos = aPosition + m_cameraPosOffset.r;// *aDirection;
+	SetPos(newCameraPos);
+	*/
+}
+
 void Camera::InitializeViewMatrix()
 {
 	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
@@ -334,7 +344,7 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
 	{
-		// update needed in current state
+		// no update needed in current state
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PRESWINGVIEW)
 	{

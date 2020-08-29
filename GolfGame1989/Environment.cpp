@@ -124,44 +124,43 @@ void Environment::LoadEnvironmentData()
 
     int i = 0;
 
-    m_environs[i].name = "Calm";
-    m_environs[i].terrainColor = DirectX::Colors::Green;
+    m_environs[i].name = "Calm";   
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
     m_environs[i].holePosition = DirectX::SimpleMath::Vector3::Zero;
-    m_environs[i].wind.x = 0.0;
-    m_environs[i].wind.y = 0.0;
-    m_environs[i].wind.z = 0.0;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
+    m_environs[i].scale = 0.02;
+    m_environs[i].teeDirection = 0.0f;
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
+    m_environs[i].terrainColor = DirectX::Colors::Green;
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     ++i;
-    m_environs[i].name = "Breezy";
-    m_environs[i].terrainColor = DirectX::Colors::Green;
+    m_environs[i].name = "Breezy";    
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3::Zero;
-    m_environs[i].holePosition.x = -2.0;
-    m_environs[i].holePosition.y = 0.0;
-    m_environs[i].holePosition.z = -0.0;
-
-    m_environs[i].wind.x = 0.69;
-    m_environs[i].wind.y = 0.0;
-    m_environs[i].wind.z = 5.0;
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
+    m_environs[i].scale = 0.02;
+    m_environs[i].teeDirection = 0.0f;
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
+    m_environs[i].terrainColor = DirectX::Colors::Green;
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.69f, 0.0f, 5.0f);
 
     ++i;
-    m_environs[i].name = "Non Terrestrial (Alien Golf!!)";
-    m_environs[i].terrainColor = DirectX::Colors::Blue;
+    m_environs[i].name = "Non Terrestrial (Alien Golf!!)";    
     m_environs[i].airDensity = 11.2;
     m_environs[i].gravity = -5.8;
     m_environs[i].holePosition = DirectX::SimpleMath::Vector3::Zero;
-    m_environs[i].wind.x = 3.0;
-    m_environs[i].wind.y = 0.0;
-    m_environs[i].wind.z = 0.69;
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
+    m_environs[i].scale = 0.02;
+    m_environs[i].teeDirection = 0.0f;
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
+    m_environs[i].terrainColor = DirectX::Colors::Blue;
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(3.0f, 0.0f, 0.69f);
 }
 
 void Environment::SetLandingHeight(double aLandingHeight)

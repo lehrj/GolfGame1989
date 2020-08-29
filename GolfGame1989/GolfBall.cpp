@@ -556,9 +556,10 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.mass = 0.0459;
     m_ball.numEqns = 6;
     m_ball.omega = 0.0;
-    m_ball.q.position.x = 0.0;
-    m_ball.q.position.y = 0.0;
-    m_ball.q.position.z = 0.0;
+    m_ball.q.position = pEnviron->GetTeePosition();
+    //m_ball.q.position.x = 0.0;
+    //m_ball.q.position.y = 0.0;
+    //m_ball.q.position.z = 0.0;
     m_ball.q.velocity.x = 0.0;
     m_ball.q.velocity.y = 0.0;
     m_ball.q.velocity.z = 0.0;

@@ -18,7 +18,10 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
+    m_ballPos = pGolf->GetTeePos();
     pCamera = new Camera(m_outputWidth, m_outputHeight);
+
+    pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
 
     m_currentState = GameState::GAMESTATE_INTROSCREEN;
     //m_currentState = GameState::GAMESTATE_STARTSCREEN;
