@@ -65,6 +65,7 @@ private:
     void DrawStartScreen();
     void DrawSwing();
     void DrawSwingUI();
+    void DrawTeeBox();
     void DrawUI();
     void DrawWorld();
 
@@ -229,4 +230,5 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
+    const bool                                  m_isInDebugMode = true;
 };

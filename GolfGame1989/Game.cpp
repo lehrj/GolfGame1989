@@ -19,13 +19,19 @@ Game::Game() noexcept :
     pGolf = new Golf;
     pPlay = new GolfPlay;
     m_ballPos = pGolf->GetTeePos();
+    m_shootOrigin = m_ballPos;
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
 
-    m_currentState = GameState::GAMESTATE_INTROSCREEN;
-    //m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    //m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    if (m_isInDebugMode == false)
+    {
+        m_currentState = GameState::GAMESTATE_INTROSCREEN;
+    }
+    else
+    {
+        m_currentState = GameState::GAMESTATE_GAMEPLAY;
+    }
 }
 
 Game::~Game()
@@ -1544,12 +1550,19 @@ void Game::DrawSwing()
 
     if (angles.size() > 1)
     {
-        DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
-        origin += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
-        //origin += m_swingOrigin;
-        DirectX::SimpleMath::Vector3 thetaOrigin;
-        thetaOrigin.Zero;
-        thetaOrigin.y = -.02;
+        //DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
+        //DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
+        DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
+
+        //origin += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
+        //origin += pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
+
+        //DirectX::SimpleMath::Vector3 thetaOrigin;
+        //thetaOrigin.Zero;
+        //thetaOrigin.y = -.02;
+        const float thetaOriginOffsetY = -.02f;
+        DirectX::SimpleMath::Vector3 thetaOrigin = DirectX::SimpleMath::Vector3::Zero;
+        thetaOrigin.y += thetaOriginOffsetY;
 
         int swingStepCount = (int)angles.size();
         if (m_swingPathStep >= swingStepCount)
@@ -1583,9 +1596,9 @@ void Game::DrawSwing()
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            //theta += m_swingOrigin;
-            theta += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
-
+            //theta += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
+            //theta += pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
+            theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
             beta += theta;
             VertexPositionColor shoulder(origin, shoulderColor);
             VertexPositionColor thetaColor(theta, handColor);
@@ -1611,6 +1624,27 @@ void Game::DrawSwingUI()
         m_fontPosDebug.y += 35;
     }
     m_fontPosDebug.y = fontOriginPosY;
+}
+
+void Game::DrawTeeBox()
+{
+    //draw tee box;
+    const DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
+    const float teeBoxLengthScale = 0.05f;
+    const float teeBoxHorizontalScale = 0.1f;
+    DirectX::SimpleMath::Vector3 t1(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t2(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t3(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t4(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
 }
 
 void Game::DrawUI()
@@ -1640,6 +1674,7 @@ void Game::DrawWorld()
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
     size_t extention = 50;
+
     DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
     
     for (size_t i = 0; i <= divisions + extention; ++i)
@@ -1681,22 +1716,7 @@ void Game::DrawWorld()
         }
     }
 
-    //draw tee box
-    float originX = m_shootOrigin.x;
-    DirectX::SimpleMath::Vector3 t1(originX - .05f, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t2(originX + .05f, 0.0f, -0.1f);
-    DirectX::SimpleMath::Vector3 t3(originX - 0.05f, 0.0f, 0.1f);
-    DirectX::SimpleMath::Vector3 t4(originX + .05f, 0.0f, 0.1f);
-    VertexPositionColor vt1(t1, Colors::White);
-    VertexPositionColor vt2(t2, Colors::White);
-    VertexPositionColor vt3(t3, Colors::White);
-    VertexPositionColor vt4(t4, Colors::White);
-    m_batch->DrawLine(vt1, vt2);
-    m_batch->DrawLine(vt1, vt3);
-    m_batch->DrawLine(vt3, vt4);
-    m_batch->DrawLine(vt4, vt2);
-    // end tee box draw
-
+    DrawTeeBox();
     DrawFlagAndHole();
 }
 
@@ -1884,7 +1904,7 @@ void Game::Render()
     {
         DrawWorld();
 
-        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
+        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {
             DrawSwing();
         }
@@ -1895,7 +1915,10 @@ void Game::Render()
             DrawProjectileRealTime();
             pCamera->SetTargetPos(m_ballPos);
         }
-        DrawCameraFocus();
+        if (m_isInDebugMode == true)
+        {
+            DrawCameraFocus();
+        }
     }
 
     m_batch->End();
@@ -2238,26 +2261,26 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
         pCamera->UpdatePos(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f);
     }
-    if (m_kbStateTracker.pressed.V)
+    if (m_kbStateTracker.pressed.V) // reset ball to tee position and prep for new shot
     {       
-        pCamera->SetCameraStartPos(pCamera->GetPos());
-        //pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());      
+        //m_ballPos = pGolf->GetShotStartPos();
+        m_ballPos = pGolf->GetTeePos();
+        //m_shootOrigin = m_ballPos;
+        pGolf->SetShotStartPos(m_ballPos);
+        pCamera->SetCameraStartPos(pCamera->GetPos());     
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-        //pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);        
-        //pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
         ResetGamePlay();
     }
-    if (m_kbStateTracker.pressed.B)
+    if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
+        //m_shootOrigin = m_ballPos;
         pGolf->SetShotStartPos(m_ballPos);
         pCamera->SetCameraStartPos(pCamera->GetPos());      
-        //pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-        //pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
         ResetGamePlay();
@@ -2269,10 +2292,8 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             if (pPlay->IsSwingStateAtImpact() == true)
             {              
                 pCamera->SetCameraStartPos(pCamera->GetPos());
-                //pCamera->SetCameraEndPos(pGolf->GetCameraSwingPos());
                 pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-                //pCamera->SetTargetEndPos(pGolf->GetCameraTargetSwingPos());
                 pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);           
             }
