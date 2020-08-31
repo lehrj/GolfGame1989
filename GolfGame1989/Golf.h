@@ -17,7 +17,8 @@ public:
  
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
-  
+    
+    DirectX::SimpleMath::Vector3 GetBallPosition() const { return m_ballPos; };
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
     std::string GetCharacterArmMass(const int aCharacterIndex) const;
@@ -28,12 +29,6 @@ public:
     std::string GetCharacterBioLine2(const int aCharacterIndex) const;
     std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
-
-    // Future updates will process these from the environment once game moves past just a driving range
-    //DirectX::SimpleMath::Vector3 GetCameraPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.9f, 0.5f, 0.0f); };
-    //DirectX::SimpleMath::Vector3 GetCameraTargetPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.3f, 0.0f); };
-    DirectX::SimpleMath::Vector3 GetCameraSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.02f, .2f); };
-    DirectX::SimpleMath::Vector3 GetCameraTargetSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f); };
 
     std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
 
@@ -61,6 +56,7 @@ public:
 
     void CycleNextClub(const bool aIsCycleClubUp);
 
+    void SetBallPosition(const DirectX::SimpleMath::Vector3 aBallPos);
     void SetCharacter(const int aCharacterIndex);    
     void SetEnvironment(const int aEnvironmentIndex);
     void SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos);
@@ -84,6 +80,7 @@ private:
     GolfSwing*                                  pSwing;
     Utility::ImpactData                         m_impactData;
 
+    DirectX::SimpleMath::Vector3                m_ballPos;
     DirectX::SimpleMath::Vector3                m_shotStartPos;
 
     double                                      m_maxX;

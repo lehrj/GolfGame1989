@@ -77,6 +77,10 @@ private:
     void Update(DX::StepTimer const& aTimer);
     void UpdateInput(DX::StepTimer const& aTimer);
 
+    Camera*                                         pCamera;
+    Golf*                                           pGolf;
+    GolfPlay*                                       pPlay;
+
     // Device resources.
     HWND                                            m_window;
     int                                             m_outputWidth;
@@ -112,9 +116,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_raster; // WLJ anti-aliasing
     //world end
 
-    // WLJ added for drawing projectile and swing
-    Golf*                                           pGolf;
-    GolfPlay*                                       pPlay;
+    // WLJ added for drawing projectile and swing  
     int                                             m_swingPathStep = 0;
     int                                             m_projectilePathStep = 0;
 
@@ -214,13 +216,6 @@ private:
     };
     GameState                                   m_currentState;
 
-    Camera*                                     pCamera;
-
-    DirectX::SimpleMath::Vector3                m_ballPos = DirectX::SimpleMath::Vector3::Zero;
-
-    DirectX::SimpleMath::Vector3                m_shootOrigin = DirectX::SimpleMath::Vector3(-2.f, .0f, 0.f);
-    DirectX::SimpleMath::Vector3                m_swingOrigin = DirectX::SimpleMath::Vector3(-2.0087f, .04f, 0.f);
-
     // audio 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;
@@ -230,5 +225,5 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
-    const bool                                  m_isInDebugMode = true;
+    const bool                                  m_isInDebugMode = false;
 };

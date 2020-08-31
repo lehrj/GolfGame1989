@@ -18,8 +18,7 @@ Game::Game() noexcept :
 {
     pGolf = new Golf;
     pPlay = new GolfPlay;
-    m_ballPos = pGolf->GetTeePos();
-    m_shootOrigin = m_ballPos;
+    
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
@@ -1455,7 +1454,7 @@ void Game::DrawProjectile()
             m_flightStepTimer.ResetElapsedTime();
             m_projectilePathStep = 0;
         }
-        m_ballPos = shotPath[m_projectilePathStep];
+        pGolf->SetBallPosition(shotPath[m_projectilePathStep]);
         ++m_projectilePathStep;
 
         DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
@@ -1497,12 +1496,12 @@ void Game::DrawProjectileRealTime()
             }
             prevPos = shotPath[i];
         }
-        m_ballPos = shotPath[ballPosIndex];
+        pGolf->SetBallPosition(shotPath[ballPosIndex]);
 
         // Set camera targe on ball position if using projectile tracking camera
         if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {
-            pCamera->SetTargetPos(m_ballPos);
+            pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
     }
 }
@@ -1550,16 +1549,8 @@ void Game::DrawSwing()
 
     if (angles.size() > 1)
     {
-        //DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
-        //DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
         DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
 
-        //origin += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
-        //origin += pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
-
-        //DirectX::SimpleMath::Vector3 thetaOrigin;
-        //thetaOrigin.Zero;
-        //thetaOrigin.y = -.02;
         const float thetaOriginOffsetY = -.02f;
         DirectX::SimpleMath::Vector3 thetaOrigin = DirectX::SimpleMath::Vector3::Zero;
         thetaOrigin.y += thetaOriginOffsetY;
@@ -1596,8 +1587,6 @@ void Game::DrawSwing()
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            //theta += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
-            //theta += pGolf->GetSwingOriginOffsetPos() + m_shootOrigin;
             theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
             beta += theta;
             VertexPositionColor shoulder(origin, shoulderColor);
@@ -1913,7 +1902,7 @@ void Game::Render()
         {         
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
-            pCamera->SetTargetPos(m_ballPos);
+            pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
         if (m_isInDebugMode == true)
         {
@@ -2263,10 +2252,8 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.V) // reset ball to tee position and prep for new shot
     {       
-        //m_ballPos = pGolf->GetShotStartPos();
-        m_ballPos = pGolf->GetTeePos();
-        //m_shootOrigin = m_ballPos;
-        pGolf->SetShotStartPos(m_ballPos);
+        pGolf->SetBallPosition(pGolf->GetTeePos());
+        pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());     
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
@@ -2276,8 +2263,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
-        //m_shootOrigin = m_ballPos;
-        pGolf->SetShotStartPos(m_ballPos);
+        pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());      
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());

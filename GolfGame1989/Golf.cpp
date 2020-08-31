@@ -22,8 +22,8 @@ Golf::Golf()
     //BuildTrajectoryData(); // WLJ turn off to disable auto draw of projectile without powerbar input 
     BuildUIstrings();
     BuildEnvironSelectStrings();
-    m_shotStartPos = pEnvironment->GetTeePosition();
-    
+    SetShotStartPos(pEnvironment->GetTeePosition());
+    SetBallPosition(GetShotStartPos());
 }
 
 Golf::~Golf()
@@ -305,6 +305,11 @@ void Golf::SelectInputClub(int aInput)
     pSwing->UpdateGolfSwingValues();
     BuildTrajectoryData();
     BuildUIstrings();
+}
+
+void Golf::SetBallPosition(const DirectX::SimpleMath::Vector3 aBallPos)
+{
+    m_ballPos = aBallPos;
 }
 
 void Golf::SetCharacter(const int aCharacterIndex)
