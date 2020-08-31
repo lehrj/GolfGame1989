@@ -46,7 +46,8 @@ public:
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
-    DirectX::SimpleMath::Vector3 GetShotStartPos()const { return m_shotStartPos; };
+    DirectX::SimpleMath::Vector3 GetShotStartPos() const { return m_shotStartPos; };
+    DirectX::SimpleMath::Vector3 GetSwingOriginOffsetPos() const { return m_swingOriginOffset; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
     DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
@@ -97,4 +98,6 @@ private:
     std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
     std::vector<std::string>                    m_uiStrings;
     std::vector<std::vector<std::string>>       m_environSelectStrings;
+
+    const DirectX::SimpleMath::Vector3          m_swingOriginOffset = DirectX::SimpleMath::Vector3(-.0087f, .04f, 0.f);
 };

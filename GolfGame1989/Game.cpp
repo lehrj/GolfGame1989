@@ -1544,9 +1544,9 @@ void Game::DrawSwing()
 
     if (angles.size() > 1)
     {
-        DirectX::SimpleMath::Vector3 origin;
-        origin.Zero;
-        origin += m_swingOrigin;
+        DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
+        origin += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
+        //origin += m_swingOrigin;
         DirectX::SimpleMath::Vector3 thetaOrigin;
         thetaOrigin.Zero;
         thetaOrigin.y = -.02;
@@ -1583,7 +1583,9 @@ void Game::DrawSwing()
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            theta += m_swingOrigin;
+            //theta += m_swingOrigin;
+            theta += pGolf->GetSwingOriginOffsetPos() + m_ballPos;
+
             beta += theta;
             VertexPositionColor shoulder(origin, shoulderColor);
             VertexPositionColor thetaColor(theta, handColor);
