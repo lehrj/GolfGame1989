@@ -32,6 +32,34 @@ Camera::Camera(int aWidth, int aHeight)
 	InitializeOrthoganalMatrix();
 }
 
+DirectX::SimpleMath::Vector3 Camera::GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+{
+	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingCamPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+	return newCamPosition;
+}
+
+DirectX::SimpleMath::Vector3 Camera::GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+{
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingTargetPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+	return newTargetPosition;
+}
+
+DirectX::SimpleMath::Vector3 Camera::GetSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+{
+	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(m_swingCamPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+	return newCamPosition;
+}
+
+DirectX::SimpleMath::Vector3 Camera::GetSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+{
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_swingTargetPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+	return newTargetPosition;
+}
+
 void Camera::InitializeOrthoganalMatrix()
 {
 	m_orthogonalMatrix = DirectX::SimpleMath::Matrix::CreateOrthographic((float)m_clientWidth, (float)m_clientHeight, m_nearPlane, m_farPlane);
@@ -43,13 +71,15 @@ void Camera::InitializeProjectionMatrix()
 }
 
 void Camera::InintializePreSwingCamera(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
-{
-	/*
-	DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
-	DirectX::SimpleMath::Matrix::CreateRotationY
-	DirectX::SimpleMath::Vector3 newCameraPos = aPosition + m_cameraPosOffset.r;// *aDirection;
-	SetPos(newCameraPos);
-	*/
+{	
+	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingCamPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingTargetPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+
+	SetTargetPos(newTargetPosition);
+	SetPos(newCamPosition);
 }
 
 void Camera::InitializeViewMatrix()
@@ -228,7 +258,6 @@ void Camera::SetHomePos(DirectX::SimpleMath::Vector3 aHomePos)
 		return;
 	}
 	m_position = aHomePos;
-	UpdateUp();
 }
 
 void Camera::SetPos(DirectX::SimpleMath::Vector3 aPos)
@@ -240,7 +269,6 @@ void Camera::SetPos(DirectX::SimpleMath::Vector3 aPos)
 		return;
 	}
 	m_position = aPos;
-	UpdateUp();
 }
 
 void Camera::SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos)
@@ -339,8 +367,8 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_SWINGVIEW)
 	{
-		m_target = DirectX::SimpleMath::Vector3(-2.f, 0.0, 0.0);
-		m_position = DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f);
+		//m_target = DirectX::SimpleMath::Vector3(-2.f, 0.0, 0.0);
+		//m_position = DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f);
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
 	{
@@ -348,9 +376,9 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PRESWINGVIEW)
 	{
-		m_position = DirectX::SimpleMath::Vector3(-2.9f, .5f, 0.0f);
-		m_target = DirectX::SimpleMath::Vector3(-2.f, 0.3f, 0.0f);
-		m_up = DirectX::SimpleMath::Vector3::UnitY;
+		//m_position = DirectX::SimpleMath::Vector3(-2.9f, .5f, 0.0f);
+		//m_target = DirectX::SimpleMath::Vector3(-2.f, 0.3f, 0.0f);
+		//m_up = DirectX::SimpleMath::Vector3::UnitY;
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_TRANSITION)
 	{
@@ -376,8 +404,33 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 			m_isCameraAtDestination = false;
 		}
 	}
+	if (m_cameraState == CameraState::CAMERASTATE_TRANSTONEWSHOT)
+	{
+		if (IsCameraAtDestination() == false)
+		{
+			UpdateTransitionCamera(aTimer);
+		}
+		else
+		{
 
-	m_up = DirectX::SimpleMath::Vector3::UnitY;
+			SetCameraStartPos(GetPos());
+			//pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());      
+			SetCameraEndPos(GetPreSwingCamPos(GetPos(), 0.0));
+
+			SetTargetStartPos(GetTargetPos());
+			//pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());
+			SetTargetEndPos(GetPreSwingTargPos(GetPos(), 0.0));
+
+			//SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
+//////////////////
+
+///////////////////////////
+
+			//m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
+			m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
+			m_isCameraAtDestination = false;
+		}
+	}
 
 	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_target, m_up);
 }
@@ -429,11 +482,6 @@ void Camera::UpdateOrthoganalMatrix()
 void Camera::UpdateProjectionMatrix()
 {
 	m_projectionMatrix = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(DirectX::XM_PI / 4.f, (float)m_clientWidth / (float)m_clientHeight, m_nearPlane, m_farPlane);
-}
-
-void Camera::UpdateUp()
-{
-	m_up = m_position + DirectX::SimpleMath::Vector3(0.0f, 1.0f, 0.0f);
 }
 
 void Camera::UpdateViewMatrix()

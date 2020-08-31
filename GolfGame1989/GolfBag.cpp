@@ -19,9 +19,6 @@ void GolfBag::BuildBag()
     // Club data modeled off of Ping G400 series driver and woods, G irons, and Karsten TR B60 putter, along with best guesses to fill in data gaps
     int i = 0;
     
-
-
-    /*
     m_bag[i].clubName = "Custom Debug";
     m_bag[i].angle = 10.0;
     m_bag[i].balancePoint = 0.75;
@@ -31,29 +28,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m 
     ++i;
-    */
-
-    m_bag[i].clubName = "Custom Debug2";
-    m_bag[i].angle = 10.0;
-    m_bag[i].balancePoint = 0.75;
-    m_bag[i].coefficiantOfRestitution = 0.78;
-    m_bag[i].lengthBase = 1.16205;
-    m_bag[i].mass = 0.330;
-    m_bag[i].massMoI = 0.08;
-    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m 
-    ++i;
-
-    m_bag[i].clubName = "Putter1";
-    m_bag[i].angle = 1.0;
-    m_bag[i].balancePoint = 0.75;
-    m_bag[i].coefficiantOfRestitution = 0.78;
-    m_bag[i].lengthBase = 0.889;
-    m_bag[i].mass = 0.345;
-    m_bag[i].massMoI = 0.08;
-    m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
-    ++i;
-
-    /*
+       
     m_bag[i].clubName = "3 Wood";
     m_bag[i].angle = 14.5;
     m_bag[i].balancePoint = 0.75;
@@ -63,8 +38,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-    */
-
+    
     /*
     m_bag[i].clubName = "Driver";
     m_bag[i].angle = 25.0;
@@ -156,8 +130,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-
-    /*
+    
     m_bag[i].clubName = "UW";
     m_bag[i].angle = 50.0;
     m_bag[i].balancePoint = 0.75;
@@ -167,8 +140,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-
-    
+  
     m_bag[i].clubName = "SW";
     m_bag[i].angle = 54.0;
     m_bag[i].balancePoint = 0.75;
@@ -200,7 +172,7 @@ void GolfBag::BuildBag()
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
     */
-    
+    /*
     m_bag[i].clubName = "Putter0";
     m_bag[i].angle = 0.0;
     m_bag[i].balancePoint = 0.75;
@@ -230,7 +202,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-
+    */
     m_bag[i].clubName = "Putter";
     m_bag[i].angle = 3.0;
     m_bag[i].balancePoint = 0.75;
@@ -240,7 +212,6 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-    
 }
 
 GolfClub GolfBag::GetClub(const int aClubIndex)

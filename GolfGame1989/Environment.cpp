@@ -127,7 +127,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].name = "Calm";   
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3::Zero;
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.3f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;
@@ -153,12 +153,12 @@ void Environment::LoadEnvironmentData()
     m_environs[i].name = "Non Terrestrial (Alien Golf!!)";    
     m_environs[i].airDensity = 11.2;
     m_environs[i].gravity = -5.8;
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3::Zero;
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, -1.0f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;
-    m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
+    m_environs[i].teeDirection = 45.0f;
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.0f);
     m_environs[i].terrainColor = DirectX::Colors::Blue;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(3.0f, 0.0f, 0.69f);
 }

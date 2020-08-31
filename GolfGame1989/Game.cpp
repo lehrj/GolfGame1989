@@ -2236,13 +2236,28 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
         pCamera->UpdatePos(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f);
     }
-    if (kb.V)
-    {
+    if (m_kbStateTracker.pressed.V)
+    {       
         pCamera->SetCameraStartPos(pCamera->GetPos());
-        pCamera->SetCameraEndPos(pGolf->GetCameraPreSwingPos());
+        //pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());      
+        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-        pCamera->SetTargetEndPos(pGolf->GetCameraTargetPreSwingPos());
-        pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
+        //pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());
+        pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
+        pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);        
+        //pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
+        ResetGamePlay();
+    }
+    if (m_kbStateTracker.pressed.B)
+    {
+        pGolf->SetShotStartPos(m_ballPos);
+        pCamera->SetCameraStartPos(pCamera->GetPos());      
+        //pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetTargetStartPos(pCamera->GetTargetPos());
+        //pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
         ResetGamePlay();
     }
     if (m_kbStateTracker.pressed.Space)
@@ -2252,9 +2267,11 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             if (pPlay->IsSwingStateAtImpact() == true)
             {              
                 pCamera->SetCameraStartPos(pCamera->GetPos());
-                pCamera->SetCameraEndPos(pGolf->GetCameraSwingPos());
+                //pCamera->SetCameraEndPos(pGolf->GetCameraSwingPos());
+                pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-                pCamera->SetTargetEndPos(pGolf->GetCameraTargetSwingPos());
+                //pCamera->SetTargetEndPos(pGolf->GetCameraTargetSwingPos());
+                pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);           
             }
             pPlay->UpdateSwingState();

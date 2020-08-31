@@ -17,7 +17,7 @@ public:
  
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
-
+  
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
     std::string GetCharacterArmMass(const int aCharacterIndex) const;
@@ -30,8 +30,8 @@ public:
     std::string GetCharacterName(const int aCharacterIndex) const;
 
     // Future updates will process these from the environment once game moves past just a driving range
-    DirectX::SimpleMath::Vector3 GetCameraPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.9f, 0.5f, 0.0f); };
-    DirectX::SimpleMath::Vector3 GetCameraTargetPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.3f, 0.0f); };
+    //DirectX::SimpleMath::Vector3 GetCameraPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.9f, 0.5f, 0.0f); };
+    //DirectX::SimpleMath::Vector3 GetCameraTargetPreSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.3f, 0.0f); };
     DirectX::SimpleMath::Vector3 GetCameraSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.02f, .2f); };
     DirectX::SimpleMath::Vector3 GetCameraTargetSwingPos() const { return DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f); };
 
@@ -42,9 +42,11 @@ public:
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
+    float GetDirectionToHoleInRads() const;
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
+    DirectX::SimpleMath::Vector3 GetShotStartPos()const { return m_shotStartPos; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
     DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
@@ -60,6 +62,7 @@ public:
 
     void SetCharacter(const int aCharacterIndex);    
     void SetEnvironment(const int aEnvironmentIndex);
+    void SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos);
     void UpdateImpact(Utility::ImpactData aImpact);
 
     void ZeroUIandRenderData();

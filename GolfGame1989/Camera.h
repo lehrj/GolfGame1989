@@ -5,18 +5,13 @@
 
 enum class CameraState
 {
-    CAMERASTATE_DEFAULT,
-    CAMERASTATE_CAMERA1,
-    CAMERASTATE_CAMERA2,
-    CAMERASTATE_CAMERA3,
-    CAMERASTATE_CAMERA4,
     CAMERASTATE_TRANSITION,
     CAMERASTATE_FIRSTPERSON,
-    CAMERASTATE_CAMERACLASS,
     CAMERASTATE_PRESWINGVIEW,
     CAMERASTATE_PROJECTILEFLIGHTVIEW,
     CAMERASTATE_SWINGVIEW,
-    CAMERASTATE_RESET
+    CAMERASTATE_RESET,
+    CAMERASTATE_TRANSTONEWSHOT
 };
 
 class Camera
@@ -28,7 +23,12 @@ public:
     CameraState GetCameraState() const { return m_cameraState; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
+
+    DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
+    DirectX::SimpleMath::Vector3 GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
+    DirectX::SimpleMath::Vector3 GetSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
+    DirectX::SimpleMath::Vector3 GetSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
     DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
     DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
@@ -66,13 +66,11 @@ public:
     
     void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };
     DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
-
-    
+  
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
     void InitializeViewMatrix(); //Pavel
-    void UpdateUp();
     void UpdateProjectionMatrix();
     void UpdateOrthoganalMatrix();
     void UpdateViewMatrix();
@@ -108,13 +106,6 @@ private:
     
     DirectX::SimpleMath::Matrix     m_rotationMatrix;
 
-    /*
-    DirectX::XMVECTOR               m_defaultForward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-    DirectX::XMVECTOR               m_forward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-    DirectX::XMVECTOR               m_defaultRight = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    DirectX::XMVECTOR               m_right = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    */
-
     DirectX::SimpleMath::Vector4    m_defaultForward = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
     DirectX::SimpleMath::Vector4    m_forward        = DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
     DirectX::SimpleMath::Vector4    m_defaultRight   = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -124,7 +115,11 @@ private:
     float                           m_moveLeftRight = 0.0f;
     float                           m_moveUpDown = 0.0f;
 
-    const DirectX::SimpleMath::Vector3 m_cameraPosOffset = DirectX::SimpleMath::Vector3(-0.9f, 0.5f, 0.0f);
+    const DirectX::SimpleMath::Vector3 m_preSwingCamPosOffset = DirectX::SimpleMath::Vector3(-0.9f, 0.5f, 0.0f);
+    const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.3f, 0.0f);
+
+    const DirectX::SimpleMath::Vector3 m_swingCamPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.02f, 0.2f);
+    const DirectX::SimpleMath::Vector3 m_swingTargetPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     DirectX::SimpleMath::Vector3    m_cameraStartPos;
     DirectX::SimpleMath::Vector3    m_cameraEndPos;

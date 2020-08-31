@@ -39,6 +39,7 @@ public:
     std::string GetGravityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravityStr; };
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return m_flagVertex; };
+    DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return m_holeVertex; };
     double GetLandingHeight() const { return m_landingHeight; };
     double GetLauchHeight() const { return m_launchHeight; };

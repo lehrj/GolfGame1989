@@ -223,6 +223,29 @@ std::string Golf::GetCharacterName(const int aCharacterIndex) const
     return pCharacter->GetName(aCharacterIndex);
 }
 
+float Golf::GetDirectionToHoleInRads() const
+{
+    DirectX::SimpleMath::Vector3 start = m_shotStartPos;
+    DirectX::SimpleMath::Vector3 end = pEnvironment->GetHolePosition();
+
+    DirectX::SimpleMath::Vector3 vecToHole;
+    vecToHole.x = end.x - start.x;
+    vecToHole.y = end.y - start.y;
+    vecToHole.z = end.z - start.z;
+
+    DirectX::SimpleMath::Vector3 zeroDirection = DirectX::SimpleMath::Vector3(1.0, 0.0, 0.0);
+
+    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(vecToHole), 
+        DirectX::XMVector3Normalize(zeroDirection)));
+
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(vecToHole, zeroDirection)) > 0.0f)
+    {
+        direction = -direction;
+    }
+
+    return direction;
+}
+
 void Golf::LoadCharacterTraits()
 {
     pSwing->SetArmBalancePoint(pCharacter->GetArmBalancePoint(m_selectedCharacter));
@@ -333,6 +356,11 @@ void Golf::SetShotCordMax()
     m_maxX = maxX;
     m_maxY = maxY;
     m_maxZ = maxZ;
+}
+
+void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
+{
+    m_shotStartPos = aShotStartPos;
 }
 
 //Transform shotpath to start at edge of world grid
