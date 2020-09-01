@@ -93,6 +93,7 @@ private:
     int                                         m_selectedCharacter;
     int                                         m_selectedEnvironment;
     std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
+    int                                         m_swingStep;
     std::vector<std::string>                    m_uiStrings;
     std::vector<std::vector<std::string>>       m_environSelectStrings;
 

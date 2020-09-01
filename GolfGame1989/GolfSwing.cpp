@@ -118,12 +118,20 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     m_impactData.cor = m_club.coefficiantOfRestitution;
 
     // start work for switch to vector usage
-    m_impactData.vHead.x = static_cast<float>(velocityCapture);
+    m_impactData.vHead.x = static_cast<float>(velocityCapture);    
+    //DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+    //float testRot = Utility::ToRadians(0.0);
+    //m_impactData.vHead = DirectX::SimpleMath::Vector3::Transform(m_impactData.vHead, DirectX::SimpleMath::Matrix::CreateRotationY(testRot));
+
+
     m_impactData.vFaceNormal.x = static_cast<float>(cos(Utility::ToRadians(launchAngle)));
     m_impactData.vFaceNormal.y = static_cast<float>(sin(Utility::ToRadians(launchAngle)));
     m_impactData.vFaceNormal.z = 0.0; // WLJ ToDo: update with value from play mechanics
 
-    m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(Utility::ToRadians(m_impactData.impactMissOffSet))));
+    //m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(testRot));
+
+    m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, 
+        DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(Utility::ToRadians(m_impactData.impactMissOffSet))));
 
     m_impactData.vFaceNormal.Normalize();
 

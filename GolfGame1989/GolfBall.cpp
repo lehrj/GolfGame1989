@@ -305,24 +305,25 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     //double vy0 = sinL * vbp + cosL * vbn;
     //double vz0 = 0.0;
 
-    DirectX::SimpleMath::Vector4 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
+    //DirectX::SimpleMath::Vector4 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
+    //    + (static_cast<float>(((2 * clubMass) / (7 * (clubMass + ballMass)))) * aImpactData.vHeadParallel);
+    DirectX::SimpleMath::Vector3 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
         + (static_cast<float>(((2 * clubMass) / (7 * (clubMass + ballMass)))) * aImpactData.vHeadParallel);
-    DirectX::SimpleMath::Vector4 vBall1 = (static_cast<float>(((1.0 + e) * clubMass) / (clubMass + ballMass)) * aImpactData.vHeadNormal);
-    DirectX::SimpleMath::Vector4 vBall2 = (static_cast<float>((2 * clubMass) / (7 * (clubMass + ballMass))) * aImpactData.vHeadParallel);
-    DirectX::SimpleMath::Vector4 vBall3 = vBall1 + vBall2;
 
     DirectX::SimpleMath::Vector3 unitVHead = aImpactData.vHead;
     unitVHead.Normalize();
     DirectX::SimpleMath::Vector3 unitFaceNormal = aImpactData.vFaceNormal;
     unitFaceNormal.Normalize();
 
-    DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
+    //DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
+    DirectX::SimpleMath::Vector3 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
 
     double absVhP = sqrt((aImpactData.vHeadParallel.x * aImpactData.vHeadParallel.x)
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
 
-    DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
+    //DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
+    DirectX::SimpleMath::Vector3 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
 
     double absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
         + (omegaBall.y * omegaBall.y)
@@ -332,9 +333,8 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
         + (vBall.z * vBall.z));
 
     double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
-    DirectX::SimpleMath::Vector3 fMangus;
-    fMangus.Zero;
-    fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall)) * (unitFaceNormal.Cross(unitVHead));
+    DirectX::SimpleMath::Vector3 fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall)) 
+        * (unitFaceNormal.Cross(unitVHead));
 
     DirectX::SimpleMath::Vector3 normfManus = fMangus;
     DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;
@@ -397,6 +397,24 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     double Fdx = -Fd * vax / va;
     double Fdy = -Fd * vay / va;
     double Fdz = -Fd * vaz / va;
+
+
+    // ToDo: WLJ look into coverting drag forces to vector, this does not apply wind to flight
+    DirectX::SimpleMath::Vector3 absVball = DirectX::XMVectorAbs(newQ.velocity);
+    DirectX::SimpleMath::Vector3 vBallNorm = newQ.velocity;
+    vBallNorm.Normalize();   
+    DirectX::SimpleMath::Vector3 Fd3D = -(0.5 * pBall->airDensity * pBall->area * m_ball.dragCoefficient * (absVball * absVball)) * vBallNorm;
+    double Fdx1 = Fd3D.x;
+    double Fdy1 = Fd3D.y;
+    double Fdz1 = Fd3D.z;
+
+    double Fdx2 = Fd3D.x * vax / va;
+    double Fdy2 = Fd3D.y * vay / va;
+    double Fdz2 = Fd3D.z * vaz / va;
+
+    //Fdx = Fdx2;
+    //Fdy = Fdy2;
+    //Fdz = Fdz2;
 
     //  Compute the velocity magnitude
     double v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8;
