@@ -16,7 +16,7 @@ Arm length, arm mass, arm balance point, arm mass moment of inertia, and club le
 </p>
 
 Environment select features:
-Air density, gravity, wind values and terrain color
+Air density, gravity, wind values and terrain color. An Alien non-Earth like environment has been added for fun to demonstrate how wildly different environmental variables can affect the ball flight… plus space golf is cool
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/EnvironmentSelect.png">
