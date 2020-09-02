@@ -1536,6 +1536,18 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
+void Game::DrawShotAim()
+{
+    const float line = .25f;
+    DirectX::SimpleMath::Vector3 aimLine = DirectX::SimpleMath::Vector3(line, 0.0f, 0.0f);
+    aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+    aimLine += pGolf->GetShotStartPos();
+    VertexPositionColor origin(pGolf->GetShotStartPos(), Colors::Red);
+    VertexPositionColor aimPoint(aimLine, Colors::Red);
+
+    m_batch->DrawLine(origin, aimPoint);
+}
+
 void Game::DrawShotTimerUI()
 {
     std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
@@ -1907,6 +1919,7 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             DrawCameraFocus();
+            DrawShotAim();
         }
     }
 
@@ -2222,7 +2235,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->UpdatePos(0.0f + static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f, 0.0f);
     }
     if (kb.S)
-    {        
+    {
         pCamera->UpdatePos(0.0f, 0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()));
     }
     if (kb.A)
@@ -2251,20 +2264,20 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->UpdatePos(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f);
     }
     if (m_kbStateTracker.pressed.V) // reset ball to tee position and prep for new shot
-    {       
+    {
         pGolf->SetBallPosition(pGolf->GetTeePos());
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
-        pCamera->SetCameraStartPos(pCamera->GetPos());     
+        pCamera->SetCameraStartPos(pCamera->GetPos());
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
-        pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);        
+        pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         ResetGamePlay();
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
-        pCamera->SetCameraStartPos(pCamera->GetPos());      
+        pCamera->SetCameraStartPos(pCamera->GetPos());
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
@@ -2276,12 +2289,12 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
             if (pPlay->IsSwingStateAtImpact() == true)
-            {              
+            {
                 pCamera->SetCameraStartPos(pCamera->GetPos());
                 pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
                 pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
-                pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);           
+                pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
             }
             pPlay->UpdateSwingState();
         }
@@ -2301,6 +2314,14 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (m_kbStateTracker.pressed.F1)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_SWINGVIEW);
+    }
+    if (kb.OemPeriod)
+    {
+        pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()));
+    }
+    if (kb.OemComma)
+    {
+        pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()));
     }
 
     auto mouse = m_mouse->GetState();

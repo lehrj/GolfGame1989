@@ -413,20 +413,11 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 		else
 		{
 
-			SetCameraStartPos(GetPos());
-			//pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());      
+			SetCameraStartPos(GetPos());     
 			SetCameraEndPos(GetPreSwingCamPos(GetPos(), 0.0));
-
 			SetTargetStartPos(GetTargetPos());
-			//pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection());
 			SetTargetEndPos(GetPreSwingTargPos(GetPos(), 0.0));
 
-			//SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
-//////////////////
-
-///////////////////////////
-
-			//m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
 			m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
 			m_isCameraAtDestination = false;
 		}

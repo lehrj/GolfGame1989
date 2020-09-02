@@ -80,6 +80,9 @@ void Golf::BuildUIstrings()
     inVal << std::fixed << pBall->GetShotDistance();
     m_uiStrings.push_back("Travel Distance = " + inVal.str() + " meters");
     inVal.str(std::string());
+    inVal << std::fixed << pBall->GetShotFlightDistance();
+    m_uiStrings.push_back("Flight Distance = " + inVal.str() + " meters");
+    inVal.str(std::string());
     inVal << std::fixed << pBall->GetMaxHeight();
     m_uiStrings.push_back("Max Height = " + inVal.str() + " meters");
     inVal.str(std::string());
@@ -368,7 +371,7 @@ void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
     m_shotStartPos = aShotStartPos;
 }
 
-//Transform shotpath to start at edge of world grid
+//Transform shotpath to start at tee position or end position of last shot
 void Golf::TransformCordinates(const int aIndex)
 {
     m_shotPath[aIndex] += m_shotStartPos;

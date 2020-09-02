@@ -11,15 +11,16 @@ public:
     static inline double ToRadians(double d) { return d / 180.0 * GetPi(); };
 
     struct ImpactData
-    {
-        double velocity;
+    {   
         double angleX;
         double angleY;
         double angleZ;
+        double directionDegrees = 0.0;
         double mass;
         double cor;
         double impactMissOffSet;
         double power;
+        double velocity;
         DirectX::SimpleMath::Vector3 vHead;
         DirectX::SimpleMath::Vector3 vHeadNormal;
         DirectX::SimpleMath::Vector3 vHeadParallel;
@@ -28,14 +29,15 @@ public:
 
     static inline void ZeroImpactData(ImpactData& aImpact) 
     {
-        aImpact.velocity = 0.0;
         aImpact.angleX = 0.0;
         aImpact.angleY = 0.0;
         aImpact.angleZ = 0.0;
+        aImpact.directionDegrees = 0.0;
         aImpact.mass = 0.0;
         aImpact.impactMissOffSet = 0.0;
         aImpact.power = 0.0;
         aImpact.cor = 0.0; 
+        aImpact.velocity = 0.0;
         aImpact.vFaceNormal.Zero;
         aImpact.vHead.Zero;
         aImpact.vHeadNormal.Zero;

@@ -95,14 +95,12 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 0.4f;
+    const float                     m_posTravelSpeed = 0.2f;
     const float                     m_rotationTravelSpeed = 1.4f;
 
     bool                            m_isCameraAtDestination;
 
     CameraState                     m_cameraState;
-
-    //////////////////////////////////////////////////////////////
     
     DirectX::SimpleMath::Matrix     m_rotationMatrix;
 

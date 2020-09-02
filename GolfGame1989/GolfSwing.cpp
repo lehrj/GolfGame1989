@@ -119,16 +119,11 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     // start work for switch to vector usage
     m_impactData.vHead.x = static_cast<float>(velocityCapture);    
-    //DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-    //float testRot = Utility::ToRadians(0.0);
-    //m_impactData.vHead = DirectX::SimpleMath::Vector3::Transform(m_impactData.vHead, DirectX::SimpleMath::Matrix::CreateRotationY(testRot));
-
 
     m_impactData.vFaceNormal.x = static_cast<float>(cos(Utility::ToRadians(launchAngle)));
     m_impactData.vFaceNormal.y = static_cast<float>(sin(Utility::ToRadians(launchAngle)));
     m_impactData.vFaceNormal.z = 0.0; // WLJ ToDo: update with value from play mechanics
-
-    //m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, DirectX::SimpleMath::Matrix::CreateRotationY(testRot));
+    //m_impactData.vFaceNormal.z = static_cast<float>(cos(Utility::ToRadians(launchAngle)));; // WLJ ToDo: update with value from play mechanics   
 
     m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, 
         DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(Utility::ToRadians(m_impactData.impactMissOffSet))));
@@ -315,17 +310,9 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;
-    //m_club.angle = 25.0;
     m_impactData.angleX = 25.0;
-    //m_club.balancePoint = 0.75;
-    //m_club.coefficiantOfRestitution = 0.78; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
     m_impactData.cor = 0.78;
-
     m_club.length = m_club.lengthBase * m_clubLengthModifier;
-    //.mass = 0.4;
-    //m_impactData.mass = 0.4;
-    //m_club.massMoI = 0.08; // Mass moment of inertia of the rod representing the club in kg m^2
-    //m_club.clubName = "Custom";
     m_Qalpha = 100; // Torque applied at the shoulder to the arm rod in N m
     m_Qbeta = -10; // Torque applied at the wrist joint to the club rod in N m
 
@@ -380,6 +367,8 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     m_impactData.impactMissOffSet = aImpactData.impactMissOffSet;
     m_backSwingPercentage = aImpactData.power;
     m_impactData.power = aImpactData.power;
+    m_impactData.directionDegrees = aImpactData.directionDegrees;
+
     UpdateGolfSwingValues();
 }
 

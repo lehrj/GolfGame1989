@@ -61,6 +61,7 @@ private:
     void DrawPowerBarUI();
     void DrawProjectile();
     void DrawProjectileRealTime();
+    void DrawShotAim();
     void DrawShotTimerUI();
     void DrawStartScreen();
     void DrawSwing();
@@ -225,5 +226,5 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
-    const bool                                  m_isInDebugMode = false;
+    const bool                                  m_isInDebugMode = true;
 };

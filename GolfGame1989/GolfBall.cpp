@@ -193,6 +193,7 @@ void GolfBall::LaunchProjectile()
     SetInitialSpinRate(m_ball.omega);
     
     int count = 0;
+    
     bool isBallFlyOrBounce = true;
     while (isBallFlyOrBounce == true)
     {
@@ -238,6 +239,11 @@ void GolfBall::LaunchProjectile()
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+        }
+
+        if (count == 0)
+        {
+            m_landingImpactCordinates = m_ball.q.position;
         }
 
         SetLandingSpinRate(m_ball.omega);
@@ -347,6 +353,12 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     m_ball.q.velocity.x = vBall.x;
     m_ball.q.velocity.y = vBall.y;
     m_ball.q.velocity.z = vBall.z;
+
+    float shotDirection = aImpactData.directionDegrees;
+
+    // Turn velocity and axis of rotation to aimed direction
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
+    m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
 }
 
 void GolfBall::PushFlightData()
@@ -397,7 +409,6 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     double Fdx = -Fd * vax / va;
     double Fdy = -Fd * vay / va;
     double Fdz = -Fd * vaz / va;
-
 
     // ToDo: WLJ look into coverting drag forces to vector, this does not apply wind to flight
     DirectX::SimpleMath::Vector3 absVball = DirectX::XMVectorAbs(newQ.velocity);
@@ -575,9 +586,6 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.numEqns = 6;
     m_ball.omega = 0.0;
     m_ball.q.position = pEnviron->GetTeePosition();
-    //m_ball.q.position.x = 0.0;
-    //m_ball.q.position.y = 0.0;
-    //m_ball.q.position.z = 0.0;
     m_ball.q.velocity.x = 0.0;
     m_ball.q.velocity.y = 0.0;
     m_ball.q.velocity.z = 0.0;
@@ -674,6 +682,16 @@ double GolfBall::GetShotDistance() const
 {
     DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
     DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
+    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
+        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
+
+    return distance;
+}
+
+double GolfBall::GetShotFlightDistance() const
+{
+    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
+    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates2();
     double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
         * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
 

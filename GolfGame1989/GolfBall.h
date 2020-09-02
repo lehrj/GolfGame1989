@@ -37,6 +37,7 @@ public:
 
     int GetBounceCount() const { return m_bounceCount; };
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
+    DirectX::SimpleMath::Vector3 GetLandingCordinates2() const { return m_landingImpactCordinates; };
     double GetMaxHeight() const { return m_maxHeight; };   
     double GetImpactAngle() const;
     double GetImpactDirection() const;
@@ -46,15 +47,14 @@ public:
     double GetLandingSpinRate() const { return m_landingSpinRate; };
     double GetLandingHeight() const;
     double GetShotDistance() const;
+    double GetShotFlightDistance() const;
     std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
   
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
     void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
-
     void ZeroDataForUI();
-
 
 private:
     void LandProjectile();
@@ -80,6 +80,7 @@ private:
     double                                      m_initialSpinRate;
     double                                      m_landingSpinRate;
     DirectX::SimpleMath::Vector3                m_landingCordinates;
+    DirectX::SimpleMath::Vector3                m_landingImpactCordinates;
     double                                      m_maxHeight;
     DirectX::SimpleMath::Vector3                m_shotOrigin;
     int                                         m_bounceCount = 0;

@@ -135,6 +135,21 @@ void GolfPlay::StartSwing()
     m_isSwingStart = true;
 }
 
+void GolfPlay::TurnShotAim(double aTurn)
+{
+    m_impactData.directionDegrees += aTurn * m_turnRate;
+
+    // wrap angle
+    if (m_impactData.directionDegrees > 180.0)
+    {
+        m_impactData.directionDegrees -= 360.0;
+    }
+    else if (m_impactData.directionDegrees < -180.0)
+    {
+        m_impactData.directionDegrees += 360.0;
+    }
+}
+
 bool GolfPlay::UpdateSwing()
 {
     return m_isSwingUpdateReady;
