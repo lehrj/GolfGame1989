@@ -2,7 +2,7 @@
 
 Demo Videos on YouTube - https://www.youtube.com/playlist?list=PLKMR2Ppf1A4jcWj0OhxXVMuNQZNznrlG9
 
-This is golf game based on the double pendulum model in professor Theodore P. Jorgensen’s “The Physics of Golf” using the DirectX Tool Kit. The games features that have been implemented include character select, environment select, a full golf bag with 14 clubs to select
+This is golf game based on the double pendulum model in professor Theodore P. Jorgensen’s “The Physics of Golf” using the DirectX Tool Kit. The games features that have been implemented include character select, environment select, and a full golf bag with 14 clubs to select
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
@@ -16,7 +16,7 @@ Arm length, arm mass, arm balance point, arm mass moment of inertia, and club le
 </p>
 
 Environment select features:
-Air density, gravity, wind values and terrain color
+Air density, gravity, wind values and terrain color. An Alien non-Earth like environment has been added for fun to demonstrate how wildly different environmental variables can affect the ball flight… plus space golf is cool
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/EnvironmentSelect.png">
