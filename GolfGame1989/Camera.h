@@ -66,6 +66,8 @@ public:
     
     void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };
     DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
+
+    void YawSpin(float aTurn);
   
 private:
     void InitializeOrthoganalMatrix(); //Pavel

@@ -480,3 +480,8 @@ void Camera::UpdateViewMatrix()
 	DirectX::SimpleMath::Vector3 newPosition = DirectX::SimpleMath::Vector3::Transform(m_position, DirectX::SimpleMath::Matrix::CreateRotationY(m_yaw));
 	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(newPosition, m_target, m_up);
 }
+
+void Camera::YawSpin(float aTurn)
+{
+	Utility::WrapAngle(m_yaw += aTurn * m_cameraTransitionSpeed);
+}

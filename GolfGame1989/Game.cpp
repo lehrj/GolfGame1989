@@ -1536,16 +1536,83 @@ void Game::DrawStartScreen()
     m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
-void Game::DrawShotAim()
+void Game::DrawShotAimArrow()
 {
     const float line = .25f;
+    const float aimWidth = .02f;
+    const float aimHeight = 0.0f;
+    const float centerIndent = .15f;
     DirectX::SimpleMath::Vector3 aimLine = DirectX::SimpleMath::Vector3(line, 0.0f, 0.0f);
+    DirectX::SimpleMath::Vector3 aimLineLeft = DirectX::SimpleMath::Vector3(0.05f, 0.0f, -aimWidth);
+    DirectX::SimpleMath::Vector3 aimLineRight = DirectX::SimpleMath::Vector3(0.05f, 0.0f, aimWidth);
     aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+    aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+    aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+        
     aimLine += pGolf->GetShotStartPos();
-    VertexPositionColor origin(pGolf->GetShotStartPos(), Colors::Red);
-    VertexPositionColor aimPoint(aimLine, Colors::Red);
+    aimLineLeft += pGolf->GetShotStartPos();
+    aimLineRight += pGolf->GetShotStartPos();
 
-    m_batch->DrawLine(origin, aimPoint);
+    DirectX::SimpleMath::Vector3 centerBase = DirectX::SimpleMath::Vector3(centerIndent, aimHeight, 0.0f);
+    centerBase = DirectX::SimpleMath::Vector3::Transform(centerBase, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+    centerBase += pGolf->GetShotStartPos();
+
+    VertexPositionColor origin(centerBase, Colors::Red);
+
+
+    VertexPositionColor aimPoint(aimLine, Colors::Red);
+    VertexPositionColor aimBaseLeft(aimLineLeft, Colors::Red);
+
+    VertexPositionColor aimBaseRight(aimLineRight, Colors::DarkRed);
+
+    VertexPositionColor originRight = origin;
+    originRight.color.x = 0.5450980663F;
+    VertexPositionColor aimPointRight = aimPoint;
+    aimPointRight.color.x = 0.5450980663F;
+
+
+    //origin.color.w = .0f;
+    //origin.color.y = 1;
+    //originRight.color.w = .0f;
+
+    if (pPlay->GetShotDirection() <= 0.0)
+    {
+        m_batch->DrawTriangle(aimPoint, origin, aimBaseLeft);
+        m_batch->DrawTriangle(aimPointRight, originRight, aimBaseRight);
+    }
+    else
+    {
+        m_batch->DrawTriangle(aimPointRight, originRight, aimBaseRight);
+        m_batch->DrawTriangle(aimPoint, origin, aimBaseLeft);
+    }
+
+}
+
+void Game::DrawShotAimCone()
+{
+    const float width = .015f;
+    const float length = .25f;
+    const float indent = .18f;
+    DirectX::SimpleMath::Vector3 right = DirectX::SimpleMath::Vector3(length, 0.0f, width);
+    DirectX::SimpleMath::Vector3 left = DirectX::SimpleMath::Vector3(length, 0.0f, -width);
+    DirectX::SimpleMath::Vector3 center = DirectX::SimpleMath::Vector3(length - indent, 0.0f, 0.0f);
+    
+    DirectX::SimpleMath::Matrix rotationMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
+    right = DirectX::SimpleMath::Vector3::Transform(right, rotationMat);
+    left = DirectX::SimpleMath::Vector3::Transform(left, rotationMat);
+    center = DirectX::SimpleMath::Vector3::Transform(center, rotationMat);
+
+    right += pGolf->GetShotStartPos();
+    left += pGolf->GetShotStartPos();
+    center += pGolf->GetShotStartPos();
+
+    VertexPositionColor origin(pGolf->GetShotStartPos(), Colors::White);
+    VertexPositionColor rightLine(right, Colors::White);
+    VertexPositionColor leftLine(left, Colors::White);
+    VertexPositionColor centerLine(center, Colors::Transparent);
+
+    m_batch->DrawTriangle(origin, rightLine, centerLine);
+    m_batch->DrawTriangle(origin, leftLine, centerLine);
 }
 
 void Game::DrawShotTimerUI()
@@ -1903,6 +1970,8 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
+        //DrawShotAimCone();
+        //DrawShotAimArrow();
         DrawWorld();
 
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
@@ -1919,7 +1988,8 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             DrawCameraFocus();
-            DrawShotAim();
+            DrawShotAimCone();
+            //DrawShotAimArrow();
         }
     }
 
@@ -2228,7 +2298,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.OemCloseBrackets)
     {
-        pGolf->CycleNextClub(true);
+        pGolf->CycleNextClub(true);        
     }
     if (kb.D)
     {
@@ -2318,10 +2388,12 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (kb.OemPeriod)
     {
         pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()));
+        pCamera->YawSpin(static_cast<float>(-aTimer.GetElapsedSeconds()));
     }
     if (kb.OemComma)
     {
         pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()));
+        pCamera->YawSpin(static_cast<float>(aTimer.GetElapsedSeconds()));
     }
 
     auto mouse = m_mouse->GetState();

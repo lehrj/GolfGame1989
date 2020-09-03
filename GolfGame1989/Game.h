@@ -61,7 +61,8 @@ private:
     void DrawPowerBarUI();
     void DrawProjectile();
     void DrawProjectileRealTime();
-    void DrawShotAim();
+    void DrawShotAimArrow();
+    void DrawShotAimCone();
     void DrawShotTimerUI();
     void DrawStartScreen();
     void DrawSwing();
