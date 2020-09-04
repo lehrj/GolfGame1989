@@ -26,7 +26,7 @@ public:
     void SetPower();
     void StartSwing();
     void Swing();
-    void TurnShotAim(double aTurn);
+    void TurnShotAim(double aTurn, float aTurnRate);
     bool UpdateSwing();
     void UpdateSwingState();
 

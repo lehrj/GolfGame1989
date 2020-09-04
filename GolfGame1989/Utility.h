@@ -16,6 +16,7 @@ public:
         double angleY;
         double angleZ;
         double directionDegrees = 0.0;
+        double directionRads = 0.0;
         double mass;
         double cor;
         double impactMissOffSet;
@@ -33,6 +34,7 @@ public:
         aImpact.angleY = 0.0;
         aImpact.angleZ = 0.0;
         aImpact.directionDegrees = 0.0;
+        aImpact.directionRads = 0.0;
         aImpact.mass = 0.0;
         aImpact.impactMissOffSet = 0.0;
         aImpact.power = 0.0;

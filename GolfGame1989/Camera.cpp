@@ -485,3 +485,22 @@ void Camera::YawSpin(float aTurn)
 {
 	Utility::WrapAngle(m_yaw += aTurn * m_cameraTransitionSpeed);
 }
+
+void Camera::TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint)
+{
+	DirectX::SimpleMath::Vector3 updateTarget = m_target;
+	DirectX::SimpleMath::Vector3 updateCamPos = m_position;
+
+	updateTarget -= aCenterPoint;
+	updateCamPos -= aCenterPoint;
+
+	DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn * m_aimTurnRate);
+	updateTarget = DirectX::SimpleMath::Vector3::Transform(updateTarget, rotMatrix);
+	updateCamPos = DirectX::SimpleMath::Vector3::Transform(updateCamPos, rotMatrix);
+
+	updateTarget += aCenterPoint;
+	updateCamPos += aCenterPoint;
+	
+	m_target = updateTarget;
+	m_position = updateCamPos;
+}

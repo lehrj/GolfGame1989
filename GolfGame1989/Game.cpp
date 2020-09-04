@@ -1988,8 +1988,8 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             DrawCameraFocus();
-            DrawShotAimCone();
-            //DrawShotAimArrow();
+            //DrawShotAimCone();
+            DrawShotAimArrow();
         }
     }
 
@@ -2387,13 +2387,16 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.OemPeriod)
     {
-        pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()));
-        pCamera->YawSpin(static_cast<float>(-aTimer.GetElapsedSeconds()));
+        pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
+        //pCamera->YawSpin(static_cast<float>(-aTimer.GetElapsedSeconds()));
+        pCamera->TurnAroundPoint(static_cast<float>(-aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
     }
     if (kb.OemComma)
     {
-        pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()));
-        pCamera->YawSpin(static_cast<float>(aTimer.GetElapsedSeconds()));
+        pCamera->TurnAroundPoint(static_cast<float>(aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
+        pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
+        //pCamera->YawSpin(static_cast<float>(aTimer.GetElapsedSeconds()));
+        
     }
 
     auto mouse = m_mouse->GetState();

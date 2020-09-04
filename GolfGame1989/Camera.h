@@ -21,9 +21,9 @@ public:
     Camera(int aWidth, int aHeight);
 
     CameraState GetCameraState() const { return m_cameraState; };
+    float GetAimTurnRate() const { return m_aimTurnRate; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
-
     DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Vector3 GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
@@ -68,6 +68,7 @@ public:
     DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
 
     void YawSpin(float aTurn);
+    void TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
   
 private:
     void InitializeOrthoganalMatrix(); //Pavel
@@ -99,6 +100,7 @@ private:
 
     const float                     m_posTravelSpeed = 0.2f;
     const float                     m_rotationTravelSpeed = 1.4f;
+    const float                     m_aimTurnRate = 0.9f;
 
     bool                            m_isCameraAtDestination;
 

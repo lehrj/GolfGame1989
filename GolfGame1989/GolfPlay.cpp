@@ -135,9 +135,15 @@ void GolfPlay::StartSwing()
     m_isSwingStart = true;
 }
 
-void GolfPlay::TurnShotAim(double aTurn)
+void GolfPlay::TurnShotAim(double aTurn, float aTurnRate)
 {
-    m_impactData.directionDegrees += aTurn * m_turnRate;
+    double turnInRadians = Utility::ToRadians(aTurn) * (aTurnRate * 57.2958);
+    //double turnInRadians = Utility::ToRadians(aTurn) * 113.0;
+    double testDeg = aTurn * aTurnRate;
+    double testRad = Utility::ToDegrees(turnInRadians);
+
+    m_impactData.directionDegrees += Utility::ToDegrees(turnInRadians);
+    //m_impactData.directionDegrees += aTurn * m_turnRate;
 
     // wrap angle
     if (m_impactData.directionDegrees > 180.0)
