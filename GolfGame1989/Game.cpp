@@ -1540,7 +1540,7 @@ void Game::DrawShotAimArrow()
 {
     const float line = .25f;
     const float aimWidth = .02f;
-    const float aimHeight = 0.0f;
+    const float aimHeight = 0.01f;
     const float centerIndent = .15f;
     DirectX::SimpleMath::Vector3 aimLine = DirectX::SimpleMath::Vector3(line, 0.0f, 0.0f);
     DirectX::SimpleMath::Vector3 aimLineLeft = DirectX::SimpleMath::Vector3(0.05f, 0.0f, -aimWidth);
@@ -1548,6 +1548,10 @@ void Game::DrawShotAimArrow()
     aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+
+    //aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
+    //aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
+    //aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
         
     aimLine += pGolf->GetShotStartPos();
     aimLineLeft += pGolf->GetShotStartPos();
@@ -1555,6 +1559,7 @@ void Game::DrawShotAimArrow()
 
     DirectX::SimpleMath::Vector3 centerBase = DirectX::SimpleMath::Vector3(centerIndent, aimHeight, 0.0f);
     centerBase = DirectX::SimpleMath::Vector3::Transform(centerBase, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
+    //centerBase = DirectX::SimpleMath::Vector3::Transform(centerBase, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
     centerBase += pGolf->GetShotStartPos();
 
     VertexPositionColor origin(centerBase, Colors::Red);
@@ -1626,6 +1631,8 @@ void Game::DrawSwing()
 {
     std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
 
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
+
     if (angles.size() > 1)
     {
         DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
@@ -1666,6 +1673,12 @@ void Game::DrawSwing()
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+
+            // Rotate to point swing draw in direction of swing aim
+            theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
+            beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
+
+
             theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
             beta += theta;
             VertexPositionColor shoulder(origin, shoulderColor);
@@ -1973,6 +1986,8 @@ void Game::Render()
         //DrawShotAimCone();
         //DrawShotAimArrow();
         DrawWorld();
+        DrawShotAimCone();
+        DrawShotAimArrow();
 
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {
@@ -1988,8 +2003,6 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             DrawCameraFocus();
-            //DrawShotAimCone();
-            DrawShotAimArrow();
         }
     }
 
@@ -2362,8 +2375,13 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             {
                 pCamera->SetCameraStartPos(pCamera->GetPos());
                 pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+                //pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), Utility::ToRadians(pPlay->GetShotDirection())));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
                 pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+                //pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), Utility::ToRadians(pPlay->GetShotDirection())));
+
+                pCamera->TurnEndPosAroundPoint(Utility::ToRadians(pPlay->GetShotDirection()), pGolf->GetShotStartPos());
+
                 pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
             }
             pPlay->UpdateSwingState();

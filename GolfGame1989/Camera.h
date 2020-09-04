@@ -69,7 +69,8 @@ public:
 
     void YawSpin(float aTurn);
     void TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
-  
+    void TurnEndPosAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
+
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
@@ -127,7 +128,7 @@ private:
     DirectX::SimpleMath::Vector3    m_cameraEndPos;
     DirectX::SimpleMath::Vector3    m_targetStartPos;
     DirectX::SimpleMath::Vector3    m_targetEndPos;
-    const float                     m_cameraTransitionSpeed = .5f;
+    const float                     m_cameraTransitionSpeed = .9f;
     DX::StepTimer                   m_cameraTimer;
 };
 

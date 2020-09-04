@@ -495,6 +495,7 @@ void Camera::TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPo
 	updateCamPos -= aCenterPoint;
 
 	DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn * m_aimTurnRate);
+	//DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
 	updateTarget = DirectX::SimpleMath::Vector3::Transform(updateTarget, rotMatrix);
 	updateCamPos = DirectX::SimpleMath::Vector3::Transform(updateCamPos, rotMatrix);
 
@@ -503,4 +504,24 @@ void Camera::TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPo
 	
 	m_target = updateTarget;
 	m_position = updateCamPos;
+}
+
+void Camera::TurnEndPosAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint)
+{
+	DirectX::SimpleMath::Vector3 updateTarget = m_targetEndPos; //m_targetEndPos;
+	DirectX::SimpleMath::Vector3 updateCamPos = m_cameraEndPos; //m_cameraEndPos
+
+	updateTarget -= aCenterPoint;
+	updateCamPos -= aCenterPoint;
+
+	DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
+	//DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
+	updateTarget = DirectX::SimpleMath::Vector3::Transform(updateTarget, rotMatrix);
+	updateCamPos = DirectX::SimpleMath::Vector3::Transform(updateCamPos, rotMatrix);
+
+	updateTarget += aCenterPoint;
+	updateCamPos += aCenterPoint;
+
+	m_targetEndPos = updateTarget;
+	m_cameraEndPos = updateCamPos;
 }

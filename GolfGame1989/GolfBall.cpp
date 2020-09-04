@@ -354,11 +354,21 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     m_ball.q.velocity.y = vBall.y;
     m_ball.q.velocity.z = vBall.z;
 
-    float shotDirection = aImpactData.directionDegrees;
+    /*
+    double direction = aImpactData.directionDegrees;
+    if (direction > 90.0 || direction < -90.0)
+    {
+        m_ball.rotationAxis.z = m_ball.rotationAxis.z * -1;
+    }
+    */
 
     // Turn velocity and axis of rotation to aimed direction
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));    
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
+       
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
+    //m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
+
 }
 
 void GolfBall::PushFlightData()
@@ -602,7 +612,7 @@ void GolfBall::SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord)
     m_landingCordinates = aCord;
 }
 
-void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector4 aAxis)
+void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector3 aAxis)
 {
     m_ball.rotationAxis.Normalize();
     float spinTotal = abs(aAxis.x) + abs(aAxis.y) + abs(aAxis.z);

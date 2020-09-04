@@ -144,7 +144,8 @@ void GolfPlay::TurnShotAim(double aTurn, float aTurnRate)
 
     m_impactData.directionDegrees += Utility::ToDegrees(turnInRadians);
     //m_impactData.directionDegrees += aTurn * m_turnRate;
-
+    //Utility::WrapAngle(m_impactData.directionDegrees);
+    
     // wrap angle
     if (m_impactData.directionDegrees > 180.0)
     {
@@ -154,6 +155,7 @@ void GolfPlay::TurnShotAim(double aTurn, float aTurnRate)
     {
         m_impactData.directionDegrees += 360.0;
     }
+    
 }
 
 bool GolfPlay::UpdateSwing()
