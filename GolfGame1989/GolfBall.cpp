@@ -27,6 +27,7 @@ void GolfBall::LandProjectile()
 {
     double direction = GetImpactDirection();
     double impactAngle = GetImpactAngle();
+    double directionDeg = Utility::ToDegrees(direction);
 
     impactAngle = Utility::ToRadians(impactAngle);
     double impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
@@ -143,7 +144,9 @@ void GolfBall::LandProjectile()
     //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(180.0f)));
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
     //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
@@ -249,13 +252,8 @@ void GolfBall::LaunchProjectile()
         SetLandingSpinRate(m_ball.omega);
         
         ++m_bounceCount;
-        
-        double angle1 = GetImpactAngle();
 
         LandProjectile();
-
-        double angle2 = GetImpactAngle();
-        double angle2post = angle2 - 90.0;
 
         ++count;
         if (m_ball.q.velocity.y < 3.9 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
@@ -657,9 +655,23 @@ double GolfBall::GetImpactDirection() const
     DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
 
     double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
+       
     if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
     {
         direction = -direction;
+    }
+
+    if (direction < Utility::ToRadians(-90.0f))
+    {
+        //direction = -direction;
+        int test = 0;
+    }
+    if (direction > Utility::ToRadians(90.0f))
+    {
+        
+        //direction = direction - Utility::ToRadians(90.0f);
+        direction = direction - Utility::ToRadians(180.0f);
+        //Utility::WrapAngle(direction);
     }
 
     return direction;
