@@ -6,6 +6,8 @@ class GolfPlay
 public:
     GolfPlay();
 
+    void DebugShot();
+
     double GetBackswingSet() const { return m_impactData.power; };
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() const { return m_impactData; };

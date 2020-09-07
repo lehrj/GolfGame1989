@@ -170,7 +170,8 @@ void GolfBall::RollBall()
     directionVec.Normalize();
 
     int i = 0;
-    while (m_ball.q.velocity.x > stopTolerance && i < overflowTolerance)
+
+    while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
     {
         double velocity = m_ball.q.velocity.Length();
 

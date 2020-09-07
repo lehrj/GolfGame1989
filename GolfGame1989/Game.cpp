@@ -2387,6 +2387,10 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             pPlay->UpdateSwingState();
         }
     }
+    if (m_kbStateTracker.pressed.Z)
+    {
+        pPlay->DebugShot();
+    }
     if (m_kbStateTracker.pressed.T)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);

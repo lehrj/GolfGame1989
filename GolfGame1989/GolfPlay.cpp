@@ -19,6 +19,21 @@ void GolfPlay::BuildDebugData()
     m_debugData.push_back("m_sliceRate = " + std::to_string(m_sliceRate));
 }
 
+// set shot power to 100% and impact to perfect for debuging
+void GolfPlay::DebugShot()
+{
+    m_impactData.power = 100.0;
+    m_swingPower = 100.0;
+    m_isOnDownSwing = true;
+    m_isSwingPowerSet = true;
+
+    m_impactData.impactMissOffSet = 0.0;
+    m_swingImpactProcessed = 0.0;
+    m_swingImpact = 0.0;
+    m_isSwingStart = false;
+    m_isSwingUpdateReady = true;
+}
+
 std::vector<std::string> GolfPlay::GetDebugData()
 { 
     BuildDebugData();
