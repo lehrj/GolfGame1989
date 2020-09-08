@@ -42,9 +42,19 @@ Power bar tolerance update will penalize very early or late impacts with “skul
 
 Spacebar : Triple click gameplay button. Start swing, set power, and set impact
 
-V : Reset swing at tee position
+, : Turn shot aim left
 
-B : Reset swing to last ball position
+. : Turn shot aim right
+
+] : Select next club
+
+[ : Select previous club
+
+1-0 : Select one of the first 10 clubs in the bag as related to key
+
+V : Reset swing at tee position and set camera to aiming postion
+
+B : Reset swing to last ball position and set camera to aiming position
 
 Z : Debug test swing, 100% power & perfect impact
 
