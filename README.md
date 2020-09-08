@@ -38,7 +38,7 @@ Future update will allow the adjustment of the direction of travel of the club�
 Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. 
 
 
-### Controls
+### Controls:
 
 Spacebar : Triple click gameplay button. Start swing, set power, and set impact
 
@@ -70,6 +70,7 @@ Mouse Button 1, hold : While in first person camera turn camera
 
 
 
+
 ### Works Cited:
 
 Bourg and Baywalec. (2013). Physics for Game Developers. CA USA. O’Reilly
@@ -85,6 +86,7 @@ Penner, A. R. (2003). The Physics of Golf, Reports on Progress in Physics vol 66
 Penner, A.R. (2002). The Run of a Golf Ball, NRC Research Press Web Site http://cjp.nrc.ca/, p 931 - 940
 
 Roh, W.J., Lee, C.W. (2010). Golf Ball Landing, Bounce and Roll on Turf. 8th Conference of the International Sports Engineering Association. P 3237 - 3242
+
 
 ### Music Credits:
 
