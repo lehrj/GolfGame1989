@@ -35,6 +35,10 @@ void GolfBall::LandProjectile()
     impactSpinRate = impactSpinRate * -1;
     //impactSpinRate = impactSpinRate * 9.5493;
     //impactSpinRate = impactSpinRate / m_ball.radius;
+
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+
+
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
 
@@ -153,6 +157,7 @@ void GolfBall::LandProjectile()
     m_ball.omega = omegaR;
     //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
+
 }
 
 void GolfBall::RollBall()
@@ -329,23 +334,33 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     //DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
     DirectX::SimpleMath::Vector3 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
-
+    
+    /*
     double absOmegaBall = sqrt((omegaBall.x * omegaBall.x)
         + (omegaBall.y * omegaBall.y)
         + (omegaBall.z * omegaBall.z));
     double absvBall = sqrt((vBall.x * vBall.x)
         + (vBall.y * vBall.y)
         + (vBall.z * vBall.z));
+    */
 
-    double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
-    DirectX::SimpleMath::Vector3 fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall)) 
-        * (unitFaceNormal.Cross(unitVHead));
+    DirectX::SimpleMath::Vector3 absOmegaBall = DirectX::XMVectorAbs(omegaBall);
+    DirectX::SimpleMath::Vector3 absvBall = DirectX::XMVectorAbs(vBall);
 
-    DirectX::SimpleMath::Vector3 normfManus = fMangus;
-    DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;
+    //double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
+    //DirectX::SimpleMath::Vector3 testCL2 = DirectX::XMVectorSqrt((0.0025 + 0.36) * ((m_ball.radius * absOmegaBall) / absvBall));
 
-    normfManus.Normalize();
-    normOmegaBall.Normalize();
+
+    //DirectX::SimpleMath::Vector3 fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall))
+    //    * (unitFaceNormal.Cross(unitVHead));
+
+    //DirectX::SimpleMath::Vector3 fMangus = ((.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall)) * (unitFaceNormal.Cross(unitVHead));
+
+    //DirectX::SimpleMath::Vector3 normfManus = fMangus;
+    //DirectX::SimpleMath::Vector3 normOmegaBall = omegaBall;
+
+    //normfManus.Normalize();
+    //normOmegaBall.Normalize();
 
     m_ball.omega = omega;
    
@@ -368,6 +383,8 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
     //m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
 
+    //m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Zero;
+    //m_ball.omega = 0.0;
 }
 
 void GolfBall::PushFlightData()
@@ -632,7 +649,16 @@ void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector3 aAxis)
 
 void GolfBall::UpdateSpinRate(double aTimeDelta)
 {
-    m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
+    // Slow speed to approch zero for eithe positive or negative spin rates
+    if (m_ball.omega < 0.0)
+    {
+        m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
+    }
+    else
+    {
+        m_ball.omega *= 1.0 + (aTimeDelta * m_spinRateDecay);
+    }
+    //m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
 double GolfBall::GetImpactAngle() const
@@ -653,6 +679,7 @@ double GolfBall::GetImpactAngle() const
 double GolfBall::GetImpactDirection() const
 {
     DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
+    //DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
     DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
 
     double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
@@ -662,18 +689,9 @@ double GolfBall::GetImpactDirection() const
         direction = -direction;
     }
 
-    if (direction < Utility::ToRadians(-90.0f))
-    {
-        //direction = -direction;
-        int test = 0;
-    }
-    if (direction > Utility::ToRadians(90.0f))
-    {
-        
-        //direction = direction - Utility::ToRadians(90.0f);
-        direction = direction - Utility::ToRadians(180.0f);
-        //Utility::WrapAngle(direction);
-    }
+    double testWrapDirDeg = Utility::WrapAngle(direction);
+    testWrapDirDeg = Utility::ToDegrees(testWrapDirDeg);
+    double testDirectionDeg = Utility::ToDegrees(direction);
 
     return direction;
 }
