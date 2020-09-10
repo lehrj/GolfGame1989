@@ -36,7 +36,7 @@ void GolfBall::LandProjectile()
     //impactSpinRate = impactSpinRate * 9.5493;
     //impactSpinRate = impactSpinRate / m_ball.radius;
 
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(direction)));
 
 
     double vix = m_ball.q.velocity.x;
@@ -157,7 +157,6 @@ void GolfBall::LandProjectile()
     m_ball.omega = omegaR;
     //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
-
 }
 
 void GolfBall::RollBall()
