@@ -36,6 +36,10 @@ public:
     void FireProjectile(Utility::ImpactData aImpact);
 
     int GetBounceCount() const { return m_bounceCount; };
+    double GetDebugValue01() const { return m_debugValue01; };
+    double GetDebugValue02() const { return m_debugValue02; };
+    double GetDebugValue03() const { return m_debugValue03; };
+    double GetDebugValue04() const { return m_debugValue04; };
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
     DirectX::SimpleMath::Vector3 GetLandingCordinates2() const { return m_landingImpactCordinates; };
     double GetMaxHeight() const { return m_maxHeight; };   
@@ -84,6 +88,11 @@ private:
     double                                      m_maxHeight;
     DirectX::SimpleMath::Vector3                m_shotOrigin;
     int                                         m_bounceCount = 0;
+
+    double                                      m_debugValue01 = 0.0;
+    double                                      m_debugValue02 = 0.0;
+    double                                      m_debugValue03 = 0.0;
+    double                                      m_debugValue04 = 0.0;
 };
 
 

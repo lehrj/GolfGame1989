@@ -50,6 +50,7 @@ public:
 
     void InputData();
     void LoadEnvironment(const int aIndex);
+    void ResetBallData() { pBall->ResetBallData(); };
     void SelectInputClub(int aInput);
 
     void SetBallPosition(const DirectX::SimpleMath::Vector3 aBallPos);

@@ -101,7 +101,7 @@ private:
 
     const float                     m_posTravelSpeed = 0.4f;
     const float                     m_rotationTravelSpeed = 1.4f;
-    const float                     m_aimTurnRate = 0.9f;
+    const float                     m_aimTurnRate = 1.0f;
 
     bool                            m_isCameraAtDestination;
 

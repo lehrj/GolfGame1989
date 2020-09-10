@@ -75,7 +75,7 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
     inVal.str(std::string());
     inVal << std::fixed << std::to_string(pBall->GetLandingSpinRate());
-    //m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
+    m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
     inVal.str(std::string());
     inVal << std::fixed << pBall->GetShotDistance();
     m_uiStrings.push_back("Travel Distance = " + inVal.str() + " meters");
@@ -90,6 +90,12 @@ void Golf::BuildUIstrings()
     //m_uiStrings.push_back("Landing Height = " + inVal.str() + " meters");
     //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
+
+    
+    m_uiStrings.push_back("Ball Debug 1 = " + std::to_string(pBall->GetDebugValue01()));
+    m_uiStrings.push_back("Ball Debug 2 = " + std::to_string(pBall->GetDebugValue02()));
+    m_uiStrings.push_back("Ball Debug 3 = " + std::to_string(pBall->GetDebugValue03()));
+    m_uiStrings.push_back("Ball Debug 4 = " + std::to_string(pBall->GetDebugValue04()));
 }
 
 void Golf::BuildTrajectoryData()

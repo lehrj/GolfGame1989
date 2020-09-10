@@ -259,6 +259,11 @@ void GolfBall::LaunchProjectile()
         
         ++m_bounceCount;
 
+        if (m_debugValue01 == 0.0)
+        {
+            m_debugValue01 = m_ball.omega;
+        }
+
         LandProjectile();
 
         ++count;
@@ -279,6 +284,13 @@ void GolfBall::LaunchProjectile()
 
 void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 { 
+    //  Reset ball rotional axis and spin rate prior 
+    //  prepping new launch data
+    m_ball.rotationAxis.x = 0.0;
+    m_ball.rotationAxis.y = 0.0;
+    m_ball.rotationAxis.z = 1.0;
+    m_ball.omega = 0.0;
+
     //  Convert the loft angle from degrees to radians and
     //  assign values to some convenience variables.
     double loft = Utility::ToRadians(aImpactData.angleY);
@@ -315,8 +327,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     //double vy0 = sinL * vbp + cosL * vbn;
     //double vz0 = 0.0;
 
-    //DirectX::SimpleMath::Vector4 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
-    //    + (static_cast<float>(((2 * clubMass) / (7 * (clubMass + ballMass)))) * aImpactData.vHeadParallel);
     DirectX::SimpleMath::Vector3 vBall = (static_cast<float>((((1.0 + e) * clubMass) / (clubMass + ballMass))) * aImpactData.vHeadNormal)
         + (static_cast<float>(((2 * clubMass) / (7 * (clubMass + ballMass)))) * aImpactData.vHeadParallel);
 
@@ -325,14 +335,12 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     DirectX::SimpleMath::Vector3 unitFaceNormal = aImpactData.vFaceNormal;
     unitFaceNormal.Normalize();
 
-    //DirectX::SimpleMath::Vector4 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
     DirectX::SimpleMath::Vector3 crossVheadvFace = unitVHead.Cross(unitFaceNormal);
 
     double absVhP = sqrt((aImpactData.vHeadParallel.x * aImpactData.vHeadParallel.x)
         + (aImpactData.vHeadParallel.y * aImpactData.vHeadParallel.y) 
         + (aImpactData.vHeadParallel.z * aImpactData.vHeadParallel.z));
 
-    //DirectX::SimpleMath::Vector4 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
     DirectX::SimpleMath::Vector3 omegaBall = static_cast<float>(((5.0 * absVhP) / (7.0 * m_ball.radius))) * crossVheadvFace;
     
     /*
@@ -349,7 +357,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     //double cL = -0.05 + sqrt(0.0025 + 0.36 * ((m_ball.radius * absOmegaBall) / absvBall));
     //DirectX::SimpleMath::Vector3 testCL2 = DirectX::XMVectorSqrt((0.0025 + 0.36) * ((m_ball.radius * absOmegaBall) / absvBall));
-
 
     //DirectX::SimpleMath::Vector3 fMangus = (static_cast<float>(.5f * m_ball.airDensity * m_ball.area * cL * absvBall * absvBall))
     //    * (unitFaceNormal.Cross(unitVHead));
@@ -368,23 +375,9 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     m_ball.q.velocity.y = vBall.y;
     m_ball.q.velocity.z = vBall.z;
 
-    /*
-    double direction = aImpactData.directionDegrees;
-    if (direction > 90.0 || direction < -90.0)
-    {
-        m_ball.rotationAxis.z = m_ball.rotationAxis.z * -1;
-    }
-    */
-
     // Turn velocity and axis of rotation to aimed direction
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));    
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
-       
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
-    //m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(aImpactData.directionDegrees));
-
-    //m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Zero;
-    //m_ball.omega = 0.0;
 }
 
 void GolfBall::PushFlightData()
@@ -596,6 +589,10 @@ void GolfBall::ResetBallData()
     m_ball.q.velocity.x = 0.0;
     m_ball.q.velocity.y = 0.0;
     m_ball.q.velocity.z = 0.0;
+    m_debugValue01 = 0.0;
+    m_debugValue02 = 0.0;
+    m_debugValue03 = 0.0;
+    m_debugValue04 = 0.0;
 }
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)

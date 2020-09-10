@@ -1982,8 +1982,6 @@ void Game::Render()
 
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawShotAimCone();
-        //DrawShotAimArrow();
         DrawWorld();
         DrawShotAimCone();
         DrawShotAimArrow();
@@ -1993,11 +1991,11 @@ void Game::Render()
             DrawSwing();
         }
 
-        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
+        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PRESWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {         
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
-            pCamera->SetTargetPos(pGolf->GetBallPosition());
+            //pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
         if (m_isInDebugMode == true)
         {
@@ -2386,8 +2384,9 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             pPlay->UpdateSwingState();
         }
     }
-    if (m_kbStateTracker.pressed.Z)
+    if (m_kbStateTracker.released.Z)
     {
+        m_kbStateTracker.Reset();
         pPlay->DebugShot();
     }
     if (m_kbStateTracker.pressed.T)
@@ -2409,15 +2408,24 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (kb.OemPeriod)
     {
         pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
-        //pCamera->YawSpin(static_cast<float>(-aTimer.GetElapsedSeconds()));
         pCamera->TurnAroundPoint(static_cast<float>(-aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
     }
     if (kb.OemComma)
     {
-        pCamera->TurnAroundPoint(static_cast<float>(aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
         pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
-        //pCamera->YawSpin(static_cast<float>(aTimer.GetElapsedSeconds()));
-        
+        pCamera->TurnAroundPoint(static_cast<float>(aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());    
+    }
+    if (m_kbStateTracker.pressed.X) // Debug to turn aim at a set rate
+    {
+        const double turnAngle = 90.0;
+        const float turnRate = 0.0174532862792735;
+
+        pPlay->TurnShotAim(turnAngle, turnRate);
+        pCamera->TurnAroundPoint(Utility::ToRadians(turnAngle), pGolf->GetShotStartPos());
+    }
+    if (m_kbStateTracker.pressed.N)
+    {
+        pGolf->ResetBallData();
     }
 
     auto mouse = m_mouse->GetState();
@@ -2425,7 +2433,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
     {
         if (mouse.positionMode == Mouse::MODE_RELATIVE)
-        //if (mouse.positionMode == Mouse::MODE_ABSOLUTE)
         {
             const float ROTATION_GAIN = 0.004f;
             DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f) * ROTATION_GAIN;
