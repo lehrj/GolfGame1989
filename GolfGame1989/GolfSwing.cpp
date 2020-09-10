@@ -221,7 +221,7 @@ void GolfSwing::ResetAlphaBeta()
     // dependant variables 
     m_armFirstMoment = (m_armMass * m_armLength * m_armBalancePoint); // First moment of the arm rod about the shoulder axis kg m
     m_club.firstMoment = (m_club.mass * m_club.length * m_club.balancePoint); // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    m_shoulderHorizAccel = 0.1 * m_gravity; // Horizontal acceleration of the shoulder in  m/s^2
+    m_shoulderHorizAccel = 0.1 * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
     m_gamma = Utility::ToRadians(135.0);
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
@@ -291,14 +291,8 @@ void GolfSwing::SetClubMass(double aMass)
 void GolfSwing::SetDefaultSwingValues(double aGravity)
 {
     Utility::ZeroImpactData(m_impactData);
-    if (aGravity < 0.0) // ensuring that we make gravity pointed down since golf doesn't work if its positive
-    {
-        m_gravity = -aGravity; // Gravity's acceleration inverted  because the downswing is working in gravity's direction m/s^2 
-    }
-    else
-    {
-        m_gravity = aGravity;
-    }
+
+    m_gravity = VerifySwingGravityDirection(aGravity);
 
     // Input Variables
     m_alpha = 0.0; // Angle swept by arm rod from initial backswing position in radians
@@ -319,14 +313,14 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     // dependant variables 
     m_armFirstMoment = (m_armMass * m_armLength * m_armBalancePoint); // First moment of the arm rod about the shoulder axis kg m
     m_club.firstMoment = (m_club.mass * m_club.length * m_club.balancePoint); // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    m_shoulderHorizAccel = 0.1 * m_gravity; // Horizontal acceleration of the shoulder in  m/s^2
+    m_shoulderHorizAccel = 0.1 * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
     m_gamma = Utility::ToRadians(135.0);
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
 void GolfSwing::SetShoulderAccel(double aShouldAcell)
 {
-    m_shoulderHorizAccel = aShouldAcell * m_gravity;
+    m_shoulderHorizAccel = aShouldAcell * VerifySwingGravityDirection(m_gravity);
 }
 
 void GolfSwing::SetQalpha(double aQalpha)
@@ -357,7 +351,8 @@ void GolfSwing::UpdateGolfSwingValues()
 
 void GolfSwing::UpdateGravityDependants(const double aGravity)
 {
-    m_gravity = aGravity;
+    m_gravity = VerifySwingGravityDirection(aGravity);
+
     m_shoulderHorizAccel = 0.1 * m_gravity;
 }
 
@@ -370,6 +365,20 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     m_impactData.directionDegrees = aImpactData.directionDegrees;
 
     UpdateGolfSwingValues();
+}
+
+// Verify gravity direction is pointing in the right positive/negative direction for the swing equations
+double GolfSwing::VerifySwingGravityDirection(double aGravity) const
+{
+    if (aGravity < 0.0) 
+    {
+        aGravity = aGravity;
+    }
+    else
+    {
+        aGravity = -aGravity;
+    }
+    return aGravity;
 }
 
 void GolfSwing::ZeroDataForUI()

@@ -2425,6 +2425,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.N)
     {
+        pGolf->ZeroUIandRenderData();
         pGolf->ResetBallData();
     }
 

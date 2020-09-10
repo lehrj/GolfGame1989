@@ -59,6 +59,7 @@ private:
     void SetQalpha(double aQalpha);
     void SetQbeta(double aQbeta);
     void SetShoulderAccel(double aShoulderAccel);
+    double VerifySwingGravityDirection(double aGravity) const;
 
     GolfBag*                                    m_pBag;
     GolfClub                                    m_club;

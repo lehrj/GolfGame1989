@@ -40,11 +40,10 @@ public:
         aImpact.power = 0.0;
         aImpact.cor = 0.0; 
         aImpact.velocity = 0.0;
-        aImpact.vFaceNormal.Zero;
-        aImpact.vHead.Zero;
-        aImpact.vHeadNormal.Zero;
-        aImpact.vHeadParallel.Zero;
-
+        aImpact.vFaceNormal = DirectX::SimpleMath::Vector3::Zero;
+        aImpact.vHead = DirectX::SimpleMath::Vector3::Zero;
+        aImpact.vHeadNormal = DirectX::SimpleMath::Vector3::Zero;
+        aImpact.vHeadParallel = DirectX::SimpleMath::Vector3::Zero;
      };
 
     template<typename T>
