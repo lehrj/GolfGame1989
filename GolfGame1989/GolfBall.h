@@ -29,6 +29,7 @@ struct SpinProjectile
     DirectX::SimpleMath::Vector3 windSpeed;
 };
 
+// Class to handle the balls
 class GolfBall
 {
 public:

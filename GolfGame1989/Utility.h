@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector4d.h"
 
+// Class to handle miscellaneous functions and data structures needed across multiple classes
 class Utility
 {
 public:
@@ -15,17 +16,21 @@ public:
         double angleX;
         double angleY;
         double angleZ;
-        double directionDegrees = 0.0;
-        double directionRads = 0.0;
+        double directionDegrees = 0.0; // shot aim direction
+        double directionRads = 0.0; // shot aim direction
         double mass;
-        double cor;
+        double cor; // Coefficient of restitution
         double impactMissOffSet;
         double power;
         double velocity;
-        DirectX::SimpleMath::Vector3 vHead;
+        DirectX::SimpleMath::Vector3 vHead; 
         DirectX::SimpleMath::Vector3 vHeadNormal;
         DirectX::SimpleMath::Vector3 vHeadParallel;
         DirectX::SimpleMath::Vector3 vFaceNormal;
+
+        // test variables for gameplay
+        double swingPlaneAngle;
+        double ballAxisTilt;
     };
 
     static inline void ZeroImpactData(ImpactData& aImpact) 
@@ -44,6 +49,9 @@ public:
         aImpact.vHead = DirectX::SimpleMath::Vector3::Zero;
         aImpact.vHeadNormal = DirectX::SimpleMath::Vector3::Zero;
         aImpact.vHeadParallel = DirectX::SimpleMath::Vector3::Zero;
+
+        aImpact.swingPlaneAngle = 0.0;
+        aImpact.ballAxisTilt = 0.0;
      };
 
     template<typename T>

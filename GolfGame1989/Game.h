@@ -54,6 +54,7 @@ private:
 
     void DrawCameraFocus();
     void DrawFlagAndHole();
+    void DrawHydraShot();
     void DrawIntroScreen();
     void DrawMenuCharacterSelect();
     void DrawMenuEnvironmentSelect();

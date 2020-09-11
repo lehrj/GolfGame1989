@@ -5,6 +5,7 @@
 #include "Vector4d.h"
 #include "GolfCharacter.h"
 
+// Class to handle club functionality
 class GolfSwing
 {
 public:
@@ -50,6 +51,8 @@ public:
     void UpdateGolfSwingValues();
     void UpdateGravityDependants(const double aGravity);
     void UpdateImpactData(Utility::ImpactData aImpactData);
+    void UpdateImpactDataAxis(const double aAxisAngle);
+    void UpdateImpactDataPlane(const double aPlaneAngle);   
     void ZeroDataForUI();
 
 private:
@@ -94,10 +97,6 @@ private:
     double                                      m_beta_dot;
     double                                      m_beta_dotdot;
     double                                      m_clubLengthModifier = 1.0;
-    //double m_clubCoR; // club face coefficiant of restitution, aka club spring face, current USGA rules limit this to .830 in tournemnt play
-    //double m_clubFirstMoment; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    //double m_clubLength; // length of club in m
-    //double m_clubMassMoI; // Mass moment of inertia of the rod representing the club in kg m^2
     double                                      m_gamma; // 135.0 degrees in radians
     double                                      m_gravity; // Gravity's acceleration m/s^2
     double                                      m_Qalpha; // Torque applied at the shoulder to the arm rod in N m

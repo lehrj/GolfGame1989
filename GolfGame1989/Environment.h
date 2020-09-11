@@ -24,6 +24,7 @@ struct Environ
     std::string                         windZStr;
 };
 
+// Class to handle environment and gameplay world needs
 class Environment
 {
 public:

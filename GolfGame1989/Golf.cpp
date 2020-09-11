@@ -35,6 +35,95 @@ Golf::~Golf()
     delete pPlay;
 }
 
+void Golf::BuildEnvironSelectStrings()
+{
+    m_environSelectStrings.clear();
+    const int environCount = pEnvironment->GetNumerOfEnvirons();
+
+    std::vector<std::string> strVec;
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = pEnvironment->GetEnvironName(i);
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Air Density = " + pEnvironment->GetAirDensityString(i) + " kg/m^3";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Gravity = " + pEnvironment->GetGravityString(i) + " m/s^2";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Wind X = " + pEnvironment->GetWindXString(i) + " m/s ";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+    strVec.clear();
+
+    for (int i = 0; i < environCount; ++i)
+    {
+        std::string inString = "Wind Z = " + pEnvironment->GetWindZString(i) + " m/s ";
+        strVec.push_back(inString);
+    }
+    m_environSelectStrings.push_back(strVec);
+}
+
+void Golf::BuildHyrdraShotData()
+{
+    const double hydraAxisTilt = Utility::ToRadians(15.0);
+    const double hydraPlaneTurn = Utility::ToRadians(15.0);
+
+    m_hydraData.clear();
+
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+
+    InputData();
+    ScaleCordinates();
+
+    int i = 0;
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    pSwing->UpdateImpactDataPlane(-hydraPlaneTurn * 2);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraData[i] = m_shotPath;
+}
+
+void Golf::BuildTrajectoryData()
+{
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+
+    InputData();
+    ScaleCordinates();
+}
+
 void Golf::BuildUIstrings()
 {
     m_uiStrings.clear();
@@ -96,61 +185,6 @@ void Golf::BuildUIstrings()
     m_uiStrings.push_back("Ball Debug 2 = " + std::to_string(pBall->GetDebugValue02()));
     m_uiStrings.push_back("Ball Debug 3 = " + std::to_string(pBall->GetDebugValue03()));
     m_uiStrings.push_back("Ball Debug 4 = " + std::to_string(pBall->GetDebugValue04()));
-}
-
-void Golf::BuildTrajectoryData()
-{
-    pBall->FireProjectile(pSwing->CalculateLaunchVector());
-
-    InputData();
-    ScaleCordinates();
-}
-
-void Golf::BuildEnvironSelectStrings()
-{
-    m_environSelectStrings.clear();
-    const int environCount = pEnvironment->GetNumerOfEnvirons();
-
-    std::vector<std::string> strVec;
-
-    for (int i = 0; i < environCount; ++i)
-    {
-        std::string inString = pEnvironment->GetEnvironName(i);
-        strVec.push_back(inString);
-    }
-    m_environSelectStrings.push_back(strVec);
-    strVec.clear();
-
-    for (int i = 0; i < environCount; ++i)
-    {
-        std::string inString = "Air Density = " + pEnvironment->GetAirDensityString(i) + " kg/m^3";
-        strVec.push_back(inString);
-    }
-    m_environSelectStrings.push_back(strVec);
-    strVec.clear();
-
-    for (int i = 0; i < environCount; ++i)
-    {
-        std::string inString = "Gravity = " + pEnvironment->GetGravityString(i) + " m/s^2";
-        strVec.push_back(inString);
-    }
-    m_environSelectStrings.push_back(strVec);
-    strVec.clear();
-
-    for (int i = 0; i < environCount; ++i)
-    {
-        std::string inString = "Wind X = " + pEnvironment->GetWindXString(i) + " m/s ";
-        strVec.push_back(inString);
-    }
-    m_environSelectStrings.push_back(strVec);
-    strVec.clear();
-
-    for (int i = 0; i < environCount; ++i)
-    {
-        std::string inString = "Wind Z = " + pEnvironment->GetWindZString(i) + " m/s ";
-        strVec.push_back(inString);
-    }
-    m_environSelectStrings.push_back(strVec);
 }
 
 void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)

@@ -1,6 +1,7 @@
 #pragma once
 #include "Utility.h"
 
+// Gameplay Interface class 
 class GolfPlay
 {
 public:

@@ -9,12 +9,14 @@
 #include "Utility.h"
 #include "Vector4d.h"
 
+// Class to manage interactions between game and golf physics engine
 class Golf
 {
 public:
     Golf();
     ~Golf();
- 
+    
+    void BuildHyrdraShotData();
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
     void CycleNextClub(const bool aIsCycleClubUp);
@@ -94,4 +96,6 @@ private:
 
     const DirectX::SimpleMath::Vector3          m_swingOriginOffset = DirectX::SimpleMath::Vector3(-.0087f, .04f, 0.f);
     
+    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_hydraData;
+
 };

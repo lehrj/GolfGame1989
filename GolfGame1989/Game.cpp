@@ -507,6 +507,40 @@ void Game::DrawFlagAndHole()
     }
 }
 
+void Game::DrawHydraShot()
+{
+    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    if (shotPath.size() > 1)
+    {
+        std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        int ballPosIndex = 0;
+        for (int i = 0; i < shotPath.size(); ++i)
+        {
+            DirectX::SimpleMath::Vector3 p1(prevPos);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+            VertexPositionColor aV(p1, Colors::White);
+            VertexPositionColor bV(p2, Colors::White);
+
+            if (shotTimeStep[i] < m_projectileTimer)
+            {
+                m_batch->DrawLine(aV, bV);
+                ballPosIndex = i;
+            }
+            prevPos = shotPath[i];
+        }
+        pGolf->SetBallPosition(shotPath[ballPosIndex]);
+
+        // Set camera targe on ball position if using projectile tracking camera
+        if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        {
+            pCamera->SetTargetPos(pGolf->GetBallPosition());
+        }
+    }
+}
+
 void Game::DrawIntroScreen()
 {
     float fadeDuration = 1.5f;
@@ -1995,6 +2029,8 @@ void Game::Render()
         {         
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
+            //DrawHydraShot();
+
             //pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
         if (m_isInDebugMode == true)

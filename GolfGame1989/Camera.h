@@ -3,6 +3,7 @@
 #include "StepTimer.h"
 #include "Utility.h"
 
+
 enum class CameraState
 {
     CAMERASTATE_TRANSITION,
@@ -14,6 +15,7 @@ enum class CameraState
     CAMERASTATE_TRANSTONEWSHOT
 };
 
+// Class to manage game camera
 class Camera
 {
 public:

@@ -1,5 +1,6 @@
 #pragma once
 
+// Class to handle vector needs prior to DirectX implementation, plan to remove after all functionality and data moved over to DirectX interface
 class Vector4d
 {
 public:
@@ -28,8 +29,6 @@ public:
     void SetY(const double& aY);
     void SetZ(const double& aZ);
     void SetW(const double& aW);
-
-
 
 private:
     double x;

@@ -378,8 +378,7 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees))); 
     
     // Tilt ball spin axis to curve shot, ToDo: Update from gameplay inputs
-    const float axisTilt = Utility::ToRadians(0.0);
-    m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationX(axisTilt));
+    m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationX(aImpactData.ballAxisTilt));
 
     // Turn ball spin axis to shot aim direction
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
