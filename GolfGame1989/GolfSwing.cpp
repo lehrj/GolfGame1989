@@ -118,7 +118,13 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     m_impactData.cor = m_club.coefficiantOfRestitution;
 
     // start work for switch to vector usage
+    // Change club swing path for Push/Pull effect, ToDo : update with input from gameplay mechanics
+    const double faceTurn = Utility::ToRadians(0.0);
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(faceTurn);
+
     m_impactData.vHead.x = static_cast<float>(velocityCapture);    
+
+    m_impactData.vHead = DirectX::SimpleMath::Vector3::Transform(m_impactData.vHead, rotMat);
 
     m_impactData.vFaceNormal.x = static_cast<float>(cos(Utility::ToRadians(launchAngle)));
     m_impactData.vFaceNormal.y = static_cast<float>(sin(Utility::ToRadians(launchAngle)));
@@ -127,6 +133,8 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, 
         DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(Utility::ToRadians(m_impactData.impactMissOffSet))));
+
+    m_impactData.vFaceNormal = DirectX::SimpleMath::Vector3::Transform(m_impactData.vFaceNormal, rotMat);
 
     m_impactData.vFaceNormal.Normalize();
 
