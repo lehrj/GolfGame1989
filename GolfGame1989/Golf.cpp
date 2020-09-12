@@ -84,36 +84,121 @@ void Golf::BuildEnvironSelectStrings()
 
 void Golf::BuildHyrdraShotData()
 {
-    const double hydraAxisTilt = Utility::ToRadians(15.0);
-    const double hydraPlaneTurn = Utility::ToRadians(15.0);
+    const double hydraAxisTilt = Utility::ToRadians(25.0);
+    const double hydraPlaneTurn = Utility::ToRadians(7.0);
 
     m_hydraData.clear();
+    m_hydraTimeSteps.clear();
+
+    m_hydraData.resize(9);
+    m_hydraTimeSteps.resize(9);
 
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 
     InputData();
     ScaleCordinates();
-
     int i = 0;
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();  
     m_hydraData[i] = m_shotPath;
     ++i;
 
+    // 1
     pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
+    // 2
     pSwing->UpdateImpactDataPlane(-hydraPlaneTurn * 2);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 3
+    pSwing->UpdateImpactDataPlane(hydraPlaneTurn * 2);
+    pSwing->UpdateImpactDataAxis(hydraAxisTilt);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 4
+    pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
+    //pSwing->UpdateImpactDataAxis(hydraAxisTilt);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 5
+    pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
+    //pSwing->UpdateImpactDataAxis(hydraAxisTilt);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 6
+    //pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
+    pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 7
+    pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
+    //pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    // 8
+    pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
+    //pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
+    pSwing->ResetAlphaBeta();
+    pBall->ResetBallData();
+    pBall->FireProjectile(pSwing->CalculateLaunchVector());
+    InputData();
+    ScaleCordinates();
+    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
+    m_hydraData[i] = m_shotPath;
+    ++i;
+
+    pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
+    pSwing->UpdateImpactDataAxis(hydraAxisTilt);
+   
 }
 
 void Golf::BuildTrajectoryData()
@@ -162,9 +247,9 @@ void Golf::BuildUIstrings()
     inVal.str(std::string());
     inVal << std::fixed << pBall->GetInitialSpinRate();
     m_uiStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
-    inVal.str(std::string());
-    inVal << std::fixed << std::to_string(pBall->GetLandingSpinRate());
-    m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
+    //inVal.str(std::string());
+    //inVal << std::fixed << std::to_string(pBall->GetLandingSpinRate());
+    //m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
     inVal.str(std::string());
     inVal << std::fixed << pBall->GetShotDistance();
     m_uiStrings.push_back("Travel Distance = " + inVal.str() + " meters");
@@ -180,11 +265,11 @@ void Golf::BuildUIstrings()
     //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
     //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
 
-    
-    m_uiStrings.push_back("Ball Debug 1 = " + std::to_string(pBall->GetDebugValue01()));
-    m_uiStrings.push_back("Ball Debug 2 = " + std::to_string(pBall->GetDebugValue02()));
-    m_uiStrings.push_back("Ball Debug 3 = " + std::to_string(pBall->GetDebugValue03()));
-    m_uiStrings.push_back("Ball Debug 4 = " + std::to_string(pBall->GetDebugValue04()));
+    // For use as needed for debuging
+    //m_uiStrings.push_back("Ball Debug 1 = " + std::to_string(pBall->GetDebugValue01()));
+    //m_uiStrings.push_back("Ball Debug 2 = " + std::to_string(pBall->GetDebugValue02()));
+    //m_uiStrings.push_back("Ball Debug 3 = " + std::to_string(pBall->GetDebugValue03()));
+    //m_uiStrings.push_back("Ball Debug 4 = " + std::to_string(pBall->GetDebugValue04()));
 }
 
 void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)

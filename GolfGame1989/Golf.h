@@ -17,6 +17,7 @@ public:
     ~Golf();
     
     void BuildHyrdraShotData();
+
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
     void CycleNextClub(const bool aIsCycleClubUp);
@@ -34,6 +35,10 @@ public:
     std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
+
+    std::vector<std::vector<DirectX::SimpleMath::Vector3>>& GetHydraShotPath() { return m_hydraData; };
+    std::vector<std::vector<float>>& GetHydraTimeStep() { return m_hydraTimeSteps; };
+
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
@@ -97,5 +102,6 @@ private:
     const DirectX::SimpleMath::Vector3          m_swingOriginOffset = DirectX::SimpleMath::Vector3(-.0087f, .04f, 0.f);
     
     std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_hydraData;
+    std::vector<std::vector<float>>             m_hydraTimeSteps;
 
 };

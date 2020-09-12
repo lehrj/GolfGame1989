@@ -509,31 +509,52 @@ void Game::DrawFlagAndHole()
 
 void Game::DrawHydraShot()
 {
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+    std::vector<DirectX::XMVECTORF32> lineColor;
 
-    if (shotPath.size() > 1)
+    lineColor.push_back(DirectX::Colors::AliceBlue);
+    lineColor.push_back(DirectX::Colors::CadetBlue);
+    lineColor.push_back(DirectX::Colors::CornflowerBlue);
+
+    lineColor.push_back(DirectX::Colors::Red);
+    lineColor.push_back(DirectX::Colors::OrangeRed);
+    lineColor.push_back(DirectX::Colors::DarkRed);
+
+    lineColor.push_back(DirectX::Colors::Yellow);
+    lineColor.push_back(DirectX::Colors::ForestGreen);
+    lineColor.push_back(DirectX::Colors::DarkSeaGreen);
+
+
+    std::vector<std::vector<DirectX::SimpleMath::Vector3>> hydraPath = pGolf->GetHydraShotPath();
+    //std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+
+    if (hydraPath.size() > 1)
     {
+        std::vector<std::vector<float>> hydraTimeStep = pGolf->GetHydraTimeStep();
+        //GetHydraShotPath
         std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
 
-        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
-        int ballPosIndex = 0;
-        for (int i = 0; i < shotPath.size(); ++i)
+        for (int i = 0; i < hydraPath.size(); ++i)
         {
-            DirectX::SimpleMath::Vector3 p1(prevPos);
-            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-            VertexPositionColor aV(p1, Colors::White);
-            VertexPositionColor bV(p2, Colors::White);
-
-            if (shotTimeStep[i] < m_projectileTimer)
+            DirectX::SimpleMath::Vector3 prevPos2 = hydraPath[i][0];
+            int ballPosIndex2 = 0;
+            for (int j = 0; j < hydraPath[i].size(); ++j)
             {
-                m_batch->DrawLine(aV, bV);
-                ballPosIndex = i;
-            }
-            prevPos = shotPath[i];
-        }
-        pGolf->SetBallPosition(shotPath[ballPosIndex]);
+                DirectX::SimpleMath::Vector3 p1(prevPos2);
+                DirectX::SimpleMath::Vector3 p2(hydraPath[i][j]);
+                VertexPositionColor aV(p1, lineColor[i]);
+                VertexPositionColor bV(p2, lineColor[i]);
+                //VertexPositionColor aV(p1, DirectX::Colors::White);
+                //VertexPositionColor bV(p2, DirectX::Colors::White);
 
-        // Set camera targe on ball position if using projectile tracking camera
+                if (hydraTimeStep[i][j] < m_projectileTimer)
+                {
+                    m_batch->DrawLine(aV, bV);
+                    ballPosIndex2 = j;
+                }
+                prevPos2 = hydraPath[i][j];
+            }
+            //pGolf->SetBallPosition(hydraPath[0][ballPosIndex2]);
+        }
         if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {
             pCamera->SetTargetPos(pGolf->GetBallPosition());
@@ -2028,14 +2049,14 @@ void Game::Render()
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PRESWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {         
             m_flightStepTimer.ResetElapsedTime();
-            DrawProjectileRealTime();
-            //DrawHydraShot();
+            //DrawProjectileRealTime();
+            DrawHydraShot();
 
             //pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
         if (m_isInDebugMode == true)
         {
-            DrawCameraFocus();
+            //DrawCameraFocus();
         }
     }
 
@@ -2376,7 +2397,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (kb.C)
     {
-        //pCamera->UpdatePitchYaw(0.0 - aTimer.GetElapsedSeconds(), 0.0f);
         pCamera->UpdatePos(0.0f, 0.0f - static_cast<float>(aTimer.GetElapsedSeconds()), 0.0f);
     }
     if (m_kbStateTracker.pressed.V) // reset ball to tee position and prep for new shot
@@ -2425,6 +2445,13 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         m_kbStateTracker.Reset();
         pPlay->DebugShot();
     }
+    if (m_kbStateTracker.released.H)
+    {        
+        m_kbStateTracker.Reset();
+        m_projectileTimer = 0.0;
+        pGolf->BuildHyrdraShotData();
+    }
+
     if (m_kbStateTracker.pressed.T)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
