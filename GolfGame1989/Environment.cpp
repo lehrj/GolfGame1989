@@ -147,7 +147,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teeDirection = 0.0f;
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(-10.0f, 0.0f, 0.0f);
 
     ++i;
     m_environs[i].name = "Non Terrestrial (Alien Golf!!)";    

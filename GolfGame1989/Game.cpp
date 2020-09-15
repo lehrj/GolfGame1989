@@ -523,6 +523,31 @@ void Game::DrawHydraShot()
     lineColor.push_back(DirectX::Colors::ForestGreen);
     lineColor.push_back(DirectX::Colors::DarkSeaGreen);
 
+    std::vector<DirectX::XMVECTORF32> lineStartColor;
+    lineStartColor.push_back(DirectX::Colors::White);
+    lineStartColor.push_back(DirectX::Colors::White);
+    lineStartColor.push_back(DirectX::Colors::White);
+
+    lineStartColor.push_back(DirectX::Colors::Yellow);
+    lineStartColor.push_back(DirectX::Colors::Yellow);
+    lineStartColor.push_back(DirectX::Colors::Yellow);
+
+    lineStartColor.push_back(DirectX::Colors::Orange);
+    lineStartColor.push_back(DirectX::Colors::Orange);
+    lineStartColor.push_back(DirectX::Colors::Orange);
+
+    std::vector<DirectX::XMVECTORF32> lineEndColor;
+    lineEndColor.push_back(DirectX::Colors::Red);
+    lineEndColor.push_back(DirectX::Colors::Red);
+    lineEndColor.push_back(DirectX::Colors::Red);
+
+    lineEndColor.push_back(DirectX::Colors::Blue);
+    lineEndColor.push_back(DirectX::Colors::Blue);
+    lineEndColor.push_back(DirectX::Colors::Blue);
+
+    lineEndColor.push_back(DirectX::Colors::Yellow);
+    lineEndColor.push_back(DirectX::Colors::Yellow);
+    lineEndColor.push_back(DirectX::Colors::Yellow);
 
     std::vector<std::vector<DirectX::SimpleMath::Vector3>> hydraPath = pGolf->GetHydraShotPath();
     //std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
@@ -541,8 +566,10 @@ void Game::DrawHydraShot()
             {
                 DirectX::SimpleMath::Vector3 p1(prevPos2);
                 DirectX::SimpleMath::Vector3 p2(hydraPath[i][j]);
-                VertexPositionColor aV(p1, lineColor[i]);
-                VertexPositionColor bV(p2, lineColor[i]);
+                //VertexPositionColor aV(p1, lineColor[i]);
+               // VertexPositionColor bV(p2, lineColor[i]);
+                VertexPositionColor aV(p1, lineEndColor[i]);
+                VertexPositionColor bV(p2, lineEndColor[i]);
                 //VertexPositionColor aV(p1, DirectX::Colors::White);
                 //VertexPositionColor bV(p2, DirectX::Colors::White);
 
@@ -2049,7 +2076,7 @@ void Game::Render()
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PRESWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {         
             m_flightStepTimer.ResetElapsedTime();
-            //DrawProjectileRealTime();
+            DrawProjectileRealTime();
             DrawHydraShot();
 
             //pCamera->SetTargetPos(pGolf->GetBallPosition());
@@ -2090,7 +2117,7 @@ void Game::Render()
     {
         DrawPowerBarUI();
         //DrawSwingUI();
-        DrawUI();
+        //DrawUI();
     }
 
     m_spriteBatch->End();
@@ -2428,13 +2455,9 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             {
                 pCamera->SetCameraStartPos(pCamera->GetPos());
                 pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
-                //pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), Utility::ToRadians(pPlay->GetShotDirection())));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
                 pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
-                //pCamera->SetTargetEndPos(pCamera->GetSwingTargPos(pGolf->GetShotStartPos(), Utility::ToRadians(pPlay->GetShotDirection())));
-
                 pCamera->TurnEndPosAroundPoint(Utility::ToRadians(pPlay->GetShotDirection()), pGolf->GetShotStartPos());
-
                 pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
             }
             pPlay->UpdateSwingState();
@@ -2504,7 +2527,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             //m_pitch -= delta.y;
             //m_yaw -= delta.x;
 
-            float pitch = delta.y;
+            float pitch = -delta.y;
             float yaw = -delta.x;
 
             // limit pitch to straight up or straight down

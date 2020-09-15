@@ -367,8 +367,7 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_SWINGVIEW)
 	{
-		//m_target = DirectX::SimpleMath::Vector3(-2.f, 0.0, 0.0);
-		//m_position = DirectX::SimpleMath::Vector3(-2.f, 0.02f, .2f);
+		// no update needed in current state
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
 	{
@@ -376,9 +375,7 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_PRESWINGVIEW)
 	{
-		//m_position = DirectX::SimpleMath::Vector3(-2.9f, .5f, 0.0f);
-		//m_target = DirectX::SimpleMath::Vector3(-2.f, 0.3f, 0.0f);
-		//m_up = DirectX::SimpleMath::Vector3::UnitY;
+		// no update needed in current state
 	}
 	if (m_cameraState == CameraState::CAMERASTATE_TRANSITION)
 	{
@@ -428,6 +425,11 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 
 void Camera::UpdateFirstPersonCamera()
 {
+	if (m_pitch > 0.5)
+	{
+		int testBreak = 0;
+	}
+
 	m_rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0);
 	m_target = DirectX::XMVector3TransformCoord(m_defaultForward, m_rotationMatrix);
 	m_target.Normalize();
@@ -436,20 +438,25 @@ void Camera::UpdateFirstPersonCamera()
 	rotateYTempMatrix = DirectX::XMMatrixRotationY(m_yaw);
 
 	m_right = DirectX::XMVector3TransformCoord(m_defaultRight, rotateYTempMatrix);
-
+	//m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
 	m_forward = DirectX::XMVector3TransformCoord(m_defaultForward, rotateYTempMatrix);
-	m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
+	//m_up = DirectX::XMVector3Cross(m_forward, m_right);
+
+	//DirectX::XMMATRIX pitchMatrix;
+	//pitchMatrix = DirectX::XMMatrixRotationZ(m_pitch);
+	//m_up = DirectX::XMVector3TransformCoord(m_up, m_rotationMatrix);
+	//m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
 
 	m_position += DirectX::operator*(m_moveLeftRight, m_right);
 	m_position += DirectX::operator*(m_moveBackForward, m_forward);
-	m_position += DirectX::operator*(m_moveUpDown, m_up);
+	//m_position += DirectX::operator*(m_moveUpDown, m_up);
 
 	m_moveLeftRight = 0.0f;
 	m_moveBackForward = 0.0f;
-	m_moveUpDown = 0.0f;
+	//m_moveUpDown = 0.0f;
 
 	m_target = m_position + m_target;
-	//m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
+	m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
 }
 
 void Camera::UpdatePitchYaw(const float aPitch, const float aYaw)
