@@ -1824,6 +1824,39 @@ void Game::DrawUI()
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
         m_fontPos2.y += 35;
     }
+    //("Air Density = " + inVal.str() + " kg/m cubed");
+    std::string test = std::to_string(pCamera->GetPitch());
+    std::string uiLine1 = "pitch = " + test;
+    DirectX::SimpleMath::Vector2 line1Vect = m_font->MeasureString(uiLine1.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine1.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
+    m_fontPos2.y += 35;
+
+    std::string test2 = std::to_string(pCamera->GetYaw());
+    std::string uiLine2 = "Yaw = " + test2;
+    DirectX::SimpleMath::Vector2 line2Vect = m_font->MeasureString(uiLine1.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine2.c_str(), m_fontPos2, Colors::White, 0.f, line2Vect);
+    m_fontPos2.y += 35;
+
+
+    DirectX::SimpleMath::Vector3 up = pCamera->GetUp();
+    test = std::to_string(up.x);
+    std::string uiLine = "up.x = " + test;
+    line1Vect = m_font->MeasureString(uiLine.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
+    m_fontPos2.y += 35;
+
+    test = std::to_string(up.y);
+    uiLine = "up.y = " + test;
+    line1Vect = m_font->MeasureString(uiLine.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
+    m_fontPos2.y += 35;
+
+    test = std::to_string(up.z);
+    uiLine = "up.z = " + test;
+    line1Vect = m_font->MeasureString(uiLine.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
+    m_fontPos2.y += 35;
+
     m_fontPos2.y = fontOriginPosY;
 }
 
@@ -2083,7 +2116,7 @@ void Game::Render()
         }
         if (m_isInDebugMode == true)
         {
-            //DrawCameraFocus();
+            DrawCameraFocus();
         }
     }
 
@@ -2117,7 +2150,7 @@ void Game::Render()
     {
         DrawPowerBarUI();
         //DrawSwingUI();
-        //DrawUI();
+        DrawUI();
     }
 
     m_spriteBatch->End();
@@ -2524,27 +2557,8 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             const float ROTATION_GAIN = 0.004f;
             DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f) * ROTATION_GAIN;
 
-            //m_pitch -= delta.y;
-            //m_yaw -= delta.x;
-
             float pitch = -delta.y;
             float yaw = -delta.x;
-
-            // limit pitch to straight up or straight down
-            // with a little fudge-factor to avoid gimbal lock
-            float limit = XM_PI / 2.0f - 0.01f;
-            pitch = std::max(-limit, pitch);
-            pitch = std::min(+limit, pitch);
-
-            // keep longitude in sane range by wrapping
-            if (yaw > XM_PI)
-            {
-                yaw -= XM_PI * 2.0f;
-            }
-            else if (yaw < -XM_PI)
-            {
-                yaw += XM_PI * 2.0f;
-            }
 
             pCamera->UpdatePitchYaw(pitch, yaw);
         }

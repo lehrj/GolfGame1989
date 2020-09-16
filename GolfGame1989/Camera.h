@@ -24,8 +24,10 @@ public:
 
     CameraState GetCameraState() const { return m_cameraState; };
     float GetAimTurnRate() const { return m_aimTurnRate; };
-    DirectX::SimpleMath::Vector3 GetPos() const { return m_position; }; 
+
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
+    double GetPitch() const { return m_pitch; };
+    DirectX::SimpleMath::Vector3 GetPos() const { return m_position; };
     DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Vector3 GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
@@ -34,6 +36,7 @@ public:
     DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
     DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
     DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
+    double GetYaw() const { return m_yaw; };
     void InintializePreSwingCamera(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     bool IsCameraAtDestination();
     void OnResize(uint32_t aWidth, uint32_t aHeight);
@@ -132,5 +135,7 @@ private:
     DirectX::SimpleMath::Vector3    m_targetEndPos;
     const float                     m_cameraTransitionSpeed = .9f;
     DX::StepTimer                   m_cameraTimer;
+
+    bool                            m_isFpYaxisInverted = true; // toggle of turning on/off inverting the firstperson camera y axis control, set to true because I am weirdo that likes an inverted y axis
 };
 

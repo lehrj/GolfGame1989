@@ -409,7 +409,6 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 		}
 		else
 		{
-
 			SetCameraStartPos(GetPos());     
 			SetCameraEndPos(GetPreSwingCamPos(GetPos(), 0.0));
 			SetTargetStartPos(GetTargetPos());
@@ -425,44 +424,59 @@ void Camera::UpdateCamera(DX::StepTimer const& aTimer)
 
 void Camera::UpdateFirstPersonCamera()
 {
-	if (m_pitch > 0.5)
+	// apply setting for inverting first person camer Y axis controls 
+	if (m_isFpYaxisInverted == true)
 	{
-		int testBreak = 0;
+		m_rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(0, m_yaw, -m_pitch);
+	}
+	else
+	{
+		m_rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(0, m_yaw, m_pitch);
 	}
 
-	m_rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, 0);
 	m_target = DirectX::XMVector3TransformCoord(m_defaultForward, m_rotationMatrix);
 	m_target.Normalize();
 
-	DirectX::XMMATRIX rotateYTempMatrix;
-	rotateYTempMatrix = DirectX::XMMatrixRotationY(m_yaw);
+	m_right = DirectX::XMVector3TransformCoord(m_defaultRight, m_rotationMatrix);
+	m_forward = DirectX::XMVector3TransformCoord(m_defaultForward, m_rotationMatrix);
 
-	m_right = DirectX::XMVector3TransformCoord(m_defaultRight, rotateYTempMatrix);
-	//m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
-	m_forward = DirectX::XMVector3TransformCoord(m_defaultForward, rotateYTempMatrix);
-	//m_up = DirectX::XMVector3Cross(m_forward, m_right);
+	DirectX::SimpleMath::Vector3 testVec = DirectX::XMVector3Cross(m_forward, m_right);
+	DirectX::SimpleMath::Vector3 testVec2 = DirectX::XMVector3Cross(m_right, m_forward);
+	DirectX::SimpleMath::Vector3 testVec3 = DirectX::XMVector3Cross(m_forward, -m_right);
 
-	//DirectX::XMMATRIX pitchMatrix;
-	//pitchMatrix = DirectX::XMMatrixRotationZ(m_pitch);
-	//m_up = DirectX::XMVector3TransformCoord(m_up, m_rotationMatrix);
-	//m_up = DirectX::XMVector3TransformCoord(m_up, rotateYTempMatrix);
+	m_up = DirectX::XMVector3Cross(m_right, m_forward);
 
 	m_position += DirectX::operator*(m_moveLeftRight, m_right);
 	m_position += DirectX::operator*(m_moveBackForward, m_forward);
-	//m_position += DirectX::operator*(m_moveUpDown, m_up);
+	m_position += DirectX::operator*(m_moveUpDown, m_up);
 
 	m_moveLeftRight = 0.0f;
 	m_moveBackForward = 0.0f;
-	//m_moveUpDown = 0.0f;
+	m_moveUpDown = 0.0f;
 
 	m_target = m_position + m_target;
-	m_viewMatrix = DirectX::XMMatrixLookAtLH(m_position, m_target, m_up);
 }
 
 void Camera::UpdatePitchYaw(const float aPitch, const float aYaw)
 {
 	m_pitch += aPitch * m_rotationTravelSpeed;
 	m_yaw += aYaw * m_rotationTravelSpeed;
+
+	// keep longitude in sane range by wrapping
+	if (m_yaw > DirectX::XM_PI)
+	{
+		m_yaw -= DirectX::XM_PI * 2.0f;
+	}
+	else if (m_yaw < -DirectX::XM_PI)
+	{
+		m_yaw += DirectX::XM_PI * 2.0f;
+	}
+
+	// limit pitch to straight up or straight down
+	// with a little fudge-factor to avoid gimbal lock
+	float limit = DirectX::XM_PI / 2.0f - 0.01f;
+	m_pitch = std::max(-limit, m_pitch);
+	m_pitch = std::min(+limit, m_pitch);
 }
 
 void Camera::UpdatePos(const float aX, const float aY, const float aZ)
@@ -502,7 +516,6 @@ void Camera::TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPo
 	updateCamPos -= aCenterPoint;
 
 	DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn * m_aimTurnRate);
-	//DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
 	updateTarget = DirectX::SimpleMath::Vector3::Transform(updateTarget, rotMatrix);
 	updateCamPos = DirectX::SimpleMath::Vector3::Transform(updateCamPos, rotMatrix);
 
@@ -515,14 +528,13 @@ void Camera::TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPo
 
 void Camera::TurnEndPosAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint)
 {
-	DirectX::SimpleMath::Vector3 updateTarget = m_targetEndPos; //m_targetEndPos;
-	DirectX::SimpleMath::Vector3 updateCamPos = m_cameraEndPos; //m_cameraEndPos
+	DirectX::SimpleMath::Vector3 updateTarget = m_targetEndPos; 
+	DirectX::SimpleMath::Vector3 updateCamPos = m_cameraEndPos; 
 
 	updateTarget -= aCenterPoint;
 	updateCamPos -= aCenterPoint;
 
 	DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
-	//DirectX::SimpleMath::Matrix rotMatrix = DirectX::SimpleMath::Matrix::CreateRotationY(aTurn);
 	updateTarget = DirectX::SimpleMath::Vector3::Transform(updateTarget, rotMatrix);
 	updateCamPos = DirectX::SimpleMath::Vector3::Transform(updateCamPos, rotMatrix);
 
