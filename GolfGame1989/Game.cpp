@@ -1409,12 +1409,21 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
+    // Hydra Shot Demo
+    ////////////////////////////
+    lineDrawY += menuObj0Pos.y;
+    std::string menuObjHydraString = "Hydra Shot Demo";
+    DirectX::SimpleMath::Vector2 menuObjHydraPos(menuTitlePosX, lineDrawY);
+    DirectX::SimpleMath::Vector2 menuObjHydraOrigin = m_font->MeasureString(menuObjHydraString.c_str()) / 2.f;
+    ///////////////////////////
+
     lineDrawY += menuObj0Pos.y;
     std::string menuObj3String = "Quit";
     DirectX::SimpleMath::Vector2 menuObj3Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj3Origin = m_font->MeasureString(menuObj3String.c_str()) / 2.f;
 
-    if (m_menuSelect < 0 || m_menuSelect > 3)
+    //if (m_menuSelect < 0 || m_menuSelect > 3)
+    if (m_menuSelect < 0 || m_menuSelect > 4)
     {
         m_menuSelect = 0;
     }
@@ -1476,6 +1485,26 @@ void Game::DrawMenuMain()
     }
 
     if (m_menuSelect == 3)
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(-4.f, -4.f), Colors::White, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(4.f, -4.f), Colors::White, 0.f, menuObjHydraOrigin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Black, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(-2.f, 2.f), Colors::Black, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(-2.f, -2.f), Colors::Black, 0.f, menuObjHydraOrigin);
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(2.f, -2.f), Colors::Black, 0.f, menuObjHydraOrigin);
+
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos, Colors::White, 0.f, menuObjHydraOrigin);
+    }
+    else
+    {
+        m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos, Colors::White, 0.f, menuObjHydraOrigin);
+    }
+
+    //if (m_menuSelect == 3)
+    if (m_menuSelect == 4)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
@@ -1759,7 +1788,6 @@ void Game::DrawSwing()
             theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
             beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
 
-
             theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
             beta += theta;
             VertexPositionColor shoulder(origin, shoulderColor);
@@ -1809,6 +1837,55 @@ void Game::DrawTeeBox()
     // end tee box draw
 }
 
+void Game::DrawTree(const DirectX::SimpleMath::Vector3 aTreePos)
+{
+    DirectX::SimpleMath::Vector3 baseTop = aTreePos;
+    baseTop.y += .08;
+
+    DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
+    viewLine.Normalize();
+
+    //DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross(viewLine, (aTreePos + baseTop));
+    DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine);
+    //viewHorizontal = viewHorizontal / 2;
+
+    VertexPositionColor treeRootBase(aTreePos, Colors::Gray);
+    VertexPositionColor treeRootTop(baseTop, Colors::Gray);
+    m_batch->DrawLine(treeRootBase, treeRootTop);
+
+    const float branchGap = .01;
+    /*
+    treeRootTop.position.y += branchGap;
+    DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
+    branchEndR.y += branchGap;
+    DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
+    branchEndL.y += branchGap;
+    VertexPositionColor leafR(branchEndR, Colors::ForestGreen);
+    VertexPositionColor leafL(branchEndL, Colors::ForestGreen);
+    m_batch->DrawLine(treeRootTop, leafR);
+    m_batch->DrawLine(treeRootTop, leafL);
+    */
+
+    VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::ForestGreen);
+    DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
+
+    const int layerCount = 30;
+    for (int i = 1; i < layerCount; ++i)
+    {
+        treeRootTop2.position.y += branchGap;
+        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
+        branchEndR.y += branchGap;
+        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
+        branchEndL.y += branchGap;
+        VertexPositionColor leafR(branchEndR, Colors::ForestGreen);
+        VertexPositionColor leafL(branchEndL, Colors::ForestGreen);
+        m_batch->DrawLine(treeRootTop2, leafR);
+        m_batch->DrawLine(treeRootTop2, leafL);
+    }
+
+}
+
+
 void Game::DrawUI()
 {
     std::vector<std::string> uiString = pGolf->GetUIstrings();
@@ -1824,38 +1901,6 @@ void Game::DrawUI()
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
         m_fontPos2.y += 35;
     }
-    //("Air Density = " + inVal.str() + " kg/m cubed");
-    std::string test = std::to_string(pCamera->GetPitch());
-    std::string uiLine1 = "pitch = " + test;
-    DirectX::SimpleMath::Vector2 line1Vect = m_font->MeasureString(uiLine1.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine1.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
-    m_fontPos2.y += 35;
-
-    std::string test2 = std::to_string(pCamera->GetYaw());
-    std::string uiLine2 = "Yaw = " + test2;
-    DirectX::SimpleMath::Vector2 line2Vect = m_font->MeasureString(uiLine1.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine2.c_str(), m_fontPos2, Colors::White, 0.f, line2Vect);
-    m_fontPos2.y += 35;
-
-
-    DirectX::SimpleMath::Vector3 up = pCamera->GetUp();
-    test = std::to_string(up.x);
-    std::string uiLine = "up.x = " + test;
-    line1Vect = m_font->MeasureString(uiLine.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
-    m_fontPos2.y += 35;
-
-    test = std::to_string(up.y);
-    uiLine = "up.y = " + test;
-    line1Vect = m_font->MeasureString(uiLine.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
-    m_fontPos2.y += 35;
-
-    test = std::to_string(up.z);
-    uiLine = "up.z = " + test;
-    line1Vect = m_font->MeasureString(uiLine.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, line1Vect);
-    m_fontPos2.y += 35;
 
     m_fontPos2.y = fontOriginPosY;
 }
@@ -1913,6 +1958,18 @@ void Game::DrawWorld()
 
     DrawTeeBox();
     DrawFlagAndHole();
+
+    // Test Draw Tree
+    DirectX::SimpleMath::Vector3 treePos(0.0, 0.0, 0.0);
+    DrawTree(treePos);
+    DirectX::SimpleMath::Vector3 treePos2(0.2, 0.0, 0.2);
+    DrawTree(treePos2);
+    DirectX::SimpleMath::Vector3 treePos3(0.3, 0.0, 0.2);
+    DrawTree(treePos3);
+    DirectX::SimpleMath::Vector3 treePos4(0.3, 0.0, 0.4);
+    DrawTree(treePos4);
+    DirectX::SimpleMath::Vector3 treePos5(0.2, 0.0, 0.4);
+    DrawTree(treePos5);
 }
 
 // Properties
@@ -2111,12 +2168,10 @@ void Game::Render()
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
             DrawHydraShot();
-
-            //pCamera->SetTargetPos(pGolf->GetBallPosition());
         }
         if (m_isInDebugMode == true)
         {
-            DrawCameraFocus();
+            //DrawCameraFocus();
         }
     }
 
@@ -2148,9 +2203,9 @@ void Game::Render()
     }
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawPowerBarUI();
+        //DrawPowerBarUI();
         //DrawSwingUI();
-        DrawUI();
+        //DrawUI();
     }
 
     m_spriteBatch->End();
@@ -2316,7 +2371,12 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             {
                 m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
             }
-            if (m_menuSelect == 3) // Quit Game
+            if (m_menuSelect == 3) // GoTo Game State Hydra Shot Style! (aka just goes into game, yea its for show)
+            {
+                m_currentState = GameState::GAMESTATE_GAMEPLAY;
+            }
+            //if (m_menuSelect == 3) // Quit Game
+            if (m_menuSelect == 4) // Quit Game
             {
                 ExitGame();
             }
@@ -2499,13 +2559,14 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (m_kbStateTracker.released.Z)
     {
         m_kbStateTracker.Reset();
+        m_projectileTimer = 0.0;
         pPlay->DebugShot();
     }
     if (m_kbStateTracker.released.H)
     {        
         m_kbStateTracker.Reset();
         m_projectileTimer = 0.0;
-        pGolf->BuildHyrdraShotData();
+        pGolf->BuildHyrdraShotData(pPlay->GetShotDirection());
     }
 
     if (m_kbStateTracker.pressed.T)

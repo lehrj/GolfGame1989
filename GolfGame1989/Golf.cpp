@@ -82,8 +82,10 @@ void Golf::BuildEnvironSelectStrings()
     m_environSelectStrings.push_back(strVec);
 }
 
-void Golf::BuildHyrdraShotData()
-{
+void Golf::BuildHyrdraShotData(const double aDirectionDeg)
+{  
+    pSwing->SetImpactDirectionDegrees(aDirectionDeg);
+
     const double hydraAxisTilt = Utility::ToRadians(25.0);
     const double hydraPlaneTurn = Utility::ToRadians(7.0);
 
@@ -138,7 +140,6 @@ void Golf::BuildHyrdraShotData()
 
     // 4
     pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
-    //pSwing->UpdateImpactDataAxis(hydraAxisTilt);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
@@ -150,7 +151,6 @@ void Golf::BuildHyrdraShotData()
 
     // 5
     pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
-    //pSwing->UpdateImpactDataAxis(hydraAxisTilt);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
@@ -161,7 +161,6 @@ void Golf::BuildHyrdraShotData()
     ++i;
 
     // 6
-    //pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
     pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
@@ -174,7 +173,6 @@ void Golf::BuildHyrdraShotData()
 
     // 7
     pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
-    //pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
@@ -186,7 +184,6 @@ void Golf::BuildHyrdraShotData()
 
     // 8
     pSwing->UpdateImpactDataPlane(hydraPlaneTurn);
-    //pSwing->UpdateImpactDataAxis(-hydraAxisTilt * 2);
     pSwing->ResetAlphaBeta();
     pBall->ResetBallData();
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
@@ -197,8 +194,7 @@ void Golf::BuildHyrdraShotData()
     ++i;
 
     pSwing->UpdateImpactDataPlane(-hydraPlaneTurn);
-    pSwing->UpdateImpactDataAxis(hydraAxisTilt);
-   
+    pSwing->UpdateImpactDataAxis(hydraAxisTilt); 
 }
 
 void Golf::BuildTrajectoryData()

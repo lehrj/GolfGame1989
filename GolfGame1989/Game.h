@@ -69,6 +69,7 @@ private:
     void DrawSwing();
     void DrawSwingUI();
     void DrawTeeBox();
+    void DrawTree(const DirectX::SimpleMath::Vector3 aTreePos);
     void DrawUI();
     void DrawWorld();
 

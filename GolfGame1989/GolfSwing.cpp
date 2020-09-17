@@ -325,6 +325,11 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
+void GolfSwing::SetImpactDirectionDegrees(const double aDirectionDegrees)
+{
+    m_impactData.directionDegrees = aDirectionDegrees;
+}
+
 void GolfSwing::SetShoulderAccel(double aShouldAcell)
 {
     m_shoulderHorizAccel = aShouldAcell * VerifySwingGravityDirection(m_gravity);

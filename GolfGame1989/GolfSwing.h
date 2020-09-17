@@ -46,7 +46,7 @@ public:
     void SetClubLengthModifier(double aLengthModifier);
     void SetClubMass(double aMass);
     void SetDefaultSwingValues(double aGravity);
-
+    void SetImpactDirectionDegrees(const double aDirectionDegrees);
     void UpdateGolfer();
     void UpdateGolfSwingValues();
     void UpdateGravityDependants(const double aGravity);

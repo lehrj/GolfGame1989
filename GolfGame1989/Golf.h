@@ -16,7 +16,7 @@ public:
     Golf();
     ~Golf();
     
-    void BuildHyrdraShotData();
+    void BuildHyrdraShotData(const double aDirectionDeg);
 
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
