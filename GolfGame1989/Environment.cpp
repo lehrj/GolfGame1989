@@ -12,9 +12,10 @@ Environment::Environment()
 
     LoadEnvironmentData();
     CreateDataStrings();
-    m_currentEnviron = m_environs[0];
-    BuildFlagVertex(m_environs[0].holePosition);
-    BuildHoleVertex(m_environs[0].holePosition);
+    const int startEnviron = 1;
+    m_currentEnviron = m_environs[startEnviron];
+    BuildFlagVertex(m_environs[startEnviron].holePosition);
+    BuildHoleVertex(m_environs[startEnviron].holePosition);
 }
 
 void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
@@ -140,7 +141,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].name = "Breezy";    
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.2f, 0.0f, -.2f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;
