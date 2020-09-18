@@ -32,7 +32,9 @@ public:
     std::string GetCharacterBioLine2(const int aCharacterIndex) const;
     std::string GetCharacterBioLine3(const int aCharacterIndex) const;
     std::string GetCharacterName(const int aCharacterIndex) const;
+    float GetEnvironScale() const { return pEnvironment->GetScale(); };
     std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
+    DirectX::SimpleMath::Vector3 GetEnvironWindVector() const { return pEnvironment->GetWindVector(); };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
 
@@ -54,6 +56,7 @@ public:
     float GetTeeDirection() const { return pEnvironment->GetTeeDirectionDegrees(); };
     std::vector<std::string> GetUIstrings() { return m_uiStrings; };
     double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
+    
 
     void InputData();
     void LoadEnvironment(const int aIndex);

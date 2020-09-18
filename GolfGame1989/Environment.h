@@ -51,6 +51,7 @@ public:
 
     DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
     double GetWindDirection() const;
+    DirectX::SimpleMath::Vector3 GetWindVector() const { return m_currentEnviron.wind; };
     double GetWindX() const { return m_currentEnviron.wind.x; };
     std::string GetWindXString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windXStr; };
     double GetWindY() const { return m_currentEnviron.wind.y; };
