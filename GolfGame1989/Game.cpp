@@ -2213,8 +2213,8 @@ void Game::DrawWorld()
 
         if (scale.z == 0.0f)
         {
-            VertexPositionColor v1(scale - xAxis, Colors::LawnGreen);
-            VertexPositionColor v2(scale + xFarAxis, Colors::LawnGreen);
+            VertexPositionColor v1(scale - xAxis, gridColor); // Center line
+            VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
             m_batch->DrawLine(v1, v2);
         }
         else
