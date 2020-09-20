@@ -59,6 +59,7 @@ public:
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
     void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
+    void SetEnvironment(Environment* pEnviron);
     void ZeroDataForUI();
 
 private:
@@ -94,6 +95,8 @@ private:
     double                                      m_debugValue02 = 0.0;
     double                                      m_debugValue03 = 0.0;
     double                                      m_debugValue04 = 0.0;
+
+    Environment*                                pBallEnvironment;
 };
 
 

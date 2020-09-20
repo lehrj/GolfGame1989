@@ -761,3 +761,8 @@ void GolfBall::ZeroDataForUI()
     m_landingCordinates.Zero;
     m_maxHeight = 0.0;
 }
+
+void GolfBall::SetEnvironment(Environment* pEnviron)
+{
+    pBallEnvironment = pEnviron;
+}

@@ -14,6 +14,7 @@ Golf::Golf()
     pSwing->InputClub(1);
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
+    pBall->SetEnvironment(pEnvironment);
     pBall->SetDefaultBallValues(pEnvironment);
     pPlay = new GolfPlay();
     SetCharacter(0);
@@ -23,7 +24,7 @@ Golf::Golf()
     BuildUIstrings();
     BuildEnvironSelectStrings();
     SetShotStartPos(pEnvironment->GetTeePosition());
-    SetBallPosition(GetShotStartPos());
+    SetBallPosition(GetShotStartPos());   
 }
 
 Golf::~Golf()
@@ -387,6 +388,7 @@ void Golf::LoadEnvironment(const int aIndex)
         m_selectedEnvironment = 0;
         pEnvironment->UpdateEnvironment(0);
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
+        pBall->SetEnvironment(pEnvironment);
         pBall->SetDefaultBallValues(pEnvironment);
         BuildUIstrings();
         m_shotStartPos = pEnvironment->GetTeePosition();
@@ -396,7 +398,8 @@ void Golf::LoadEnvironment(const int aIndex)
         m_selectedEnvironment = aIndex;
         pEnvironment->UpdateEnvironment(m_selectedEnvironment);
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
-        pBall->SetDefaultBallValues(pEnvironment);
+        pBall->SetEnvironment(pEnvironment);
+        pBall->SetDefaultBallValues(pEnvironment);      
         BuildUIstrings();
         m_shotStartPos = pEnvironment->GetTeePosition();
     }

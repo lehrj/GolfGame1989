@@ -2230,16 +2230,15 @@ void Game::DrawWorld()
 
     // Test Draw Tree
     DirectX::SimpleMath::Vector3 treePos(1.15, 0.0, 0.15);
-    //DrawTree2(treePos, .3);
+    DrawTree2(treePos, .3);
     DirectX::SimpleMath::Vector3 treePos2(1.3, 0.0, .3);
-    //DrawTree2(treePos2, 0.7f);
+    DrawTree2(treePos2, 0.7f);
     DirectX::SimpleMath::Vector3 treePos3(1.45, 0.0, 0.45);
-    //DrawTree2(treePos3, 5.5f);
-
+    DrawTree2(treePos3, 5.5f);
     DirectX::SimpleMath::Vector3 treePos4(1.6, 0.0, 0.6);
-    //DrawTree2(treePos4, .9f);
+    DrawTree2(treePos4, .9f);
     DirectX::SimpleMath::Vector3 treePos5(1.75, 0.0, 0.75);
-    //DrawTree2(treePos5, .1f);
+    DrawTree2(treePos5, .1f);
 }
 
 // Properties
