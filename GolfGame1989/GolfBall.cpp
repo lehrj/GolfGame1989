@@ -22,6 +22,100 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
     LaunchProjectile();
 }
 
+float GolfBall::GetDistanceToHole() const
+{
+    return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
+}
+
+double GolfBall::GetImpactAngle() const
+{
+    DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
+    DirectX::SimpleMath::Vector3 impactVector(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
+
+    impactVector.Normalize();
+    DirectX::SimpleMath::Vector3 planeNormal = impactPlane.Normal();
+    double angle = acos(impactVector.Dot(planeNormal));
+
+    angle = Utility::ToDegrees(angle);
+    angle = 180.0 - angle;
+
+    return angle;
+}
+
+double GolfBall::GetImpactDirection() const
+{
+    DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
+    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
+
+    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
+
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
+    {
+        direction = -direction;
+    }
+
+    double testWrapDirDeg = Utility::WrapAngle(direction);
+    testWrapDirDeg = Utility::ToDegrees(testWrapDirDeg);
+    double testDirectionDeg = Utility::ToDegrees(direction);
+
+    return direction;
+}
+
+DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
+{
+    // create a default horizontal plane at 0,0,0. fill in later for non-horizontal plane gameplay
+    DirectX::SimpleMath::Vector3 a = DirectX::SimpleMath::Vector3::Zero;
+    DirectX::SimpleMath::Vector3 b = DirectX::SimpleMath::Vector3::Zero;;
+    a.y = m_landingCordinates.y;
+    b.y = a.y + 1.0f;
+    DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(a, b);
+    return impactPlane;
+}
+
+float GolfBall::GetImpactVelocity() const
+{
+    DirectX::SimpleMath::Vector3 impactPoint;
+    impactPoint.x = m_ball.q.velocity.x;
+    impactPoint.y = m_ball.q.velocity.y;
+    impactPoint.z = m_ball.q.velocity.z;
+
+    float velocity = impactPoint.Length();
+
+    return velocity;
+}
+
+double GolfBall::GetShotDistance() const
+{
+    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
+    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
+    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
+        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
+
+    return distance;
+}
+
+double GolfBall::GetShotFlightDistance() const
+{
+    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
+    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates2();
+    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
+        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
+
+    return distance;
+}
+
+double GolfBall::GetLandingHeight() const
+{
+    if (m_shotPath.size() < 2)
+    {
+        return m_shotOrigin.y;
+    }
+    double height;
+    int i = (int)m_shotPath.size() - 1;
+    height = m_shotPath[i].y;
+    return height;
+}
+
 // WIP: Tweeking equations and measurement units and other voodoo hotness to get something that looks legit 
 void GolfBall::LandProjectile()
 {
@@ -159,38 +253,8 @@ void GolfBall::LandProjectile()
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 }
 
-void GolfBall::RollBall()
-{
-    double pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
-    double g = m_ball.gravity;
-    double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
-
-    double decelFactor = a;
-    double stopTolerance = 0.1;
-    int overflowTolerance = 650;
-
-    DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
-    directionVec.y = 0.0;
-    directionVec.Normalize();
-
-    int i = 0;
-
-    while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
-    {
-        double velocity = m_ball.q.velocity.Length();
-
-        velocity -= decelFactor * velocity * m_timeStep;
-        m_ball.q.velocity = directionVec * static_cast<float>(velocity);
-        m_ball.q.position += m_ball.q.velocity * m_timeStep;
-        m_ball.flightTime = m_ball.flightTime + m_timeStep;
-        PushFlightData();
-        ++i;
-    }
-}
-
 void GolfBall::LaunchProjectile()
 {
-
     PushFlightData();
 
     // Fly ball on an upward trajectory until it stops climbing
@@ -600,6 +664,35 @@ void GolfBall::ResetBallData()
     m_debugValue04 = 0.0;
 }
 
+void GolfBall::RollBall()
+{
+    double pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
+    double g = m_ball.gravity;
+    double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
+
+    double decelFactor = a;
+    double stopTolerance = 0.1;
+    int overflowTolerance = 650;
+
+    DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
+    directionVec.y = 0.0;
+    directionVec.Normalize();
+
+    int i = 0;
+
+    while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
+    {
+        double velocity = m_ball.q.velocity.Length();
+
+        velocity -= decelFactor * velocity * m_timeStep;
+        m_ball.q.velocity = directionVec * static_cast<float>(velocity);
+        m_ball.q.position += m_ball.q.velocity * m_timeStep;
+        m_ball.flightTime = m_ball.flightTime + m_timeStep;
+        PushFlightData();
+        ++i;
+    }
+}
+
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
 {
     m_ball.airDensity = pEnviron->GetAirDensity();
@@ -623,6 +716,11 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.windSpeed.x = static_cast<float>(pEnviron->GetWindX());
     m_ball.windSpeed.y = static_cast<float>(pEnviron->GetWindY());
     m_ball.windSpeed.z = static_cast<float>(pEnviron->GetWindZ());
+}
+
+void GolfBall::SetEnvironment(Environment* pEnviron)
+{
+    pBallEnvironment = pEnviron;
 }
 
 void GolfBall::SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord)
@@ -663,96 +761,6 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     //m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
-double GolfBall::GetImpactAngle() const
-{
-    DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
-    DirectX::SimpleMath::Vector3 impactVector(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
-
-    impactVector.Normalize();
-    DirectX::SimpleMath::Vector3 planeNormal = impactPlane.Normal();
-    double angle = acos(impactVector.Dot(planeNormal));
-
-    angle = Utility::ToDegrees(angle);
-    angle = 180.0 - angle;
-
-    return angle;
-}
-
-double GolfBall::GetImpactDirection() const
-{
-    DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
-    //DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
-    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
-
-    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
-       
-    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
-    {
-        direction = -direction;
-    }
-
-    double testWrapDirDeg = Utility::WrapAngle(direction);
-    testWrapDirDeg = Utility::ToDegrees(testWrapDirDeg);
-    double testDirectionDeg = Utility::ToDegrees(direction);
-
-    return direction;
-}
-
-DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
-{
-    // create a default horizontal plane at 0,0,0. fill in later for non-horizontal plane gameplay
-    DirectX::SimpleMath::Vector3 a = DirectX::SimpleMath::Vector3::Zero;
-    DirectX::SimpleMath::Vector3 b = DirectX::SimpleMath::Vector3::Zero;;
-    a.y = m_landingCordinates.y;
-    b.y = a.y + 1.0f;
-    DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(a, b);
-    return impactPlane;
-}
-
-float GolfBall::GetImpactVelocity() const
-{
-    DirectX::SimpleMath::Vector3 impactPoint;
-    impactPoint.x = m_ball.q.velocity.x;
-    impactPoint.y = m_ball.q.velocity.y;
-    impactPoint.z = m_ball.q.velocity.z;
-
-    float velocity = impactPoint.Length();
-
-    return velocity;
-}
-
-double GolfBall::GetShotDistance() const
-{
-    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
-    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
-    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
-        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
-
-    return distance;
-}
-
-double GolfBall::GetShotFlightDistance() const
-{
-    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
-    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates2();
-    double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
-        * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
-
-    return distance;
-}
-
-double GolfBall::GetLandingHeight() const
-{
-    if (m_shotPath.size() < 2)
-    {
-        return m_shotOrigin.y;
-    }
-    double height;
-    int i = (int)m_shotPath.size() - 1;
-    height = m_shotPath[i].y;
-    return height;
-}
-
 void GolfBall::ZeroDataForUI()
 {
     m_initialSpinRate = 0.0;
@@ -762,7 +770,3 @@ void GolfBall::ZeroDataForUI()
     m_maxHeight = 0.0;
 }
 
-void GolfBall::SetEnvironment(Environment* pEnviron)
-{
-    pBallEnvironment = pEnviron;
-}

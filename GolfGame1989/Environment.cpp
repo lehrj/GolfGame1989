@@ -55,14 +55,12 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
 
 void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
 {
-    double height = m_landingHeight;
-    double radius = m_holeRadius;
     const int vertexCount = m_holeResolution;
     m_holeVertex.clear();
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
-        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((radius * cos(t))), static_cast<float>(height), static_cast<float>((radius * -sin(t)))) + aPos, DirectX::Colors::White));
+        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((m_holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((m_holeRadius * -sin(t)))) + aPos, DirectX::Colors::White));
     }
 }
 

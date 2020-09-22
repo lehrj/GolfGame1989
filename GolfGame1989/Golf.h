@@ -44,7 +44,7 @@ public:
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
-    float GetDirectionToHoleInRads() const;
+    float GetDirectionToHoleInRads() const;   
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }

@@ -41,6 +41,7 @@ public:
     double GetDebugValue02() const { return m_debugValue02; };
     double GetDebugValue03() const { return m_debugValue03; };
     double GetDebugValue04() const { return m_debugValue04; };
+    float GetDistanceToHole() const;
     DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
     DirectX::SimpleMath::Vector3 GetLandingCordinates2() const { return m_landingImpactCordinates; };
     double GetMaxHeight() const { return m_maxHeight; };   
@@ -96,7 +97,7 @@ private:
     double                                      m_debugValue03 = 0.0;
     double                                      m_debugValue04 = 0.0;
 
-    Environment*                                pBallEnvironment;
+    Environment const *                         pBallEnvironment;
 };
 
 
