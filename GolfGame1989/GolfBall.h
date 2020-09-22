@@ -76,21 +76,22 @@ private:
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aTimeDelta);
     void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aTimeDelta);
     void PushFlightData();
-
     void UpdateSpinRate(double aTimeDelta);
+
     SpinProjectile                              m_ball;
+    int                                         m_bounceCount = 0;
     const double                                m_faceRoll = 0.7142857142857143; // <== 5/7, represents the ball moving up the club face to impart spin
-    const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
-    const float                                 m_timeStep = 0.01f;
-    std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
-    std::vector<float>                          m_shotPathTimeStep;
     double                                      m_initialSpinRate;
+    bool                                        m_isBallInHole = false;
     double                                      m_landingSpinRate;
     DirectX::SimpleMath::Vector3                m_landingCordinates;
     DirectX::SimpleMath::Vector3                m_landingImpactCordinates;
     double                                      m_maxHeight;
+    std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
+    std::vector<float>                          m_shotPathTimeStep;
     DirectX::SimpleMath::Vector3                m_shotOrigin;
-    int                                         m_bounceCount = 0;
+    const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
+    const float                                 m_timeStep = 0.01f;
 
     double                                      m_debugValue01 = 0.0;
     double                                      m_debugValue02 = 0.0;

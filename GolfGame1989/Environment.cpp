@@ -12,7 +12,7 @@ Environment::Environment()
 
     LoadEnvironmentData();
     CreateDataStrings();
-    const int startEnviron = 0;
+    const int startEnviron = 1;
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
@@ -55,12 +55,13 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
 
 void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
 {
-    const int vertexCount = m_holeResolution;
     m_holeVertex.clear();
+    const int vertexCount = m_holeResolution;
+    const float holeRadius= static_cast<float>(m_holeRadius * m_currentEnviron.scale);
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
-        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((m_holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((m_holeRadius * -sin(t)))) + aPos, DirectX::Colors::White));
+        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::Colors::White));
     }
 }
 
