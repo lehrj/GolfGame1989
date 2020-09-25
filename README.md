@@ -42,6 +42,8 @@ Power bar tolerance update will penalize very early or late impacts with “skul
 
 Spacebar : Triple click gameplay button. Start swing, set power, and set impact
 
+H : Hybrid shot demo
+
 , : Turn shot aim left
 
 . : Turn shot aim right
