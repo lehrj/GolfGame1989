@@ -16,6 +16,28 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
     return dt;
 }
 
+bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime) const
+{
+    // s = (1/2) a t^2
+    // s = Vit (1/2) a t^2 // with initil velocity
+
+    float traversalDistance = (aEnterRadiusPos - aExitRadiusPos).Length();
+    double traversalTime = aExitRadiusTime - aEnterRadiusTime;
+
+    float verticalDropNeeded;
+    float verticalDrop = .5 * m_ball.gravity * (traversalTime * traversalTime);
+    bool isInHole = false;
+    if (verticalDrop >= m_ball.radius)
+    {
+        isInHole = true;
+    }
+    else
+    {
+        isInHole = false;
+    }
+    return isInHole;
+}
+
 void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 {   
     PrepProjectileLaunch(aImpactData);
@@ -24,6 +46,8 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 
 float GolfBall::GetDistanceToHole() const
 {
+    float distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
+
     return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 }
 
@@ -264,11 +288,109 @@ void GolfBall::LaunchProjectile()
     double bounceHeight = m_ball.launchHeight;
     double time = 0.0;
     SetInitialSpinRate(m_ball.omega);
-    
+
     int count = 0;
-    
+
     bool isBallFlyOrBounce = true;
     while (isBallFlyOrBounce == true)
+    {
+        bool isBallAscending = true;
+        while (isBallAscending == true)
+        {
+            ProjectileRungeKutta4(&m_ball, dt);
+            UpdateSpinRate(dt);
+            flightData = this->m_ball.q;
+            PushFlightData();
+
+            if (m_ball.q.velocity.y < 0.0)
+            {
+                if (m_ball.q.position.y > maxHeight)
+                {
+                    maxHeight = m_ball.q.position.y;
+                }
+                if (m_ball.q.position.y > bounceHeight)
+                {
+                    bounceHeight = m_ball.q.position.y;
+                }
+                isBallAscending = false;
+            }
+        }
+
+        double previousY = flightData.position.y;
+        double previousTime = m_ball.flightTime;
+
+        //  Calculate ball decent path until it reaches landing area height
+        while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
+        {
+            previousY = flightData.position.y;
+            previousTime = m_ball.flightTime;
+            ProjectileRungeKutta4(&m_ball, dt);
+            UpdateSpinRate(dt);
+            flightData = this->m_ball.q;
+            PushFlightData();
+            time = m_ball.flightTime;
+        }
+
+        if (m_shotPath.size() > 1)
+        {
+            double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
+            ProjectileRungeKutta4(&m_ball, -rollBackTime);
+            m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+        }
+
+        if (count == 0)
+        {
+            m_landingImpactCordinates = m_ball.q.position;
+        }
+
+        SetLandingSpinRate(m_ball.omega);
+
+        ++m_bounceCount;
+
+        if (m_debugValue01 == 0.0)
+        {
+            m_debugValue01 = m_ball.omega;
+        }
+
+        LandProjectile();
+
+        ++count;
+        if (m_ball.q.velocity.y < 3.9 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
+        {
+            isBallFlyOrBounce = false;
+        }
+        bounceHeight = m_ball.landingHeight;
+    }
+
+    SetMaxHeight(maxHeight);
+
+    this->m_ball.q.velocity.y = 0.0;
+    m_ball.q.position.y = 0.0;
+    RollBall();
+    SetLandingCordinates(m_ball.q.position);
+}
+
+
+void GolfBall::LaunchProjectile2()
+{
+    PushFlightData();
+
+    // Fly ball on an upward trajectory until it stops climbing
+    BallMotion flightData;
+    double dt = m_timeStep;
+    double maxHeight = m_ball.launchHeight;
+    double bounceHeight = m_ball.launchHeight;
+    double time = 0.0;
+    SetInitialSpinRate(m_ball.omega);
+    
+    bool isBallInHole = false;
+    bool isBallInHoleRadius = false;
+    DirectX::SimpleMath::Vector3 posOnEnteringHoleRadius;
+    double timeOnEnteringHoleRadius;
+
+    int count = 0;
+    bool isBallFlyOrBounce = true;
+    while (isBallFlyOrBounce == true && isBallInHole == false)
     {
         bool isBallAscending = true;
         while (isBallAscending == true)
@@ -323,12 +445,14 @@ void GolfBall::LaunchProjectile()
         
         ++m_bounceCount;
 
-        if (m_debugValue01 == 0.0)
-        {
-            m_debugValue01 = m_ball.omega;
-        }
-
         LandProjectile();
+
+        // if the ball lands inside of the radius of the hole count it as going in the hole, swish
+        if (GetDistanceToHole() < pBallEnvironment->GetHoleRadius())
+        {
+            isBallInHole = true;
+            m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
+        }
 
         ++count;
         if (m_ball.q.velocity.y < 3.9 || count > 19 || bounceHeight < .3) // WLJ bounce height threshold is just a guess at this point
@@ -340,9 +464,12 @@ void GolfBall::LaunchProjectile()
 
     SetMaxHeight(maxHeight);
 
-    this->m_ball.q.velocity.y = 0.0;
-    m_ball.q.position.y = 0.0;
-    RollBall();
+    if (isBallInHole == false)
+    {
+        this->m_ball.q.velocity.y = 0.0;
+        m_ball.q.position.y = pBallEnvironment->GetLandingHeight();
+        RollBall();
+    }
     SetLandingCordinates(m_ball.q.position);
 }
 
@@ -678,16 +805,52 @@ void GolfBall::RollBall()
     directionVec.y = 0.0;
     directionVec.Normalize();
 
-    int i = 0;
 
+    bool isBallInHoleRadius = false;
+    bool isBallInHole = false;
+    DirectX::SimpleMath::Vector3 posOnEnteringHoleRadius;
+    double timeOnEnteringHoleRadius;
+
+    int i = 0;
     while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
     {
-        double velocity = m_ball.q.velocity.Length();
+        
+        if (isBallInHoleRadius == false)
+        {
+            float distanceToHole = GetDistanceToHole();
+            float holeRadius = pBallEnvironment->GetHoleRadius();
 
-        velocity -= decelFactor * velocity * m_timeStep;
-        m_ball.q.velocity = directionVec * static_cast<float>(velocity);
-        m_ball.q.position += m_ball.q.velocity * m_timeStep;
-        m_ball.flightTime = m_ball.flightTime + m_timeStep;
+            if (GetDistanceToHole() < pBallEnvironment->GetHoleRadius())
+            {
+                isBallInHoleRadius = true;
+                posOnEnteringHoleRadius = m_ball.q.position;
+                timeOnEnteringHoleRadius = m_ball.flightTime;
+
+            }
+        }
+        if (isBallInHoleRadius == true)
+        {
+
+            if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
+            {
+                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
+            }
+        }
+
+        if (isBallInHole == false)
+        {
+            double velocity = m_ball.q.velocity.Length();
+            velocity -= decelFactor * velocity * m_timeStep;
+            m_ball.q.velocity = directionVec * static_cast<float>(velocity);
+            m_ball.q.position += m_ball.q.velocity * m_timeStep;
+            m_ball.flightTime = m_ball.flightTime + m_timeStep;
+        }
+        else //stop the ball motion if its in the hole
+        {
+
+            m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
+        }
+
         PushFlightData();
         ++i;
     }

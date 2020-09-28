@@ -2744,7 +2744,7 @@ void Game::Render()
     {
         DrawPowerBarUI();
         //DrawSwingUI();
-        //DrawUI();
+        DrawUI();
     }
 
     m_spriteBatch->End();

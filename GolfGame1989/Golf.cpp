@@ -11,7 +11,7 @@ Golf::Golf()
     pSwing = new GolfSwing();
     
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    pSwing->InputClub(1);
+    pSwing->InputClub(13);
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetEnvironment(pEnvironment);

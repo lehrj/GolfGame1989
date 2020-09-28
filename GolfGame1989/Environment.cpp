@@ -140,7 +140,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].name = "Breezy";    
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.2f, 0.0f, -.2f);
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.3f, 0.0f, .0f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;
