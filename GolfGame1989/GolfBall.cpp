@@ -27,7 +27,7 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     float verticalDropNeeded;
     float verticalDrop = .5 * m_ball.gravity * (traversalTime * traversalTime);
     bool isInHole = false;
-    if (verticalDrop >= m_ball.radius)
+    if (abs(verticalDrop) >= m_ball.radius)
     {
         isInHole = true;
     }
@@ -35,6 +35,7 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     {
         isInHole = false;
     }
+
     return isInHole;
 }
 
@@ -46,6 +47,11 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 
 float GolfBall::GetDistanceToHole() const
 {
+    DirectX::SimpleMath::Vector3 holePosition = pBallEnvironment->GetHolePosition();
+    float environScale = pBallEnvironment->GetScale();
+    DirectX::SimpleMath::Vector3 ballPosition = m_ball.q.position;
+    DirectX::SimpleMath::Vector3 startPos = m_shotOrigin;
+
     float distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 
     return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
@@ -830,7 +836,6 @@ void GolfBall::RollBall()
         }
         if (isBallInHoleRadius == true)
         {
-
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
                 isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
@@ -928,8 +933,8 @@ void GolfBall::ZeroDataForUI()
 {
     m_initialSpinRate = 0.0;
     m_landingSpinRate = 0.0;
-    m_shotOrigin.Zero;
-    m_landingCordinates.Zero;
+    m_shotOrigin = DirectX::SimpleMath::Vector3::Zero;
+    m_landingCordinates = DirectX::SimpleMath::Vector3::Zero;;
     m_maxHeight = 0.0;
 }
 
