@@ -2496,6 +2496,7 @@ void Game::DrawWorld()
     DrawFlagAndHole();
 
     // Test Draw Tree
+    /*
     DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
     //DrawTree1(treePos);
     DrawTree7(treePos, 0.3f);
@@ -2509,6 +2510,7 @@ void Game::DrawWorld()
     DrawTree5(treePos5, .1f);
     DirectX::SimpleMath::Vector3 treePos6(-1.4, 0.0, 0.4);
     DrawTree6(treePos6, .1f);
+    */
 }
 
 // Properties

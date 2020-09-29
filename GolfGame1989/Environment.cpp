@@ -12,7 +12,7 @@ Environment::Environment()
 
     LoadEnvironmentData();
     CreateDataStrings();
-    const int startEnviron = 1;
+    const int startEnviron = 0;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);

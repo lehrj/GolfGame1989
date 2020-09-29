@@ -235,5 +235,5 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
-    const bool                                  m_isInDebugMode = true;
+    const bool                                  m_isInDebugMode = false;
 };
