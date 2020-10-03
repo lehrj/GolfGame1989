@@ -2445,7 +2445,8 @@ void Game::DrawWorld()
 {
     // draw world grid
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+    //DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 xFarAxis(100.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;

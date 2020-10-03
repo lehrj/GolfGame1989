@@ -11,14 +11,14 @@ Golf::Golf()
     pSwing = new GolfSwing();
     
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    //pSwing->InputClub(13); // ToDo: add error checking 
-    pSwing->InputClub(0);  // ToDo: add error checking 
+    //pSwing->InputClub(13); // ToDo WLJ : add error checking 
+    pSwing->InputClub(0);  // ToDo WLJ : add error checking 
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetEnvironment(pEnvironment);
     pBall->SetDefaultBallValues(pEnvironment);
     pPlay = new GolfPlay();
-    SetCharacter(0);
+    SetCharacter(0); // ToDo WLJ : add error checking 
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
     //BuildTrajectoryData(); // WLJ turn off to disable auto draw of projectile without powerbar input 
@@ -408,9 +408,13 @@ void Golf::LoadEnvironment(const int aIndex)
 
 void Golf::ScaleCordinates()
 {
+
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
 
     float scaleFactor = pEnvironment->GetScale();
+
+    scaleFactor = 1.0;
+    
     float sX = scaleFactor;
     float sY = scaleFactor;
     float sZ = scaleFactor;
@@ -418,7 +422,8 @@ void Golf::ScaleCordinates()
 
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
+        // temp remove scaling
+        //m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
         TransformCordinates(i);
     }  
 }

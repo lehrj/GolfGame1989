@@ -9,6 +9,7 @@ Camera::Camera()
 	m_homePitch = 0.0f;
 	m_homeYaw = 0.0f;
 	Reset();
+	// ToDo WLJ: Add updated initilzation functions and test 
 }
 
 Camera::Camera(int aWidth, int aHeight)
@@ -22,8 +23,9 @@ Camera::Camera(int aWidth, int aHeight)
 	m_homePitch = 0.0f;
 	m_homeYaw = 0.0f;
 
-	m_nearPlane = 0.1f;
-	m_farPlane = 10.0f;
+	m_nearPlane = 0.5f;
+	//m_farPlane = 10.0f;
+	m_farPlane = 900.0f;
 
 	m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
 	Reset();
