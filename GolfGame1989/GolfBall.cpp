@@ -580,6 +580,8 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     // Turn ball spin axis to shot aim direction
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
+
+    aImpactData.
 }
 
 void GolfBall::PushFlightData()

@@ -21,6 +21,7 @@ public:
         double mass;
         double cor; // Coefficient of restitution
         double impactMissOffSet;
+        DirectX::SimpleMath::Vector3 launchPosition;
         double power;
         double velocity;
         DirectX::SimpleMath::Vector3 vHead; 
@@ -42,6 +43,7 @@ public:
         aImpact.directionRads = 0.0;
         aImpact.mass = 0.0;
         aImpact.impactMissOffSet = 0.0;
+        aImpact.launchPosition = DirectX::SimpleMath::Vector3::Zero;
         aImpact.power = 0.0;
         aImpact.cor = 0.0; 
         aImpact.velocity = 0.0;
