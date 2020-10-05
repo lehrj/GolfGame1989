@@ -581,7 +581,7 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
     // Turn ball spin axis to shot aim direction
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
 
-    aImpactData.
+    //aImpactData.
 }
 
 void GolfBall::PushFlightData()
@@ -896,6 +896,11 @@ void GolfBall::SetEnvironment(Environment* pEnviron)
 void GolfBall::SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord)
 {
     m_landingCordinates = aCord;
+}
+
+void GolfBall::SetLaunchPosition(const DirectX::SimpleMath::Vector3 aPos)
+{
+    m_shotOrigin = aPos;
 }
 
 void GolfBall::SetSpinAxis(DirectX::SimpleMath::Vector3 aAxis)

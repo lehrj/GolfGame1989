@@ -61,6 +61,7 @@ public:
     void ResetBallData();
     void SetDefaultBallValues(Environment* pEnviron);
     void SetEnvironment(Environment* pEnviron);
+    void SetLaunchPosition(const DirectX::SimpleMath::Vector3 aPos);
     void ZeroDataForUI();
 
 private:

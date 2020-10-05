@@ -201,6 +201,7 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
 
 void Golf::BuildTrajectoryData()
 {
+    pBall->SetLaunchPosition(m_shotStartPos);
     
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 
@@ -414,7 +415,7 @@ void Golf::ScaleCordinates()
 
     float scaleFactor = pEnvironment->GetScale();
 
-    scaleFactor = 1.0;
+    //scaleFactor = 1.0;
     
     float sX = scaleFactor;
     float sY = scaleFactor;
@@ -424,7 +425,7 @@ void Golf::ScaleCordinates()
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
         // temp remove scaling
-        //m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
+        m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
         TransformCordinates(i);
     }  
 }
@@ -510,9 +511,11 @@ void Golf::TransformCordinates(const int aIndex)
 
 void Golf::UpdateImpact(Utility::ImpactData aImpact)
 {
-    pSwing->UpdateImpactData(aImpact);
     pBall->ResetBallData();
     pSwing->ResetAlphaBeta();
+    pSwing->UpdateImpactData(aImpact);
+    //pBall->ResetBallData();
+    //pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildTrajectoryData();
     BuildUIstrings();
