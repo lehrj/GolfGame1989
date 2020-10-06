@@ -47,12 +47,19 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 
 float GolfBall::GetDistanceToHole() const
 {
+    DirectX::SimpleMath::Vector3 holePos = pBallEnvironment->GetHolePosition();
+
     DirectX::SimpleMath::Vector3 holePosition = pBallEnvironment->GetHolePosition();
     float environScale = pBallEnvironment->GetScale();
     DirectX::SimpleMath::Vector3 ballPosition = m_ball.q.position;
     DirectX::SimpleMath::Vector3 startPos = m_shotOrigin;
+    ballPosition += startPos;
 
-    float distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
+    float Distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
+
+    float testDistance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - ballPosition).Length();
+    float testDistance2 = ((pBallEnvironment->GetHolePosition() * pBallEnvironment->GetScale()) - ballPosition).Length();
+
 
     return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 }
@@ -812,7 +819,6 @@ void GolfBall::RollBall()
     DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
     directionVec.y = 0.0;
     directionVec.Normalize();
-
 
     bool isBallInHoleRadius = false;
     bool isBallInHole = false;

@@ -2445,8 +2445,8 @@ void Game::DrawWorld()
 {
     // draw world grid
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-    //DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 xFarAxis(100.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+    //DirectX::SimpleMath::Vector3 xFarAxis(100.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
@@ -2461,8 +2461,10 @@ void Game::DrawWorld()
         DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
         if (scale.x == 0.0f)
         {
-            VertexPositionColor v1(scale - zAxis, gridColor);
-            VertexPositionColor v2(scale + zAxis, gridColor);
+            //VertexPositionColor v1(scale - zAxis, gridColor);
+            //VertexPositionColor v2(scale + zAxis, gridColor);
+            VertexPositionColor v1(scale - zAxis, DirectX::Colors::LimeGreen); // Center line
+            VertexPositionColor v2(scale + zAxis, DirectX::Colors::LimeGreen); // Center line
             m_batch->DrawLine(v1, v2);
         }
         else
@@ -2481,8 +2483,10 @@ void Game::DrawWorld()
 
         if (scale.z == 0.0f)
         {
-            VertexPositionColor v1(scale - xAxis, gridColor); // Center line
-            VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
+            //VertexPositionColor v1(scale - xAxis, gridColor); // Center line
+            //VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
+            VertexPositionColor v1(scale - xAxis, DirectX::Colors::LimeGreen); // Center line
+            VertexPositionColor v2(scale + xFarAxis, DirectX::Colors::LimeGreen); // Center line
             m_batch->DrawLine(v1, v2);
         }
         else
