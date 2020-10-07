@@ -47,20 +47,26 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 
 float GolfBall::GetDistanceToHole() const
 {
-    DirectX::SimpleMath::Vector3 holePos = pBallEnvironment->GetHolePosition();
-
+    float distanceBetweenTeeAndHole = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_shotOrigin).Length();
+    float distanceTeeHoleScaled = distanceBetweenTeeAndHole / pBallEnvironment->GetScale();
     DirectX::SimpleMath::Vector3 holePosition = pBallEnvironment->GetHolePosition();
     float environScale = pBallEnvironment->GetScale();
     DirectX::SimpleMath::Vector3 ballPosition = m_ball.q.position;
     DirectX::SimpleMath::Vector3 startPos = m_shotOrigin;
-    ballPosition += startPos;
+    DirectX::SimpleMath::Vector3 ballOffset = ballPosition + startPos;
 
     float Distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 
     float testDistance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - ballPosition).Length();
     float testDistance2 = ((pBallEnvironment->GetHolePosition() * pBallEnvironment->GetScale()) - ballPosition).Length();
 
+    DirectX::SimpleMath::Vector3 v1(1.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 v2(2.0, 0.0, 0.0);
 
+    float vLength = (v1 - v2).Length();
+
+
+    
     return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 }
 
@@ -831,6 +837,7 @@ void GolfBall::RollBall()
         
         if (isBallInHoleRadius == false)
         {
+
             float distanceToHole = GetDistanceToHole();
             float holeRadius = pBallEnvironment->GetHoleRadius();
 
