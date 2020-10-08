@@ -128,7 +128,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
     //m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.9f, 0.0f, 0.0f);
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(2.0f, 0.0f, -1.0f);
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.5f, 0.0f, -1.0f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;

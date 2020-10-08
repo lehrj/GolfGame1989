@@ -65,9 +65,24 @@ float GolfBall::GetDistanceToHole() const
 
     float vLength = (v1 - v2).Length();
 
+    DirectX::SimpleMath::Vector3 testPosHole1 = pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale();
+    DirectX::SimpleMath::Vector3 testPosHole2 = pBallEnvironment->GetHolePosition();
+    DirectX::SimpleMath::Vector3 testPosBall = m_ball.q.position;
 
-    
-    return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
+    DirectX::SimpleMath::Vector3 scaledBallPos = m_ball.q.position;
+    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(environScale, environScale, environScale);
+    scaledBallPos = DirectX::SimpleMath::Vector3::Transform(scaledBallPos, scaleMatrix);
+    scaledBallPos += startPos;
+
+    float testDistance3 = (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
+
+
+
+
+
+    return (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
+
+    //return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 }
 
 double GolfBall::GetImpactAngle() const
