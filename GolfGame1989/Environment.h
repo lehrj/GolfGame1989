@@ -42,7 +42,7 @@ public:
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return m_flagVertex; };
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
     //double GetHoleRadius() const { return m_holeRadius / m_currentEnviron.scale; };
-    double GetHoleRadius() const { return m_holeRadius; };
+    double GetHoleRadius() const { return m_holeRadius * m_currentEnviron.scale; };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return m_holeVertex; };
     double GetLandingHeight() const { return m_landingHeight; };
     double GetLauchHeight() const { return m_launchHeight; };

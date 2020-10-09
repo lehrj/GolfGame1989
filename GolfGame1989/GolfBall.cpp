@@ -76,10 +76,6 @@ float GolfBall::GetDistanceToHole() const
 
     float testDistance3 = (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
 
-
-
-
-
     return (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
 
     //return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
@@ -852,7 +848,6 @@ void GolfBall::RollBall()
         
         if (isBallInHoleRadius == false)
         {
-
             float distanceToHole = GetDistanceToHole();
             float holeRadius = pBallEnvironment->GetHoleRadius();
 
@@ -861,7 +856,6 @@ void GolfBall::RollBall()
                 isBallInHoleRadius = true;
                 posOnEnteringHoleRadius = m_ball.q.position;
                 timeOnEnteringHoleRadius = m_ball.flightTime;
-
             }
         }
         if (isBallInHoleRadius == true)
