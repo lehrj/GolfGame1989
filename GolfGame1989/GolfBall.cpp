@@ -47,38 +47,14 @@ void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 
 float GolfBall::GetDistanceToHole() const
 {
-    float distanceBetweenTeeAndHole = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_shotOrigin).Length();
-    float distanceTeeHoleScaled = distanceBetweenTeeAndHole / pBallEnvironment->GetScale();
-    DirectX::SimpleMath::Vector3 holePosition = pBallEnvironment->GetHolePosition();
     float environScale = pBallEnvironment->GetScale();
-    DirectX::SimpleMath::Vector3 ballPosition = m_ball.q.position;
     DirectX::SimpleMath::Vector3 startPos = m_shotOrigin;
-    DirectX::SimpleMath::Vector3 ballOffset = ballPosition + startPos;
-
-    float Distance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
-
-    float testDistance = ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - ballPosition).Length();
-    float testDistance2 = ((pBallEnvironment->GetHolePosition() * pBallEnvironment->GetScale()) - ballPosition).Length();
-
-    DirectX::SimpleMath::Vector3 v1(1.0, 0.0, 0.0);
-    DirectX::SimpleMath::Vector3 v2(2.0, 0.0, 0.0);
-
-    float vLength = (v1 - v2).Length();
-
-    DirectX::SimpleMath::Vector3 testPosHole1 = pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale();
-    DirectX::SimpleMath::Vector3 testPosHole2 = pBallEnvironment->GetHolePosition();
-    DirectX::SimpleMath::Vector3 testPosBall = m_ball.q.position;
-
     DirectX::SimpleMath::Vector3 scaledBallPos = m_ball.q.position;
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(environScale, environScale, environScale);
     scaledBallPos = DirectX::SimpleMath::Vector3::Transform(scaledBallPos, scaleMatrix);
     scaledBallPos += startPos;
 
-    float testDistance3 = (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
-
     return (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
-
-    //return ((pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale()) - m_ball.q.position).Length();
 }
 
 double GolfBall::GetImpactAngle() const
