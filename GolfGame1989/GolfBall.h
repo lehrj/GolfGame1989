@@ -68,7 +68,6 @@ private:
     bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime) const;
     void LandProjectile();
     void LaunchProjectile();
-    void LaunchProjectile2();
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
     void SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord);
