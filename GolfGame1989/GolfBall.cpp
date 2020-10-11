@@ -114,6 +114,18 @@ float GolfBall::GetImpactVelocity() const
     return velocity;
 }
 
+double GolfBall::GetLandingHeight() const
+{
+    if (m_shotPath.size() < 2)
+    {
+        return m_shotOrigin.y;
+    }
+    double height;
+    int i = (int)m_shotPath.size() - 1;
+    height = m_shotPath[i].y;
+    return height;
+}
+
 double GolfBall::GetShotDistance() const
 {
     DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
@@ -134,16 +146,10 @@ double GolfBall::GetShotFlightDistance() const
     return distance;
 }
 
-double GolfBall::GetLandingHeight() const
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3) const
 {
-    if (m_shotPath.size() < 2)
-    {
-        return m_shotOrigin.y;
-    }
-    double height;
-    int i = (int)m_shotPath.size() - 1;
-    height = m_shotPath[i].y;
-    return height;
+
+    return DirectX::SimpleMath::Vector3::Zero;
 }
 
 // WIP: Tweeking equations and measurement units and other voodoo hotness to get something that looks legit 
