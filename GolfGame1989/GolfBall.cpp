@@ -149,9 +149,11 @@ double GolfBall::GetShotFlightDistance() const
 // Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
 DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3) const
 {
+    DirectX::SimpleMath::Vector3 collisionPoint = m_ball.q.position;
+    DirectX::SimpleMath::Vector3 holeCenter = pBallEnvironment->GetHolePosition();
+    DirectX::SimpleMath::Vector3 planeNormal(collisionPoint.x - holeCenter.x, collisionPoint.y - holeCenter.y, collisionPoint.z - holeCenter.z);
 
-
-
+    DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(collisionPoint, planeNormal);
 
 
     return DirectX::SimpleMath::Vector3::Zero;
@@ -746,6 +748,10 @@ void GolfBall::RollBall()
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
                 isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
+
+                // for testing
+                DirectX::SimpleMath::Vector3 posCollisionVelocity = GetPostCollisionVelocity(posOnEnteringHoleRadius, m_ball.q.position, pBallEnvironment->GetHolePosition());
+
             }
         }
 
