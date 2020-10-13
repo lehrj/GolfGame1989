@@ -146,8 +146,13 @@ double GolfBall::GetShotFlightDistance() const
     return distance;
 }
 
+// Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
 DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3) const
 {
+
+
+
+
 
     return DirectX::SimpleMath::Vector3::Zero;
 }
@@ -167,7 +172,6 @@ void GolfBall::LandProjectile()
     //impactSpinRate = impactSpinRate / m_ball.radius;
 
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(direction)));
-
 
     double vix = m_ball.q.velocity.x;
     double viy = m_ball.q.velocity.y;
