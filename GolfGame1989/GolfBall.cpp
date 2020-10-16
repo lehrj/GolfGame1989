@@ -16,7 +16,7 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
     return dt;
 }
 
-bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime) const
+bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime)
 {
     // s = (1/2) a t^2
     // s = Vit (1/2) a t^2 // with initil velocity
@@ -36,6 +36,16 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
         isInHole = false;
     }
 
+    if (isInHole == false)
+    {
+        DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
+        m_ball.q.velocity = updatedVelocity;
+
+    }
+    else
+    {
+        // ToDo: add positioning ball in hole location here
+    }
     return isInHole;
 }
 
@@ -147,7 +157,7 @@ double GolfBall::GetShotFlightDistance() const
 }
 
 // Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
-DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3) const
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) const
 {
     DirectX::SimpleMath::Vector3 collisionPoint = m_ball.q.position;
     DirectX::SimpleMath::Vector3 holeCenter = pBallEnvironment->GetHolePosition();
@@ -748,10 +758,6 @@ void GolfBall::RollBall()
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
                 isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
-
-                // for testing
-                DirectX::SimpleMath::Vector3 posCollisionVelocity = GetPostCollisionVelocity(posOnEnteringHoleRadius, m_ball.q.position, pBallEnvironment->GetHolePosition());
-
             }
         }
 
