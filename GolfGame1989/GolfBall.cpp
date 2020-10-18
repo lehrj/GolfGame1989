@@ -42,10 +42,6 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
         m_ball.q.velocity = updatedVelocity;
 
-        DirectX::SimpleMath::Vector3 testVelocity(10.0, 0.0, -10.0);
-        m_ball.q.velocity = testVelocity;
-        int testBrake = 0;
-        testBrake++;
 
     }
     else
@@ -99,10 +95,6 @@ double GolfBall::GetImpactDirection() const
     {
         direction = -direction;
     }
-
-    double testWrapDirDeg = Utility::WrapAngle(direction);
-    testWrapDirDeg = Utility::ToDegrees(testWrapDirDeg);
-    double testDirectionDeg = Utility::ToDegrees(direction);
 
     return direction;
 }
@@ -171,10 +163,12 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 
     DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(collisionPoint, planeNormal);
     
+    //DirectX::SimpleMath::Vector3 preImpactDirection = aVec2 - aVec1;
+    DirectX::SimpleMath::Vector3 preImpactDirection = m_ball.q.velocity;
 
-    DirectX::SimpleMath::Vector3 preImpactDirection = aVec2 - aVec1;
+
     //DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::SimpleMath::Matrix::CreateR
-    DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::XMMatrixRotationAxis(planeNormal, Utility::ToRadians(180.0f)));
+    DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::XMMatrixRotationAxis(planeNormal, Utility::ToRadians(90.0f)));
     DirectX::SimpleMath::Vector3 postImpactDirectionNormalized = postImpactDirection;
     postImpactDirectionNormalized.Normalize();
     //DirectX::SimpleMath::Vector3 directionUpdate = postImpactDirectionNormalized * (m_ball.q.velocity.Length() * pBallEnvironment->GetScale());
@@ -785,7 +779,12 @@ void GolfBall::RollBall()
         {
             double velocity = m_ball.q.velocity.Length();
             velocity -= decelFactor * velocity * m_timeStep;
-            m_ball.q.velocity = directionVec * static_cast<float>(velocity);
+
+            DirectX::SimpleMath::Vector3 tragectoryNormilized = m_ball.q.velocity;
+            tragectoryNormilized.Normalize();
+            m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity);
+
+            //m_ball.q.velocity = directionVec * static_cast<float>(velocity);
             m_ball.q.position += m_ball.q.velocity * m_timeStep;
             m_ball.flightTime = m_ball.flightTime + m_timeStep;
         }
