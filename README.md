@@ -34,8 +34,9 @@ Currently the game play includes a 3 click power bar swing. The first click star
 
 ### Future mechanics:
 Currently the ball placement angle respective to the player is hard coded, future update will include the ability to position the player forward or back along the swing plane which will result an adjustment in the vertical club face angle at impact.
-Future update will allow the adjustment of the direction of travel of the club’s swing plan to be from out to in, in to in, and in to out which will result in adjustments to the ball flight path. This combined with the impact face angle will result in all 9 traditional golf flight paths to be simulated.
-Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. 
+Future update will allow the adjustment of the direction of travel of the club’s swing plan to be from out to in, in to in, and in to out which will result in adjustments to the ball flight path. This combined with the impact face angle will result in all 9 traditional golf flight paths to be simulated (complete).
+Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. Hole mechanic development is in progress.
+
 
 
 ### Controls:
