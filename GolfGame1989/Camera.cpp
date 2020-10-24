@@ -24,7 +24,7 @@ Camera::Camera(int aWidth, int aHeight)
 	m_homeYaw = 0.0f;
 
 	m_nearPlane = .1f;
-	m_farPlane = 10.0f;
+	m_farPlane = 5.f;
 
 	m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
 	Reset();

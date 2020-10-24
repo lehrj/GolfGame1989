@@ -410,7 +410,6 @@ void Golf::LoadEnvironment(const int aIndex)
 
 void Golf::ScaleCordinates()
 {
-
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
 
     float scaleFactor = pEnvironment->GetScale();

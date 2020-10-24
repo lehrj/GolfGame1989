@@ -388,7 +388,11 @@ void Game::CreateResources()
 
     ////********* WLJ world start ----- deactivate to turn off world spin
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
-    m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+
+    const float viewPlaneNear = 0.1f;
+    const float viewPlaneFar = 300.0f;
+
+    m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);

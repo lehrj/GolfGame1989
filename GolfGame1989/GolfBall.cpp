@@ -38,11 +38,8 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
 
     if (isInHole == false)
     {
-
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
         m_ball.q.velocity = updatedVelocity;
-
-
     }
     else
     {
@@ -508,8 +505,6 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
     // Turn ball spin axis to shot aim direction
     m_ball.rotationAxis = DirectX::SimpleMath::Vector3::Transform(m_ball.rotationAxis, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aImpactData.directionDegrees)));
-
-    //aImpactData.
 }
 
 void GolfBall::PushFlightData()
@@ -748,8 +743,7 @@ void GolfBall::RollBall()
 
     int i = 0;
     while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
-    {
-        
+    {      
         if (isBallInHoleRadius == false)
         {
             float distanceToHole = GetDistanceToHole();
@@ -790,7 +784,6 @@ void GolfBall::RollBall()
         }
         else //stop the ball motion if its in the hole
         {
-
             // WLJ turn off for debuging // m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
         }
 
@@ -869,7 +862,6 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     {
         m_ball.omega *= 1.0 + (aTimeDelta * m_spinRateDecay);
     }
-    //m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
 }
 
 void GolfBall::ZeroDataForUI()
