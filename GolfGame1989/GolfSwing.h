@@ -68,7 +68,7 @@ private:
     GolfClub                                    m_club;
 
     Utility::ImpactData                         m_impactData;
-    int                                         m_clubIndex = 10;
+    int                                         m_clubIndex = 2;
 
     std::vector<DirectX::SimpleMath::Vector3>   m_alphaBetaThetaVec;
 

@@ -36,6 +36,8 @@ public:
     double CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2);
     void FireProjectile(Utility::ImpactData aImpact);
 
+    DirectX::SimpleMath::Vector3 GetBallPosInEnviron(DirectX::SimpleMath::Vector3 aPos) const;
+
     int GetBounceCount() const { return m_bounceCount; };
     double GetDebugValue01() const { return m_debugValue01; };
     double GetDebugValue02() const { return m_debugValue02; };

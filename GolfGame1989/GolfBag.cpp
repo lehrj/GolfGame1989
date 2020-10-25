@@ -18,7 +18,7 @@ void GolfBag::BuildBag()
     m_bag.resize(m_bagSize);
     // Club data modeled off of Ping G400 series driver and woods, G irons, and Karsten TR B60 putter, along with best guesses to fill in data gaps
     int i = 0;
-    
+
     m_bag[i].clubName = "Putter";
     m_bag[i].angle = 3.0;
     m_bag[i].balancePoint = 0.75;
@@ -170,7 +170,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
-    
+
     /*
     m_bag[i].clubName = "Default";
     m_bag[i].angle = 25.0;

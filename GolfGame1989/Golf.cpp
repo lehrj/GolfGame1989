@@ -410,7 +410,7 @@ void Golf::LoadEnvironment(const int aIndex)
 
 void Golf::ScaleCordinates()
 {
-    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
+    //DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
 
     float scaleFactor = pEnvironment->GetScale();
 
@@ -419,7 +419,9 @@ void Golf::ScaleCordinates()
     float sX = scaleFactor;
     float sY = scaleFactor;
     float sZ = scaleFactor;
-    scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
+
+    DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
+    //scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
 
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
@@ -433,7 +435,6 @@ void Golf::SelectInputClub(int aInput)
 {
     pBall->ResetBallData();
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-
     pSwing->InputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
