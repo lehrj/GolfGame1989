@@ -390,8 +390,7 @@ void Game::CreateResources()
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
     const float viewPlaneNear = 0.1f;
-    const float viewPlaneFar = 300.0f;
-
+    const float viewPlaneFar = 400.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -541,6 +540,7 @@ void Game::DrawHydraShot()
     lineStartColor.push_back(DirectX::Colors::Orange);
 
     std::vector<DirectX::XMVECTORF32> lineEndColor;
+
     lineEndColor.push_back(DirectX::Colors::Red);
     lineEndColor.push_back(DirectX::Colors::Red);
     lineEndColor.push_back(DirectX::Colors::Red);
@@ -554,12 +554,10 @@ void Game::DrawHydraShot()
     lineEndColor.push_back(DirectX::Colors::Yellow);
 
     std::vector<std::vector<DirectX::SimpleMath::Vector3>> hydraPath = pGolf->GetHydraShotPath();
-    //std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
 
     if (hydraPath.size() > 1)
     {
         std::vector<std::vector<float>> hydraTimeStep = pGolf->GetHydraTimeStep();
-        //GetHydraShotPath
         std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
 
         for (int i = 0; i < hydraPath.size(); ++i)
@@ -1415,10 +1413,12 @@ void Game::DrawMenuMain()
 
     // Hydra Shot Demo
     ////////////////////////////
+    /*
     lineDrawY += menuObj0Pos.y;
     std::string menuObjHydraString = "Hydra Shot Demo";
     DirectX::SimpleMath::Vector2 menuObjHydraPos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObjHydraOrigin = m_font->MeasureString(menuObjHydraString.c_str()) / 2.f;
+    */
     ///////////////////////////
 
     lineDrawY += menuObj0Pos.y;
@@ -1426,8 +1426,7 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj3Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj3Origin = m_font->MeasureString(menuObj3String.c_str()) / 2.f;
 
-    //if (m_menuSelect < 0 || m_menuSelect > 3)
-    if (m_menuSelect < 0 || m_menuSelect > 4)
+    if (m_menuSelect < 0 || m_menuSelect > 3)
     {
         m_menuSelect = 0;
     }
@@ -1488,6 +1487,7 @@ void Game::DrawMenuMain()
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
 
+    /*
     if (m_menuSelect == 3)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObjHydraOrigin);
@@ -1506,9 +1506,9 @@ void Game::DrawMenuMain()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos, Colors::White, 0.f, menuObjHydraOrigin);
     }
+    */
 
-    //if (m_menuSelect == 3)
-    if (m_menuSelect == 4)
+    if (m_menuSelect == 3)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
@@ -1709,7 +1709,7 @@ void Game::DrawShotAimArrow()
 
 void Game::DrawShotAimCone()
 {
-    const float width = .015f;
+    const float width = .0145f;
     const float length = .25f;
     const float indent = .18f;
     DirectX::SimpleMath::Vector3 right = DirectX::SimpleMath::Vector3(length, 0.0f, width);
@@ -2921,12 +2921,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             {
                 m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
             }
-            if (m_menuSelect == 3) // GoTo Game State Hydra Shot Style! (aka just goes into game, yea its for show)
-            {
-                m_currentState = GameState::GAMESTATE_GAMEPLAY;
-            }
-            //if (m_menuSelect == 3) // Quit Game
-            if (m_menuSelect == 4) // Quit Game
+            if (m_menuSelect == 3) // Quit Game
             {
                 ExitGame();
             }
@@ -3118,7 +3113,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         m_projectileTimer = 0.0;
         pGolf->BuildHyrdraShotData(pPlay->GetShotDirection());
     }
-
     if (m_kbStateTracker.pressed.T)
     {
         pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);

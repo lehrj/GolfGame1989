@@ -39,7 +39,6 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     if (isInHole == false)
     {
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
-
         m_ball.q.velocity = updatedVelocity;
     }
     else
@@ -185,7 +184,6 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
     //DirectX::SimpleMath::Vector3 directionUpdate = postImpactDirectionNormalized * (m_ball.q.velocity.Length() * pBallEnvironment->GetScale());
     DirectX::SimpleMath::Vector3 directionUpdate = postImpactDirectionNormalized * (m_ball.q.velocity.Length());
 
-    //return DirectX::SimpleMath::Vector3::Zero;
     return directionUpdate;
 }
 

@@ -20,11 +20,11 @@ Camera::Camera(int aWidth, int aHeight)
 	m_target = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 	m_up = DirectX::SimpleMath::Vector3::UnitY;
 	m_position = DirectX::SimpleMath::Vector3(-2.0f, 0.2f, 0.0f);
-	m_homePitch = 0.0f;
+	m_homePitch = -0.053f;
 	m_homeYaw = 0.0f;
 
 	m_nearPlane = .1f;
-	m_farPlane = 5.f;
+	m_farPlane = 8.f;
 
 	m_cameraState = CameraState::CAMERASTATE_PRESWINGVIEW;
 	Reset();

@@ -28,6 +28,7 @@ void GolfBag::BuildBag()
     m_bag[i].massMoI = 0.08;
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
+    
 
     m_bag[i].clubName = "Custom Debug";
     m_bag[i].angle = 10.0;
