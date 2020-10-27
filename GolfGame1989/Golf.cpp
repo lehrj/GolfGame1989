@@ -6,7 +6,6 @@
 Golf::Golf()
 {
     pEnvironment = new Environment();
-
     pCharacter = new GolfCharacter();
     pSwing = new GolfSwing();
     

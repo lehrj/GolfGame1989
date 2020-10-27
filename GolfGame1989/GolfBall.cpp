@@ -36,6 +36,9 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
         isInHole = false;
     }
 
+    // Debug forcing the ball not to roll in hole
+    isInHole = false;
+
     if (isInHole == false)
     {
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
@@ -45,6 +48,7 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     {
         // ToDo: add positioning ball in hole location here
     }
+
     return isInHole;
 }
 
@@ -117,18 +121,6 @@ DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
     return impactPlane;
 }
 
-float GolfBall::GetImpactVelocity() const
-{
-    DirectX::SimpleMath::Vector3 impactPoint;
-    impactPoint.x = m_ball.q.velocity.x;
-    impactPoint.y = m_ball.q.velocity.y;
-    impactPoint.z = m_ball.q.velocity.z;
-
-    float velocity = impactPoint.Length();
-
-    return velocity;
-}
-
 double GolfBall::GetLandingHeight() const
 {
     if (m_shotPath.size() < 2)
@@ -162,11 +154,11 @@ double GolfBall::GetShotFlightDistance() const
 }
 
 // Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
-DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) const
+// GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) //const
 {
     DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(m_ball.q.position);
 
-    ////DirectX::SimpleMath::Vector3 collisionPoint = m_ball.q.position;
     DirectX::SimpleMath::Vector3 collisionPoint = environPos;
 
     DirectX::SimpleMath::Vector3 holeCenter = pBallEnvironment->GetHolePosition();    
@@ -174,6 +166,48 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 
     DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(collisionPoint, planeNormal);
     
+
+    DirectX::SimpleMath::Vector3 preImpactDirection = m_ball.q.velocity;
+
+    //DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::SimpleMath::Matrix::CreateR
+    DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::XMMatrixRotationAxis(planeNormal, Utility::ToRadians(90.0f)));
+    DirectX::SimpleMath::Vector3 postImpactDirectionNormalized = postImpactDirection;
+    postImpactDirectionNormalized.Normalize();
+    //DirectX::SimpleMath::Vector3 directionUpdate = postImpactDirectionNormalized * (m_ball.q.velocity.Length() * pBallEnvironment->GetScale());
+    DirectX::SimpleMath::Vector3 directionUpdate = postImpactDirectionNormalized * (m_ball.q.velocity.Length());
+
+    /////////////////////////////////////////
+
+    DirectX::SimpleMath::Vector3 travelPathNormalized = m_ball.q.velocity;
+    travelPathNormalized.Normalize();
+
+    DirectX::SimpleMath::Vector3 impactLineNormalized = planeNormal;
+    impactLineNormalized.Normalize();
+
+    float angle = acos(travelPathNormalized.Dot(impactLineNormalized));
+    angle = Utility::GetPi() - angle;
+
+    DirectX::SimpleMath::Vector3 updatedTravelPath = DirectX::SimpleMath::Vector3::Transform(impactLineNormalized, DirectX::SimpleMath::Matrix::CreateRotationY(angle));
+    updatedTravelPath = updatedTravelPath * m_ball.q.velocity.Length();
+
+
+    return updatedTravelPath;
+    //return directionUpdate;
+}
+
+// Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity2(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) const
+{
+    DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(m_ball.q.position);
+
+    ////DirectX::SimpleMath::Vector3 collisionPoint = m_ball.q.position;
+    DirectX::SimpleMath::Vector3 collisionPoint = environPos;
+
+    DirectX::SimpleMath::Vector3 holeCenter = pBallEnvironment->GetHolePosition();
+    DirectX::SimpleMath::Vector3 planeNormal = collisionPoint - holeCenter;
+
+    DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(collisionPoint, planeNormal);
+
     //DirectX::SimpleMath::Vector3 preImpactDirection = aVec2 - aVec1;
     DirectX::SimpleMath::Vector3 preImpactDirection = m_ball.q.velocity;
 
@@ -772,7 +806,7 @@ void GolfBall::RollBall()
         {
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
-                isBallInHoleRadius = false;
+                //isBallInHoleRadius = false;
                 isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
                 if (isBallInHole == false)
                 {
