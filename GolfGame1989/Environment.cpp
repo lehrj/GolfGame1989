@@ -12,7 +12,7 @@ Environment::Environment()
 
     LoadEnvironmentData();
     CreateDataStrings();
-    const int startEnviron = 0;  // ToDo: add error checking 
+    const int startEnviron = 1;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
@@ -145,7 +145,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-10.0f, 0.0f, 0.0f);
 
