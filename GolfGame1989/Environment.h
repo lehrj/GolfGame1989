@@ -4,7 +4,6 @@
 struct Environ
 {
     std::string                         name;
-
     double                              airDensity;        // in kg/m^3
     std::string                         airDensityStr;
     DirectX::SimpleMath::Vector3        holePosition;

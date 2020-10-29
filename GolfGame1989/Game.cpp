@@ -2620,9 +2620,11 @@ void Game::DrawTree9(const DirectX::SimpleMath::Vector3 aTreePos, const float aV
 
 
         VertexPositionColor branchBaseBackground = branchBaseVertex;
+        //VertexPositionColor branchBaseBackground(branchBase, Colors::Black);
 
+        //VertexPositionColor prevBranchBaseBackground = prevBranchBaseVertex;
+        VertexPositionColor prevBranchBaseBackground(branchBase, Colors::Black);
 
-        VertexPositionColor prevBranchBaseBackground = prevBranchBaseVertex;
         VertexPositionColor leafRBackground(branchEndR, Colors::Black);
         VertexPositionColor leafLBackground(branchEndL, Colors::Black);
 
@@ -2631,8 +2633,8 @@ void Game::DrawTree9(const DirectX::SimpleMath::Vector3 aTreePos, const float aV
         {
 
 
-            m_batch->DrawTriangle(branchBaseVertex, prevBranchBaseVertex, leafRBackground);
-            m_batch->DrawTriangle(branchBaseVertex, prevBranchBaseVertex, leafLBackground);
+            m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafRBackground);
+            m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafLBackground);
 
             m_batch->DrawLine(branchBaseVertex, leafR);
             m_batch->DrawLine(branchBaseVertex, leafL);
