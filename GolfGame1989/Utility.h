@@ -1,5 +1,11 @@
 #pragma once
+#include <stdlib.h>  // for random numbers
+#include <time.h>    // timer for random numbers
 #include "Vector4d.h"
+
+#include <random>
+
+
 
 // Class to handle miscellaneous functions and data structures needed across multiple classes
 class Utility
@@ -10,6 +16,38 @@ public:
     static inline double GetPi() { return 3.1415926535897931; };
     static inline double ToDegrees(double r) { return r * 180.0 / GetPi(); };
     static inline double ToRadians(double d) { return d / 180.0 * GetPi(); };
+
+    static inline void InitializeRandom()
+    {
+        
+        srand(time(NULL));
+        
+    };
+
+    static inline int GetRandomInt(const int aMin, const int aMax)
+    {
+        return rand() % aMax + aMin;
+    };
+
+    static inline float GetRandomFloat(const int aMin, const int aMax)
+    {
+        //return rand() % aMax + aMin;
+        return (aMin + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (aMax - aMin))));
+    };
+
+    static inline float GetAnimationTimeSeed()
+    {
+        const int min = 3;
+        const int max = 99;
+        const float range = 10;
+        //return (rand() % max)+min;
+        return rand();
+    };
+
+    static inline float GetAnimationTimeSeed(int aMax)
+    {  
+        return static_cast <float> (rand() / (static_cast<float> (RAND_MAX / aMax)));
+    };
 
     struct ImpactData
     {   
@@ -73,6 +111,7 @@ public:
     }
     
 private:
+
     
 };
 
