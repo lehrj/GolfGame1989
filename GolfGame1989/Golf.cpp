@@ -508,6 +508,11 @@ void Golf::TransformCordinates(const int aIndex)
     m_shotPath[aIndex] += m_shotStartPos;
 }
 
+void Golf::UpdateEnvironmentSortingForDraw(DirectX::SimpleMath::Vector3 aCameraPos)
+{
+    pEnvironment->UpdateFixtures(aCameraPos);
+}
+
 void Golf::UpdateImpact(Utility::ImpactData aImpact)
 {
     pBall->ResetBallData();

@@ -23,6 +23,27 @@ struct Environ
     std::string                         windZStr;
 };
 
+
+enum class FixtureType
+{
+    FIXTURETYPE_FLAGSTICK,
+    FIXTURETYPE_TREE01,
+    FIXTURETYPE_TREE02,
+    FIXTURETYPE_TREE03,
+    FIXTURETYPE_TREE04,
+    FIXTURETYPE_TREE05,
+};
+
+struct Fixture
+{
+    unsigned int                    idNumber;
+    DirectX::SimpleMath::Vector3    position;
+    FixtureType                     fixtureType;  // think of a better name later
+    float                           animationVariation;
+    float                           distanceToCamera;
+
+};
+
 // Class to handle environment and gameplay world needs
 class Environment
 {
@@ -35,6 +56,8 @@ public:
     double GetAirDensity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensity; };
     DirectX::XMVECTORF32 GetEnvironColor() const { return m_currentEnviron.terrainColor; };
     std::string GetEnvironName(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].name; };
+    std::vector<Fixture> GetFixtureBucket() { return m_fixtureBucket; };
+
     double GetGravity() const { return m_currentEnviron.gravity; };
     std::string GetGravityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravityStr; };
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
@@ -58,8 +81,12 @@ public:
     double GetWindY() const { return m_currentEnviron.wind.y; };
     std::string GetWindYString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windYStr; };
     double GetWindZ() const { return m_currentEnviron.wind.z; };
-    std::string GetWindZString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZStr; };
+    std::string GetWindZString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZStr; };    
+
+    void SortFixtureBucketByDistance();
     void UpdateEnvironment(const int aIndex);
+    void UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vector3 &aCameraPos);
+    void UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos);
 
 private:
     void BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos);
@@ -67,6 +94,7 @@ private:
 
     void CreateDataStrings();
     void LoadEnvironmentData();
+    void LoadFixtureBucket();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
 
@@ -75,6 +103,8 @@ private:
     std::vector<Environ>                m_environs;
     const int                           m_environsAvailable = 3;
     const int                           m_environSelectDisplayDataPoints = 5;
+
+    std::vector<Fixture>                m_fixtureBucket;
 
     std::vector<DirectX::VertexPositionColor> m_flagVertex;
     std::vector<DirectX::VertexPositionColor> m_holeVertex;

@@ -2728,8 +2728,35 @@ void Game::DrawWorld()
 
     // Test Draw Tree
     
+    pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
+    std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
 
+    for (int i = 0; i < fixtureList.size(); ++i)
+    {
+        if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
+        {
+            DrawTree9(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE02)
+        {
+            DrawTree9(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
+        {
+            DrawTree9(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE04)
+        {
+            DrawTree9(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE05)
+        {
+            DrawTree9(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+    }
+
+    /*
     DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
     //DrawTree1(treePos);
     DrawTree7(treePos, 0.3f);
@@ -2748,6 +2775,7 @@ void Game::DrawWorld()
 
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree9(treePos9, .9f);
+    */
 }
 
 // Properties
@@ -2911,7 +2939,7 @@ void Game::Render()
         return;
     }
 
-    Clear();
+    Clear();  
 
     // TODO: Add your rendering code here.
     // WLJ start

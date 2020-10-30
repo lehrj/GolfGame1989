@@ -9,13 +9,13 @@
 
 Environment::Environment()
 {
-
     LoadEnvironmentData();
     CreateDataStrings();
     const int startEnviron = 1;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
+    LoadFixtureBucket();
 }
 
 void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
@@ -163,6 +163,37 @@ void Environment::LoadEnvironmentData()
     m_environs[i].wind = DirectX::SimpleMath::Vector3(3.0f, 0.0f, 0.69f);
 }
 
+void Environment::LoadFixtureBucket()
+{
+    m_fixtureBucket.clear();
+    int i = 0;
+
+    Fixture inputFixture;
+
+    inputFixture.idNumber = i;
+    inputFixture.position = DirectX::SimpleMath::Vector3(-1.1f, 0.0f, 0.0f);
+    inputFixture.fixtureType = FixtureType::FIXTURETYPE_TREE01;
+    inputFixture.animationVariation = 0.0f;  // temp, use random function once implemented
+    inputFixture.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(inputFixture.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(inputFixture);
+
+    ++i;
+    inputFixture.idNumber = i;
+    inputFixture.position = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, 0.3f);
+    inputFixture.fixtureType = FixtureType::FIXTURETYPE_TREE02;
+    inputFixture.animationVariation = 0.2f;
+    inputFixture.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(inputFixture.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(inputFixture);
+
+    ++i;
+    inputFixture.idNumber = i;
+    inputFixture.position = DirectX::SimpleMath::Vector3(-1.0f, 0.0f, -0.3f);
+    inputFixture.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+    inputFixture.animationVariation = 0.4f;
+    inputFixture.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(inputFixture.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(inputFixture);
+}
+
 void Environment::SetLandingHeight(double aLandingHeight)
 {
     m_landingHeight = aLandingHeight;
@@ -173,6 +204,13 @@ void Environment::SetLauchHeight(double aLaunchHeight)
     m_launchHeight = aLaunchHeight;
 }
 
+void Environment::SortFixtureBucketByDistance()
+{
+    std::sort(m_fixtureBucket.begin(), m_fixtureBucket.end(),
+        [](const auto& i, const auto& j) {return i.distanceToCamera > j.distanceToCamera; });
+    
+}
+
 void Environment::UpdateEnvironment(const int aIndex)
 {
     m_currentEnviron = m_environs[aIndex];
@@ -180,4 +218,20 @@ void Environment::UpdateEnvironment(const int aIndex)
     m_landingHardness = m_environs[aIndex].landingHardnessScale;
     BuildFlagVertex(m_environs[aIndex].holePosition);
     BuildHoleVertex(m_environs[aIndex].holePosition);
+}
+
+void Environment::UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos)
+{
+
+    UpdateFixtureDistanceToCamera(aPos);
+    SortFixtureBucketByDistance();
+
+}
+
+void Environment::UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vector3 &aCameraPos)
+{
+    for (int i = 0; i < m_fixtureBucket.size(); ++i)
+    {
+        m_fixtureBucket[i].distanceToCamera = DirectX::SimpleMath::Vector3::Distance(m_fixtureBucket[i].position, aCameraPos);
+    }
 }

@@ -45,6 +45,9 @@ public:
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
     float GetDirectionToHoleInRads() const;   
+
+    std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
+
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
@@ -68,6 +71,7 @@ public:
     void SetEnvironment(const int aEnvironmentIndex);
     void SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos);
     
+    void UpdateEnvironmentSortingForDraw(DirectX::SimpleMath::Vector3 aCameraPos);
     void UpdateImpact(Utility::ImpactData aImpact);
     void ZeroUIandRenderData();
 
