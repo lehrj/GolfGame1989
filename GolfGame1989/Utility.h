@@ -1,9 +1,7 @@
 #pragma once
-#include <stdlib.h>  // for random numbers
-#include <time.h>    // timer for random numbers
+
 #include "Vector4d.h"
 
-#include <random>
 
 
 
@@ -17,6 +15,7 @@ public:
     static inline double ToDegrees(double r) { return r * 180.0 / GetPi(); };
     static inline double ToRadians(double d) { return d / 180.0 * GetPi(); };
 
+    /*
     static inline void InitializeRandom()
     {
         
@@ -48,6 +47,7 @@ public:
     {  
         return static_cast <float> (rand() / (static_cast<float> (RAND_MAX / aMax)));
     };
+    */
 
     struct ImpactData
     {   

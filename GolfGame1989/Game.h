@@ -69,15 +69,16 @@ private:
     void DrawSwing();
     void DrawSwingUI();
     void DrawTeeBox();
-    void DrawTree1(const DirectX::SimpleMath::Vector3 aTreePos);
-    void DrawTree2(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree3(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree4(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree5(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree6(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree7(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree8(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree9(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree01(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);   
+    void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree
+    void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
+    void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree07(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawUI();
     void DrawWorld();
 
