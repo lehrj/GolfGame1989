@@ -231,12 +231,13 @@ void Environment::LoadFixtureBucket()
     float varMax = 10.0;
     float posMin = -2.0;
     float posMax = 4.0;
+    //int fixtureTypeNumMin = 1;
+    //int fixtureTypeNumMax = 11;
     int fixtureTypeNumMin = 1;
-    int fixtureTypeNumMax = 11;
-
-    for (int j = 0; j < 100; ++j)
+    int fixtureTypeNumMax = 6;
+    for (int j = 0; j < 130; ++j)
     {
-        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ posMax)) -2.0;
+        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ (posMax))) -2.0;
         float y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ posMax);
         float z = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ posMax)) - 2.0;
         //float z = static_cast <float> (fixtureTypeNumMin + rand()) / static_cast <float> (RAND_MAX / (posMax - posMin));
@@ -252,24 +253,29 @@ void Environment::LoadFixtureBucket()
         int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
         if (fixtureNum == 1)
         {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE01;
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
         }
         else if (fixtureNum == 2)
         {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE02;
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
         }
         else if (fixtureNum == 3)
         {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
         }
         else if (fixtureNum == 4)
         {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
         }
         else if (fixtureNum == 5)
         {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE05;
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
         }
+        else
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+        }
+        /*
         else if (fixtureNum == 6)
         {
             fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
@@ -294,7 +300,7 @@ void Environment::LoadFixtureBucket()
         {
             fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
         }
-
+        */
         fixt.animationVariation = aVar;
         fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
 
