@@ -79,6 +79,7 @@ private:
     void DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawUI();
     void DrawWorld();
 
