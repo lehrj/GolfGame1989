@@ -1414,14 +1414,14 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj2Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj2Origin = m_font->MeasureString(menuObj2String.c_str()) / 2.f;
 
-    // Hydra Shot Demo
+    // Demo
     ////////////////////////////
-    /*
+    
     lineDrawY += menuObj0Pos.y;
-    std::string menuObjHydraString = "Hydra Shot Demo";
+    std::string menuObjHydraString = "Forest Stroll Demo";
     DirectX::SimpleMath::Vector2 menuObjHydraPos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObjHydraOrigin = m_font->MeasureString(menuObjHydraString.c_str()) / 2.f;
-    */
+    
     ///////////////////////////
 
     lineDrawY += menuObj0Pos.y;
@@ -1429,7 +1429,7 @@ void Game::DrawMenuMain()
     DirectX::SimpleMath::Vector2 menuObj3Pos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObj3Origin = m_font->MeasureString(menuObj3String.c_str()) / 2.f;
 
-    if (m_menuSelect < 0 || m_menuSelect > 3)
+    if (m_menuSelect < 0 || m_menuSelect > 4)
     {
         m_menuSelect = 0;
     }
@@ -1489,8 +1489,7 @@ void Game::DrawMenuMain()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
-
-    /*
+    
     if (m_menuSelect == 3)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObjHydraOrigin);
@@ -1509,9 +1508,8 @@ void Game::DrawMenuMain()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos, Colors::White, 0.f, menuObjHydraOrigin);
     }
-    */
-
-    if (m_menuSelect == 3)
+    
+    if (m_menuSelect == 4)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(-4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
@@ -3058,13 +3056,13 @@ void Game::DrawWorld()
 {
     // draw world grid
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 xFarAxis(2.f, 0.f, 0.f);
-    //DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
+
+    DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
     //DirectX::SimpleMath::Vector3 xFarAxis(100.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
-    size_t extention = 0;
+    size_t extention = 50;
 
     DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
     
@@ -3077,8 +3075,8 @@ void Game::DrawWorld()
         {
             //VertexPositionColor v1(scale - zAxis, gridColor);
             //VertexPositionColor v2(scale + zAxis, gridColor);
-            VertexPositionColor v1(scale - zAxis, DirectX::Colors::Green); // Center line
-            VertexPositionColor v2(scale + zAxis, DirectX::Colors::Green); // Center line
+            VertexPositionColor v1(scale - zAxis, DirectX::Colors::LawnGreen); // Center line
+            VertexPositionColor v2(scale + zAxis, DirectX::Colors::LawnGreen); // Center line
             m_batch->DrawLine(v1, v2);
         }
         else
@@ -3099,8 +3097,8 @@ void Game::DrawWorld()
         {
             //VertexPositionColor v1(scale - xAxis, gridColor); // Center line
             //VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
-            VertexPositionColor v1(scale - xAxis, DirectX::Colors::Green); // Center line
-            VertexPositionColor v2(scale + xFarAxis, DirectX::Colors::Green); // Center line
+            VertexPositionColor v1(scale - xAxis, DirectX::Colors::LawnGreen); // Center line
+            VertexPositionColor v2(scale + xFarAxis, DirectX::Colors::LawnGreen); // Center line
             m_batch->DrawLine(v1, v2);
         }
         else
@@ -3111,8 +3109,8 @@ void Game::DrawWorld()
         }
     }
 
-    //DrawTeeBox();
-    //DrawFlagAndHole();
+    DrawTeeBox();
+    DrawFlagAndHole();
 
     // Test Draw Tree
     
@@ -3374,8 +3372,8 @@ void Game::Render()
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawWorld();
-        //DrawShotAimCone();
-        //DrawShotAimArrow();
+        DrawShotAimCone();
+        DrawShotAimArrow();
 
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
         {
@@ -3422,9 +3420,9 @@ void Game::Render()
     }
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawPowerBarUI();
+        DrawPowerBarUI();
         //DrawSwingUI();
-        //DrawUI();
+        DrawUI();
     }
 
     m_spriteBatch->End();
@@ -3530,12 +3528,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     auto kb = m_keyboard->GetState();
     m_kbStateTracker.Update(kb);
 
-    if (m_kbStateTracker.pressed.P)
-    {
-        m_currentState = GameState::GAMESTATE_STARTSCREEN;
-    }
-
-
     if (kb.Escape)
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
@@ -3596,7 +3588,11 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             {
                 m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
             }
-            if (m_menuSelect == 3) // Quit Game
+            if (m_menuSelect == 3) // GoTo Demo Select State
+            {
+                m_currentState = GameState::GAMESTATE_GAMEPLAY;
+            }
+            if (m_menuSelect == 4) // Quit Game
             {
                 ExitGame();
             }

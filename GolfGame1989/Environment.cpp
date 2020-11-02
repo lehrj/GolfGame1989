@@ -11,7 +11,7 @@ Environment::Environment()
 {
     LoadEnvironmentData();
     CreateDataStrings();
-    const int startEnviron = 1;  // ToDo: add error checking 
+    const int startEnviron = 0;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
@@ -176,6 +176,7 @@ void Environment::LoadFixtureBucket()
 
     Fixture inputFixture;
 
+    // placed fixtures
     inputFixture.idNumber = i;
     inputFixture.position = DirectX::SimpleMath::Vector3(-1.1f, 0.0f, 0.0f);
     inputFixture.fixtureType = FixtureType::FIXTURETYPE_TREE01;
@@ -208,17 +209,6 @@ void Environment::LoadFixtureBucket()
     inputFixture.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(inputFixture.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(inputFixture);
 
-    float a = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float c = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-
-
-    //m_fixtureBucket[0].animationVariation = a;
-    //m_fixtureBucket[1].animationVariation = b;
-    //m_fixtureBucket[2].animationVariation = c;
-
-
-
     for (int j = 0; j < m_fixtureBucket.size(); ++j)
     {
         float testVar = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -226,30 +216,35 @@ void Environment::LoadFixtureBucket()
         m_fixtureBucket[j].position = DirectX::SimpleMath::Vector3::Zero;
     }
 
+    m_fixtureBucket.clear();  // using randomized placement until further course design implemented
 
-    m_fixtureBucket.clear();
-    float varMax = 10.0;
-    float posMin = -2.0;
-    float posMax = 4.0;
-    //int fixtureTypeNumMin = 1;
-    //int fixtureTypeNumMax = 11;
-    int fixtureTypeNumMin = 1;
-    int fixtureTypeNumMax = 6;
-    for (int j = 0; j < 130; ++j)
+    // randomized fixtures
+    const float varMax = 10.0;
+    const float posMin = -2.0;
+    const float posMax = 4.0;
+    const float xPosMin = -2.0;
+    const float xPosMax = 8.0;
+    const float yPos = m_landingHeight;
+    const float zPosMin = -2.0;
+    const float zPosMax = -1.8;
+    const int fixtureTypeNumMin = 1;
+    const int fixtureTypeNumMax = 6;
+    const int fixtureCount = 35;
+    int leftOrRightFairwayPlacement = 1;
+    for (int j = 0; j < fixtureCount; ++j)
     {
-        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ (posMax))) -2.0;
-        float y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ posMax);
-        float z = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ posMax)) - 2.0;
-        //float z = static_cast <float> (fixtureTypeNumMin + rand()) / static_cast <float> (RAND_MAX / (posMax - posMin));
+        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ (xPosMax))) - 2.0;
+        float y = yPos;
+        float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (zPosMax - zPosMin)) - 2.0;
+        z *= leftOrRightFairwayPlacement; // to alternate tree placement or right or left side of fairway
+        leftOrRightFairwayPlacement *= -1;
         float aVar = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ varMax);
 
         Fixture fixt;
 
         fixt.idNumber = j;
-        fixt.position = DirectX::SimpleMath::Vector3(x, 0.0, z);
-        //fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+        fixt.position = DirectX::SimpleMath::Vector3(x, y, z);
 
-        //float r3 = LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
         int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
         if (fixtureNum == 1)
         {
@@ -275,37 +270,9 @@ void Environment::LoadFixtureBucket()
         {
             fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
         }
-        /*
-        else if (fixtureNum == 6)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-        }
-        else if (fixtureNum == 7)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-        }
-        else if (fixtureNum == 8)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE08;
-        }
-        else if (fixtureNum == 9)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-        else if (fixtureNum == 10)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE10;
-        }
-        else
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-        */
+
         fixt.animationVariation = aVar;
         fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-
-
-        //fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
         
         m_fixtureBucket.push_back(fixt);
     }
