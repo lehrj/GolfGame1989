@@ -38,7 +38,7 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
 
     // Debug forcing the ball not to roll in hole
     isInHole = false;
-
+    //m_ball.q.position.y += verticalDrop;
     if (isInHole == false)
     {
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
@@ -166,7 +166,6 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 
     DirectX::SimpleMath::Plane impactPlane = DirectX::SimpleMath::Plane(collisionPoint, planeNormal);
     
-
     DirectX::SimpleMath::Vector3 preImpactDirection = m_ball.q.velocity;
 
     //DirectX::SimpleMath::Vector3 postImpactDirection = DirectX::SimpleMath::Vector3::Transform(preImpactDirection, DirectX::SimpleMath::Matrix::CreateR
@@ -189,7 +188,6 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 
     DirectX::SimpleMath::Vector3 updatedTravelPath = DirectX::SimpleMath::Vector3::Transform(impactLineNormalized, DirectX::SimpleMath::Matrix::CreateRotationY(angle));
     updatedTravelPath = updatedTravelPath * m_ball.q.velocity.Length();
-
 
     return updatedTravelPath;
     //return directionUpdate;
@@ -685,7 +683,7 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
 
 void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, double aTimeDelta)
 {
-    int numEqns = pBall->numEqns;
+    const int numEqns = pBall->numEqns;
     //  Allocate memory for the arrays.
     BallMotion vecQ;
     BallMotion vecDq1;

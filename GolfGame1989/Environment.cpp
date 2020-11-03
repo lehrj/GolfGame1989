@@ -61,7 +61,7 @@ void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
-        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::Colors::White));
+        m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::Colors::Gray));
     }
 }
 
