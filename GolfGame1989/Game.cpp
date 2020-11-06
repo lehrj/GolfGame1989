@@ -492,6 +492,17 @@ void Game::DrawCameraFocus()
     m_batch->DrawLine(origin, zOffset);
 }
 
+void Game::DrawDebugLines()
+{
+    //std::vector<std::tuple<DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3, DirectX::XMVECTORF32>> debugLines = pGolf->GetBallDebugLines();
+    std::vector<std::pair<DirectX::VertexPositionColor, DirectX::VertexPositionColor>> debugLines = pGolf->GetBallDebugLines();
+
+    for (int i = 0; i < debugLines.size(); ++i)
+    {
+        m_batch->DrawLine(debugLines[i].first, debugLines[i].second);
+    }
+}
+
 void Game::DrawFlagAndHole()
 {
     std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
@@ -3389,6 +3400,7 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             //DrawCameraFocus();
+            DrawDebugLines();
         }
     }
 
@@ -3774,9 +3786,12 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.released.Z)
     {
-        m_kbStateTracker.Reset();
-        m_projectileTimer = 0.0;
-        pPlay->DebugShot();
+        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        {
+            m_kbStateTracker.Reset();
+            m_projectileTimer = 0.0;
+            pPlay->DebugShot();
+        }
     }
     if (m_kbStateTracker.released.H)
     {        

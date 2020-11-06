@@ -16,6 +16,8 @@ Environment::Environment()
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
     LoadFixtureBucket();
+
+    
 }
 
 void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)

@@ -55,6 +55,7 @@ class Environment
 public:
 
     Environment();
+    
 
     double GetAirDensity() const { return m_currentEnviron.airDensity; };
     std::string GetAirDensityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensityStr; };
@@ -94,6 +95,7 @@ public:
     void UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos);
 
 private:
+    
     void BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos);
     void BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos);
 
@@ -133,5 +135,7 @@ private:
     const double                        m_maxGravity = 28.0;    // approximate value for the mass of the sun
     const double                        m_minMaxHeight = 450.0; // Launch & Landing min/max heights is just above the largest elevation change (>400 meters) of any real golf course which is the Extreme 19 in Limpopo Province South Africa
     const double                        m_minMaxWind = 667.0;   // highest know wind speed on Neptune
+
+    
 };
 

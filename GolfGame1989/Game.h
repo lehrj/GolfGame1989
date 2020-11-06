@@ -52,6 +52,7 @@ private:
     void CreateDevice();
     void CreateResources();
 
+    void DrawDebugLines();
     void DrawCameraFocus();
     void DrawFlagAndHole();
     void DrawHydraShot();

@@ -7,6 +7,14 @@
 #include "Vector4d.h"
 #include <vector>
 
+void GolfBall::AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor)
+{
+    DirectX::VertexPositionColor originVertex(aOriginPos, aColor);
+    DirectX::VertexPositionColor lineEndVertex(aLine, aColor);
+    std::pair<DirectX::VertexPositionColor, DirectX::VertexPositionColor> vertexPair(originVertex, lineEndVertex);
+    m_debugDrawLines.push_back(vertexPair);
+}
+
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2)
 {
     double m = (aHeight2 - aHeight1) / (aTime2 - aTime1);
@@ -199,8 +207,28 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 
     DirectX::SimpleMath::Vector3 updatedTravelPath = DirectX::SimpleMath::Vector3::Transform(impactLineNormalized, DirectX::SimpleMath::Matrix::CreateRotationY(angle));
     updatedTravelPath = updatedTravelPath * m_ball.q.velocity.Length();
+    
 
-    return updatedTravelPath;
+    DirectX::SimpleMath::Vector3 heightDropVec(0.0, aHeightDrop, 0.0);
+    float scaledHoleRad = pBallEnvironment->GetHoleRadius() / pBallEnvironment->GetScale();
+
+    DirectX::SimpleMath::Vector3 testHoleRadWithHeightDrop(scaledHoleRad, aHeightDrop, 0.0);
+    testHoleRadWithHeightDrop.Normalize();
+    heightDropVec.Normalize();
+    //float tiltAngle = acos(heightDropVec.Dot(testHoleRadWithHeightDrop));
+    float tiltAngle = acos(testHoleRadWithHeightDrop.Dot(heightDropVec));
+    tiltAngle = Utility::GetPi() - tiltAngle;
+    float tiltAngleDeg = Utility::ToDegrees(tiltAngle);
+
+    DirectX::SimpleMath::Vector3 testTravelPath = DirectX::SimpleMath::Vector3::Transform(impactLineNormalized, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(testAxis, tiltAngle));
+    testTravelPath = testTravelPath * m_ball.q.velocity.Length();
+    testTravelPath.y = 0;
+
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), impactLineNormalized, DirectX::Colors::Red);
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), testTravelPath, DirectX::Colors::Blue);
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), updatedTravelPath, DirectX::Colors::Yellow);
+    return testTravelPath;
+    //return updatedTravelPath;
     //return directionUpdate;
 }
 
@@ -770,8 +798,6 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
 
 void GolfBall::ResetBallData()
 {
-    m_shotPath.clear();
-    m_shotPathTimeStep.clear();
     m_landingCordinates = m_shotOrigin;
     m_bounceCount = 0;
     m_shotPath.clear();
@@ -788,6 +814,7 @@ void GolfBall::ResetBallData()
     m_debugValue02 = 0.0;
     m_debugValue03 = 0.0;
     m_debugValue04 = 0.0;
+    m_debugDrawLines.clear();
 }
 
 void GolfBall::RollBall()

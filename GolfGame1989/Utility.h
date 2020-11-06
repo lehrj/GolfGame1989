@@ -3,8 +3,6 @@
 #include "Vector4d.h"
 
 
-
-
 // Class to handle miscellaneous functions and data structures needed across multiple classes
 class Utility
 {

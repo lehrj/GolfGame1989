@@ -21,6 +21,9 @@ public:
     void BuildUIstrings();
     void BuildEnvironSelectStrings();
     void CycleNextClub(const bool aIsCycleClubUp);
+    //std::vector<std::tuple<DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3, DirectX::XMVECTORF32>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
+    std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
+
     DirectX::SimpleMath::Vector3 GetBallPosition() const { return m_ballPos; };
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
