@@ -115,7 +115,7 @@ private:
 
     std::vector<DirectX::VertexPositionColor> m_flagVertex;
     std::vector<DirectX::VertexPositionColor> m_holeVertex;
-    const int                           m_holeResolution = 10;          // number of vertices used to draw hole circle
+    const int                           m_holeResolution = 30;          // number of vertices used to draw hole circle
     //const double                        m_holeRadius = 0.10795;              // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
     const double                        m_holeRadius = 12.40795;
 
