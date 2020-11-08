@@ -10,7 +10,8 @@
 void GolfBall::AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor)
 {
     DirectX::VertexPositionColor originVertex(aOriginPos, aColor);
-    DirectX::VertexPositionColor lineEndVertex(aLine, aColor);
+    DirectX::VertexPositionColor lineEndVertex(aLine + aOriginPos, aColor);
+    //DirectX::VertexPositionColor lineEndVertex(aLine + aOriginPos, DirectX::Colors::Red);
     std::pair<DirectX::VertexPositionColor, DirectX::VertexPositionColor> vertexPair(originVertex, lineEndVertex);
     m_debugDrawLines.push_back(vertexPair);
 }
@@ -164,8 +165,65 @@ double GolfBall::GetShotFlightDistance() const
 }
 
 // Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
-DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity2(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) //const
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop) //const
 {
+    DirectX::SimpleMath::Vector3 travelPathNorm = m_ball.q.velocity;
+    travelPathNorm.Normalize();
+
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), travelPathNorm, DirectX::Colors::Orange);
+
+    DirectX::SimpleMath::Vector3 holeNormal = pBallEnvironment->GetHolePosition() - GetBallPosInEnviron(m_ball.q.position);
+    holeNormal.Normalize();
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), holeNormal, DirectX::Colors::Yellow);
+
+
+    DirectX::SimpleMath::Vector3 impactAxis = holeNormal;
+    impactAxis.Cross(DirectX::SimpleMath::Vector3::UnitY, impactAxis);
+
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), impactAxis, DirectX::Colors::Teal);
+
+    DirectX::SimpleMath::Vector3 ballDropPos = m_ball.q.position;
+    ballDropPos.y += aHeightDrop;
+    //ballDropPos.y += aHeightDrop / pBallEnvironment->GetScale();
+    ballDropPos = GetBallPosInEnviron(ballDropPos);
+
+    DirectX::SimpleMath::Vector3 dropVec = pBallEnvironment->GetHolePosition() - ballDropPos;
+    //DirectX::SimpleMath::Vector3 dropVec = ballDropPos - pBallEnvironment->GetHolePosition();
+    //DirectX::SimpleMath::Vector3 test = dropVec.Backward;
+    //dropVec.Backward;
+    //dropVec *= -1;
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), dropVec, DirectX::Colors::Blue);
+
+
+    DirectX::SimpleMath::Vector3 testAxis = holeNormal;
+    testAxis.Cross(travelPathNorm, testAxis);
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), testAxis, DirectX::Colors::Yellow);
+
+
+
+    DirectX::SimpleMath::Vector3 impactAxis2 = impactAxis * -1;
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), impactAxis2, DirectX::Colors::CornflowerBlue);
+
+ 
+    DirectX::SimpleMath::Vector3 testCross1 = travelPathNorm;
+    testCross1.Cross(dropVec, testCross1);
+    testCross1.y = 0.0;
+    testCross1.Normalize();
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), testCross1, DirectX::Colors::Pink);
+
+    DirectX::SimpleMath::Vector3 testCross2 = holeNormal;
+    testCross2.Cross(dropVec, testCross2);
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), testCross2, DirectX::Colors::Purple);
+
+
+    DirectX::SimpleMath::Vector3 testVelocity = impactAxis;
+    if (testAxis.y > 0.0)
+    {
+        testVelocity *= -1;
+    }
+    testVelocity += travelPathNorm;
+    //testVelocity += m_ball.q.velocity;
+    AddDebugDrawLines(GetBallPosInEnviron(m_ball.q.position), testVelocity, DirectX::Colors::Red);
 
 
     return DirectX::SimpleMath::Vector3::Zero;

@@ -494,7 +494,6 @@ void Game::DrawCameraFocus()
 
 void Game::DrawDebugLines()
 {
-    //std::vector<std::tuple<DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3, DirectX::XMVECTORF32>> debugLines = pGolf->GetBallDebugLines();
     std::vector<std::pair<DirectX::VertexPositionColor, DirectX::VertexPositionColor>> debugLines = pGolf->GetBallDebugLines();
 
     for (int i = 0; i < debugLines.size(); ++i)
@@ -3432,9 +3431,9 @@ void Game::Render()
     }
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawPowerBarUI();
+        //DrawPowerBarUI();
         //DrawSwingUI();
-        DrawUI();
+        //DrawUI();
     }
 
     m_spriteBatch->End();
@@ -3818,12 +3817,18 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     if (kb.OemPeriod)
     {
         pPlay->TurnShotAim(static_cast<float>(-aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
-        pCamera->TurnAroundPoint(static_cast<float>(-aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
+        if (pCamera->GetCameraState() != CameraState::CAMERASTATE_FIRSTPERSON)  // for debuging don't move camera if in first person mode
+        {
+            pCamera->TurnAroundPoint(static_cast<float>(-aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
+        }
     }
     if (kb.OemComma)
     {
         pPlay->TurnShotAim(static_cast<float>(aTimer.GetElapsedSeconds()), pCamera->GetAimTurnRate());
-        pCamera->TurnAroundPoint(static_cast<float>(aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());    
+        if (pCamera->GetCameraState() != CameraState::CAMERASTATE_FIRSTPERSON) // for debuging don't move camera if in first person mode
+        {
+            pCamera->TurnAroundPoint(static_cast<float>(aTimer.GetElapsedSeconds()), pGolf->GetShotStartPos());
+        }
     }
     if (m_kbStateTracker.pressed.X) // Debug to turn aim at a set rate
     {
