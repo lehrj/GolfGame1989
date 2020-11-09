@@ -56,7 +56,6 @@ public:
 
     Environment();
     
-
     double GetAirDensity() const { return m_currentEnviron.airDensity; };
     std::string GetAirDensityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensityStr; };
     double GetAirDensity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensity; };
@@ -69,7 +68,6 @@ public:
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return m_flagVertex; };
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
-    //double GetHoleRadius() const { return m_holeRadius / m_currentEnviron.scale; };
     double GetHoleRadius() const { return m_holeRadius * m_currentEnviron.scale; };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return m_holeVertex; };
     double GetLandingHeight() const { return m_landingHeight; };

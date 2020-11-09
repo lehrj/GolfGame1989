@@ -3378,7 +3378,7 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-
+    //DrawDebugLines();
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawWorld();
