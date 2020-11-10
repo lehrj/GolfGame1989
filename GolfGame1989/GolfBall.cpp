@@ -45,10 +45,6 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
         isInHole = false;
     }
 
-    float ballRad = m_ball.radius;
-    // Debug forcing the ball not to roll in hole
-    //isInHole = false;
-    //m_ball.q.position.y += verticalDrop;
     if (isInHole == false)
     {
         DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
@@ -261,7 +257,7 @@ void GolfBall::LandProjectile()
     double e;
 
    // if (absViyPrime <= 20.0)
-    if(impactSpeed <= 20.0)
+    if (impactSpeed <= 20.0)
     {
         e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
     }
@@ -330,11 +326,9 @@ void GolfBall::LandProjectile()
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
     //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(180.0f)));
     //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
-    //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
     m_ball.omega = omegaR;
-    //m_ball.omega = omegaR;
     //m_ball.omega = omegaR * .10472; // conversion from rpm to rad per second
 }
 
@@ -425,8 +419,8 @@ void GolfBall::LaunchProjectile()
 
     SetMaxHeight(maxHeight);
 
-    this->m_ball.q.velocity.y = 0.0;
-    m_ball.q.position.y = 0.0;
+    m_ball.q.velocity.y = 0.0;
+    m_ball.q.position.y = pBallEnvironment->GetLandingHeight();
     RollBall();
     SetLandingCordinates(m_ball.q.position);
 }
@@ -776,8 +770,6 @@ void GolfBall::RollBall()
     {      
         if (isBallInHoleRadius == false)
         {
-            float distanceToHole = GetDistanceToHole();
-
             if (GetDistanceToHole() < pBallEnvironment->GetHoleRadius())
             {
                 isBallInHoleRadius = true;
@@ -834,7 +826,6 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.mass = 0.0459;
     m_ball.numEqns = 6;
     m_ball.omega = 0.0;
-    //m_ball.q.position = pEnviron->GetTeePosition();
     m_ball.q.velocity.x = 0.0;
     m_ball.q.velocity.y = 0.0;
     m_ball.q.velocity.z = 0.0;

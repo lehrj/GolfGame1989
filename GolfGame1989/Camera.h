@@ -104,8 +104,7 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 0.2f; 
-    //const float                     m_rotationTravelSpeed = 1.4f;
+    const float                     m_posTravelSpeed = 0.2f;
     const float                     m_rotationTravelSpeed = .9f;
     const float                     m_aimTurnRate = 0.3f;
 
@@ -124,13 +123,8 @@ private:
     float                           m_moveLeftRight = 0.0f;
     float                           m_moveUpDown = 0.0f;
 
-    //const DirectX::SimpleMath::Vector3 m_preSwingCamPosOffset = DirectX::SimpleMath::Vector3(-0.9f, 0.5f, 0.0f);
-    //const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.3f, 0.0f);
-
     const DirectX::SimpleMath::Vector3 m_preSwingCamPosOffset = DirectX::SimpleMath::Vector3(-0.25f, 0.07f, 0.0f);
-    //const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.5f, 0.09f, 0.0f);
     const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.5f, 0.11f, 0.0f);
-
     const DirectX::SimpleMath::Vector3 m_swingCamPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.02f, 0.2f);
     const DirectX::SimpleMath::Vector3 m_swingTargetPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
@@ -138,6 +132,7 @@ private:
     DirectX::SimpleMath::Vector3    m_cameraEndPos;
     DirectX::SimpleMath::Vector3    m_targetStartPos;
     DirectX::SimpleMath::Vector3    m_targetEndPos;
+
     const float                     m_cameraTransitionSpeed = .9f;
     DX::StepTimer                   m_cameraTimer;
 

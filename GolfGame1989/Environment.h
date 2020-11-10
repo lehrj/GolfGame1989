@@ -53,7 +53,6 @@ struct Fixture
 class Environment
 {
 public:
-
     Environment();
     
     double GetAirDensity() const { return m_currentEnviron.airDensity; };
@@ -116,7 +115,6 @@ private:
     const int                           m_holeResolution = 30;          // number of vertices used to draw hole circle
     //const double                        m_holeRadius = 0.10795;              // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
     const double                        m_holeRadius = 1.10795;
-    //const double                        m_holeRadius = 12.40795;
 
     double                              m_landingHeight = 0.0;     // in meters
     double                              m_launchHeight = 0.0;      // in meters

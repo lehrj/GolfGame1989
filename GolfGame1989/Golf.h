@@ -84,7 +84,6 @@ private:
     Environment*                                pEnvironment;    
     GolfBall*                                   pBall;
     GolfCharacter*                              pCharacter;
-    GolfPlay*                                   pPlay;
     GolfSwing*                                  pSwing;
 
     DirectX::SimpleMath::Vector3                m_ballPos;

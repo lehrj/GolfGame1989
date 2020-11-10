@@ -10,13 +10,11 @@ Golf::Golf()
     pSwing = new GolfSwing();
     
     pSwing->SetDefaultSwingValues(pEnvironment->GetGravity());
-    //pSwing->InputClub(13); // ToDo WLJ : add error checking 
     pSwing->InputClub(0);  // ToDo WLJ : add error checking 
     pSwing->UpdateGolfSwingValues();
     pBall = new GolfBall();
     pBall->SetEnvironment(pEnvironment);
     pBall->SetDefaultBallValues(pEnvironment);
-    pPlay = new GolfPlay();
     SetCharacter(0); // ToDo WLJ : add error checking 
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
@@ -33,7 +31,6 @@ Golf::~Golf()
     delete pSwing;
     delete pEnvironment;
     delete pCharacter;
-    delete pPlay;
 }
 
 void Golf::BuildEnvironSelectStrings()
@@ -200,8 +197,7 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
 
 void Golf::BuildTrajectoryData()
 {
-    pBall->SetLaunchPosition(m_shotStartPos);
-    
+    pBall->SetLaunchPosition(m_shotStartPos);   
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 
     InputData();
@@ -409,22 +405,15 @@ void Golf::LoadEnvironment(const int aIndex)
 
 void Golf::ScaleCordinates()
 {
-    //DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::Identity;
-
-    float scaleFactor = pEnvironment->GetScale();
-
-    //scaleFactor = 1.0;
-    
+    float scaleFactor = pEnvironment->GetScale();   
     float sX = scaleFactor;
     float sY = scaleFactor;
     float sZ = scaleFactor;
 
     DirectX::SimpleMath::Matrix scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
-    //scaleMatrix = DirectX::SimpleMath::Matrix::CreateScale(sX, sY, sZ);
 
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        // temp remove scaling
         m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
         TransformCordinates(i);
     }  
@@ -518,8 +507,6 @@ void Golf::UpdateImpact(Utility::ImpactData aImpact)
     pBall->ResetBallData();
     pSwing->ResetAlphaBeta();
     pSwing->UpdateImpactData(aImpact);
-    //pBall->ResetBallData();
-    //pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
     BuildTrajectoryData();
     BuildUIstrings();
