@@ -3059,6 +3059,12 @@ void Game::DrawUI()
         m_fontPos2.y += 35;
     }
 
+    // temp for testing swing count
+    std::string uiLine = std::to_string(pPlay->GetSwingCount());
+    DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+    m_fontPos2.y += 35;
+
     m_fontPos2.y = fontOriginPosY;
 }
 
@@ -3748,6 +3754,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.V) // reset ball to tee position and prep for new shot
     {
+        pPlay->ResetSwingCount();
         pGolf->SetBallPosition(pGolf->GetTeePos());
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
@@ -3773,6 +3780,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         {
             if (pPlay->IsSwingStateAtImpact() == true)
             {
+                pPlay->IncrementSwingCount();
                 pCamera->SetCameraStartPos(pCamera->GetPos());
                 pCamera->SetCameraEndPos(pCamera->GetSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
                 pCamera->SetTargetStartPos(pCamera->GetTargetPos());
@@ -3787,6 +3795,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     {
         if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
         {
+            pPlay->IncrementSwingCount();
             m_kbStateTracker.Reset();
             m_projectileTimer = 0.0;
             pPlay->DebugShot();

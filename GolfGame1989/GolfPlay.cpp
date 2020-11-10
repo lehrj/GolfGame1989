@@ -5,6 +5,7 @@
 GolfPlay::GolfPlay()
 {
     ResetPlayData();
+    ResetSwingCount();
 }
 
 void GolfPlay::BuildDebugData()
@@ -40,6 +41,11 @@ std::vector<std::string> GolfPlay::GetDebugData()
     return m_debugData; 
 };
 
+void GolfPlay::IncrementSwingCount()
+{
+    ++m_swingCount;
+}
+
 bool GolfPlay::IsSwingStateAtImpact() const
 {
     if (m_isSwingStart == true && m_isSwingPowerSet == true && m_isOnDownSwing == true)
@@ -73,7 +79,7 @@ void GolfPlay::UpdateSwingState()
 }
 
 void GolfPlay::ResetPlayData()
-{
+{   
     Utility::ZeroImpactData(m_impactData);
     m_isSwingPowerSet = false;
     m_isSwingStart = false;
@@ -88,6 +94,11 @@ void GolfPlay::ResetPlayData()
     m_swingPower = 0.0;
     m_skullRate = 0.0;
     m_sliceRate = 0.0;
+}
+
+void GolfPlay::ResetSwingCount()
+{
+    m_swingCount = 0;
 }
 
 void GolfPlay::ResetSwingUpdateReady()

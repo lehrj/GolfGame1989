@@ -20,9 +20,12 @@ public:
     float GetMeterLength() const { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };
     double GetShotDirection() const { return m_impactData.directionDegrees; };
+    int GetSwingCount() const { return m_swingCount; };
+    void IncrementSwingCount();
     bool IsSwingStateAtImpact() const;
     void ResetGamePlayButton() { m_isGameplayButtonReady = true; };
     void ResetPlayData();
+    void ResetSwingCount();
     void ResetSwingUpdateReady();   
     void SetGameplayButtonReadyFalse() { m_isGameplayButtonReady = false; };
     void SetImpact();
@@ -62,5 +65,7 @@ private:
     const double                    m_turnRate = 10.0;
 
     std::vector<std::string>        m_debugData;
+
+    int                             m_swingCount;
 };
 

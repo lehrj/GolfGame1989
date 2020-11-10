@@ -57,9 +57,6 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     else
     {
         // ToDo: add positioning ball in hole location here
-        //m_ball.q.position = pBallEnvironment->GetHolePosition() / pBallEnvironment->GetScale();
-        //m_ball.q.position = GetBallPosInEnviron(pBallEnvironment->GetHolePosition()); 
-        //PushFlightData();
     }
 
     return isInHole;
@@ -547,11 +544,9 @@ void GolfBall::PushFlightData()
         m_shotPathTimeStep.push_back(timeStep);
         //m_shotPathTimeStep.push_back(m_ball.flightTime); //Error C4244
     }
-    else if (GetDistanceToHole() <= pBallEnvironment->GetHoleRadius())
+    else
     {
-        m_shotPath.push_back(m_ball.q.position);
-        float timeStep = static_cast<float>(m_ball.flightTime);
-        m_shotPathTimeStep.push_back(timeStep);
+        // add check for if ball is in the hole
     }
 }
 
