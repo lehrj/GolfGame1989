@@ -37,12 +37,8 @@ public:
     void FireProjectile(Utility::ImpactData aImpact);
 
     DirectX::SimpleMath::Vector3 GetBallPosInEnviron(DirectX::SimpleMath::Vector3 aPos) const;
-
     int GetBounceCount() const { return m_bounceCount; };
-
-    //std::vector<std::tuple<DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3, DirectX::XMVECTORF32>> GetDebugLines() const { return m_debugDrawLines; };
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetDebugLines() const { return m_debugDrawLines; };
-
     double GetDebugValue01() const { return m_debugValue01; };
     double GetDebugValue02() const { return m_debugValue02; };
     double GetDebugValue03() const { return m_debugValue03; };
@@ -72,9 +68,8 @@ public:
 private:
     void AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor);
     bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime);
-    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop); //const;
-    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity2(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop); //const;
-    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity3(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop); //const;
+    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop);
+
     void LandProjectile();
     void LaunchProjectile();
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
@@ -111,8 +106,6 @@ private:
 
     Environment const *                         pBallEnvironment;
 
-    //std::vector<std::tuple<DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3, DirectX::XMVECTORF32>> m_debugDrawLines;
-    //std::vector<std::pair< DirectX::SimpleMath::Vector3, DirectX::SimpleMath::Vector3>> m_debugDrawLines;
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> m_debugDrawLines;
 };
 

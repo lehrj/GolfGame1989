@@ -3378,7 +3378,7 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-    //DrawDebugLines();
+    DrawDebugLines();
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawWorld();
@@ -3399,7 +3399,7 @@ void Game::Render()
         if (m_isInDebugMode == true)
         {
             //DrawCameraFocus();
-            DrawDebugLines();
+            //DrawDebugLines();
         }
     }
 
@@ -3431,9 +3431,9 @@ void Game::Render()
     }
     if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawPowerBarUI();
+        DrawPowerBarUI();
         //DrawSwingUI();
-        //DrawUI();
+        DrawUI();
     }
 
     m_spriteBatch->End();
