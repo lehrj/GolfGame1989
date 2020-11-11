@@ -29,19 +29,19 @@ void GolfPlay::CalculateScoreString(const int aPar)
     }
     else if (m_swingCount == 1)
     {
-        m_scoreString = "Ace";
+        m_scoreString = "Ace!!!";
     }
     else if (holeScore == -3)
     {
-        m_scoreString = "Albatross";
+        m_scoreString = "Albatross!!";
     }
     else if (holeScore == -2)
     {
-        m_scoreString = "Eagle";
+        m_scoreString = "Eagle!";
     }
     else if (holeScore == -1)
     {
-        m_scoreString = "Birdie";
+        m_scoreString = "Birdie!";
     }
     else if (holeScore == 0)
     {
@@ -57,7 +57,7 @@ void GolfPlay::CalculateScoreString(const int aPar)
     }
     else
     {
-        m_scoreString = std::to_string(holeScore);
+        m_scoreString = "Score is : " + std::to_string(holeScore);
     }
 }
 

@@ -73,6 +73,7 @@ public:
     double GetLauchHeight() const { return m_launchHeight; };
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
     int GetNumberOfEnvironSelectDisplayVariables() const { return m_environSelectDisplayDataPoints; };
+    int GetPar() const { return m_currentEnviron.par; };
     float GetScale() const { return m_currentEnviron.scale; };
     float GetTeeDirectionDegrees() const { return m_currentEnviron.teeDirection; };
 

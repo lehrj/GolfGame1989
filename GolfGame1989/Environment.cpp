@@ -130,7 +130,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].holePosition = DirectX::SimpleMath::Vector3(-1.9f, 0.0f, -1.001f);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
-    m_environs[i].par = 5;
+    m_environs[i].par = 1;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -1.0f);

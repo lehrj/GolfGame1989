@@ -19,6 +19,7 @@ public:
     float GetSwingPower() const { return m_swingPower; };
     float GetMeterLength() const { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };
+    std::string GetScoreString() const { return m_scoreString; };
     double GetShotDirection() const { return m_impactData.directionDegrees; };
     int GetSwingCount() const { return m_swingCount; };
     void IncrementSwingCount();

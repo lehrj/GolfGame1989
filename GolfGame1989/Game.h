@@ -229,8 +229,15 @@ private:
         GAMESTATE_ENVIRONTMENTSELECT,
         GAMESTATE_GAMEPLAY
     };
-    GameState                                   m_currentState;
+    GameState                                   m_currentGameState;
 
+    enum class UiState
+    {
+        UISTATE_SWING,
+        UISTATE_SHOT,
+        UISTATE_SCORE
+    };
+    UiState                                     m_currentUiState;
 
     // audio 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;

@@ -28,12 +28,13 @@ Game::Game() noexcept :
 
     if (m_isInDebugMode == false)
     {
-        m_currentState = GameState::GAMESTATE_INTROSCREEN;
+        m_currentGameState = GameState::GAMESTATE_INTROSCREEN;
     }
     else
     {
-        m_currentState = GameState::GAMESTATE_GAMEPLAY;
+        m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
     }
+    m_currentUiState = UiState::UISTATE_SWING;
 }
 
 Game::~Game()
@@ -698,7 +699,7 @@ void Game::DrawIntroScreen()
     if (timeStamp > fadeOutEnd2 + logoDisplayGap)
     {
         AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_MUSIC01);
-        m_currentState = GameState::GAMESTATE_STARTSCREEN;
+        m_currentGameState = GameState::GAMESTATE_STARTSCREEN;
     }
 }
 
@@ -1620,6 +1621,13 @@ void Game::DrawProjectileRealTime()
                 ballPosIndex = i;
 
                 prevPos = shotPath[i];
+
+                // Deactivate gameplay UI and display the score for the hole cause the ball is in it, further updates will be needed when scorecard functionality is implemented
+                if (pGolf->GetIsBallInHole() == true && m_currentUiState != UiState::UISTATE_SCORE && i == shotPath.size() - 1)
+                {
+                    pPlay->CalculateScoreString(pGolf->GetParFromEnviron());
+                    m_currentUiState = UiState::UISTATE_SCORE;
+                }
             }
         }
         pGolf->SetBallPosition(shotPath[ballPosIndex]);
@@ -3032,38 +3040,46 @@ void Game::DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
 void Game::DrawUI()
 {
-
-
-    std::vector<std::string> uiString = pGolf->GetUIstrings();
-
-    std::string output = uiString[0];
-
-    float fontOriginPosY = m_fontPos2.y;
-
-    for (int i = 0; i < uiString.size(); ++i)
+    if (m_currentUiState == UiState::UISTATE_SWING || m_currentUiState == UiState::UISTATE_SHOT)
     {
-        std::string uiLine = std::string(uiString[i]);
+        std::vector<std::string> uiString = pGolf->GetUIstrings();
+
+        std::string output = uiString[0];
+
+        float fontOriginPosY = m_fontPos2.y;
+
+        for (int i = 0; i < uiString.size(); ++i)
+        {
+            std::string uiLine = std::string(uiString[i]);
+            DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+            m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+            m_fontPos2.y += 35;
+        }
+
+        // temp for testing swing count
+        std::string uiLine = "Swing Count = " + std::to_string(pPlay->GetSwingCount());
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
         m_fontPos2.y += 35;
+
+        ////m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+
+        // temp for testing is ball in hole bool
+        uiLine = "Is ball in hole = " + std::to_string(pGolf->GetIsBallInHole());
+        lineOrigin = m_font->MeasureString(uiLine.c_str());
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+        m_fontPos2.y += 35;
+
+        m_fontPos2.y = fontOriginPosY;
     }
 
-
-    // temp for testing swing count
-    std::string uiLine = "Swing Count = " + std::to_string(pPlay->GetSwingCount());
-    DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-    m_fontPos2.y += 35;
-
-    ////m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
-
-    // temp for testing is ball in hole bool
-    uiLine = "Is ball in hole = " + std::to_string(pGolf->GetIsBallInHole());
-    lineOrigin = m_font->MeasureString(uiLine.c_str());
-    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-    m_fontPos2.y += 35;
-
-    m_fontPos2.y = fontOriginPosY;
+    if (m_currentUiState == UiState::UISTATE_SCORE)
+    {
+        std::string uiLine = pPlay->GetScoreString();
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //DirectX::SimpleMath::Vector2 scorePos = m_bitwiseFontPos;
+        m_bitwiseFont->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_bitwiseFontPos, Colors::White, 0.f, lineOrigin);
+    }
 }
 
 void Game::DrawWorld()
@@ -3383,7 +3399,7 @@ void Game::Render()
 
     m_batch->Begin();
     DrawDebugLines();
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawWorld();
         DrawShotAimCone();
@@ -3413,27 +3429,27 @@ void Game::Render()
 
     //DrawShotTimerUI();
 
-    if (m_currentState == GameState::GAMESTATE_INTROSCREEN)
+    if (m_currentGameState == GameState::GAMESTATE_INTROSCREEN)
     {
         DrawIntroScreen();
     }
-    if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
+    if (m_currentGameState == GameState::GAMESTATE_STARTSCREEN)
     {
         DrawStartScreen();
     }
-    if (m_currentState == GameState::GAMESTATE_MAINMENU)
+    if (m_currentGameState == GameState::GAMESTATE_MAINMENU)
     {
         DrawMenuMain();
     }
-    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+    if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
     {
         DrawMenuCharacterSelect();
     }
-    if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+    if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
     {
         DrawMenuEnvironmentSelect();
     }
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawPowerBarUI();
         //DrawSwingUI();
@@ -3477,7 +3493,7 @@ void Game::Update(DX::StepTimer const& aTimer)
     m_projectileTimer += elapsedTime;
     // TODO: Add your game logic here.
 
-    if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+    if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
     {
         if (m_menuSelect == 0)
         {
@@ -3493,7 +3509,7 @@ void Game::Update(DX::StepTimer const& aTimer)
         }
     }
 
-    if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+    if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
         pPlay->Swing();
 
@@ -3545,16 +3561,16 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
 
     if (kb.Escape)
     {
-        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
         {
             pCamera->SetCameraState(CameraState::CAMERASTATE_PRESWINGVIEW);
             ResetGamePlay();
         }
-        m_currentState = GameState::GAMESTATE_MAINMENU;
+        m_currentGameState = GameState::GAMESTATE_MAINMENU;
     }
     if (m_kbStateTracker.pressed.Enter)
     {
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
         {
             if (m_menuSelect == 0)
             {
@@ -3569,9 +3585,9 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
                 pGolf->LoadEnvironment(2);
             }
             m_menuSelect = 0;
-            m_currentState = GameState::GAMESTATE_STARTSCREEN;
+            m_currentGameState = GameState::GAMESTATE_STARTSCREEN;
         }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             if (m_menuSelect == 0)
             {
@@ -3586,26 +3602,26 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
                 pGolf->SetCharacter(2);
             }
             m_menuSelect = 0;
-            //m_currentState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
-            m_currentState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+            //m_currentGameState = GameState::GAMESTATE_MAINMENU; // Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
+            m_currentGameState = GameState::GAMESTATE_STARTSCREEN;// Return to Main Menu after selecting character, ToDo: using value of 1 doesn't return to main menu
         }
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        if (m_currentGameState == GameState::GAMESTATE_MAINMENU)
         {
             if (m_menuSelect == 0) // GoTo Game State
             {
-                m_currentState = GameState::GAMESTATE_GAMEPLAY;
+                m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
             }
             if (m_menuSelect == 1) // GoTo Character Select State
             {
-                m_currentState = GameState::GAMESTATE_CHARACTERSELECT;
+                m_currentGameState = GameState::GAMESTATE_CHARACTERSELECT;
             }
             if (m_menuSelect == 2) // GoTo Environment Select State
             {
-                m_currentState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
+                m_currentGameState = GameState::GAMESTATE_ENVIRONTMENTSELECT;
             }
             if (m_menuSelect == 3) // GoTo Demo Select State
             {
-                m_currentState = GameState::GAMESTATE_GAMEPLAY;
+                m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
             }
             if (m_menuSelect == 4) // Quit Game
             {
@@ -3613,59 +3629,59 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
             }
             m_menuSelect = 0;
         }
-        if (m_currentState == GameState::GAMESTATE_STARTSCREEN)
+        if (m_currentGameState == GameState::GAMESTATE_STARTSCREEN)
         {
-            m_currentState = GameState::GAMESTATE_MAINMENU;
+            m_currentGameState = GameState::GAMESTATE_MAINMENU;
         }
     }
     if (m_kbStateTracker.pressed.Up)
     {
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        if (m_currentGameState == GameState::GAMESTATE_MAINMENU)
         {
             --m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             --m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
         {
             --m_menuSelect;
         }
     }
     if (m_kbStateTracker.pressed.Down)
     {
-        if (m_currentState == GameState::GAMESTATE_MAINMENU)
+        if (m_currentGameState == GameState::GAMESTATE_MAINMENU)
         {
             ++m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             ++m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
         {
             ++m_menuSelect;
         }
     }
     if (m_kbStateTracker.pressed.Left)
     {
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             --m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
         {
             --m_menuSelect;
         }
     }
     if (m_kbStateTracker.pressed.Right)
     {
-        if (m_currentState == GameState::GAMESTATE_CHARACTERSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_CHARACTERSELECT)
         {
             ++m_menuSelect;
         }
-        if (m_currentState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
+        if (m_currentGameState == GameState::GAMESTATE_ENVIRONTMENTSELECT)
         {
             ++m_menuSelect;
         }
@@ -3762,6 +3778,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         pGolf->ResetIsBallInHole();
         ResetGamePlay();
+        m_currentUiState = UiState::UISTATE_SWING;
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
@@ -3775,7 +3792,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.Space)
     {
-        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
         {
             if (pPlay->IsSwingStateAtImpact() == true)
             {
@@ -3792,7 +3809,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.released.Z)
     {
-        if (m_currentState == GameState::GAMESTATE_GAMEPLAY)
+        if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
         {
             pPlay->IncrementSwingCount();
             m_kbStateTracker.Reset();
