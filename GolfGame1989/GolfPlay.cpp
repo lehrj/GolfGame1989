@@ -20,6 +20,47 @@ void GolfPlay::BuildDebugData()
     m_debugData.push_back("m_sliceRate = " + std::to_string(m_sliceRate));
 }
 
+void GolfPlay::CalculateScoreString(const int aPar)
+{
+    const int holeScore = m_swingCount - aPar;
+    if (m_swingCount <= 0)
+    {
+        // add error logging 
+    }
+    else if (m_swingCount == 1)
+    {
+        m_scoreString = "Ace";
+    }
+    else if (holeScore == -3)
+    {
+        m_scoreString = "Albatross";
+    }
+    else if (holeScore == -2)
+    {
+        m_scoreString = "Eagle";
+    }
+    else if (holeScore == -1)
+    {
+        m_scoreString = "Birdie";
+    }
+    else if (holeScore == 0)
+    {
+        m_scoreString = "Par";
+    }
+    else if (holeScore == 1)
+    {
+        m_scoreString = "Boogie";
+    }
+    else if (holeScore == 2)
+    {
+        m_scoreString = "Double Boogie";
+    }
+    else
+    {
+        m_scoreString = std::to_string(holeScore);
+    }
+}
+
 // set shot power to 100% and impact to perfect for debuging
 void GolfPlay::DebugShot()
 {

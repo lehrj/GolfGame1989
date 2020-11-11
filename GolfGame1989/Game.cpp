@@ -1609,17 +1609,18 @@ void Game::DrawProjectileRealTime()
         int ballPosIndex = 0;
         for (int i = 0; i < shotPath.size(); ++i)
         {
-            DirectX::SimpleMath::Vector3 p1(prevPos);
-            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
-            VertexPositionColor aV(p1, Colors::White);
-            VertexPositionColor bV(p2, Colors::White);
-
             if (shotTimeStep[i] < m_projectileTimer)
             {
+                DirectX::SimpleMath::Vector3 p1(prevPos);
+                DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+                VertexPositionColor aV(p1, Colors::White);
+                VertexPositionColor bV(p2, Colors::White);
+
                 m_batch->DrawLine(aV, bV);
                 ballPosIndex = i;
+
+                prevPos = shotPath[i];
             }
-            prevPos = shotPath[i];
         }
         pGolf->SetBallPosition(shotPath[ballPosIndex]);
 
@@ -1673,10 +1674,6 @@ void Game::DrawShotAimArrow()
     aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
-
-    //aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
-    //aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
-    //aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
         
     aimLine += pGolf->GetShotStartPos();
     aimLineLeft += pGolf->GetShotStartPos();
@@ -1684,26 +1681,16 @@ void Game::DrawShotAimArrow()
 
     DirectX::SimpleMath::Vector3 centerBase = DirectX::SimpleMath::Vector3(centerIndent, aimHeight, 0.0f);
     centerBase = DirectX::SimpleMath::Vector3::Transform(centerBase, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
-    //centerBase = DirectX::SimpleMath::Vector3::Transform(centerBase, DirectX::SimpleMath::Matrix::CreateRotationY(pPlay->GetShotDirection()));
     centerBase += pGolf->GetShotStartPos();
 
     VertexPositionColor origin(centerBase, Colors::Red);
-
-
     VertexPositionColor aimPoint(aimLine, Colors::Red);
     VertexPositionColor aimBaseLeft(aimLineLeft, Colors::Red);
-
     VertexPositionColor aimBaseRight(aimLineRight, Colors::DarkRed);
-
     VertexPositionColor originRight = origin;
     originRight.color.x = 0.5450980663F;
     VertexPositionColor aimPointRight = aimPoint;
     aimPointRight.color.x = 0.5450980663F;
-
-
-    //origin.color.w = .0f;
-    //origin.color.y = 1;
-    //originRight.color.w = .0f;
 
     if (pPlay->GetShotDirection() <= 0.0)
     {
@@ -3045,6 +3032,8 @@ void Game::DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
 void Game::DrawUI()
 {
+
+
     std::vector<std::string> uiString = pGolf->GetUIstrings();
 
     std::string output = uiString[0];
@@ -3059,9 +3048,18 @@ void Game::DrawUI()
         m_fontPos2.y += 35;
     }
 
+
     // temp for testing swing count
-    std::string uiLine = std::to_string(pPlay->GetSwingCount());
+    std::string uiLine = "Swing Count = " + std::to_string(pPlay->GetSwingCount());
     DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+    m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
+    m_fontPos2.y += 35;
+
+    ////m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+
+    // temp for testing is ball in hole bool
+    uiLine = "Is ball in hole = " + std::to_string(pGolf->GetIsBallInHole());
+    lineOrigin = m_font->MeasureString(uiLine.c_str());
     m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
     m_fontPos2.y += 35;
 
@@ -3762,6 +3760,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
+        pGolf->ResetIsBallInHole();
         ResetGamePlay();
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot

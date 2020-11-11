@@ -746,6 +746,11 @@ void GolfBall::ResetBallData()
     m_debugDrawLines.clear();
 }
 
+void GolfBall::ResetIsInHole()
+{
+    m_isBallInHole = false;
+}
+
 void GolfBall::RollBall()
 {
     double pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
@@ -805,6 +810,7 @@ void GolfBall::RollBall()
         }
         else //stop the ball motion if its in the hole
         {
+            m_isBallInHole = true;
             m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
         }
 
@@ -835,6 +841,8 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.windSpeed.x = static_cast<float>(pEnviron->GetWindX());
     m_ball.windSpeed.y = static_cast<float>(pEnviron->GetWindY());
     m_ball.windSpeed.z = static_cast<float>(pEnviron->GetWindZ());
+
+    m_isBallInHole = false;
 }
 
 void GolfBall::SetEnvironment(Environment* pEnviron)

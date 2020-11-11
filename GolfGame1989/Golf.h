@@ -41,6 +41,7 @@ public:
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
     std::vector<std::vector<DirectX::SimpleMath::Vector3>>& GetHydraShotPath() { return m_hydraData; };
     std::vector<std::vector<float>>& GetHydraTimeStep() { return m_hydraTimeSteps; };
+    bool GetIsBallInHole() const { return pBall->GetIsInHole(); };
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
@@ -62,6 +63,7 @@ public:
     void InputData();
     void LoadEnvironment(const int aIndex);
     void ResetBallData() { pBall->ResetBallData(); };
+    void ResetIsBallInHole() { pBall->ResetIsInHole(); };
     void SelectInputClub(int aInput);
 
     void SetBallPosition(const DirectX::SimpleMath::Vector3 aBallPos);

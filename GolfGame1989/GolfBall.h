@@ -44,15 +44,16 @@ public:
     double GetDebugValue03() const { return m_debugValue03; };
     double GetDebugValue04() const { return m_debugValue04; };
     float GetDistanceToHole() const;
-    DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
-    DirectX::SimpleMath::Vector3 GetLandingCordinates2() const { return m_landingImpactCordinates; };
-    double GetMaxHeight() const { return m_maxHeight; };   
     double GetImpactAngle() const;
     double GetImpactDirection() const;
     DirectX::SimpleMath::Plane GetImpactPlane() const;
     double GetInitialSpinRate() const { return m_initialSpinRate; };
+    bool GetIsInHole() const { return m_isBallInHole; };
+    DirectX::SimpleMath::Vector3 GetLandingCordinates() const { return m_landingCordinates; };
+    DirectX::SimpleMath::Vector3 GetLandingCordinates2() const { return m_landingImpactCordinates; };
     double GetLandingSpinRate() const { return m_landingSpinRate; };
     double GetLandingHeight() const;
+    double GetMaxHeight() const { return m_maxHeight; };
     double GetShotDistance() const;
     double GetShotFlightDistance() const;
     std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
@@ -60,6 +61,7 @@ public:
     std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
     void ResetBallData();
+    void ResetIsInHole();
     void SetDefaultBallValues(Environment* pEnviron);
     void SetEnvironment(Environment* pEnviron);
     void SetLaunchPosition(const DirectX::SimpleMath::Vector3 aPos);

@@ -8,7 +8,7 @@ public:
     GolfPlay();
 
     void DebugShot();
-
+    void CalculateScoreString(const int aPar);
     double GetBackswingSet() const { return m_impactData.power; };
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() const { return m_impactData; };
@@ -67,5 +67,6 @@ private:
     std::vector<std::string>        m_debugData;
 
     int                             m_swingCount;
+    std::string                     m_scoreString;
 };
 

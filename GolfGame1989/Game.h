@@ -231,6 +231,7 @@ private:
     };
     GameState                                   m_currentState;
 
+
     // audio 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;

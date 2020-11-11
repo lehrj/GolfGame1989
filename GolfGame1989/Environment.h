@@ -13,6 +13,7 @@ struct Environ
     std::string                         landingFrictionScaleStr;
     double                              landingHardnessScale;
     std::string                         landingHardnessScaleStr;
+    int                                 par;
     float                               scale;
     float                               teeDirection;       // start direction for first shot
     DirectX::SimpleMath::Vector3        teePosition;        // start position for first shot
@@ -22,7 +23,6 @@ struct Environ
     std::string                         windYStr;
     std::string                         windZStr;
 };
-
 
 enum class FixtureType
 {
