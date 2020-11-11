@@ -1,7 +1,7 @@
 # GolfGame1989
 
-Demo Videos on YouTube - https://www.youtube.com/playlist?list=PLKMR2Ppf1A4jcWj0OhxXVMuNQZNznrlG9
-
+Demo Videos on YouTube - https://www.youtube.com/channel/UCGI09aGt2juMQRwlK00GkFA
+                       
 This is golf game based on the double pendulum model in professor Theodore P. Jorgensen’s “The Physics of Golf” using the DirectX Tool Kit. The games features that have been implemented include character select, environment select, and a full golf bag with 14 clubs to select
 
 <p align="center">
@@ -35,7 +35,7 @@ Currently the game play includes a 3 click power bar swing. The first click star
 ### Future mechanics:
 Currently the ball placement angle respective to the player is hard coded, future update will include the ability to position the player forward or back along the swing plane which will result an adjustment in the vertical club face angle at impact.
 Future update will allow the adjustment of the direction of travel of the club’s swing plan to be from out to in, in to in, and in to out which will result in adjustments to the ball flight path. This combined with the impact face angle will result in all 9 traditional golf flight paths to be simulated (complete).
-Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. Hole mechanic development is in progress.
+Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. Hole mechanic development is in progress (complete).
 
 
 
