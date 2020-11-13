@@ -9,6 +9,7 @@ struct BallMotion
 {
     DirectX::SimpleMath::Vector3 position;
     DirectX::SimpleMath::Vector3 velocity;
+    double time;
 };
 
 struct SpinProjectile
@@ -16,7 +17,7 @@ struct SpinProjectile
     double          airDensity;
     double          area;
     double          dragCoefficient;
-    double          flightTime;
+    //double          flightTime;
     double          gravity;
     double          launchHeight;
     double          landingHeight;
@@ -56,9 +57,9 @@ public:
     double GetMaxHeight() const { return m_maxHeight; };
     double GetShotDistance() const;
     double GetShotFlightDistance() const;
-    std::vector<float>& GetShotTimeSteps() { return m_shotPathTimeStep; };
   
-    std::vector<DirectX::SimpleMath::Vector3>& OutputShotPath() { return m_shotPath; };
+    std::vector<BallMotion>& OutputBallPath() { return m_ballPath; };
+
     void PrepProjectileLaunch(Utility::ImpactData aImpactData);
     void ResetBallData();
     void ResetIsInHole();
@@ -95,8 +96,9 @@ private:
     DirectX::SimpleMath::Vector3                m_landingCordinates;
     DirectX::SimpleMath::Vector3                m_landingImpactCordinates;
     double                                      m_maxHeight;
-    std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
-    std::vector<float>                          m_shotPathTimeStep;
+
+    std::vector<BallMotion>                     m_ballPath;
+
     DirectX::SimpleMath::Vector3                m_shotOrigin;
     const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
     const float                                 m_timeStep = 0.01f;

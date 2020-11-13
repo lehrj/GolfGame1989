@@ -524,6 +524,11 @@ void Game::DrawFlagAndHole()
     }
 }
 
+void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
+{
+
+}
+
 void Game::DrawHydraShot()
 {
     std::vector<DirectX::XMVECTORF32> lineColor;
@@ -567,21 +572,18 @@ void Game::DrawHydraShot()
     lineEndColor.push_back(DirectX::Colors::Yellow);
     lineEndColor.push_back(DirectX::Colors::Yellow);
 
-    std::vector<std::vector<DirectX::SimpleMath::Vector3>> hydraPath = pGolf->GetHydraShotPath();
+    std::vector<std::vector<BallMotion>> hydraPath = pGolf->GetHydraShotPath();
 
     if (hydraPath.size() > 1)
     {
-        std::vector<std::vector<float>> hydraTimeStep = pGolf->GetHydraTimeStep();
-        std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
-
         for (int i = 0; i < hydraPath.size(); ++i)
         {
-            DirectX::SimpleMath::Vector3 prevPos2 = hydraPath[i][0];
+            DirectX::SimpleMath::Vector3 prevPos2 = hydraPath[i][0].position;
             int ballPosIndex2 = 0;
             for (int j = 0; j < hydraPath[i].size(); ++j)
             {
                 DirectX::SimpleMath::Vector3 p1(prevPos2);
-                DirectX::SimpleMath::Vector3 p2(hydraPath[i][j]);
+                DirectX::SimpleMath::Vector3 p2(hydraPath[i][j].position);
                 //VertexPositionColor aV(p1, lineColor[i]);
                // VertexPositionColor bV(p2, lineColor[i]);
                 VertexPositionColor aV(p1, lineEndColor[i]);
@@ -589,12 +591,12 @@ void Game::DrawHydraShot()
                 //VertexPositionColor aV(p1, DirectX::Colors::White);
                 //VertexPositionColor bV(p2, DirectX::Colors::White);
 
-                if (hydraTimeStep[i][j] < m_projectileTimer)
+                if (hydraPath[i][j].time < m_projectileTimer)
                 {
                     m_batch->DrawLine(aV, bV);
                     ballPosIndex2 = j;
                 }
-                prevPos2 = hydraPath[i][j];
+                prevPos2 = hydraPath[i][j].position;
             }
             //pGolf->SetBallPosition(hydraPath[0][ballPosIndex2]);
         }
@@ -1569,7 +1571,7 @@ void Game::DrawPowerBarUI()
 // working old version prior to impmenting real time match update
 void Game::DrawProjectile()
 {
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+    std::vector<BallMotion> shotPath = pGolf->GetShotPath();
     
     if (shotPath.size() > 1)
     {
@@ -1580,47 +1582,48 @@ void Game::DrawProjectile()
             m_flightStepTimer.ResetElapsedTime();
             m_projectilePathStep = 0;
         }
-        pGolf->SetBallPosition(shotPath[m_projectilePathStep]);
+        pGolf->SetBallPosition(shotPath[m_projectilePathStep].position);
         ++m_projectilePathStep;
 
-        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0].position;
         for (int i = 0; i < m_projectilePathStep; ++i)
         {
             DirectX::SimpleMath::Vector3 p1(prevPos);
-            DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+            DirectX::SimpleMath::Vector3 p2(shotPath[i].position);
 
             VertexPositionColor aV(p1, Colors::White);
             VertexPositionColor bV(p2, Colors::White);
 
             m_batch->DrawLine(aV, bV);
-            prevPos = shotPath[i];
+            prevPos = shotPath[i].position;
         }
     }
 }
 
 void Game::DrawProjectileRealTime()
 {
-    std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
-
+    //std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
+    std::vector<BallMotion> shotPath = pGolf->GetShotPath();
     if (shotPath.size() > 1)
     {
-        std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
+        //std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
 
-        DirectX::SimpleMath::Vector3 prevPos = shotPath[0];
+        DirectX::SimpleMath::Vector3 prevPos = shotPath[0].position;
         int ballPosIndex = 0;
         for (int i = 0; i < shotPath.size(); ++i)
         {
-            if (shotTimeStep[i] < m_projectileTimer)
+            //if (shotTimeStep[i] < m_projectileTimer)
+            if (shotPath[i].time < m_projectileTimer)
             {
                 DirectX::SimpleMath::Vector3 p1(prevPos);
-                DirectX::SimpleMath::Vector3 p2(shotPath[i]);
+                DirectX::SimpleMath::Vector3 p2(shotPath[i].position);
                 VertexPositionColor aV(p1, Colors::White);
                 VertexPositionColor bV(p2, Colors::White);
 
                 m_batch->DrawLine(aV, bV);
                 ballPosIndex = i;
 
-                prevPos = shotPath[i];
+                prevPos = shotPath[i].position;
 
                 // Deactivate gameplay UI and display the score for the hole cause the ball is in it, further updates will be needed when scorecard functionality is implemented
                 if (pGolf->GetIsBallInHole() == true && m_currentUiState != UiState::UISTATE_SCORE && i == shotPath.size() - 1)
@@ -1630,7 +1633,7 @@ void Game::DrawProjectileRealTime()
                 }
             }
         }
-        pGolf->SetBallPosition(shotPath[ballPosIndex]);
+        pGolf->SetBallPosition(shotPath[ballPosIndex].position);
 
         // Set camera targe on ball position if using projectile tracking camera
         if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
@@ -3076,6 +3079,16 @@ void Game::DrawUI()
             m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
             fontPos.y += 35;
         }
+ 
+        std::string distanceString = pGolf->GetShotDistanceString();
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(distanceString.c_str());
+        m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
+
+        float distance = pGolf->GetShotDistance();
+        std::string uiLine = std::to_string(distance);
+        lineOrigin = m_font->MeasureString(uiLine.c_str());
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
     }
 
     if (m_currentUiState == UiState::UISTATE_SCORE)
@@ -3154,7 +3167,11 @@ void Game::DrawWorld()
     
     for (int i = 0; i < fixtureList.size(); ++i)
     {
-        if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
+        if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
+        {
+            DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
         {
             DrawTree01(fixtureList[i].position, fixtureList[i].animationVariation);
         }

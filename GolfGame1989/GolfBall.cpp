@@ -129,22 +129,27 @@ DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
 
 double GolfBall::GetLandingHeight() const
 {
-    if (m_shotPath.size() < 2)
+    if (m_ballPath.size() < 2)
     {
         return m_shotOrigin.y;
     }
     double height;
-    int i = (int)m_shotPath.size() - 1;
-    height = m_shotPath[i].y;
+    int i = (int)m_ballPath.size() - 1;
+    height = m_ballPath[i].position.y;
     return height;
 }
 
 double GolfBall::GetShotDistance() const
 {
-    DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
-    DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
+    //DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
+    DirectX::SimpleMath::Vector3 origin = GetBallPosInEnviron(m_shotOrigin);
+    //DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
+    DirectX::SimpleMath::Vector3 landingPos = GetBallPosInEnviron(GetLandingCordinates());
     double distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
         * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
+
+    float distance2 = DirectX::SimpleMath::Vector3(origin - landingPos).Length();
+
 
     return distance;
 }
@@ -372,25 +377,25 @@ void GolfBall::LaunchProjectile()
         }
 
         double previousY = flightData.position.y;
-        double previousTime = m_ball.flightTime;
-
+        double previousTime = m_ball.q.time;
+        
         //  Calculate ball decent path until it reaches landing area height
         while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
         {
             previousY = flightData.position.y;
-            previousTime = m_ball.flightTime;
+            previousTime = m_ball.q.time;
             ProjectileRungeKutta4(&m_ball, dt);
             UpdateSpinRate(dt);
             flightData = this->m_ball.q;
             PushFlightData();
-            time = m_ball.flightTime;
+            time = m_ball.q.time;
         }
 
-        if (m_shotPath.size() > 1)
+        if (m_ballPath.size() > 1)
         {
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
-            m_shotPath[m_shotPath.size() - 1] = m_ball.q.position;
+            m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
 
         if (count == 0)
@@ -533,10 +538,7 @@ void GolfBall::PushFlightData()
     // Prevent push of data below ground level
     if (m_ball.q.position.y >= m_ball.landingHeight)
     {
-        m_shotPath.push_back(m_ball.q.position);
-        float timeStep = static_cast<float>(m_ball.flightTime);
-        m_shotPathTimeStep.push_back(timeStep);
-        //m_shotPathTimeStep.push_back(m_ball.flightTime); //Error C4244
+        m_ballPath.push_back(m_ball.q);
     }
     else
     {
@@ -646,7 +648,7 @@ void GolfBall::ProjectileRungeKutta4(struct SpinProjectile* pBall, double aTimeD
     //  Update the dependent and independent variable values
     //  at the new dependent variable location and store the
     //  values in the ODE object arrays.
-    pBall->flightTime = pBall->flightTime + aTimeDelta;
+    pBall->q.time = pBall->q.time + aTimeDelta;
 
     pQ.position.x = static_cast<float>(pQ.position.x + (pQ1.position.x + 2.0 * pQ2.position.x + 2.0 * pQ3.position.x + pQ4.position.x) / numEqns);
     pBall->q.position.x = pQ.position.x;
@@ -698,7 +700,7 @@ void GolfBall::ProjectileRungeKutta4wPointers(struct SpinProjectile* pBall, doub
     //  Update the dependent and independent variable values
     //  at the new dependent variable location and store the
     //  values in the ODE object arrays.
-    pBall->flightTime = pBall->flightTime + aTimeDelta;
+    pBall->q.time = pBall->q.time + aTimeDelta;
     pQ->position.x = static_cast<float>(pQ->position.x + (pQ1->position.x + 2.0 * pQ2->position.x + 2.0 * pQ3->position.x + pQ4->position.x) / numEqns);
     pBall->q.position.x = pQ->position.x;
     pQ->position.y = static_cast<float>(pQ->position.y + (pQ1->position.y + 2.0 * pQ2->position.y + 2.0 * pQ3->position.y + pQ4->position.y) / numEqns);
@@ -729,9 +731,8 @@ void GolfBall::ResetBallData()
 {
     m_landingCordinates = m_shotOrigin;
     m_bounceCount = 0;
-    m_shotPath.clear();
-    m_shotPathTimeStep.clear();
-    m_ball.flightTime = 0.0;
+    m_ballPath.clear();
+    m_ball.q.time = 0.0;
     m_ball.omega = 0.0;
     m_ball.q.position.x = 0.0;
     m_ball.q.position.y = 0.0;
@@ -779,7 +780,7 @@ void GolfBall::RollBall()
             {
                 isBallInHoleRadius = true;
                 posOnEnteringHoleRadius = m_ball.q.position;
-                timeOnEnteringHoleRadius = m_ball.flightTime;
+                timeOnEnteringHoleRadius = m_ball.q.time;
             }
         }
         if (isBallInHoleRadius == true)
@@ -787,11 +788,11 @@ void GolfBall::RollBall()
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
                 isBallInHoleRadius = false;
-                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.flightTime);
+                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.q.time);
                 if (isBallInHole == false)
                 {
                     posOnEnteringHoleRadius = m_ball.q.position;
-                    timeOnEnteringHoleRadius = m_ball.flightTime;
+                    timeOnEnteringHoleRadius = m_ball.q.time;
                 }
             }
         }
@@ -806,7 +807,7 @@ void GolfBall::RollBall()
             m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity);
 
             m_ball.q.position += m_ball.q.velocity * m_timeStep;
-            m_ball.flightTime = m_ball.flightTime + m_timeStep;
+            m_ball.q.time = m_ball.q.time + m_timeStep;
         }
         else //stop the ball motion if its in the hole
         {
@@ -824,7 +825,7 @@ void GolfBall::SetDefaultBallValues(Environment* pEnviron)
     m_ball.airDensity = pEnviron->GetAirDensity();
     m_ball.area = 0.001432;
     m_ball.dragCoefficient = 0.22;
-    m_ball.flightTime = 0.0;      
+    m_ball.q.time = 0.0;
     m_ball.gravity = pEnviron->GetGravity();
     m_ball.launchHeight = pEnviron->GetLauchHeight();
     m_ball.landingHeight = pEnviron->GetLandingHeight();

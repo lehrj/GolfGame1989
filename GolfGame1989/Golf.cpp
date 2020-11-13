@@ -88,17 +88,14 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     const double hydraPlaneTurn = Utility::ToRadians(7.0);
 
     m_hydraData.clear();
-    m_hydraTimeSteps.clear();
 
     m_hydraData.resize(9);
-    m_hydraTimeSteps.resize(9);
 
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 
     InputData();
     ScaleCordinates();
     int i = 0;
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();  
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -109,7 +106,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -120,7 +116,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -132,7 +127,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -143,7 +137,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -154,7 +147,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -165,7 +157,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -176,7 +167,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -187,7 +177,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
     InputData();
     ScaleCordinates();
-    m_hydraTimeSteps[i] = pBall->GetShotTimeSteps();
     m_hydraData[i] = m_shotPath;
     ++i;
 
@@ -226,6 +215,7 @@ void Golf::BuildUIShotStrings()
     m_uiShotStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
     inVal.str(std::string());
 
+    /*
     inVal << std::fixed << pBall->GetShotDistance();
     m_uiShotStrings.push_back("Travel Distance = " + inVal.str() + " meters");
     inVal.str(std::string());
@@ -233,6 +223,7 @@ void Golf::BuildUIShotStrings()
     inVal << std::fixed << pBall->GetShotFlightDistance();
     m_uiShotStrings.push_back("Flight Distance = " + inVal.str() + " meters");
     inVal.str(std::string());
+    */
 
     inVal << std::fixed << pBall->GetMaxHeight();
     m_uiShotStrings.push_back("Max Height = " + inVal.str() + " meters");
@@ -278,7 +269,7 @@ void Golf::BuildUISwingStrings()
     m_uiSwingStrings.push_back("Club Angle = " + inVal.str() + " degrees");
 }
 
-void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
+void Golf::CopyShotPath(std::vector<BallMotion>& aPath)
 {
     m_shotPath = aPath;
 }
@@ -298,7 +289,7 @@ void Golf::CycleNextClub(const bool aIsCycleClubUp)
 void Golf::InputData()
 {
     m_shotPath.clear();
-    CopyShotPath(pBall->OutputShotPath());
+    CopyShotPath(pBall->OutputBallPath());
 }
 
 std::string Golf::GetCharacterArmBalancePoint(const int aCharacterIndex) const
@@ -379,13 +370,24 @@ float Golf::GetDirectionToHoleInRads() const
     return direction;
 }
 
-float Golf::GetRealTimeProjectileDistance(double aTmeStep) const
+float Golf::GetShotDistance() const
 {
-    DirectX::SimpleMath::Vector3 originPos = m_shotStartPos;
-    int currentStep = 0;
+    float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
+    distance = distance / pEnvironment->GetScale();
+    return distance;
+}
 
-    //std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
-    //for(int i = 0; i < 
+std::string Golf::GetShotDistanceString() const
+{
+    float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
+    distance = distance / pEnvironment->GetScale();
+
+    std::stringstream inVal;
+    inVal.precision(Utility::GetNumericalPrecisionForUI());
+    inVal << std::fixed << distance;
+    std::string distanceString("Shot Distance = " + inVal.str() + " meters");
+
+    return distanceString;
 }
 
 void Golf::LoadCharacterTraits()
@@ -433,7 +435,7 @@ void Golf::ScaleCordinates()
 
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        m_shotPath[i] = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i], scaleMatrix);
+        m_shotPath[i].position = DirectX::SimpleMath::Vector3::Transform(m_shotPath[i].position, scaleMatrix);
         TransformCordinates(i);
     }  
 }
@@ -487,17 +489,17 @@ void Golf::SetShotCordMax()
     double maxZ = 0.0;
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
-        if (maxX < m_shotPath[i].x)
+        if (maxX < m_shotPath[i].position.x)
         {
-            maxX = m_shotPath[i].x;
+            maxX = m_shotPath[i].position.x;
         }
-        if (maxY < m_shotPath[i].y)
+        if (maxY < m_shotPath[i].position.y)
         {
-            maxY = m_shotPath[i].y;
+            maxY = m_shotPath[i].position.y;
         }
-        if (maxZ < m_shotPath[i].z)
+        if (maxZ < m_shotPath[i].position.z)
         {
-            maxZ = m_shotPath[i].z;
+            maxZ = m_shotPath[i].position.z;
         }
     }
     m_maxX = maxX;
@@ -513,7 +515,7 @@ void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
 //Transform shotpath to start at tee position or end position of last shot
 void Golf::TransformCordinates(const int aIndex)
 {
-    m_shotPath[aIndex] += m_shotStartPos;
+    m_shotPath[aIndex].position += m_shotStartPos;
 }
 
 void Golf::UpdateEnvironmentSortingForDraw(DirectX::SimpleMath::Vector3 aCameraPos)

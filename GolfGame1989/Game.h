@@ -55,6 +55,7 @@ private:
     void DrawDebugLines();
     void DrawCameraFocus();
     void DrawFlagAndHole();
+    void DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
     void DrawHydraShot();
     void DrawIntroScreen();
     void DrawMenuCharacterSelect();
@@ -70,6 +71,7 @@ private:
     void DrawSwing();
     void DrawSwingUI();
     void DrawTeeBox();
+    
     void DrawTree01(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);   
     void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree

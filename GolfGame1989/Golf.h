@@ -39,8 +39,7 @@ public:
     DirectX::SimpleMath::Vector3 GetEnvironWindVector() const { return pEnvironment->GetWindVector(); };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
-    std::vector<std::vector<DirectX::SimpleMath::Vector3>>& GetHydraShotPath() { return m_hydraData; };
-    std::vector<std::vector<float>>& GetHydraTimeStep() { return m_hydraTimeSteps; };
+    std::vector<std::vector<BallMotion>>& GetHydraShotPath() { return m_hydraData; };
     bool GetIsBallInHole() const { return pBall->GetIsInHole(); };
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
@@ -49,9 +48,9 @@ public:
     std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
     int GetParFromEnviron() const { return pEnvironment->GetPar(); };
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
-    float GetRealTimeProjectileDistance(double aTmeStep) const;
-    std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
-    std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
+    float GetShotDistance() const;
+    std::string GetShotDistanceString() const;
+    std::vector<BallMotion>& GetShotPath() { return m_shotPath; };
     DirectX::SimpleMath::Vector3 GetShotStartPos() const { return m_shotStartPos; };
     DirectX::SimpleMath::Vector3 GetSwingOriginOffsetPos() const { return m_swingOriginOffset; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
@@ -81,7 +80,7 @@ public:
 
 private:
     void BuildTrajectoryData();
-    void CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath);
+    void CopyShotPath(std::vector<BallMotion>& aPath);
     void LoadCharacterTraits();
     void ScaleCordinates();
     void SetShotCordMax();
@@ -104,7 +103,7 @@ private:
 
     int                                         m_selectedCharacter;
     int                                         m_selectedEnvironment;
-    std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
+    std::vector<BallMotion>                     m_shotPath;
     int                                         m_swingStep;
 
     std::vector<std::string>                    m_uiStrings;
@@ -115,7 +114,6 @@ private:
 
     const DirectX::SimpleMath::Vector3          m_swingOriginOffset = DirectX::SimpleMath::Vector3(-.0087f, .04f, 0.f);
     
-    std::vector<std::vector<DirectX::SimpleMath::Vector3>> m_hydraData;
-    std::vector<std::vector<float>>             m_hydraTimeSteps;
+    std::vector<std::vector<BallMotion>>        m_hydraData;
 
 };
