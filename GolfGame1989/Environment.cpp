@@ -221,7 +221,17 @@ void Environment::LoadFixtureBucket()
 
     m_fixtureBucket.clear();  // using randomized placement until further course design implemented
 
-    // add FlagStick
+
+    // add Tee Box;
+    Fixture teeBox;
+    teeBox.idNumber = 2;
+    teeBox.position = m_currentEnviron.teePosition;
+    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
+    teeBox.animationVariation = 0.0;
+    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(teeBox);
+
+    // add FlagStick   
     Fixture flagStick;
     flagStick.idNumber = 0;
     flagStick.position = m_currentEnviron.holePosition;
@@ -229,6 +239,7 @@ void Environment::LoadFixtureBucket()
     flagStick.animationVariation = 0.0;
     flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(flagStick);
+    
 
     // randomized fixtures
     const float varMax = 10.0;
@@ -243,7 +254,7 @@ void Environment::LoadFixtureBucket()
     const int fixtureTypeNumMax = 6;
     const int fixtureCount = 35;
     int leftOrRightFairwayPlacement = 1;
-    for (int j = 1; j < fixtureCount; ++j)
+    for (int j = 2; j < fixtureCount; ++j)  // start at 2 due to 0 being flag/hole and 1 being the tee box
     {
         float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ (xPosMax))) - 2.0;
         float y = yPos;

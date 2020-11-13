@@ -526,7 +526,23 @@ void Game::DrawFlagAndHole()
 
 void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
 {
+    std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
 
+    for (int i = 0; i < holeVert.size() - 1; ++i)
+    {
+        m_batch->DrawLine(holeVert[i], holeVert[i + 1]);
+    }
+
+    std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
+    if (flagVert.size() == 5)
+    {
+        m_batch->DrawLine(flagVert[0], flagVert[1]);
+        m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
+    }
+    else
+    {
+        // error handle vector is of wrong size for needed inputs to draw
+    }
 }
 
 void Game::DrawHydraShot()
@@ -1830,6 +1846,27 @@ void Game::DrawSwingUI()
 }
 
 void Game::DrawTeeBox()
+{
+    //draw tee box;
+    const DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
+    const float teeBoxLengthScale = 0.05f;
+    const float teeBoxHorizontalScale = 0.1f;
+    DirectX::SimpleMath::Vector3 t1(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t2(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t3(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t4(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    VertexPositionColor vt1(t1, Colors::White);
+    VertexPositionColor vt2(t2, Colors::White);
+    VertexPositionColor vt3(t3, Colors::White);
+    VertexPositionColor vt4(t4, Colors::White);
+    m_batch->DrawLine(vt1, vt2);
+    m_batch->DrawLine(vt1, vt3);
+    m_batch->DrawLine(vt3, vt4);
+    m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
+}
+
+void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
 {
     //draw tee box;
     const DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
@@ -3156,10 +3193,9 @@ void Game::DrawWorld()
         }
     }
 
-    DrawTeeBox();
-    DrawFlagAndHole();
+    //DrawTeeBox();
+    //DrawFlagAndHole();
 
-    // Test Draw Tree
     
     pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
@@ -3170,6 +3206,10 @@ void Game::DrawWorld()
         if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
         {
             DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
+        {
+            DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
         {
