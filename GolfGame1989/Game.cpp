@@ -532,7 +532,8 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
     const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
 
-    DirectX::SimpleMath::Vector3 poleBase = aPos;
+    //DirectX::SimpleMath::Vector3 poleBase = aPos;
+    DirectX::SimpleMath::Vector3 poleBase = DirectX::SimpleMath::Vector3::Zero;
     DirectX::SimpleMath::Vector3 poleTop = poleBase;
     poleTop.y += poleHeight;
     DirectX::SimpleMath::Vector3 flagTip = poleTop;
@@ -554,17 +555,16 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
 
     windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
     flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
-
+    
     poleTop += swayBase;
     DirectX::SimpleMath::Vector3 flagBottom = poleTop;
     flagBottom.y -= flagHeight + flagHeight;
-
+    
     DirectX::VertexPositionColor poleBaseVertex(poleBase + aPos, poleColor);
     DirectX::VertexPositionColor poleTopVertex(poleTop + aPos, poleColor);
     DirectX::VertexPositionColor flagTopVertex(poleTop + aPos, flagColor);
     DirectX::VertexPositionColor flagTipVertex(flagTip + aPos, flagColor);
     DirectX::VertexPositionColor flagBottomVertex(flagBottom + aPos, flagColor);
-
 
     m_batch->DrawLine(poleBaseVertex, poleTopVertex);
     m_batch->DrawTriangle(flagTopVertex, flagTipVertex, flagBottomVertex);
