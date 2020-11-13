@@ -16,10 +16,10 @@ public:
     Golf();
     ~Golf();
     
-    void BuildHyrdraShotData(const double aDirectionDeg);
-
-    void BuildUIstrings();
     void BuildEnvironSelectStrings();
+    void BuildHyrdraShotData(const double aDirectionDeg);
+    void BuildUIShotStrings();
+    void BuildUISwingStrings();
     void CycleNextClub(const bool aIsCycleClubUp);
 
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
@@ -49,6 +49,7 @@ public:
     std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
     int GetParFromEnviron() const { return pEnvironment->GetPar(); };
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
+    float GetRealTimeProjectileDistance(double aTmeStep) const;
     std::vector<DirectX::SimpleMath::Vector3>& GetShotPath() { return m_shotPath; };
     std::vector<float>& GetShotPathTimeSteps() { return pBall->GetShotTimeSteps(); }
     DirectX::SimpleMath::Vector3 GetShotStartPos() const { return m_shotStartPos; };
@@ -57,7 +58,9 @@ public:
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
     DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
     float GetTeeDirection() const { return pEnvironment->GetTeeDirectionDegrees(); };
-    std::vector<std::string> GetUIstrings() { return m_uiStrings; };
+    std::vector<std::string> GetUIShotStrings() const { return m_uiShotStrings; };
+    std::vector<std::string> GetUIStrings() const { return m_uiStrings; };
+    std::vector<std::string> GetUISwingStrings() const { return m_uiSwingStrings; };
     double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
     
 
@@ -103,7 +106,11 @@ private:
     int                                         m_selectedEnvironment;
     std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
     int                                         m_swingStep;
+
     std::vector<std::string>                    m_uiStrings;
+    std::vector<std::string>                    m_uiShotStrings;
+    std::vector<std::string>                    m_uiSwingStrings;
+
     std::vector<std::vector<std::string>>       m_environSelectStrings;
 
     const DirectX::SimpleMath::Vector3          m_swingOriginOffset = DirectX::SimpleMath::Vector3(-.0087f, .04f, 0.f);

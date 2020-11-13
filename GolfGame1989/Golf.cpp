@@ -19,7 +19,7 @@ Golf::Golf()
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
     //BuildTrajectoryData(); // WLJ turn off to disable auto draw of projectile without powerbar input 
-    BuildUIstrings();
+    BuildUISwingStrings();
     BuildEnvironSelectStrings();
     SetShotStartPos(pEnvironment->GetTeePosition());
     SetBallPosition(GetShotStartPos());   
@@ -204,67 +204,78 @@ void Golf::BuildTrajectoryData()
     ScaleCordinates();
 }
 
-void Golf::BuildUIstrings()
+void Golf::BuildUIShotStrings()
 {
-    m_uiStrings.clear();
+    m_uiShotStrings.clear();
     std::stringstream inVal;
     inVal.precision(Utility::GetNumericalPrecisionForUI());
-    inVal << std::fixed << pEnvironment->GetAirDensity(); 
-    m_uiStrings.push_back("Air Density = " + inVal.str() + " kg/m cubed");
+
+    inVal << std::fixed << pSwing->GetBackSwingPercentage();
+    m_uiShotStrings.push_back("Shot Power = " + inVal.str() + " percent");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pSwing->GetLaunchAngle();
+    m_uiShotStrings.push_back("Launch Angle = " + inVal.str() + " degrees");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pSwing->GetLaunchVelocity();
+    m_uiShotStrings.push_back("Launch Velocity = " + inVal.str() + " m/s");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pBall->GetInitialSpinRate();
+    m_uiShotStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pBall->GetShotDistance();
+    m_uiShotStrings.push_back("Travel Distance = " + inVal.str() + " meters");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pBall->GetShotFlightDistance();
+    m_uiShotStrings.push_back("Flight Distance = " + inVal.str() + " meters");
+    inVal.str(std::string());
+
+    inVal << std::fixed << pBall->GetMaxHeight();
+    m_uiShotStrings.push_back("Max Height = " + inVal.str() + " meters");
+    inVal.str(std::string());
+    //inVal << std::fixed << pBall->GetLandingHeight();
+}
+
+void Golf::BuildUISwingStrings()
+{
+    m_uiSwingStrings.clear();
+    std::stringstream inVal;
+    inVal.precision(Utility::GetNumericalPrecisionForUI());
+
+    inVal << std::fixed << pEnvironment->GetAirDensity();
+    m_uiSwingStrings.push_back("Air Density = " + inVal.str() + " kg/m cubed");
+
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindX();
-    m_uiStrings.push_back("Wind X = " + inVal.str() + " m/s");
+    m_uiSwingStrings.push_back("Wind X = " + inVal.str() + " m/s");
+
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindY();
-    m_uiStrings.push_back("Wind Y = " + inVal.str() + " m/s");
+    m_uiSwingStrings.push_back("Wind Y = " + inVal.str() + " m/s");
+
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindZ();
-    m_uiStrings.push_back("Wind Z = " + inVal.str() + " m/s");
+    m_uiSwingStrings.push_back("Wind Z = " + inVal.str() + " m/s");
+
     inVal.str(std::string());
-    inVal << std::fixed << pSwing->GetBackSwingPercentage();
-    m_uiStrings.push_back("Shot Power = " + inVal.str() + " percent");
-    m_uiStrings.push_back("Club Name = " + pSwing->GetClubName());
+    inVal << std::fixed << pSwing->GetClubName();
+    m_uiSwingStrings.push_back("Club Name = " + inVal.str());
+
     inVal.str(std::string());
     inVal << std::fixed << pSwing->GetClubLength();
-    m_uiStrings.push_back("Club Length = " + inVal.str() + " meters");
+    m_uiSwingStrings.push_back("Club Length = " + inVal.str() + " meters");
+
     inVal.str(std::string());
     inVal << std::fixed << pSwing->GetClubMass();
-    m_uiStrings.push_back("Club Mass = " + inVal.str() + " kg");
+    m_uiSwingStrings.push_back("Club Mass = " + inVal.str() + " kg");
+
     inVal.str(std::string());
     inVal << std::fixed << pSwing->GetClubAngle();
-    m_uiStrings.push_back("Club Angle = " + inVal.str() + " degrees");
-    inVal.str(std::string());
-    inVal << std::fixed << pSwing->GetLaunchAngle();
-    m_uiStrings.push_back("Launch Angle = " + inVal.str() + " degrees");
-    inVal.str(std::string());
-    inVal << std::fixed << pSwing->GetLaunchVelocity();
-    m_uiStrings.push_back("Launch Velocity = " + inVal.str() + " m/s");
-    inVal.str(std::string());
-    inVal << std::fixed << pBall->GetInitialSpinRate();
-    m_uiStrings.push_back("Initial Spin Rate = " + inVal.str() + " rads per s");
-    //inVal.str(std::string());
-    //inVal << std::fixed << std::to_string(pBall->GetLandingSpinRate());
-    //m_uiStrings.push_back("Landing Spin Rate = " + inVal.str() + " rads per s");
-    inVal.str(std::string());
-    inVal << std::fixed << pBall->GetShotDistance();
-    m_uiStrings.push_back("Travel Distance = " + inVal.str() + " meters");
-    inVal.str(std::string());
-    inVal << std::fixed << pBall->GetShotFlightDistance();
-    m_uiStrings.push_back("Flight Distance = " + inVal.str() + " meters");
-    inVal.str(std::string());
-    inVal << std::fixed << pBall->GetMaxHeight();
-    m_uiStrings.push_back("Max Height = " + inVal.str() + " meters");
-    inVal.str(std::string());
-    inVal << std::fixed << pBall->GetLandingHeight();
-    //m_uiStrings.push_back("Landing Height = " + inVal.str() + " meters");
-    //m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
-    //m_uiStrings.push_back("Character Name = " + pCharacter->GetName(m_selectedCharacter));
-
-    // For use as needed for debuging
-    //m_uiStrings.push_back("Ball Debug 1 = " + std::to_string(pBall->GetDebugValue01()));
-    //m_uiStrings.push_back("Ball Debug 2 = " + std::to_string(pBall->GetDebugValue02()));
-    //m_uiStrings.push_back("Ball Debug 3 = " + std::to_string(pBall->GetDebugValue03()));
-    //m_uiStrings.push_back("Ball Debug 4 = " + std::to_string(pBall->GetDebugValue04()));
+    m_uiSwingStrings.push_back("Club Angle = " + inVal.str() + " degrees");
 }
 
 void Golf::CopyShotPath(std::vector<DirectX::SimpleMath::Vector3>& aPath)
@@ -280,9 +291,8 @@ void Golf::CycleNextClub(const bool aIsCycleClubUp)
 
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
-    BuildTrajectoryData();
-
-    BuildUIstrings();
+    //BuildTrajectoryData(); // Toggle on for debuging and testing
+    BuildUISwingStrings();
 }
 
 void Golf::InputData()
@@ -369,6 +379,15 @@ float Golf::GetDirectionToHoleInRads() const
     return direction;
 }
 
+float Golf::GetRealTimeProjectileDistance(double aTmeStep) const
+{
+    DirectX::SimpleMath::Vector3 originPos = m_shotStartPos;
+    int currentStep = 0;
+
+    //std::vector<DirectX::SimpleMath::Vector3>   m_shotPath;
+    //for(int i = 0; i < 
+}
+
 void Golf::LoadCharacterTraits()
 {
     pSwing->SetArmBalancePoint(pCharacter->GetArmBalancePoint(m_selectedCharacter));
@@ -388,7 +407,7 @@ void Golf::LoadEnvironment(const int aIndex)
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
         pBall->SetEnvironment(pEnvironment);
         pBall->SetDefaultBallValues(pEnvironment);
-        BuildUIstrings();
+        BuildUISwingStrings();
         m_shotStartPos = pEnvironment->GetTeePosition();
     }
     else
@@ -398,7 +417,7 @@ void Golf::LoadEnvironment(const int aIndex)
         pSwing->UpdateGravityDependants(pEnvironment->GetGravity());
         pBall->SetEnvironment(pEnvironment);
         pBall->SetDefaultBallValues(pEnvironment);      
-        BuildUIstrings();
+        BuildUISwingStrings();
         m_shotStartPos = pEnvironment->GetTeePosition();
     }
 }
@@ -426,8 +445,8 @@ void Golf::SelectInputClub(int aInput)
     pSwing->InputClub(aInput);
     pSwing->ResetAlphaBeta();
     pSwing->UpdateGolfSwingValues();
-    BuildTrajectoryData();
-    BuildUIstrings();
+    //BuildTrajectoryData();  // Toggle on for debuging and testing
+    BuildUISwingStrings();
 }
 
 void Golf::SetBallPosition(const DirectX::SimpleMath::Vector3 aBallPos)
@@ -509,7 +528,7 @@ void Golf::UpdateImpact(Utility::ImpactData aImpact)
     pSwing->UpdateImpactData(aImpact);
     pSwing->UpdateGolfSwingValues();
     BuildTrajectoryData();
-    BuildUIstrings();
+    BuildUIShotStrings();
 }
 
 void Golf::ZeroUIandRenderData()

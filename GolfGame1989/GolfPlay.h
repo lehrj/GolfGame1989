@@ -18,10 +18,10 @@ public:
     float GetMeterPower() const { return m_meterBar; };
     float GetSwingPower() const { return m_swingPower; };
     float GetMeterLength() const { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
-    float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };
-    std::string GetScoreString() const { return m_scoreString; };
+    float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };   
     double GetShotDirection() const { return m_impactData.directionDegrees; };
     int GetSwingCount() const { return m_swingCount; };
+    std::string GetUIScoreString() const { return m_scoreString; };
     void IncrementSwingCount();
     bool IsSwingStateAtImpact() const;
     void ResetGamePlayButton() { m_isGameplayButtonReady = true; };

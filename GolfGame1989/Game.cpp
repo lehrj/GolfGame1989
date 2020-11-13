@@ -3040,45 +3040,51 @@ void Game::DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
 void Game::DrawUI()
 {
-    if (m_currentUiState == UiState::UISTATE_SWING || m_currentUiState == UiState::UISTATE_SHOT)
+    if (m_currentUiState == UiState::UISTATE_SWING)
     {
-        std::vector<std::string> uiString = pGolf->GetUIstrings();
-
-        std::string output = uiString[0];
-
-        float fontOriginPosY = m_fontPos2.y;
-
+        std::vector<std::string> uiString = pGolf->GetUISwingStrings();
+        DirectX::SimpleMath::Vector2 fontPos = m_fontPos2;
         for (int i = 0; i < uiString.size(); ++i)
         {
             std::string uiLine = std::string(uiString[i]);
             DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-            m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-            m_fontPos2.y += 35;
+            m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+            fontPos.y += 35;
         }
 
         // temp for testing swing count
         std::string uiLine = "Swing Count = " + std::to_string(pPlay->GetSwingCount());
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
-
-        ////m_uiStrings.push_back("Bounce Count = " + std::to_string(pBall->GetBounceCount()));
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
 
         // temp for testing is ball in hole bool
         uiLine = "Is ball in hole = " + std::to_string(pGolf->GetIsBallInHole());
         lineOrigin = m_font->MeasureString(uiLine.c_str());
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_fontPos2, Colors::White, 0.f, lineOrigin);
-        m_fontPos2.y += 35;
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
+    }
 
-        m_fontPos2.y = fontOriginPosY;
+    if (m_currentUiState == UiState::UISTATE_SHOT)
+    {
+        std::vector<std::string> uiString = pGolf->GetUIShotStrings();
+        DirectX::SimpleMath::Vector2 fontPos = m_fontPos2;
+        for (int i = 0; i < uiString.size(); ++i)
+        {
+            std::string uiLine = std::string(uiString[i]);
+            DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+            m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+            fontPos.y += 35;
+        }
     }
 
     if (m_currentUiState == UiState::UISTATE_SCORE)
     {
-        std::string uiLine = pPlay->GetScoreString();
-        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        std::string uiLine = pPlay->GetUIScoreString();
+        //DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        DirectX::SimpleMath::Vector2 lineOrigin = m_titleFont->MeasureString(uiLine.c_str());
         //DirectX::SimpleMath::Vector2 scorePos = m_bitwiseFontPos;
-        m_bitwiseFont->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_bitwiseFontPos, Colors::White, 0.f, lineOrigin);
+        m_titleFont->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_bitwiseFontPos, Colors::White, 0.f, lineOrigin);
     }
 }
 
@@ -3086,9 +3092,7 @@ void Game::DrawWorld()
 {
     // draw world grid
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-
     DirectX::SimpleMath::Vector3 xFarAxis(6.f, 0.f, 0.f);
-    //DirectX::SimpleMath::Vector3 xFarAxis(100.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
     DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
     size_t divisions = 50;
@@ -3518,6 +3522,7 @@ void Game::Update(DX::StepTimer const& aTimer)
             AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
 
             pPlay->ResetSwingUpdateReady();
+            m_currentUiState = UiState::UISTATE_SHOT;
             pGolf->UpdateImpact(pPlay->GetImpactData());
         }
     }
@@ -3789,6 +3794,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
         ResetGamePlay();
+        m_currentUiState = UiState::UISTATE_SWING;
     }
     if (m_kbStateTracker.pressed.Space)
     {
