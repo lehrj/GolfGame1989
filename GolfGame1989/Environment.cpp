@@ -11,7 +11,7 @@ Environment::Environment()
 {
     LoadEnvironmentData();
     CreateDataStrings();
-    const int startEnviron = 0;  // ToDo: add error checking 
+    const int startEnviron = 1;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
@@ -106,8 +106,8 @@ void Environment::CreateDataStrings()
 double Environment::GetWindDirection() const
 { 
     DirectX::SimpleMath::Vector3 windVec = m_currentEnviron.wind;
-    DirectX::SimpleMath::Vector3 zeroDirection(0.0, 0.0, -1.0);
-
+    //DirectX::SimpleMath::Vector3 zeroDirection(0.0, 0.0, -1.0);
+    DirectX::SimpleMath::Vector3 zeroDirection(-1.0, 0.0, -1.0);
     double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(windVec), DirectX::XMVector3Normalize(zeroDirection)));
     if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(windVec, zeroDirection)) > 0.0f)
     {
@@ -147,7 +147,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].par = 5;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.1f, 0.0f, 0.0f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-10.0f, 0.0f, 0.0f);
 

@@ -526,6 +526,51 @@ void Game::DrawFlagAndHole()
 
 void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
 {
+    const float poleHeight = 0.1;
+    const float flagWidth = .02;
+    const float flagHeight = .01;
+    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
+    const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
+
+    DirectX::SimpleMath::Vector3 poleBase = aPos;
+    DirectX::SimpleMath::Vector3 poleTop = poleBase;
+    poleTop.y += poleHeight;
+    DirectX::SimpleMath::Vector3 flagTip = poleTop;
+    flagTip.y -= flagHeight;
+    flagTip.x -= flagWidth;
+    flagTip.z -= flagWidth;
+    
+    float windDirection = pGolf->GetWindDirectionRad();
+    DirectX::SimpleMath::Vector3 windNormalized = pGolf->GetEnvironWindVector();
+    float windSpeed = windNormalized.Length() *.3;
+    windNormalized.Normalize();
+
+    const float scaleMod = 1.0;
+    const float scale = pGolf->GetEnvironScale() * scaleMod;
+    DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation));
+    
+    DirectX::SimpleMath::Vector3 swayBase = swayVec;
+    swayBase = swayBase * 0.05;
+
+    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
+    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
+
+    poleTop += swayBase;
+    DirectX::SimpleMath::Vector3 flagBottom = poleTop;
+    flagBottom.y -= flagHeight + flagHeight;
+
+    DirectX::VertexPositionColor poleBaseVertex(poleBase + aPos, poleColor);
+    DirectX::VertexPositionColor poleTopVertex(poleTop + aPos, poleColor);
+    DirectX::VertexPositionColor flagTopVertex(poleTop + aPos, flagColor);
+    DirectX::VertexPositionColor flagTipVertex(flagTip + aPos, flagColor);
+    DirectX::VertexPositionColor flagBottomVertex(flagBottom + aPos, flagColor);
+
+
+    m_batch->DrawLine(poleBaseVertex, poleTopVertex);
+    m_batch->DrawTriangle(flagTopVertex, flagTipVertex, flagBottomVertex);
+
+    // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
 
     for (int i = 0; i < holeVert.size() - 1; ++i)
@@ -533,16 +578,18 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
         m_batch->DrawLine(holeVert[i], holeVert[i + 1]);
     }
 
+    /*
     std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
     if (flagVert.size() == 5)
     {
-        m_batch->DrawLine(flagVert[0], flagVert[1]);
-        m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
+        //m_batch->DrawLine(flagVert[0], flagVert[1]);
+        //m_batch->DrawTriangle(flagVert[2], flagVert[3], flagVert[4]);
     }
     else
     {
         // error handle vector is of wrong size for needed inputs to draw
     }
+    */
 }
 
 void Game::DrawHydraShot()
