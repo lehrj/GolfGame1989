@@ -400,6 +400,7 @@ float Golf::GetShotDistance() const
 std::string Golf::GetShotDistanceString() const
 {
     float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
+    distance = distance * 1.09361; // convert to yards
     distance = distance / pEnvironment->GetScale();
     std::stringstream inVal;
     inVal.precision(Utility::GetNumericalPrecisionForUI());

@@ -3165,7 +3165,7 @@ void Game::DrawUI()
         }
 
         // drawing text and numbers seperatly to prevent text from shifting postion as the numbes change
-        std::string shotString("Shot Distance =              Meters ");
+        std::string shotString("Shot Distance =              Yards ");
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(shotString.c_str());
         m_font->DrawString(m_spriteBatch.get(), shotString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);        
         std::string distanceString = pGolf->GetShotDistanceString();
@@ -3303,6 +3303,148 @@ void Game::DrawWorld()
 
 
     
+    DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
+    //DrawTree01(treePos);
+    DrawTree07(treePos, 0.3f);
+    DirectX::SimpleMath::Vector3 treePos2(-1.4, 0.0, -.4);
+    DrawTree02(treePos2, 0.7f);
+    DirectX::SimpleMath::Vector3 treePos3(-1.4, 0.0, -.2);
+    DrawTree03(treePos3, 5.5f);
+    */
+    /*
+    DirectX::SimpleMath::Vector3 treePos4(-1.4, 0.0, 0.9);
+    DrawTree03(treePos4, .9f);
+    DirectX::SimpleMath::Vector3 treePos5(-1.4, 0.0, 0.2);
+    DrawTree04(treePos5, .1f);
+    DirectX::SimpleMath::Vector3 treePos6(-1.4, 0.0, 0.4);
+    DrawTree06(treePos6, .1f);
+    DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
+    DrawTree07(treePos8, .9f);
+
+    DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
+    DrawTree09(treePos9, .9f);
+    */
+}
+
+void Game::DrawWorld12th()
+{
+    // draw world grid
+    DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 xFarAxis(5.f, 0.f, 0.f);
+    DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
+    DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
+    size_t divisions = 50;
+    size_t extention = 37;
+
+    DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
+
+    for (size_t i = 0; i <= divisions + extention; ++i)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
+        if (scale.x == 0.0f)
+        {
+            VertexPositionColor v1(scale - zAxis, gridColor);
+            VertexPositionColor v2(scale + zAxis, gridColor);
+            //VertexPositionColor v1(scale - zAxis, DirectX::Colors::LawnGreen); // Center line
+            //VertexPositionColor v2(scale + zAxis, DirectX::Colors::LawnGreen); // Center line
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - zAxis, gridColor);
+            VertexPositionColor v2(scale + zAxis, gridColor);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+    for (size_t i = 0; i <= divisions; i++)
+    {
+        float fPercent = float(i) / float(divisions);
+        fPercent = (fPercent * 2.0f) - 1.0f;
+
+        DirectX::SimpleMath::Vector3 scale = zAxis * fPercent + origin;
+
+        if (scale.z == 0.0f)
+        {
+            VertexPositionColor v1(scale - xAxis, gridColor); // Center line
+            VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
+            //VertexPositionColor v1(scale - xAxis, DirectX::Colors::LawnGreen); // Center line
+            //VertexPositionColor v2(scale + xFarAxis, DirectX::Colors::LawnGreen); // Center line
+            m_batch->DrawLine(v1, v2);
+        }
+        else
+        {
+            VertexPositionColor v1(scale - xAxis, gridColor);
+            VertexPositionColor v2(scale + xFarAxis, gridColor);
+            m_batch->DrawLine(v1, v2);
+        }
+    }
+
+    //DrawTeeBox();
+    //DrawFlagAndHole();
+
+
+    pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
+
+    std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
+
+    for (int i = 0; i < fixtureList.size(); ++i)
+    {
+        if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
+        {
+            DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
+        {
+            DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
+        {
+            DrawTree01(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE02)
+        {
+            DrawTree02(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
+        {
+            DrawTree03(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE04)
+        {
+            DrawTree04(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE05)
+        {
+            DrawTree05(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE06)
+        {
+            DrawTree06(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE07)
+        {
+            DrawTree07(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE08)
+        {
+            DrawTree08(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE09)
+        {
+            DrawTree09(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+    }
+
+    /*
+    DirectX::SimpleMath::Vector3 treeTestPos1(.4, 0.0, 1.3);
+    DrawTree06(treeTestPos1, .9f);
+    DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
+    DrawTree07(treeTestPos, .9f);
+
+
+
     DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
     //DrawTree01(treePos);
     DrawTree07(treePos, 0.3f);
@@ -3508,7 +3650,7 @@ void Game::Render()
     DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawWorld();
+        DrawWorld12th();
         DrawShotAimCone();
         DrawShotAimArrow();
 

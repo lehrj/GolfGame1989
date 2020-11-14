@@ -759,7 +759,7 @@ void GolfBall::RollBall()
     double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
 
     double decelFactor = a;
-    double stopTolerance = 0.1;
+    double stopTolerance = 0.05;
     int overflowTolerance = 650;
 
     DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
@@ -794,6 +794,10 @@ void GolfBall::RollBall()
                     posOnEnteringHoleRadius = m_ball.q.position;
                     timeOnEnteringHoleRadius = m_ball.q.time;
                 }
+            }
+            else if (m_ball.q.velocity.Length() < 0.1)
+            {
+                isBallInHole = true;
             }
         }
 
