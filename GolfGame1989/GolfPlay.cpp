@@ -174,6 +174,20 @@ void GolfPlay::Swing()
     }
 }
 
+void GolfPlay::SetAim(DirectX::SimpleMath::Vector3 aShotPos, DirectX::SimpleMath::Vector3 aTargetPos)
+{
+    DirectX::SimpleMath::Vector3 lineToHole = aTargetPos - aShotPos;
+
+    lineToHole.Normalize();
+    DirectX::SimpleMath::Vector3 unitX = DirectX::SimpleMath::Vector3::UnitX;
+
+    double angle = acos(lineToHole.Dot(unitX));
+    double angleDegrees = Utility::ToDegrees(angle);
+
+    m_impactData.directionRads = -angle;
+    m_impactData.directionDegrees = -angleDegrees;
+}
+
 void GolfPlay::SetImpact()
 {
     if (m_isSwingStart == true && m_isOnDownSwing == true)

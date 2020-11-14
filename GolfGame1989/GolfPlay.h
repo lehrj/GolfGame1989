@@ -28,6 +28,7 @@ public:
     void ResetPlayData();
     void ResetSwingCount();
     void ResetSwingUpdateReady();   
+    void SetAim(DirectX::SimpleMath::Vector3 aShotPos, DirectX::SimpleMath::Vector3 aTargetPos);
     void SetGameplayButtonReadyFalse() { m_isGameplayButtonReady = false; };
     void SetImpact();
     void SetPower();

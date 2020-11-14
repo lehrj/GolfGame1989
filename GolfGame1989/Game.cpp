@@ -3163,16 +3163,15 @@ void Game::DrawUI()
             m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
             fontPos.y += 35;
         }
- 
-        std::string distanceString = pGolf->GetShotDistanceString();
-        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(distanceString.c_str());
-        m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
-        fontPos.y += 35;
 
-        float distance = pGolf->GetShotDistance();
-        std::string uiLine = std::to_string(distance);
-        lineOrigin = m_font->MeasureString(uiLine.c_str());
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        // drawing text and numbers seperatly to prevent text from shifting postion as the numbes change
+        std::string shotString("Shot Distance =              Meters ");
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(shotString.c_str());
+        m_font->DrawString(m_spriteBatch.get(), shotString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);        
+        std::string distanceString = pGolf->GetShotDistanceString();
+        lineOrigin = m_font->MeasureString(distanceString.c_str());
+        fontPos.x -= 145;
+        m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);   
     }
 
     if (m_currentUiState == UiState::UISTATE_SCORE)
@@ -3573,6 +3572,7 @@ void Game::ResetGamePlay()
 {
     pGolf->ZeroUIandRenderData();
     pPlay->ResetPlayData();
+    pPlay->SetAim(pGolf->GetShotStartPos(), pGolf->GetHolePosition());
     ResetPowerMeter();
     m_projectileTimer = 0;
     m_swingPathStep = 0;
@@ -3895,7 +3895,8 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pCamera->SetCameraStartPos(pCamera->GetPos());
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-        pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        //pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetTargetEndPos(pGolf->GetHolePosition());
         pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSTONEWSHOT);
         ResetGamePlay();
         m_currentUiState = UiState::UISTATE_SWING;

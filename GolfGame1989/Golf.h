@@ -46,6 +46,7 @@ public:
     double GetClubLength() { return pSwing->GetClubLength(); };
     float GetDirectionToHoleInRads() const;   
     std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
+    DirectX::SimpleMath::Vector3 GetHolePosition() const { return pEnvironment->GetHolePosition(); };
     int GetParFromEnviron() const { return pEnvironment->GetPar(); };
     std::vector<DirectX::SimpleMath::Vector3> GetRawSwingAngles() { return pSwing->GetRawAlphaBetaTheta(); };
     float GetShotDistance() const;

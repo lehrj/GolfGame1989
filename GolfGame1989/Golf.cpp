@@ -373,6 +373,7 @@ float Golf::GetDirectionToHoleInRads() const
 float Golf::GetShotDistance() const
 {
     float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
+    distance = distance * 1.09361;
     distance = distance / pEnvironment->GetScale();
     return distance;
 }
@@ -381,12 +382,10 @@ std::string Golf::GetShotDistanceString() const
 {
     float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
     distance = distance / pEnvironment->GetScale();
-
     std::stringstream inVal;
     inVal.precision(Utility::GetNumericalPrecisionForUI());
     inVal << std::fixed << distance;
-    std::string distanceString("Shot Distance = " + inVal.str() + " meters");
-
+    std::string distanceString(inVal.str());
     return distanceString;
 }
 
