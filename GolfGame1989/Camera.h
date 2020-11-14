@@ -28,7 +28,7 @@ public:
     DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
     double GetPitch() const { return m_pitch; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; };
-    DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
+    DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirection);
     DirectX::SimpleMath::Vector3 GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetProjectionMatrix() const { return m_projectionMatrix; };
     DirectX::SimpleMath::Vector3 GetSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);

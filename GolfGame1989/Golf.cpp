@@ -367,6 +367,25 @@ float Golf::GetDirectionToHoleInRads() const
         direction = -direction;
     }
 
+    /////////////////////////////////////////////
+    /*
+    DirectX::SimpleMath::Vector3 start2 = m_shotStartPos;
+    DirectX::SimpleMath::Vector3 end2 = pEnvironment->GetHolePosition();
+    DirectX::SimpleMath::Vector3 lineToHole = end2 - start2;
+
+    start2.Normalize();
+    end2.Normalize();
+    lineToHole.Normalize();
+
+    DirectX::SimpleMath::Vector3 unitX = DirectX::SimpleMath::Vector3::UnitX;
+
+    float angle = acos(lineToHole.Dot(unitX));
+    float angleDegrees = Utility::ToDegrees(angle);
+
+    float direction2 = -angle;
+    float directionDegrees2 = -angleDegrees;
+    */
+
     return direction;
 }
 

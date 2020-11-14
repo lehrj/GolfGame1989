@@ -3893,7 +3893,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     {
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
-        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
+        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));      
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
         //pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetEndPos(pGolf->GetHolePosition());

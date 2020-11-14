@@ -33,10 +33,10 @@ Camera::Camera(int aWidth, int aHeight)
 	InitializeOrthoganalMatrix();
 }
 
-DirectX::SimpleMath::Vector3 Camera::GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
+DirectX::SimpleMath::Vector3 Camera::GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirection)
 {
 	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingCamPosOffset,
-		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+		DirectX::SimpleMath::Matrix::CreateRotationY(aDirection)) + aPosition;
 	return newCamPosition;
 }
 

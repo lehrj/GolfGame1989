@@ -134,7 +134,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 1.5f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -1.5f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
