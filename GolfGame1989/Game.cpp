@@ -32,7 +32,8 @@ Game::Game() noexcept :
     }
     else
     {
-        m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
+        //m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
+        m_currentGameState = GameState::GAMESTATE_STARTSCREEN;
     }
     m_currentUiState = UiState::UISTATE_SWING;
 }
@@ -529,7 +530,7 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     const float poleHeight = 0.1;
     const float flagWidth = .02;
     const float flagHeight = .01;
-    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
+    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Yellow;
     const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
 
     //DirectX::SimpleMath::Vector3 poleBase = aPos;
@@ -1494,7 +1495,7 @@ void Game::DrawMenuMain()
     ////////////////////////////
     
     lineDrawY += menuObj0Pos.y;
-    std::string menuObjHydraString = "Forest Stroll Demo";
+    std::string menuObjHydraString = "Hole 12 Golden Bell";
     DirectX::SimpleMath::Vector2 menuObjHydraPos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObjHydraOrigin = m_font->MeasureString(menuObjHydraString.c_str()) / 2.f;
     
@@ -1706,34 +1707,69 @@ void Game::DrawProjectileRealTime()
     }
 }
 
-void Game::DrawStartScreen()
+void Game::DrawSand()
 {
-    const std::string title = "GolfGame1989";
-    const std::string author = "By Lehr Jackson";
-    const std::string startText = "Press Enter to Start";
-    float fontTitlePosX = m_fontPos.x;
-    float fontTitlePosY = m_fontPos.y / 2.f;
-    DirectX::SimpleMath::Vector2 titlePos(fontTitlePosX, fontTitlePosY);
-    float fontAuthorPosX = m_fontPos.x;
-    float fontAuthorPosY = m_fontPos.y;
-    DirectX::SimpleMath::Vector2 authorPos(fontAuthorPosX, fontAuthorPosY);
-    DirectX::SimpleMath::Vector2 startTextPos(m_fontPos.x, m_fontPos.y + fontTitlePosY);
 
-    DirectX::SimpleMath::Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
-    DirectX::SimpleMath::Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
-    DirectX::SimpleMath::Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
+    DirectX::XMVECTORF32 sandColor2 = DirectX::Colors::SandyBrown;
+    DirectX::XMVECTORF32 sandColor1 = DirectX::Colors::Beige;
 
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(5.f, 5.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
-    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+    DirectX::SimpleMath::Vector3 b1nw(2.45f, 0.0f, -0.6f);
+    DirectX::SimpleMath::Vector3 b1ne(2.65f, 0.0f, -0.5f);
+    DirectX::SimpleMath::Vector3 b1se(2.66f, 0.0f, -0.21f);
+    DirectX::SimpleMath::Vector3 b1sw(2.35f, 0.0f, -0.5f);
 
-    m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
-    m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
+    DirectX::SimpleMath::Vector3 e(4.55, 0.0, 2.001);
+    DirectX::SimpleMath::Vector3 w(0.55, 0.0, -2.001);
+
+    VertexPositionColor b1v1(b1nw, sandColor1);
+    VertexPositionColor b1v2(b1ne, sandColor2);
+    VertexPositionColor b1v3(b1se, sandColor1);
+    VertexPositionColor b1v4(b1sw, sandColor1);
+
+    m_batch->DrawQuad(b1v1, b1v2, b1v3, b1v4);
+
+
+    DirectX::XMVECTORF32 sandColor4 = DirectX::Colors::SandyBrown;
+    DirectX::XMVECTORF32 sandColor3 = DirectX::Colors::Beige;
+
+    DirectX::SimpleMath::Vector3 b2nw(2.7f, 0.0f, -0.4f);
+    DirectX::SimpleMath::Vector3 b2ne(2.85f, 0.0f, -0.2f);
+    DirectX::SimpleMath::Vector3 b2se(2.8f, 0.0f, -0.05f);
+    DirectX::SimpleMath::Vector3 b2sw(2.49f, 0.0f, -0.4f);
+
+    VertexPositionColor b2v1(b2nw, sandColor1);
+    VertexPositionColor b2v2(b2ne, sandColor2);
+    VertexPositionColor b2v3(b2se, sandColor1);
+    VertexPositionColor b2v4(b2sw, sandColor1);
+
+    m_batch->DrawQuad(b2v1, b2v2, b2v3, b2v4);
+
+    DirectX::XMVECTORF32 sandColor5 = DirectX::Colors::Red;
+
+    DirectX::SimpleMath::Vector3 b3nw(3.6f, 0.0f, -0.55f);
+    DirectX::SimpleMath::Vector3 b3ne(3.7f, 0.0f, -0.41f);
+    DirectX::SimpleMath::Vector3 b3se(3.56f, 0.0f, -0.34f);
+    DirectX::SimpleMath::Vector3 b3sw(3.41f, 0.0f, -0.55f);
+
+    VertexPositionColor b3v1(b3nw, sandColor1);
+    VertexPositionColor b3v2(b3ne, sandColor2);
+    VertexPositionColor b3v3(b3se, sandColor1);
+    VertexPositionColor b3v4(b3sw, sandColor1);
+
+    m_batch->DrawQuad(b3v1, b3v2, b3v3, b3v4);
+
+
+    DirectX::SimpleMath::Vector3 b4nw(3.7f, 0.0f, -0.38f);
+    DirectX::SimpleMath::Vector3 b4ne(3.85f, 0.0f, -0.2f);
+    DirectX::SimpleMath::Vector3 b4se(3.71f, 0.0f, -0.18f);
+    DirectX::SimpleMath::Vector3 b4sw(3.58f, 0.0f, -0.29f);
+
+    VertexPositionColor b4v1(b4nw, sandColor1);
+    VertexPositionColor b4v2(b4ne, sandColor2);
+    VertexPositionColor b4v3(b4se, sandColor1);
+    VertexPositionColor b4v4(b4sw, sandColor1);
+
+    m_batch->DrawQuad(b4v1, b4v2, b4v3, b4v4);
 }
 
 void Game::DrawShotAimArrow()
@@ -1811,6 +1847,36 @@ void Game::DrawShotTimerUI()
     std::string timerUI = "Timer = " + std::to_string(m_projectileTimer);
     DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(timerUI.c_str());
     m_font->DrawString(m_spriteBatch.get(), timerUI.c_str(), m_fontPosDebug, Colors::White, 0.f, lineOrigin);
+}
+
+void Game::DrawStartScreen()
+{
+    const std::string title = "GolfGame1989";
+    const std::string author = "By Lehr Jackson";
+    const std::string startText = "Press Enter to Start";
+    float fontTitlePosX = m_fontPos.x;
+    float fontTitlePosY = m_fontPos.y / 2.f;
+    DirectX::SimpleMath::Vector2 titlePos(fontTitlePosX, fontTitlePosY);
+    float fontAuthorPosX = m_fontPos.x;
+    float fontAuthorPosY = m_fontPos.y;
+    DirectX::SimpleMath::Vector2 authorPos(fontAuthorPosX, fontAuthorPosY);
+    DirectX::SimpleMath::Vector2 startTextPos(m_fontPos.x, m_fontPos.y + fontTitlePosY);
+
+    DirectX::SimpleMath::Vector2 titleOrigin = m_titleFont->MeasureString(title.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 authorOrigin = m_font->MeasureString(author.c_str()) / 2.f;
+    DirectX::SimpleMath::Vector2 startTextOrigin = m_font->MeasureString(startText.c_str()) / 2.f;
+
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(7.f, 7.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(6.f, 6.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(5.f, 5.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(3.f, 3.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(2.f, 2.f), Colors::Green, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos + DirectX::SimpleMath::Vector2(-1.f, -1.f), Colors::LawnGreen, 0.f, titleOrigin);
+    m_titleFont->DrawString(m_spriteBatch.get(), title.c_str(), titlePos, Colors::LimeGreen, 0.f, titleOrigin);
+
+    m_font->DrawString(m_spriteBatch.get(), author.c_str(), authorPos, Colors::White, 0.f, authorOrigin);
+    m_font->DrawString(m_spriteBatch.get(), startText.c_str(), startTextPos, Colors::White, 0.f, startTextOrigin);
 }
 
 void Game::DrawSwing()
@@ -2192,6 +2258,131 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     }
 }
 
+void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
+{
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation);
+    DirectX::SimpleMath::Vector3 origin = aPos;
+    DirectX::XMVECTORF32 bridgeColor1 = DirectX::Colors::Gray;
+    DirectX::XMVECTORF32 bridgeColor2 = DirectX::Colors::Gray;
+
+    const float width = .1;
+    const float length = .6;
+    const float halfLength = length * .5;
+    const float quarterlength = halfLength * .6;
+    const float height = .08;
+    const float quarterHeight = height * .7;
+    const float frontBaseLength = quarterlength * .6;
+    const float secondBaseLength = halfLength - (quarterlength * .3);
+    const float thridBaseLength = halfLength + (quarterlength * .3);
+    const float backBaseLength = length - (quarterlength * .6);
+
+    DirectX::SimpleMath::Vector3 nw(length, 0.0, -width);
+    nw = DirectX::SimpleMath::Vector3::Transform(nw, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 ne(length, 0.0, width);
+    ne = DirectX::SimpleMath::Vector3::Transform(ne, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 se(.0, 0.0, width);
+    se = DirectX::SimpleMath::Vector3::Transform(se, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 sw(.0, 0.0, -width);
+    sw = DirectX::SimpleMath::Vector3::Transform(sw, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 midLeftTop(halfLength, height, -width);
+    midLeftTop = DirectX::SimpleMath::Vector3::Transform(midLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 midRightTop(halfLength, height, width);
+    midRightTop = DirectX::SimpleMath::Vector3::Transform(midRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 quarterLeftTop(quarterlength, quarterHeight, -width);
+    quarterLeftTop = DirectX::SimpleMath::Vector3::Transform(quarterLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 quarterRightTop(quarterlength, quarterHeight, width);
+    quarterRightTop = DirectX::SimpleMath::Vector3::Transform(quarterRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 backQuarterLeftTop(length - quarterlength, quarterHeight, -width);
+    backQuarterLeftTop = DirectX::SimpleMath::Vector3::Transform(backQuarterLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 backQuarterRightTop(length - quarterlength, quarterHeight, width);
+    backQuarterRightTop = DirectX::SimpleMath::Vector3::Transform(backQuarterRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 frontBaseLeft(frontBaseLength, 0.0, -width);
+    frontBaseLeft = DirectX::SimpleMath::Vector3::Transform(frontBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 frontBaseRight(frontBaseLength, 0.0, width);
+    frontBaseRight = DirectX::SimpleMath::Vector3::Transform(frontBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 secondBaseLeft(secondBaseLength, 0.0, -width);
+    secondBaseLeft = DirectX::SimpleMath::Vector3::Transform(secondBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 secondBaseRight(secondBaseLength, 0.0, width);
+    secondBaseRight = DirectX::SimpleMath::Vector3::Transform(secondBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 thirdBaseLeft(thridBaseLength, 0.0, -width);
+    thirdBaseLeft = DirectX::SimpleMath::Vector3::Transform(thirdBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 thirdBaseRight(thridBaseLength, 0.0, width);
+    thirdBaseRight = DirectX::SimpleMath::Vector3::Transform(thirdBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 backBaseLeft(backBaseLength, 0.0, -width);
+    backBaseLeft = DirectX::SimpleMath::Vector3::Transform(backBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 backBaseRight(backBaseLength, 0.0, width);
+    backBaseRight = DirectX::SimpleMath::Vector3::Transform(backBaseRight, rotMat) + origin;
+
+    VertexPositionColor endLeft(nw, bridgeColor1);
+    VertexPositionColor endRight(ne, bridgeColor1);
+    VertexPositionColor lowerRight(se, bridgeColor1);
+    VertexPositionColor lowerLeft(sw, bridgeColor1);
+
+    VertexPositionColor halfTopLeft(midLeftTop, bridgeColor1);
+    VertexPositionColor halfTopRight(midRightTop, bridgeColor1);
+
+    VertexPositionColor quarterTopLeft(quarterLeftTop, bridgeColor1);
+    VertexPositionColor quarterTopRight(quarterRightTop, bridgeColor1);
+    // under
+    VertexPositionColor underQuarterTopLeft(quarterLeftTop, bridgeColor2);
+    VertexPositionColor underQuarterTopRight(quarterRightTop, bridgeColor2);
+
+    VertexPositionColor backQuarterTopLeft(backQuarterLeftTop, bridgeColor1);
+    VertexPositionColor backQuarterTopRight(backQuarterRightTop, bridgeColor1);
+
+    VertexPositionColor frontLeftBase(frontBaseLeft, bridgeColor1);
+    VertexPositionColor frontRightBase(frontBaseRight, bridgeColor1);
+    // under
+    VertexPositionColor underFrontLeftBase(frontBaseLeft, bridgeColor2);
+    VertexPositionColor underFrontRightBase(frontBaseRight, bridgeColor2);
+
+    VertexPositionColor secondLeftBase(secondBaseLeft, bridgeColor1);
+    VertexPositionColor secondRightBase(secondBaseRight, bridgeColor1);
+    //under
+    VertexPositionColor underSecondLeftBase(secondBaseLeft, bridgeColor2);
+    VertexPositionColor underSecondRightBase(secondBaseRight, bridgeColor2);
+
+    VertexPositionColor thirdLeftBase(thirdBaseLeft, bridgeColor1);
+    VertexPositionColor thirdRightBase(thirdBaseRight, bridgeColor1);
+    //under
+    VertexPositionColor underThirdLeftBase(thirdBaseLeft, bridgeColor2);
+    VertexPositionColor UnderThirdRightBase(thirdBaseRight, bridgeColor2);
+
+    VertexPositionColor backLeftBase(backBaseLeft, bridgeColor1);
+    VertexPositionColor backRightBase(backBaseRight, bridgeColor1);
+
+    // draw undersides
+    m_batch->DrawQuad(underFrontLeftBase, underFrontRightBase, underQuarterTopRight, underQuarterTopLeft);
+    m_batch->DrawQuad(underSecondLeftBase, underSecondRightBase, quarterTopRight, quarterTopLeft);
+    m_batch->DrawQuad(thirdLeftBase, thirdRightBase, halfTopRight, halfTopLeft);
+    m_batch->DrawQuad(backLeftBase, backRightBase, backQuarterTopRight, backQuarterTopLeft);
+
+    m_batch->DrawQuad(lowerLeft, lowerRight, quarterTopRight, quarterTopLeft);
+    m_batch->DrawQuad(quarterTopLeft, quarterTopRight, halfTopRight, halfTopLeft);
+    m_batch->DrawQuad(halfTopLeft, halfTopRight, backQuarterTopRight, backQuarterTopLeft);
+    m_batch->DrawQuad(endLeft, endRight, backQuarterTopRight, backQuarterTopLeft);
+
+    m_batch->DrawTriangle(lowerLeft, frontLeftBase, quarterTopLeft);
+    m_batch->DrawTriangle(lowerRight, frontRightBase, quarterTopRight);
+
+    m_batch->DrawTriangle(secondLeftBase, halfTopLeft, quarterTopLeft);
+    m_batch->DrawTriangle(secondRightBase, halfTopRight, quarterTopRight);
+
+    m_batch->DrawTriangle(thirdLeftBase, halfTopLeft, backQuarterTopLeft);
+    m_batch->DrawTriangle(thirdRightBase, halfTopRight, backQuarterTopRight);
+
+    m_batch->DrawTriangle(backLeftBase, backQuarterTopLeft, endLeft);
+    m_batch->DrawTriangle(backRightBase, backQuarterTopRight, endRight);
+}
+
+
 void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
@@ -2269,7 +2460,7 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     branchEndR += swayVec;
     DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + branchBase;
 
-    DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Orange;
+    DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::DeepPink;
     DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::Black;
     DirectX::XMVECTORF32 branchColor3 = DirectX::Colors::GreenYellow;
 
@@ -3165,23 +3356,57 @@ void Game::DrawUI()
         }
 
         // drawing text and numbers seperatly to prevent text from shifting postion as the numbes change
-        std::string shotString("Shot Distance =              Yards ");
+        std::string shotString("Shot Distance =               Yards ");
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(shotString.c_str());
         m_font->DrawString(m_spriteBatch.get(), shotString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);        
         std::string distanceString = pGolf->GetShotDistanceString();
         lineOrigin = m_font->MeasureString(distanceString.c_str());
-        fontPos.x -= 145;
+        fontPos.x -= 130;
         m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);   
     }
 
     if (m_currentUiState == UiState::UISTATE_SCORE)
     {
         std::string uiLine = pPlay->GetUIScoreString();
-        //DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
-        DirectX::SimpleMath::Vector2 lineOrigin = m_titleFont->MeasureString(uiLine.c_str());
+        DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
+        //DirectX::SimpleMath::Vector2 lineOrigin = m_titleFont->MeasureString(uiLine.c_str());
         //DirectX::SimpleMath::Vector2 scorePos = m_bitwiseFontPos;
-        m_titleFont->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_bitwiseFontPos, Colors::White, 0.f, lineOrigin);
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), m_bitwiseFontPos, Colors::White, 0.f, lineOrigin);
     }
+}
+
+void Game::DrawWater()
+{
+    DirectX::XMVECTORF32 waterColor = DirectX::Colors::Blue;
+    DirectX::XMVECTORF32 waterColorDeep = DirectX::Colors::Navy;
+    DirectX::XMVECTORF32 waterHighlight = DirectX::Colors::SkyBlue;
+
+    DirectX::SimpleMath::Vector3 nw(0.8, 0.0, -2.001);
+    DirectX::SimpleMath::Vector3 ne(4.7, 0.0, 2.001);
+    DirectX::SimpleMath::Vector3 se(4.3, 0.0, 2.001);
+    DirectX::SimpleMath::Vector3 sw(.3, 0.0, -2.001);
+
+    DirectX::SimpleMath::Vector3 e(4.55, 0.0, 2.001);
+    DirectX::SimpleMath::Vector3 w(0.55, 0.0, -2.001);
+
+    VertexPositionColor v1(nw, waterColor);
+    VertexPositionColor v2(ne, waterColor);
+    VertexPositionColor v3(se, waterColor);
+    VertexPositionColor v4(sw, waterColor);
+
+    VertexPositionColor v5(e, waterColorDeep);
+    VertexPositionColor v6(w, waterColorDeep);
+
+    m_batch->DrawQuad(v1, v2, v5, v6);
+    m_batch->DrawQuad(v6, v5, v3, v4);
+
+    VertexPositionColor v7(nw, waterHighlight);
+    VertexPositionColor v8(ne, waterHighlight);
+    VertexPositionColor v9(se, waterHighlight);
+    VertexPositionColor v10(sw, waterHighlight);
+
+    m_batch->DrawLine(v7, v8);
+    m_batch->DrawLine(v9, v10);
 }
 
 void Game::DrawWorld()
@@ -3381,9 +3606,19 @@ void Game::DrawWorld12th()
         }
     }
 
+    
+    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Black;   
+    VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, 0.0f, -0.7f), greenColor);
+    VertexPositionColor bRight(DirectX::SimpleMath::Vector3(3.1f, 0.0f, -0.05f), greenColor);
+    VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, 0.0f, -0.1f), greenColor);
+    VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, 0.0f, -0.75f), greenColor);
+    m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
+    
+
     //DrawTeeBox();
     //DrawFlagAndHole();
-
+    DrawWater();
+    DrawSand();
 
     pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
@@ -3399,6 +3634,10 @@ void Game::DrawWorld12th()
         {
             DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
         }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_BRIDGE)
+        {
+            DrawBridge(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE01)
         {
             DrawTree01(fixtureList[i].position, fixtureList[i].animationVariation);
@@ -3413,7 +3652,7 @@ void Game::DrawWorld12th()
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE04)
         {
-            DrawTree04(fixtureList[i].position, fixtureList[i].animationVariation);
+            DrawTree04(fixtureList[i].position, fixtureList[i].animationVariation);  
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE05)
         {
@@ -3647,11 +3886,11 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
-    DrawDebugLines();
+    //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
         DrawWorld12th();
-        DrawShotAimCone();
+        //DrawShotAimCone();
         DrawShotAimArrow();
 
         if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)

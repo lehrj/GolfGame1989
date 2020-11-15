@@ -52,6 +52,7 @@ private:
     void CreateDevice();
     void CreateResources();
 
+    void DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawDebugLines();
     void DrawCameraFocus();
     void DrawFlagAndHole();
@@ -64,6 +65,7 @@ private:
     void DrawPowerBarUI();
     void DrawProjectile();
     void DrawProjectileRealTime();
+    void DrawSand();
     void DrawShotAimArrow();
     void DrawShotAimCone();
     void DrawShotTimerUI();
@@ -84,6 +86,7 @@ private:
     void DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawUI();
+    void DrawWater();
     void DrawWorld();
     void DrawWorld12th();
 

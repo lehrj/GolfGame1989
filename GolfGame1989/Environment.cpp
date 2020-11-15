@@ -15,7 +15,7 @@ Environment::Environment()
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
-    LoadFixtureBucket();
+    LoadFixtureBucket12th();
 }
 
 void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
@@ -128,15 +128,16 @@ void Environment::LoadEnvironmentData()
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
     //m_environs[i].holePosition = DirectX::SimpleMath::Vector3(4.9f, 0.0f, 0.82f);
-    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(3.0f, 0.0f, 0.0f);
+    m_environs[i].holePosition = DirectX::SimpleMath::Vector3(3.0f, 0.0f, -0.5f); // 12th positon
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.0f, 0.0f, 0.0f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.2f, 0.0f, 0.1f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
 
     ++i;
     m_environs[i].name = "Breezy";    
@@ -415,6 +416,260 @@ void Environment::LoadFixtureBucket()
     fixt.position = DirectX::SimpleMath::Vector3(2.4, 0.0, 1.17);
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
+}
+
+void Environment::LoadFixtureBucket12th()
+{
+    m_fixtureBucket.clear();
+
+    // add FlagStick   
+    Fixture flagStick;
+    flagStick.idNumber = 0;
+    flagStick.position = m_currentEnviron.holePosition;
+    flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
+    flagStick.animationVariation = 0.0;
+    flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(flagStick);
+
+    // add Tee Box;
+    Fixture teeBox;
+    teeBox.idNumber = 1;
+    teeBox.position = m_currentEnviron.teePosition;
+    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
+    teeBox.animationVariation = 0.0;
+    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(teeBox);
+
+    // randomized fixtures
+    const float varMax = 10.0;
+
+    const float posMin = -2.0;
+    const float posMax = 4.0;
+    const float xPosMin = 0.0;
+    const float xPosMax = 6.0;
+    const float yPos = m_landingHeight;
+    const float zPosMin = -2.0;
+    const float zPosMax = -1.6;
+
+    const int fixtureTypeNumMin = 1;
+    const int fixtureTypeNumMax = 6;
+    const int fixtureCount = 25;
+    int leftOrRightFairwayPlacement = 1;
+    for (int i = 2; i < fixtureCount; ++i)  // start at 2 due to 0 being flag/hole and 1 being the tee box
+    {
+        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (xPosMax))) - 1.0;
+        float y = yPos;
+        float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (zPosMax - zPosMin)) - 2.0;
+        z *= leftOrRightFairwayPlacement; // to alternate tree placement or right or left side of fairway
+        leftOrRightFairwayPlacement *= -1;
+        float aVar = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / varMax);
+
+        Fixture fixt;
+
+        fixt.idNumber = i;
+        fixt.position = DirectX::SimpleMath::Vector3(x, y, z);
+
+        int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
+        if (fixtureNum == 1)
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+        }
+        else if (fixtureNum == 2)
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
+        }
+        else if (fixtureNum == 3)
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
+        }
+        else if (fixtureNum == 4)
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
+        }
+        else if (fixtureNum == 5)
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+        }
+        else
+        {
+            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+        }
+
+        fixt.animationVariation = aVar;
+        fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+
+        m_fixtureBucket.push_back(fixt);
+    }
+
+    // FIXTURETYPE_TREE03  V yellow green
+    // FIXTURETYPE_TREE04  Circle Orange
+    // FIXTURETYPE_TREE06  Triangle dark sides
+    // FIXTURETYPE_TREE07  A tree
+    // FIXTURETYPE_TREE09  A outline
+
+    int i = 0;
+    i = fixtureCount;
+    Fixture fixt;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+    fixt.position = DirectX::SimpleMath::Vector3(4.9, 0.0, 0.1);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+    fixt.position = DirectX::SimpleMath::Vector3(4.5, 0.0, -1.4);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
+    fixt.position = DirectX::SimpleMath::Vector3(4.65, 0.0, -1.14);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+    fixt.position = DirectX::SimpleMath::Vector3(4.85, 0.0, -0.99);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+    fixt.position = DirectX::SimpleMath::Vector3(4.89, 0.0, -0.81);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
+    fixt.position = DirectX::SimpleMath::Vector3(4.91, 0.0, -0.72);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
+    fixt.position = DirectX::SimpleMath::Vector3(4.85, 0.0, -0.39);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
+    fixt.position = DirectX::SimpleMath::Vector3(4.76, 0.0, -0.17);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ///////////////////// start positive z locs
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
+    fixt.position = DirectX::SimpleMath::Vector3(4.92, 0.0, -0.17);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
+    fixt.position = DirectX::SimpleMath::Vector3(4.96, 0.0, 0.47);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
+    fixt.position = DirectX::SimpleMath::Vector3(4.82, 0.0, 0.66);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+    fixt.position = DirectX::SimpleMath::Vector3(4.79, 0.0, 0.93);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+    fixt.position = DirectX::SimpleMath::Vector3(4.69, 0.0, 1.23);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
+    fixt.position = DirectX::SimpleMath::Vector3(4.539, 0.0, 1.45);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    // start trees to create dog leg
+    ////////////////////////////////////////////
+    /*
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
+    fixt.position = DirectX::SimpleMath::Vector3(3.0, 0.0, .75);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
+    fixt.position = DirectX::SimpleMath::Vector3(2.7, 0.0, .97);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
+    fixt.position = DirectX::SimpleMath::Vector3(2.4, 0.0, 1.17);
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+    */
+
+    
+    DirectX::SimpleMath::Vector3 bridge1(1.225, 0.0, -.9);
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    fixt.position = bridge1;
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    DirectX::SimpleMath::Vector3 bridge2(3.6, 0.0, 1.5);
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    fixt.position = bridge2;
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+    
 }
 
 void Environment::SetLandingHeight(double aLandingHeight)
