@@ -106,7 +106,6 @@ void Environment::CreateDataStrings()
 double Environment::GetWindDirection() const
 { 
     DirectX::SimpleMath::Vector3 windVec = m_currentEnviron.wind;
-    //DirectX::SimpleMath::Vector3 zeroDirection(0.0, 0.0, -1.0);
     DirectX::SimpleMath::Vector3 zeroDirection(-1.0, 0.0, -1.0);
     double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(windVec), DirectX::XMVector3Normalize(zeroDirection)));
     if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(windVec, zeroDirection)) > 0.0f)
@@ -135,7 +134,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.0f, 0.0f, 0.0f);
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.2f, 0.0f, 0.1f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.2f, 0.0f, 0.1f); // 155 yards ish pos
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
 
@@ -501,12 +500,6 @@ void Environment::LoadFixtureBucket12th()
         m_fixtureBucket.push_back(fixt);
     }
 
-    // FIXTURETYPE_TREE03  V yellow green
-    // FIXTURETYPE_TREE04  Circle Orange
-    // FIXTURETYPE_TREE06  Triangle dark sides
-    // FIXTURETYPE_TREE07  A tree
-    // FIXTURETYPE_TREE09  A outline
-
     int i = 0;
     i = fixtureCount;
     Fixture fixt;
@@ -622,35 +615,6 @@ void Environment::LoadFixtureBucket12th()
     fixt.position = DirectX::SimpleMath::Vector3(4.539, 0.0, 1.45);
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
-
-    // start trees to create dog leg
-    ////////////////////////////////////////////
-    /*
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    fixt.position = DirectX::SimpleMath::Vector3(3.0, 0.0, .75);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(2.7, 0.0, .97);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(2.4, 0.0, 1.17);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-    */
-
     
     DirectX::SimpleMath::Vector3 bridge1(1.225, 0.0, -.9);
     ++i;
@@ -669,7 +633,6 @@ void Environment::LoadFixtureBucket12th()
     fixt.position = bridge2;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
-    
 }
 
 void Environment::SetLandingHeight(double aLandingHeight)
@@ -686,7 +649,6 @@ void Environment::SortFixtureBucketByDistance()
 {
     std::sort(m_fixtureBucket.begin(), m_fixtureBucket.end(),
         [](const auto& i, const auto& j) {return i.distanceToCamera > j.distanceToCamera; });
-    
 }
 
 void Environment::UpdateEnvironment(const int aIndex)
@@ -700,10 +662,8 @@ void Environment::UpdateEnvironment(const int aIndex)
 
 void Environment::UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos)
 {
-
     UpdateFixtureDistanceToCamera(aPos);
     SortFixtureBucketByDistance();
-
 }
 
 void Environment::UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vector3 &aCameraPos)

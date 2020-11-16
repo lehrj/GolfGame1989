@@ -20,7 +20,6 @@ class GolfBag
 {
 public:
     GolfBag();
-    ~GolfBag();
 
     GolfClub GetClub(const int aClubIndex);
     int GetClubCount() { return m_bagSize; };

@@ -32,8 +32,7 @@ Game::Game() noexcept :
     }
     else
     {
-        //m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
-        m_currentGameState = GameState::GAMESTATE_STARTSCREEN;
+        m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
     }
     m_currentUiState = UiState::UISTATE_SWING;
 }
@@ -474,6 +473,171 @@ void Game::CreateResources()
     // End Texture
 }
 
+void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
+{
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation);
+    DirectX::SimpleMath::Vector3 origin = aPos;
+
+    DirectX::XMVECTORF32 bridgeColor1 = DirectX::Colors::LightSlateGray;
+    DirectX::XMVECTORF32 bridgeColor2 = DirectX::Colors::DarkSlateGray;
+    DirectX::XMVECTORF32 bridgeColor3 = DirectX::Colors::White;
+    DirectX::XMVECTORF32 bridgeColor4 = DirectX::Colors::Black;
+    DirectX::XMVECTORF32 bridgeColor5 = DirectX::Colors::Red;
+
+    const float width = .06;
+    const float length = .6;
+    const float halfLength = length * .5;
+    const float quarterlength = halfLength * .6;
+    const float height = .08;
+    const float quarterHeight = height * .7;
+    const float frontBaseLength = quarterlength * .6;
+    const float secondBaseLength = halfLength - (quarterlength * .3);
+    const float thridBaseLength = halfLength + (quarterlength * .3);
+    const float backBaseLength = length - (quarterlength * .6);
+
+    DirectX::SimpleMath::Vector3 nw(length, 0.0, -width);
+    nw = DirectX::SimpleMath::Vector3::Transform(nw, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 ne(length, 0.0, width);
+    ne = DirectX::SimpleMath::Vector3::Transform(ne, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 se(.0, 0.0, width);
+    se = DirectX::SimpleMath::Vector3::Transform(se, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 sw(.0, 0.0, -width);
+    sw = DirectX::SimpleMath::Vector3::Transform(sw, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 midLeftTop(halfLength, height, -width);
+    midLeftTop = DirectX::SimpleMath::Vector3::Transform(midLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 midRightTop(halfLength, height, width);
+    midRightTop = DirectX::SimpleMath::Vector3::Transform(midRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 quarterLeftTop(quarterlength, quarterHeight, -width);
+    quarterLeftTop = DirectX::SimpleMath::Vector3::Transform(quarterLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 quarterRightTop(quarterlength, quarterHeight, width);
+    quarterRightTop = DirectX::SimpleMath::Vector3::Transform(quarterRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 backQuarterLeftTop(length - quarterlength, quarterHeight, -width);
+    backQuarterLeftTop = DirectX::SimpleMath::Vector3::Transform(backQuarterLeftTop, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 backQuarterRightTop(length - quarterlength, quarterHeight, width);
+    backQuarterRightTop = DirectX::SimpleMath::Vector3::Transform(backQuarterRightTop, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 frontBaseLeft(frontBaseLength, 0.0, -width);
+    frontBaseLeft = DirectX::SimpleMath::Vector3::Transform(frontBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 frontBaseRight(frontBaseLength, 0.0, width);
+    frontBaseRight = DirectX::SimpleMath::Vector3::Transform(frontBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 secondBaseLeft(secondBaseLength, 0.0, -width);
+    secondBaseLeft = DirectX::SimpleMath::Vector3::Transform(secondBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 secondBaseRight(secondBaseLength, 0.0, width);
+    secondBaseRight = DirectX::SimpleMath::Vector3::Transform(secondBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 thirdBaseLeft(thridBaseLength, 0.0, -width);
+    thirdBaseLeft = DirectX::SimpleMath::Vector3::Transform(thirdBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 thirdBaseRight(thridBaseLength, 0.0, width);
+    thirdBaseRight = DirectX::SimpleMath::Vector3::Transform(thirdBaseRight, rotMat) + origin;
+
+    DirectX::SimpleMath::Vector3 backBaseLeft(backBaseLength, 0.0, -width);
+    backBaseLeft = DirectX::SimpleMath::Vector3::Transform(backBaseLeft, rotMat) + origin;
+    DirectX::SimpleMath::Vector3 backBaseRight(backBaseLength, 0.0, width);
+    backBaseRight = DirectX::SimpleMath::Vector3::Transform(backBaseRight, rotMat) + origin;
+
+    VertexPositionColor endLeft(nw, bridgeColor1);
+    VertexPositionColor endRight(ne, bridgeColor1);
+    VertexPositionColor lowerRight(se, bridgeColor1);
+    VertexPositionColor lowerLeft(sw, bridgeColor1);
+
+    VertexPositionColor halfTopLeft(midLeftTop, bridgeColor1);
+    VertexPositionColor halfTopRight(midRightTop, bridgeColor1);
+    // under
+    VertexPositionColor underHalfTopLeft(midLeftTop, bridgeColor4);
+    VertexPositionColor underHalfTopRight(midRightTop, bridgeColor4);
+
+    VertexPositionColor quarterTopLeft(quarterLeftTop, bridgeColor1);
+    VertexPositionColor quarterTopRight(quarterRightTop, bridgeColor1);
+    // under
+    VertexPositionColor underQuarterTopLeft(quarterLeftTop, bridgeColor4);
+    VertexPositionColor underQuarterTopRight(quarterRightTop, bridgeColor4);
+
+    VertexPositionColor backQuarterTopLeft(backQuarterLeftTop, bridgeColor1);
+    VertexPositionColor backQuarterTopRight(backQuarterRightTop, bridgeColor1);
+    // under
+    VertexPositionColor underBackQuarterTopLeft(backQuarterLeftTop, bridgeColor4);
+    VertexPositionColor underBackQuarterTopRight(backQuarterRightTop, bridgeColor4);
+
+    VertexPositionColor frontLeftBase(frontBaseLeft, bridgeColor1);
+    VertexPositionColor frontRightBase(frontBaseRight, bridgeColor1);
+    // under
+    VertexPositionColor underFrontLeftBase(frontBaseLeft, bridgeColor2);
+    VertexPositionColor underFrontRightBase(frontBaseRight, bridgeColor2);
+
+    VertexPositionColor secondLeftBase(secondBaseLeft, bridgeColor1);
+    VertexPositionColor secondRightBase(secondBaseRight, bridgeColor1);
+    //under
+    VertexPositionColor underSecondLeftBase(secondBaseLeft, bridgeColor2);
+    VertexPositionColor underSecondRightBase(secondBaseRight, bridgeColor2);
+
+    VertexPositionColor thirdLeftBase(thirdBaseLeft, bridgeColor1);
+    VertexPositionColor thirdRightBase(thirdBaseRight, bridgeColor1);
+    //under
+    VertexPositionColor underThirdLeftBase(thirdBaseLeft, bridgeColor2);
+    VertexPositionColor UnderThirdRightBase(thirdBaseRight, bridgeColor2);
+
+    VertexPositionColor backLeftBase(backBaseLeft, bridgeColor1);
+    VertexPositionColor backRightBase(backBaseRight, bridgeColor1);
+    //under
+    VertexPositionColor underBackLeftBase(backBaseLeft, bridgeColor2);
+    VertexPositionColor underBackRightBase(backBaseRight, bridgeColor2);
+
+    // railings
+    VertexPositionColor leftRailing1(sw, bridgeColor3);
+    VertexPositionColor leftRailing2(quarterLeftTop, bridgeColor3);
+    VertexPositionColor leftRailing3(midLeftTop, bridgeColor3);
+    VertexPositionColor leftRailing4(backQuarterLeftTop, bridgeColor3);
+    VertexPositionColor leftRailing5(nw, bridgeColor3);
+
+    VertexPositionColor rightRailing1(se, bridgeColor3);
+    VertexPositionColor rightRailing2(quarterRightTop, bridgeColor3);
+    VertexPositionColor rightRailing3(midRightTop, bridgeColor3);
+    VertexPositionColor rightRailing4(backQuarterRightTop, bridgeColor3);
+    VertexPositionColor rightRailing5(ne, bridgeColor3);
+
+    // draw undersides
+    m_batch->DrawQuad(underFrontLeftBase, underFrontRightBase, underQuarterTopRight, underQuarterTopLeft);
+    m_batch->DrawQuad(underSecondLeftBase, underSecondRightBase, underQuarterTopRight, underQuarterTopLeft);
+    m_batch->DrawQuad(underSecondLeftBase, underSecondRightBase, underHalfTopRight, underHalfTopLeft);
+    m_batch->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underHalfTopRight, underHalfTopLeft);
+
+    m_batch->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
+    m_batch->DrawQuad(underBackLeftBase, underBackRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
+
+    m_batch->DrawQuad(lowerLeft, lowerRight, quarterTopRight, quarterTopLeft);
+    m_batch->DrawQuad(quarterTopLeft, quarterTopRight, halfTopRight, halfTopLeft);
+    m_batch->DrawQuad(halfTopLeft, halfTopRight, backQuarterTopRight, backQuarterTopLeft);
+    m_batch->DrawQuad(endLeft, endRight, backQuarterTopRight, backQuarterTopLeft);
+
+    // sides;
+    m_batch->DrawTriangle(lowerLeft, frontLeftBase, quarterTopLeft);
+    m_batch->DrawTriangle(lowerRight, frontRightBase, quarterTopRight);
+
+    m_batch->DrawTriangle(secondLeftBase, halfTopLeft, quarterTopLeft);
+    m_batch->DrawTriangle(secondRightBase, halfTopRight, quarterTopRight);
+
+    m_batch->DrawTriangle(thirdLeftBase, halfTopLeft, backQuarterTopLeft);
+    m_batch->DrawTriangle(thirdRightBase, halfTopRight, backQuarterTopRight);
+
+    m_batch->DrawTriangle(backLeftBase, backQuarterTopLeft, endLeft);
+    m_batch->DrawTriangle(backRightBase, backQuarterTopRight, endRight);
+
+    // railings
+    m_batch->DrawLine(leftRailing1, leftRailing2);
+    m_batch->DrawLine(leftRailing2, leftRailing3);
+    m_batch->DrawLine(leftRailing3, leftRailing4);
+    m_batch->DrawLine(leftRailing4, leftRailing5);
+
+    m_batch->DrawLine(rightRailing1, rightRailing2);
+    m_batch->DrawLine(rightRailing2, rightRailing3);
+    m_batch->DrawLine(rightRailing3, rightRailing4);
+    m_batch->DrawLine(rightRailing4, rightRailing5);
+}
+
 void Game::DrawCameraFocus()
 {
     const float line = .25f;
@@ -530,7 +694,7 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     const float poleHeight = 0.1;
     const float flagWidth = .02;
     const float flagHeight = .01;
-    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Yellow;
+    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
     const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
 
     //DirectX::SimpleMath::Vector3 poleBase = aPos;
@@ -1709,17 +1873,18 @@ void Game::DrawProjectileRealTime()
 
 void Game::DrawSand()
 {
-
-    DirectX::XMVECTORF32 sandColor2 = DirectX::Colors::SandyBrown;
     DirectX::XMVECTORF32 sandColor1 = DirectX::Colors::Beige;
+    DirectX::XMVECTORF32 sandColor2 = DirectX::Colors::SandyBrown;
+    DirectX::XMVECTORF32 sandColor9= DirectX::Colors::Red;
+    const float height = 0.004;
 
-    DirectX::SimpleMath::Vector3 b1nw(2.45f, 0.0f, -0.6f);
-    DirectX::SimpleMath::Vector3 b1ne(2.65f, 0.0f, -0.5f);
-    DirectX::SimpleMath::Vector3 b1se(2.66f, 0.0f, -0.21f);
-    DirectX::SimpleMath::Vector3 b1sw(2.35f, 0.0f, -0.5f);
+    DirectX::SimpleMath::Vector3 b1nw(2.45f, height, -0.6f);
+    DirectX::SimpleMath::Vector3 b1ne(2.65f, height, -0.5f);
+    DirectX::SimpleMath::Vector3 b1se(2.66f, 0.0, -0.21f);
+    DirectX::SimpleMath::Vector3 b1sw(2.35f, height, -0.5f);
 
-    DirectX::SimpleMath::Vector3 e(4.55, 0.0, 2.001);
-    DirectX::SimpleMath::Vector3 w(0.55, 0.0, -2.001);
+    DirectX::SimpleMath::Vector3 e(4.55, height, 2.001);
+    DirectX::SimpleMath::Vector3 w(0.55, height, -2.001);
 
     VertexPositionColor b1v1(b1nw, sandColor1);
     VertexPositionColor b1v2(b1ne, sandColor2);
@@ -1732,13 +1897,13 @@ void Game::DrawSand()
     DirectX::XMVECTORF32 sandColor4 = DirectX::Colors::SandyBrown;
     DirectX::XMVECTORF32 sandColor3 = DirectX::Colors::Beige;
 
-    DirectX::SimpleMath::Vector3 b2nw(2.7f, 0.0f, -0.4f);
-    DirectX::SimpleMath::Vector3 b2ne(2.85f, 0.0f, -0.2f);
-    DirectX::SimpleMath::Vector3 b2se(2.8f, 0.0f, -0.05f);
-    DirectX::SimpleMath::Vector3 b2sw(2.49f, 0.0f, -0.4f);
+    DirectX::SimpleMath::Vector3 b2nw(2.7f, height, -0.4f);
+    DirectX::SimpleMath::Vector3 b2ne(2.85f, height, -0.2f);
+    DirectX::SimpleMath::Vector3 b2se(2.8f, height, -0.05f);
+    DirectX::SimpleMath::Vector3 b2sw(2.49f, 0.0, -0.4f);
 
-    VertexPositionColor b2v1(b2nw, sandColor1);
-    VertexPositionColor b2v2(b2ne, sandColor2);
+    VertexPositionColor b2v1(b2nw, sandColor2);
+    VertexPositionColor b2v2(b2ne, sandColor1);
     VertexPositionColor b2v3(b2se, sandColor1);
     VertexPositionColor b2v4(b2sw, sandColor1);
 
@@ -1746,10 +1911,10 @@ void Game::DrawSand()
 
     DirectX::XMVECTORF32 sandColor5 = DirectX::Colors::Red;
 
-    DirectX::SimpleMath::Vector3 b3nw(3.6f, 0.0f, -0.55f);
-    DirectX::SimpleMath::Vector3 b3ne(3.7f, 0.0f, -0.41f);
-    DirectX::SimpleMath::Vector3 b3se(3.56f, 0.0f, -0.34f);
-    DirectX::SimpleMath::Vector3 b3sw(3.41f, 0.0f, -0.55f);
+    DirectX::SimpleMath::Vector3 b3nw(3.6f, height, -0.55f);
+    DirectX::SimpleMath::Vector3 b3ne(3.7f, height, -0.41f);
+    DirectX::SimpleMath::Vector3 b3se(3.56f, height, -0.34f);
+    DirectX::SimpleMath::Vector3 b3sw(3.41f, height, -0.55f);
 
     VertexPositionColor b3v1(b3nw, sandColor1);
     VertexPositionColor b3v2(b3ne, sandColor2);
@@ -1759,10 +1924,10 @@ void Game::DrawSand()
     m_batch->DrawQuad(b3v1, b3v2, b3v3, b3v4);
 
 
-    DirectX::SimpleMath::Vector3 b4nw(3.7f, 0.0f, -0.38f);
-    DirectX::SimpleMath::Vector3 b4ne(3.85f, 0.0f, -0.2f);
-    DirectX::SimpleMath::Vector3 b4se(3.71f, 0.0f, -0.18f);
-    DirectX::SimpleMath::Vector3 b4sw(3.58f, 0.0f, -0.29f);
+    DirectX::SimpleMath::Vector3 b4nw(3.7f, height, -0.38f);
+    DirectX::SimpleMath::Vector3 b4ne(3.85f, height, -0.2f);
+    DirectX::SimpleMath::Vector3 b4se(3.71f, height, -0.18f);
+    DirectX::SimpleMath::Vector3 b4sw(3.58f, height, -0.29f);
 
     VertexPositionColor b4v1(b4nw, sandColor1);
     VertexPositionColor b4v2(b4ne, sandColor2);
@@ -1963,7 +2128,7 @@ void Game::DrawTeeBox()
     //draw tee box;
     const DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
     const float teeBoxLengthScale = 0.05f;
-    const float teeBoxHorizontalScale = 0.1f;
+    const float teeBoxHorizontalScale = 10.1f;
     DirectX::SimpleMath::Vector3 t1(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
     DirectX::SimpleMath::Vector3 t2(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
     DirectX::SimpleMath::Vector3 t3(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
@@ -1982,7 +2147,8 @@ void Game::DrawTeeBox()
 void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
 {
     //draw tee box;
-    const DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
+    DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
+    teeBoxOrigin.y += 0.003;
     const float teeBoxLengthScale = 0.05f;
     const float teeBoxHorizontalScale = 0.1f;
     DirectX::SimpleMath::Vector3 t1(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
@@ -2181,7 +2347,6 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine) * 1.1;
     //viewHorizontal = viewHorizontal / 2;
 
-
     // tree trunk
     VertexPositionColor treeRootBase(aTreePos, Colors::Gray);
     VertexPositionColor treeRootTop(baseTop, Colors::Gray);
@@ -2213,7 +2378,6 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     const float branchGap = .01;
     const float halfBranchGap = branchGap * .5;
 
-    //VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::ForestGreen);
     DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
     DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Yellow;
     DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::Black;
@@ -2257,131 +2421,6 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         m_batch->DrawLine(branchBaseVertex, leafL);
     }
 }
-
-void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
-{
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation);
-    DirectX::SimpleMath::Vector3 origin = aPos;
-    DirectX::XMVECTORF32 bridgeColor1 = DirectX::Colors::Gray;
-    DirectX::XMVECTORF32 bridgeColor2 = DirectX::Colors::Gray;
-
-    const float width = .1;
-    const float length = .6;
-    const float halfLength = length * .5;
-    const float quarterlength = halfLength * .6;
-    const float height = .08;
-    const float quarterHeight = height * .7;
-    const float frontBaseLength = quarterlength * .6;
-    const float secondBaseLength = halfLength - (quarterlength * .3);
-    const float thridBaseLength = halfLength + (quarterlength * .3);
-    const float backBaseLength = length - (quarterlength * .6);
-
-    DirectX::SimpleMath::Vector3 nw(length, 0.0, -width);
-    nw = DirectX::SimpleMath::Vector3::Transform(nw, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 ne(length, 0.0, width);
-    ne = DirectX::SimpleMath::Vector3::Transform(ne, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 se(.0, 0.0, width);
-    se = DirectX::SimpleMath::Vector3::Transform(se, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 sw(.0, 0.0, -width);
-    sw = DirectX::SimpleMath::Vector3::Transform(sw, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 midLeftTop(halfLength, height, -width);
-    midLeftTop = DirectX::SimpleMath::Vector3::Transform(midLeftTop, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 midRightTop(halfLength, height, width);
-    midRightTop = DirectX::SimpleMath::Vector3::Transform(midRightTop, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 quarterLeftTop(quarterlength, quarterHeight, -width);
-    quarterLeftTop = DirectX::SimpleMath::Vector3::Transform(quarterLeftTop, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 quarterRightTop(quarterlength, quarterHeight, width);
-    quarterRightTop = DirectX::SimpleMath::Vector3::Transform(quarterRightTop, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 backQuarterLeftTop(length - quarterlength, quarterHeight, -width);
-    backQuarterLeftTop = DirectX::SimpleMath::Vector3::Transform(backQuarterLeftTop, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 backQuarterRightTop(length - quarterlength, quarterHeight, width);
-    backQuarterRightTop = DirectX::SimpleMath::Vector3::Transform(backQuarterRightTop, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 frontBaseLeft(frontBaseLength, 0.0, -width);
-    frontBaseLeft = DirectX::SimpleMath::Vector3::Transform(frontBaseLeft, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 frontBaseRight(frontBaseLength, 0.0, width);
-    frontBaseRight = DirectX::SimpleMath::Vector3::Transform(frontBaseRight, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 secondBaseLeft(secondBaseLength, 0.0, -width);
-    secondBaseLeft = DirectX::SimpleMath::Vector3::Transform(secondBaseLeft, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 secondBaseRight(secondBaseLength, 0.0, width);
-    secondBaseRight = DirectX::SimpleMath::Vector3::Transform(secondBaseRight, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 thirdBaseLeft(thridBaseLength, 0.0, -width);
-    thirdBaseLeft = DirectX::SimpleMath::Vector3::Transform(thirdBaseLeft, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 thirdBaseRight(thridBaseLength, 0.0, width);
-    thirdBaseRight = DirectX::SimpleMath::Vector3::Transform(thirdBaseRight, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 backBaseLeft(backBaseLength, 0.0, -width);
-    backBaseLeft = DirectX::SimpleMath::Vector3::Transform(backBaseLeft, rotMat) + origin;
-    DirectX::SimpleMath::Vector3 backBaseRight(backBaseLength, 0.0, width);
-    backBaseRight = DirectX::SimpleMath::Vector3::Transform(backBaseRight, rotMat) + origin;
-
-    VertexPositionColor endLeft(nw, bridgeColor1);
-    VertexPositionColor endRight(ne, bridgeColor1);
-    VertexPositionColor lowerRight(se, bridgeColor1);
-    VertexPositionColor lowerLeft(sw, bridgeColor1);
-
-    VertexPositionColor halfTopLeft(midLeftTop, bridgeColor1);
-    VertexPositionColor halfTopRight(midRightTop, bridgeColor1);
-
-    VertexPositionColor quarterTopLeft(quarterLeftTop, bridgeColor1);
-    VertexPositionColor quarterTopRight(quarterRightTop, bridgeColor1);
-    // under
-    VertexPositionColor underQuarterTopLeft(quarterLeftTop, bridgeColor2);
-    VertexPositionColor underQuarterTopRight(quarterRightTop, bridgeColor2);
-
-    VertexPositionColor backQuarterTopLeft(backQuarterLeftTop, bridgeColor1);
-    VertexPositionColor backQuarterTopRight(backQuarterRightTop, bridgeColor1);
-
-    VertexPositionColor frontLeftBase(frontBaseLeft, bridgeColor1);
-    VertexPositionColor frontRightBase(frontBaseRight, bridgeColor1);
-    // under
-    VertexPositionColor underFrontLeftBase(frontBaseLeft, bridgeColor2);
-    VertexPositionColor underFrontRightBase(frontBaseRight, bridgeColor2);
-
-    VertexPositionColor secondLeftBase(secondBaseLeft, bridgeColor1);
-    VertexPositionColor secondRightBase(secondBaseRight, bridgeColor1);
-    //under
-    VertexPositionColor underSecondLeftBase(secondBaseLeft, bridgeColor2);
-    VertexPositionColor underSecondRightBase(secondBaseRight, bridgeColor2);
-
-    VertexPositionColor thirdLeftBase(thirdBaseLeft, bridgeColor1);
-    VertexPositionColor thirdRightBase(thirdBaseRight, bridgeColor1);
-    //under
-    VertexPositionColor underThirdLeftBase(thirdBaseLeft, bridgeColor2);
-    VertexPositionColor UnderThirdRightBase(thirdBaseRight, bridgeColor2);
-
-    VertexPositionColor backLeftBase(backBaseLeft, bridgeColor1);
-    VertexPositionColor backRightBase(backBaseRight, bridgeColor1);
-
-    // draw undersides
-    m_batch->DrawQuad(underFrontLeftBase, underFrontRightBase, underQuarterTopRight, underQuarterTopLeft);
-    m_batch->DrawQuad(underSecondLeftBase, underSecondRightBase, quarterTopRight, quarterTopLeft);
-    m_batch->DrawQuad(thirdLeftBase, thirdRightBase, halfTopRight, halfTopLeft);
-    m_batch->DrawQuad(backLeftBase, backRightBase, backQuarterTopRight, backQuarterTopLeft);
-
-    m_batch->DrawQuad(lowerLeft, lowerRight, quarterTopRight, quarterTopLeft);
-    m_batch->DrawQuad(quarterTopLeft, quarterTopRight, halfTopRight, halfTopLeft);
-    m_batch->DrawQuad(halfTopLeft, halfTopRight, backQuarterTopRight, backQuarterTopLeft);
-    m_batch->DrawQuad(endLeft, endRight, backQuarterTopRight, backQuarterTopLeft);
-
-    m_batch->DrawTriangle(lowerLeft, frontLeftBase, quarterTopLeft);
-    m_batch->DrawTriangle(lowerRight, frontRightBase, quarterTopRight);
-
-    m_batch->DrawTriangle(secondLeftBase, halfTopLeft, quarterTopLeft);
-    m_batch->DrawTriangle(secondRightBase, halfTopRight, quarterTopRight);
-
-    m_batch->DrawTriangle(thirdLeftBase, halfTopLeft, backQuarterTopLeft);
-    m_batch->DrawTriangle(thirdRightBase, halfTopRight, backQuarterTopRight);
-
-    m_batch->DrawTriangle(backLeftBase, backQuarterTopLeft, endLeft);
-    m_batch->DrawTriangle(backRightBase, backQuarterTopRight, endRight);
-}
-
 
 void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
@@ -3335,12 +3374,6 @@ void Game::DrawUI()
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
         fontPos.y += 35;
-
-        // temp for testing is ball in hole bool
-        uiLine = "Is ball in hole = " + std::to_string(pGolf->GetIsBallInHole());
-        lineOrigin = m_font->MeasureString(uiLine.c_str());
-        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
-        fontPos.y += 35;
     }
 
     if (m_currentUiState == UiState::UISTATE_SHOT)
@@ -3381,13 +3414,14 @@ void Game::DrawWater()
     DirectX::XMVECTORF32 waterColorDeep = DirectX::Colors::Navy;
     DirectX::XMVECTORF32 waterHighlight = DirectX::Colors::SkyBlue;
 
-    DirectX::SimpleMath::Vector3 nw(0.8, 0.0, -2.001);
-    DirectX::SimpleMath::Vector3 ne(4.7, 0.0, 2.001);
-    DirectX::SimpleMath::Vector3 se(4.3, 0.0, 2.001);
-    DirectX::SimpleMath::Vector3 sw(.3, 0.0, -2.001);
+    const float height = 0.003;
+    DirectX::SimpleMath::Vector3 nw(0.8, height, -2.001);
+    DirectX::SimpleMath::Vector3 ne(4.7, height, 2.001);
+    DirectX::SimpleMath::Vector3 se(4.3, height, 2.001);
+    DirectX::SimpleMath::Vector3 sw(.3, height, -2.001);
 
-    DirectX::SimpleMath::Vector3 e(4.55, 0.0, 2.001);
-    DirectX::SimpleMath::Vector3 w(0.55, 0.0, -2.001);
+    DirectX::SimpleMath::Vector3 e(4.55, height, 2.001);
+    DirectX::SimpleMath::Vector3 w(0.55, height, -2.001);
 
     VertexPositionColor v1(nw, waterColor);
     VertexPositionColor v2(ne, waterColor);
@@ -3606,12 +3640,12 @@ void Game::DrawWorld12th()
         }
     }
 
-    
-    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Black;   
-    VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, 0.0f, -0.7f), greenColor);
-    VertexPositionColor bRight(DirectX::SimpleMath::Vector3(3.1f, 0.0f, -0.05f), greenColor);
-    VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, 0.0f, -0.1f), greenColor);
-    VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, 0.0f, -0.75f), greenColor);
+    const float height = 0.0;
+    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Green;   
+    VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, height, -0.7f), greenColor);
+    VertexPositionColor bRight(DirectX::SimpleMath::Vector3(3.1f, height, -0.05f), greenColor);
+    VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, height, -0.1f), greenColor);
+    VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, height, -0.75f), greenColor);
     m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
     
 
@@ -3620,7 +3654,7 @@ void Game::DrawWorld12th()
     DrawWater();
     DrawSand();
 
-    pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
+    //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
     std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
 
@@ -3873,8 +3907,15 @@ void Game::Render()
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-    m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0); // doesnt facecull
+    m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
     //m_d3dContext->RSSetState(m_states->CullNone());
+    //m_d3dContext->RSSetState(m_states->CullClockwise());
+
+
+
+    //10  m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+    //11  m_d3dContext->RSSetState(m_states->CullCounterClockwise());
 
     //world start
     m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
@@ -3943,7 +3984,7 @@ void Game::Render()
         //DrawSwingUI();
         DrawUI();
     }
-
+    
     m_spriteBatch->End();
 
     Present();

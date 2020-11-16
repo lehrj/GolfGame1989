@@ -8,10 +8,6 @@ GolfBag::GolfBag()
     SetDiffcultyFactor();
 }
 
-GolfBag::~GolfBag()
-{
-}
-
 void GolfBag::BuildBag()
 {
     m_bag.clear();
