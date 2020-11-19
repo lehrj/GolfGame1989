@@ -27,7 +27,7 @@ public:
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
-    
+
     // Basic game loop
     void Tick();
 
@@ -75,7 +75,7 @@ private:
     void DrawTeeBox();
     void DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
     void DrawTree01(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
-    void DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);   
+    void DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
@@ -98,9 +98,9 @@ private:
     void Update(DX::StepTimer const& aTimer);
     void UpdateInput(DX::StepTimer const& aTimer);
 
-    Camera*                                         pCamera;
-    Golf*                                           pGolf;
-    GolfPlay*                                       pPlay;
+    Camera* pCamera;
+    Golf* pGolf;
+    GolfPlay* pPlay;
 
     // Device resources.
     HWND                                            m_window;
@@ -156,7 +156,7 @@ private:
     DirectX::SimpleMath::Vector2                    m_fontMenuPos;
     DirectX::SimpleMath::Vector2                    m_bitwiseFontPos;
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
-    
+
     // Golf Character Texture
     std::unique_ptr<AnimatedTexture>                m_character;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_characterTexture;
@@ -203,6 +203,12 @@ private:
     DirectX::SimpleMath::Vector2                    m_powerBarMeterOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarImpactOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarBackswingOrigin;
+
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_testTex;
+    DirectX::SimpleMath::Vector2                    m_testTexPos;
+    DirectX::SimpleMath::Vector2                    m_testTexOrigin;
+    RECT                                            m_testTexRect;
 
     RECT                                            m_powerMeterBarRect;
     RECT                                            m_powerMeterFrameRect;
@@ -256,4 +262,3 @@ private:
 
     const bool                                  m_isInDebugMode = true;
 };
-

@@ -21,7 +21,7 @@ Game::Game() noexcept :
     srand(time(NULL));
     pGolf = new Golf;
     pPlay = new GolfPlay;
-    
+
     pCamera = new Camera(m_outputWidth, m_outputHeight);
 
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
@@ -163,11 +163,11 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
 
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
-    
+
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
-    
+
     /* // For multisampling rendering
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
@@ -393,7 +393,7 @@ void Game::CreateResources()
     ////********* WLJ world start ----- deactivate to turn off world spin
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
-    const float viewPlaneNear = 0.1f;
+    const float viewPlaneNear = 0.001f;
     const float viewPlaneFar = 400.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
@@ -441,6 +441,13 @@ void Game::CreateResources()
 
     m_powerMeterBarScale = 1.0f - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
+    // test char
+    m_testTexRect.left = static_cast<long>((backBufferWidth / 2.f) - m_powerBarFrameOrigin.x);
+    m_testTexRect.right = static_cast<long>((backBufferWidth / 2.f) + m_powerBarFrameOrigin.x);
+    m_testTexRect.top = static_cast<long>((backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y);
+    m_testTexRect.bottom = static_cast<long>((backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y);
+        
+
     // Character textures  
     m_characterPos.x = backBufferWidth / 2.f;
     m_characterPos.y = backBufferHeight / 2.f;
@@ -449,7 +456,7 @@ void Game::CreateResources()
     m_character1Pos.x = backBufferWidth / 2.f;
     m_character1Pos.y = backBufferHeight / 2.f;
     m_character2Pos.x = backBufferWidth / 2.f;
-    m_character2Pos.y = backBufferHeight / 2.f;   
+    m_character2Pos.y = backBufferHeight / 2.f;
     DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"CharacterBackground.png", nullptr, m_characterBackgroundTexture.ReleaseAndGetAddressOf()));
     m_characterBackgroundPos.x = backBufferWidth / 2.f;
     m_characterBackgroundPos.y = backBufferHeight / 2.f;
@@ -671,12 +678,12 @@ void Game::DrawDebugLines()
 void Game::DrawFlagAndHole()
 {
     std::vector<DirectX::VertexPositionColor> holeVert = pGolf->GetHoleVertex();
-    
+
     for (int i = 0; i < holeVert.size() - 1; ++i)
     {
         m_batch->DrawLine(holeVert[i], holeVert[i + 1]);
     }
-    
+
     std::vector<DirectX::VertexPositionColor> flagVert = pGolf->GetFlagVertex();
     if (flagVert.size() == 5)
     {
@@ -705,26 +712,26 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     flagTip.y -= flagHeight;
     flagTip.x -= flagWidth;
     flagTip.z -= flagWidth;
-    
+
     float windDirection = pGolf->GetWindDirectionRad();
     DirectX::SimpleMath::Vector3 windNormalized = pGolf->GetEnvironWindVector();
-    float windSpeed = windNormalized.Length() *.3;
+    float windSpeed = windNormalized.Length() * .3;
     windNormalized.Normalize();
 
     const float scaleMod = 1.0;
     const float scale = pGolf->GetEnvironScale() * scaleMod;
     DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation));
-    
+
     DirectX::SimpleMath::Vector3 swayBase = swayVec;
     swayBase = swayBase * 0.05;
 
     windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
     flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
-    
+
     poleTop += swayBase;
     DirectX::SimpleMath::Vector3 flagBottom = poleTop;
     flagBottom.y -= flagHeight + flagHeight;
-    
+
     DirectX::VertexPositionColor poleBaseVertex(poleBase + aPos, poleColor);
     DirectX::VertexPositionColor poleTopVertex(poleTop + aPos, poleColor);
     DirectX::VertexPositionColor flagTopVertex(poleTop + aPos, flagColor);
@@ -840,9 +847,9 @@ void Game::DrawIntroScreen()
     float fadeDuration = 1.5f;
     float logoDisplayDuration = 5.f;
     float logoDisplayGap = 1.f;
-    float startDelay = 4.2f;  
+    float startDelay = 4.2f;
     float timeStamp = static_cast<float>(m_timer.GetTotalSeconds());
-    
+
     float fadeInStart1 = startDelay;
     float fadeInStart2 = startDelay + logoDisplayDuration + logoDisplayGap;
     float fadeInEnd1 = startDelay + fadeDuration;
@@ -918,7 +925,7 @@ void Game::DrawIntroScreen()
             fadeColor.f[2] = colorIntensity;
             m_spriteBatch->Draw(m_bmwLogoTexture.Get(), m_bmwLogoPos, nullptr, fadeColor, 0.f, m_bmwLogoOrigin);
             m_bitwiseFont->DrawString(m_spriteBatch.get(), textLine.c_str(), textLinePos, fadeColor, 0.f, textLineOrigin);
-        }       
+        }
         else
         {
             AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_COINSFX);
@@ -1657,12 +1664,12 @@ void Game::DrawMenuMain()
 
     // Demo
     ////////////////////////////
-    
+
     lineDrawY += menuObj0Pos.y;
     std::string menuObjHydraString = "Hole 12 Golden Bell";
     DirectX::SimpleMath::Vector2 menuObjHydraPos(menuTitlePosX, lineDrawY);
     DirectX::SimpleMath::Vector2 menuObjHydraOrigin = m_font->MeasureString(menuObjHydraString.c_str()) / 2.f;
-    
+
     ///////////////////////////
 
     lineDrawY += menuObj0Pos.y;
@@ -1730,7 +1737,7 @@ void Game::DrawMenuMain()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj2String.c_str(), menuObj2Pos, Colors::White, 0.f, menuObj2Origin);
     }
-    
+
     if (m_menuSelect == 3)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObjHydraOrigin);
@@ -1749,7 +1756,7 @@ void Game::DrawMenuMain()
     {
         m_font->DrawString(m_spriteBatch.get(), menuObjHydraString.c_str(), menuObjHydraPos, Colors::White, 0.f, menuObjHydraOrigin);
     }
-    
+
     if (m_menuSelect == 4)
     {
         m_font->DrawString(m_spriteBatch.get(), menuObj3String.c_str(), menuObj3Pos + DirectX::SimpleMath::Vector2(4.f, 4.f), Colors::White, 0.f, menuObj3Origin);
@@ -1800,7 +1807,7 @@ void Game::DrawPowerBarUI()
 void Game::DrawProjectile()
 {
     std::vector<BallMotion> shotPath = pGolf->GetShotPath();
-    
+
     if (shotPath.size() > 1)
     {
         int stepCount = (int)shotPath.size();
@@ -1875,7 +1882,7 @@ void Game::DrawSand()
 {
     DirectX::XMVECTORF32 sandColor1 = DirectX::Colors::Beige;
     DirectX::XMVECTORF32 sandColor2 = DirectX::Colors::SandyBrown;
-    DirectX::XMVECTORF32 sandColor9= DirectX::Colors::Red;
+    DirectX::XMVECTORF32 sandColor9 = DirectX::Colors::Red;
     const float height = 0.004;
 
     DirectX::SimpleMath::Vector3 b1nw(2.45f, height, -0.6f);
@@ -1949,7 +1956,7 @@ void Game::DrawShotAimArrow()
     aimLine = DirectX::SimpleMath::Vector3::Transform(aimLine, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineLeft = DirectX::SimpleMath::Vector3::Transform(aimLineLeft, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
     aimLineRight = DirectX::SimpleMath::Vector3::Transform(aimLineRight, DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection())));
-        
+
     aimLine += pGolf->GetShotStartPos();
     aimLineLeft += pGolf->GetShotStartPos();
     aimLineRight += pGolf->GetShotStartPos();
@@ -1988,7 +1995,7 @@ void Game::DrawShotAimCone()
     DirectX::SimpleMath::Vector3 right = DirectX::SimpleMath::Vector3(length, 0.0f, width);
     DirectX::SimpleMath::Vector3 left = DirectX::SimpleMath::Vector3(length, 0.0f, -width);
     DirectX::SimpleMath::Vector3 center = DirectX::SimpleMath::Vector3(length - indent, 0.0f, 0.0f);
-    
+
     DirectX::SimpleMath::Matrix rotationMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
     right = DirectX::SimpleMath::Vector3::Transform(right, rotationMat);
     left = DirectX::SimpleMath::Vector3::Transform(left, rotationMat);
@@ -2069,6 +2076,11 @@ void Game::DrawSwing()
         DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
         DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
         DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
+
+        const float clubFaceLength = 0.005;
+        const float grooveGap = .0005;
+        // const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
+        const double clubFaceAngle = Utility::ToRadians(45.0);
         bool isBallHit = false;
         for (int i = 0; i < m_swingPathStep; ++i)
         {
@@ -2090,6 +2102,8 @@ void Game::DrawSwing()
             }
             DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
             DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
+            DirectX::SimpleMath::Vector3 clubHeadBase = beta;
+            clubHeadBase.z += clubFaceLength;
 
             // Rotate to point swing draw in direction of swing aim
             theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
@@ -2097,15 +2111,78 @@ void Game::DrawSwing()
 
             theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
             beta += theta;
+            clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
+            clubHeadBase += theta;
+
+            DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y - angles[i].z + clubFaceAngle);
+
+
+            DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
+            toeGroove1.y += grooveGap;
+            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
+            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
+            toeGroove1 += clubHeadBase;
+            VertexPositionColor toeGrooveVert1(toeGroove1, DirectX::Colors::Pink);
+
+            DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
+            heelGroove1.y += grooveGap;
+            heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
+            heelGroove1 += beta;
+            VertexPositionColor heelGrooveVert1(heelGroove1, DirectX::Colors::White);
+
+            DirectX::SimpleMath::Vector3 toeGroove2 = DirectX::SimpleMath::Vector3::Zero;
+            toeGroove2.y += grooveGap * 2;
+            toeGroove2 = DirectX::SimpleMath::Vector3::Transform(toeGroove2, clubFaceRot);
+            toeGroove2 += clubHeadBase;
+            VertexPositionColor toeGrooveVert2(toeGroove2, DirectX::Colors::Pink);
+
+            DirectX::SimpleMath::Vector3 heelGroove2 = DirectX::SimpleMath::Vector3::Zero;
+            heelGroove2.y += grooveGap * 2;
+            heelGroove2 = DirectX::SimpleMath::Vector3::Transform(heelGroove2, clubFaceRot);
+            heelGroove2 += beta;
+            VertexPositionColor heelGrooveVert2(heelGroove2, DirectX::Colors::White);
+
+
+
+            DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
+            DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
+            toeGroove3.y += grooveGap * 3;
+
+            toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
+            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, clubFaceRot);
+            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, rotMat);
+            toeGroove3 += clubHeadBase;
+            VertexPositionColor toeGrooveVert3(toeGroove3, DirectX::Colors::Pink);
+
+            DirectX::SimpleMath::Vector3 heelGroove3 = DirectX::SimpleMath::Vector3::Zero;
+            heelGroove3.y += grooveGap * 3;
+            heelGroove3 = DirectX::SimpleMath::Vector3::Transform(heelGroove3, clubFaceRot);
+            heelGroove3 += beta;
+            VertexPositionColor heelGrooveVert3(heelGroove3, DirectX::Colors::White);
+
             VertexPositionColor shoulder(origin, shoulderColor);
-            VertexPositionColor thetaColor(theta, handColor);
-            VertexPositionColor betaColor(beta, clubHeadColor);
-            m_batch->DrawLine(shoulder, thetaColor);
-            m_batch->DrawLine(thetaColor, betaColor);
+            VertexPositionColor thetaVert(theta, handColor);
+            VertexPositionColor betaVert(beta, clubHeadColor);
+            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Yellow);
+ 
+            if (i == i)
+            {
+                m_batch->DrawLine(shoulder, thetaVert);
+                m_batch->DrawLine(thetaVert, betaVert);
+                
+                m_batch->DrawLine(betaVert, clubHeadVert);
+                m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
+                m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
+                m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
+                m_batch->DrawLine(toeGrooveVert2, heelGrooveVert2);
+                m_batch->DrawLine(toeGrooveVert3, heelGrooveVert3);
+                m_batch->DrawLine(toeGrooveVert2, toeGrooveVert3);
+                
+                m_batch->DrawTriangle(betaVert, clubHeadVert, toeGrooveVert3);
+            }
         }
     }
 }
-
 void Game::DrawSwingUI()
 {
     std::vector<std::string> uiString = pPlay->GetDebugData();
@@ -2248,7 +2325,7 @@ void Game::DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
     //DirectX::SimpleMath::Vector3 swayVec = windVector * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds()));
     DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * (cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation)));
-    
+
     DirectX::SimpleMath::Vector3 swayBase = swayVec;
     swayBase = swayBase * 0.05;
 
@@ -2308,7 +2385,7 @@ void Game::DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
         //treeRootTop2.position.y += branchGap;
         //treeRootTop2.position += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;    
+        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
         branchEndR.y += branchGap;
         branchEndR += swayVec;
         DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
@@ -2494,8 +2571,8 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
     VertexPositionColor branchBaseVertex(branchBase, Colors::ForestGreen);
     DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + branchBase;
-    
-  
+
+
     branchEndR += swayVec;
     DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + branchBase;
 
@@ -2546,7 +2623,7 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         }
     }
 
-    branchBaseVertex.position.y += branchGap;  
+    branchBaseVertex.position.y += branchGap;
     leafR.position.y += branchGap;
     leafL.position.y += branchGap;
     //m_batch->DrawLine(branchBaseVertex, leafR);
@@ -2597,7 +2674,7 @@ void Game::DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     trunkTopRight += swayBase;
     //trunkBottomRight += swayBase;
     //trunkBottomLeft += swayBase;
-    
+
     VertexPositionColor trunkBackTL(trunkTopLeft, Colors::Black);
     VertexPositionColor trunkBackTR(trunkTopRight, Colors::Black);
     VertexPositionColor trunkBackBR(trunkBottomRight, Colors::Black);
@@ -2629,7 +2706,7 @@ void Game::DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         branchBase.y += branchGap;
 
         VertexPositionColor branchBaseVertex(branchBase, Colors::ForestGreen);
-        
+
         //treeRootTop2.position.y += branchGap;
         //treeRootTop2.position += swayVec;
         DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
@@ -2946,7 +3023,7 @@ void Game::DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::ForestGreen;
     DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::White;
     DirectX::SimpleMath::Vector3 prevBBV = branchBase;
-    
+
     VertexPositionColor prevBranchBaseVertex(prevBBV, branchColor2);
     const float heightLayer = 1.05f;
     float widthMod = 1.0f;
@@ -2971,7 +3048,7 @@ void Game::DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
         VertexPositionColor leafR(branchEndR, Colors::ForestGreen);
         VertexPositionColor leafL(branchEndL, Colors::ForestGreen);
-  
+
         if (i > 1)
         {
             m_batch->DrawLine(branchBaseVertex, leafR);
@@ -3046,7 +3123,7 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     m_batch->DrawLine(trunkTL, trunkBL);
     m_batch->DrawLine(trunkTR, trunkBR);
 
-    
+
     baseTop.y -= branchGap * 7;  /// adjust the angle of the tree branches and overall tree pointy'ness
 
     DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Green;
@@ -3101,7 +3178,7 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
         m_batch->DrawLine(prevBranchBaseVertex, leafR);
         m_batch->DrawLine(prevBranchBaseVertex, leafL);
-        
+
         prevBranchBaseVertex = branchBaseVertex;
     }
 }
@@ -3210,7 +3287,7 @@ void Game::DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         VertexPositionColor leafLBackground(branchEndL, Colors::Black);
 
         //prevBranchBaseVertex = branchBaseVertex;
- 
+
         m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafRBackground);
         m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafLBackground);
 
@@ -3221,7 +3298,7 @@ void Game::DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
         m_batch->DrawLine(prevBranchBaseVertex, leafR);
         m_batch->DrawLine(prevBranchBaseVertex, leafL);
-        
+
         prevBranchBaseVertex = branchBaseVertex;
     }
 }
@@ -3391,11 +3468,11 @@ void Game::DrawUI()
         // drawing text and numbers seperatly to prevent text from shifting postion as the numbes change
         std::string shotString("Shot Distance =               Yards ");
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(shotString.c_str());
-        m_font->DrawString(m_spriteBatch.get(), shotString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);        
+        m_font->DrawString(m_spriteBatch.get(), shotString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
         std::string distanceString = pGolf->GetShotDistanceString();
         lineOrigin = m_font->MeasureString(distanceString.c_str());
         fontPos.x -= 130;
-        m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);   
+        m_font->DrawString(m_spriteBatch.get(), distanceString.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
     }
 
     if (m_currentUiState == UiState::UISTATE_SCORE)
@@ -3454,7 +3531,7 @@ void Game::DrawWorld()
     size_t extention = 50;
 
     DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
-    
+
     for (size_t i = 0; i <= divisions + extention; ++i)
     {
         float fPercent = float(i) / float(divisions);
@@ -3501,11 +3578,11 @@ void Game::DrawWorld()
     //DrawTeeBox();
     //DrawFlagAndHole();
 
-    
+
     pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
     std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
-    
+
     for (int i = 0; i < fixtureList.size(); ++i)
     {
         if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
@@ -3553,15 +3630,13 @@ void Game::DrawWorld()
             DrawTree09(fixtureList[i].position, fixtureList[i].animationVariation);
         }
     }
-    
+
     /*
     DirectX::SimpleMath::Vector3 treeTestPos1(.4, 0.0, 1.3);
     DrawTree06(treeTestPos1, .9f);
     DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
     DrawTree07(treeTestPos, .9f);
 
-
-    
     DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
     //DrawTree01(treePos);
     DrawTree07(treePos, 0.3f);
@@ -3579,7 +3654,6 @@ void Game::DrawWorld()
     DrawTree06(treePos6, .1f);
     DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
     DrawTree07(treePos8, .9f);
-
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree09(treePos9, .9f);
     */
@@ -3641,13 +3715,13 @@ void Game::DrawWorld12th()
     }
 
     const float height = 0.0;
-    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Green;   
+    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Green;
     VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, height, -0.7f), greenColor);
     VertexPositionColor bRight(DirectX::SimpleMath::Vector3(3.1f, height, -0.05f), greenColor);
     VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, height, -0.1f), greenColor);
     VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, height, -0.75f), greenColor);
     m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
-    
+
 
     //DrawTeeBox();
     //DrawFlagAndHole();
@@ -3686,7 +3760,7 @@ void Game::DrawWorld12th()
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE04)
         {
-            DrawTree04(fixtureList[i].position, fixtureList[i].animationVariation);  
+            DrawTree04(fixtureList[i].position, fixtureList[i].animationVariation);
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE05)
         {
@@ -3715,9 +3789,6 @@ void Game::DrawWorld12th()
     DrawTree06(treeTestPos1, .9f);
     DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
     DrawTree07(treeTestPos, .9f);
-
-
-
     DirectX::SimpleMath::Vector3 treePos(-1.4, 0.0, -.6);
     //DrawTree01(treePos);
     DrawTree07(treePos, 0.3f);
@@ -3735,7 +3806,6 @@ void Game::DrawWorld12th()
     DrawTree06(treePos6, .1f);
     DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
     DrawTree07(treePos8, .9f);
-
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree09(treePos9, .9f);
     */
@@ -3775,9 +3845,9 @@ void Game::Initialize(HWND window, int width, int height)
 
     // Audio
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
-    #ifdef DEBUG  //#ifdef _DEBUG
+#ifdef DEBUG  //#ifdef _DEBUG
     eflags |= AudioEngine_Debug;
-    #endif
+#endif
     m_audioEngine = std::make_unique<AudioEngine>(eflags);
     m_retryAudio = false;
     m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
@@ -3871,7 +3941,7 @@ void Game::OnWindowSizeChanged(int width, int height)
     // TODO: Game window is being resized.
     pCamera->OnResize(m_outputWidth, m_outputHeight);
     m_proj = pCamera->GetProjectionMatrix();
-    m_effect->SetProjection(m_proj);   
+    m_effect->SetProjection(m_proj);
 }
 
 // Presents the back buffer contents to the screen.
@@ -3902,7 +3972,7 @@ void Game::Render()
         return;
     }
 
-    Clear();  
+    Clear();
 
     // TODO: Add your rendering code here.
     // WLJ start
@@ -3911,9 +3981,6 @@ void Game::Render()
     m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
     //m_d3dContext->RSSetState(m_states->CullNone());
     //m_d3dContext->RSSetState(m_states->CullClockwise());
-
-
-
     //10  m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
     //11  m_d3dContext->RSSetState(m_states->CullCounterClockwise());
 
@@ -3927,6 +3994,7 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch->Begin();
+
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -3934,13 +4002,13 @@ void Game::Render()
         //DrawShotAimCone();
         DrawShotAimArrow();
 
-        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW)
+        if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {
             DrawSwing();
         }
 
-        if(pCamera->GetCameraState() == CameraState::CAMERASTATE_PRESWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
-        {         
+        if (pCamera->GetCameraState() == CameraState::CAMERASTATE_PRESWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
+        {
             m_flightStepTimer.ResetElapsedTime();
             DrawProjectileRealTime();
             DrawHydraShot();
@@ -3984,7 +4052,7 @@ void Game::Render()
         //DrawSwingUI();
         DrawUI();
     }
-    
+
     m_spriteBatch->End();
 
     Present();
@@ -4077,10 +4145,10 @@ void Game::Update(DX::StepTimer const& aTimer)
             m_retryAudio = true;
         }
     }
-    
+
     pCamera->UpdateCamera(aTimer);
     m_effect->SetView(pCamera->GetViewMatrix());
-    
+
     UpdateInput(aTimer);
 }
 
@@ -4263,7 +4331,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.OemCloseBrackets)
     {
-        pGolf->CycleNextClub(true);        
+        pGolf->CycleNextClub(true);
     }
     if (kb.D)
     {
@@ -4315,7 +4383,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     {
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
-        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));      
+        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
         //pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetEndPos(pGolf->GetHolePosition());
@@ -4351,7 +4419,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         }
     }
     if (m_kbStateTracker.released.H)
-    {        
+    {
         m_kbStateTracker.Reset();
         m_projectileTimer = 0.0;
         pGolf->BuildHyrdraShotData(pPlay->GetShotDirection());

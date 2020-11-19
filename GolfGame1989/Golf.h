@@ -44,6 +44,7 @@ public:
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
     double GetArmLength() { return pSwing->GetArmLength(); };
     double GetClubLength() { return pSwing->GetClubLength(); };
+    double GetClubFaceAngle() { return pSwing->GetClubAngle(); };
     float GetDirectionToHoleInRads() const;   
     std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return pEnvironment->GetHolePosition(); };
