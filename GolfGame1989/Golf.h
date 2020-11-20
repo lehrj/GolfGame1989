@@ -23,6 +23,7 @@ public:
     void CycleNextClub(const bool aIsCycleClubUp);
 
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
+    double GetBallPlacementAngleForSwing() const { return pSwing->GetBallPlacementAngle(); };
     DirectX::SimpleMath::Vector3 GetBallPosition() const { return m_ballPos; };
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
@@ -37,6 +38,7 @@ public:
     float GetEnvironScale() const { return pEnvironment->GetScale(); };
     std::vector<std::vector<std::string>> GetEnvironSelectStrings() const { return m_environSelectStrings; };
     DirectX::SimpleMath::Vector3 GetEnvironWindVector() const { return pEnvironment->GetWindVector(); };
+    DirectX::SimpleMath::Vector3 GetFaceImpact() const { return pSwing->GetFaceNormal(); };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
     std::vector<std::vector<BallMotion>>& GetHydraShotPath() { return m_hydraData; };
@@ -54,6 +56,7 @@ public:
     std::string GetShotDistanceString() const;
     std::vector<BallMotion>& GetShotPath() { return m_shotPath; };
     DirectX::SimpleMath::Vector3 GetShotStartPos() const { return m_shotStartPos; };
+    DirectX::SimpleMath::Vector3 GetSwingShoulderOrigin() { return pSwing->GetShoulderPos(); };
     DirectX::SimpleMath::Vector3 GetSwingOriginOffsetPos() const { return m_swingOriginOffset; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };

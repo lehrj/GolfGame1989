@@ -134,7 +134,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.0f, 0.0f, 0.0f);
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.f, 0.0f, 0.f); // 155 yards ish pos
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f); // 155 yards ish pos
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
 

@@ -193,6 +193,27 @@ void GolfSwing::CycleClub(const bool aIsCycleClubUp)
     this->InputClub(newClubIndex);
 }
 
+// ToDo: Add build function for this to remove calculations from the Get()
+DirectX::SimpleMath::Vector3 GolfSwing::GetShoulderPos()
+{
+    if (GetSwingImpactStep() == 0)
+    { 
+        // add error checking
+        return DirectX::SimpleMath::Vector3(0.0,GetArmLength() + GetClubLength(), 0.0);
+    }
+    else
+    {
+        const float armAngle = -m_alphaBetaThetaVec[GetSwingImpactStep()].z;
+        const float clubAngle = -m_alphaBetaThetaVec[GetSwingImpactStep()].y + armAngle;
+        
+        DirectX::SimpleMath::Vector3 club(0.0, GetClubLength(), 0.0);
+        club = DirectX::SimpleMath::Vector3::Transform(club, DirectX::SimpleMath::Matrix::CreateRotationZ(clubAngle));
+        DirectX::SimpleMath::Vector3 arm(0.0, GetArmLength(), 0.0);
+        arm = DirectX::SimpleMath::Vector3::Transform(arm, DirectX::SimpleMath::Matrix::CreateRotationZ(armAngle));
+        return club + arm;
+    }
+}
+
 void GolfSwing::InputClub(int aInput)
 {
 
@@ -204,7 +225,7 @@ void GolfSwing::InputClub(int aInput)
     }
     else
     {
-        // input error handling 
+        // add input error handling 
     }
 }
 
@@ -308,7 +329,7 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     m_alpha_dotdot = 0.0;
     m_backSwingPercentage = 100.0;
     m_impactData.power = 100.0;
-    m_ballPlacementAngle = 5.0;
+    m_ballPlacementAngle = Utility::ToRadians(0.0);
     m_beta = Utility::ToRadians(120.0); // Wrist cock angle in radians
     m_beta_dot = 0.0;
     m_beta_dotdot = 0.0;

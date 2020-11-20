@@ -20,14 +20,17 @@ public:
     const double GetArmLength() const { return m_armLength; };
     
     double GetBackSwingPercentage() const { return m_impactData.power; };
+    double GetBallPlacementAngle() const { return m_ballPlacementAngle; };
     double GetClubAngle() const { return m_club.angle; };
     double GetClubLength() const { return m_club.length; };
     double GetClubMass() const { return m_club.mass; };
     std::string GetClubName() const { return m_club.clubName; };
+    DirectX::SimpleMath::Vector3 GetFaceNormal() const { return m_impactData.vFaceNormal; };
     double GetLaunchAngle() const { return m_launchAngle; };
     
     double GetLaunchVelocity() const { return m_impactData.velocity; };
     std::vector<DirectX::SimpleMath::Vector3> GetRawAlphaBetaTheta() const { return m_alphaBetaThetaVec; };
+    DirectX::SimpleMath::Vector3 GetShoulderPos();
     int GetSwingImpactStep() const { return m_swingImpactStep; };
     int GetSwingStepIncrementCount() const { return m_swingStepIncrementCount; };
 
