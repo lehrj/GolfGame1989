@@ -71,9 +71,6 @@ private:
     void DrawShotTimerUI();
     void DrawStartScreen();
     void DrawSwing();
-    void DrawSwing2();
-    void DrawSwing3();
-    void DrawSwing4();
     void DrawSwingUI();
     void DrawTeeBox();
     void DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);

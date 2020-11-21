@@ -2058,61 +2058,56 @@ void Game::DrawSwing()
     DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
     const float armLength = pGolf->GetArmLength() * pGolf->GetEnvironScale();
     const float clubLength = pGolf->GetClubLength() * pGolf->GetEnvironScale();
-    //const float shoulderHeight = armLength + clubLength;
-    const DirectX::SimpleMath::Vector3 shoulderPos = pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale();
 
-    float ballPlacemnt = pGolf->GetBallPlacementAngleForSwing();
-    //DirectX::SimpleMath::Vector3 swingTest(0.0, shoulderHeight, 0.0);
-    //swingTest = DirectX::SimpleMath::Vector3::Transform(swingTest, DirectX::SimpleMath::Matrix::CreateRotationZ(ballPlacemnt));
-    //swintTest = shoulderPos;
-    //DirectX::SimpleMath::Vector3 posShift = swingTest;
+    //DirectX::SimpleMath::Vector3 shoulderPos = (pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale()) + pGolf->GetShotStartPos();
+    DirectX::SimpleMath::Vector3 shoulderPos = (pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale());
 
-    DirectX::SimpleMath::Vector3 clubL(0.0, clubLength, 0.2);
-    DirectX::SimpleMath::Vector3 armL(0.0, armLength, 0.3);
-    //DirectX::SimpleMath::Vector3 shoulderL(0.0, shoulderHeight, 0.0);
-    //shoulderL = posShift + pGolf->GetShotStartPos();
-    DirectX::SimpleMath::Vector3 shoulderL = (pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale()) + pGolf->GetShotStartPos();
-    VertexPositionColor clubVert(clubL, DirectX::Colors::Blue);
-    VertexPositionColor armVert(armL, DirectX::Colors::Red);
-    VertexPositionColor shoulderVert(shoulderL, DirectX::Colors::Yellow);
+    VertexPositionColor staticShoulderVert(shoulderPos, DirectX::Colors::Yellow);
+    VertexPositionColor staticBaseVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
+    //m_batch->DrawLine(staticShoulderVert, staticBaseVert);
 
-    VertexPositionColor baseArmVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.3), DirectX::Colors::White);
-    VertexPositionColor baseClubVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.2), DirectX::Colors::White);
-    VertexPositionColor baseShoulderVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
-
-    m_batch->DrawLine(baseArmVert, armVert);
-    m_batch->DrawLine(baseClubVert, clubVert);
-    m_batch->DrawLine(shoulderVert, baseShoulderVert);
-
+    // DarkSlateGray, Silver, White, DimGray, WhiteSmoke
+    DirectX::XMVECTORF32 preImpactShadowColor = DirectX::Colors::DarkSlateGray;
+    DirectX::XMVECTORF32 postImpactShadowColor = DirectX::Colors::DarkSlateBlue;
+    DirectX::XMVECTORF32 color1 = DirectX::Colors::White;
+    DirectX::XMVECTORF32 color2 = DirectX::Colors::Red;
+    DirectX::XMVECTORF32 shoulderColor = color1;
+    DirectX::XMVECTORF32 handColor = color1;
+    DirectX::XMVECTORF32 clubHeadColor = color1;
     if (angles.size() > 1)
     {
-        //DirectX::SimpleMath::Vector3 origin2(0.0, shoulderHeight, 0.0);
-        //origin2 += pGolf->GetShotStartPos();
-        DirectX::SimpleMath::Vector3 origin2 = shoulderL;
-        int swingStepCount = (int)angles.size();
-        if (m_swingPathStep >= swingStepCount)
+        if (m_swingPathStep >= (int)angles.size())
         {
             m_swingPathStep = 0;
         }
         ++m_swingPathStep;
 
-        //int impactPoint = pGolf->GetImpactStep();
-        DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-        DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-        DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-        
-        const float clubFaceLength = 0.005;
+        const float clubFaceWidth = -shoulderPos.z * 2;
+
         const float grooveGap = .0005;
         const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
         bool isBallHit = false;
         for (int i = 0; i < m_swingPathStep; ++i)
         {
+            if (i < impactPoint)
+            {
+                shoulderColor = preImpactShadowColor;
+                handColor = preImpactShadowColor;
+                clubHeadColor = preImpactShadowColor;
+                isBallHit = true;
+            }
             if (i > impactPoint)
             {
-                shoulderColor = DirectX::Colors::Gray;
-                handColor = DirectX::Colors::Black;
-                clubHeadColor = DirectX::Colors::Green;
+                shoulderColor = postImpactShadowColor;
+                handColor = postImpactShadowColor;
+                clubHeadColor = postImpactShadowColor;
                 isBallHit = true;
+            }
+            if (i == m_swingPathStep-1)
+            {
+                shoulderColor = color1;
+                handColor = color1;
+                clubHeadColor = color1;
             }
             if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
             {
@@ -2124,49 +2119,49 @@ void Game::DrawSwing()
                 }
             }
 
-            DirectX::SimpleMath::Vector3 theta2(0.0, -armLength, 0.0);
-            DirectX::SimpleMath::Vector3 beta2(0.0, -clubLength, 0.0);
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z));
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, rotMat);
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, rotMat);
+            DirectX::SimpleMath::Vector3 theta(0.0, -armLength, 0.0);
+            DirectX::SimpleMath::Vector3 beta(0.0, -clubLength, 0.0);
+            theta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
+            beta = DirectX::SimpleMath::Vector3::Transform(beta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z));
+            theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
+            beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
 
-            theta2 += shoulderL;
-            beta2 += theta2;
+            theta += shoulderPos;
+            beta += theta;
 
             DirectX::SimpleMath::Vector3 clubHeadBase = DirectX::SimpleMath::Vector3::Zero;
-            clubHeadBase.z += clubFaceLength;
+            clubHeadBase.z += clubFaceWidth;
 
             // Rotate to point swing draw in direction of swing aim
 
             DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z + clubFaceAngle);
             clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
-            clubHeadBase += beta2;
+            clubHeadBase += beta;
 
             DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
             toeGroove1.y += grooveGap;
             toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
             toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
             toeGroove1 += clubHeadBase;
-            VertexPositionColor toeGrooveVert1(toeGroove1, DirectX::Colors::Pink);
+            VertexPositionColor toeGrooveVert1(toeGroove1, clubHeadColor);
 
             DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
             heelGroove1.y += grooveGap;
             heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
-            heelGroove1 += beta2;
-            VertexPositionColor heelGrooveVert1(heelGroove1, DirectX::Colors::White);
+            heelGroove1 += beta;
+            VertexPositionColor heelGrooveVert1(heelGroove1, clubHeadColor);
 
             DirectX::SimpleMath::Vector3 toeGroove2 = DirectX::SimpleMath::Vector3::Zero;
             toeGroove2.y += grooveGap * 2;
             toeGroove2 = DirectX::SimpleMath::Vector3::Transform(toeGroove2, clubFaceRot);
             toeGroove2 += clubHeadBase;
-            VertexPositionColor toeGrooveVert2(toeGroove2, DirectX::Colors::Pink);
+            VertexPositionColor toeGrooveVert2(toeGroove2, clubHeadColor);
 
             DirectX::SimpleMath::Vector3 heelGroove2 = DirectX::SimpleMath::Vector3::Zero;
             heelGroove2.y += grooveGap * 2;
             heelGroove2 = DirectX::SimpleMath::Vector3::Transform(heelGroove2, clubFaceRot);
-            heelGroove2 += beta2;
-            VertexPositionColor heelGrooveVert2(heelGroove2, DirectX::Colors::White);
+            heelGroove2 += beta;
+            VertexPositionColor heelGrooveVert2(heelGroove2, clubHeadColor);
 
             DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
             DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
@@ -2174,30 +2169,23 @@ void Game::DrawSwing()
 
             toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
             toeGroove3 += clubHeadBase;
-            VertexPositionColor toeGrooveVert3(toeGroove3, DirectX::Colors::Pink);
+            VertexPositionColor toeGrooveVert3(toeGroove3, clubHeadColor);
 
             DirectX::SimpleMath::Vector3 heelGroove3 = DirectX::SimpleMath::Vector3::Zero;
             heelGroove3.y += grooveGap * 3;
             heelGroove3 = DirectX::SimpleMath::Vector3::Transform(heelGroove3, clubFaceRot);
-            heelGroove3 += beta2;
-            VertexPositionColor heelGrooveVert3(heelGroove3, DirectX::Colors::White);
+            heelGroove3 += beta;
+            VertexPositionColor heelGrooveVert3(heelGroove3, clubHeadColor);
 
-            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Yellow);
+            VertexPositionColor clubHeadVert(clubHeadBase, clubHeadColor);
             
-            DirectX::XMVECTORF32 newColor = DirectX::Colors::Blue;
-
-            if (i < impactPoint)
-            {
-                newColor = DirectX::Colors::Gray;
-            }
-
-            VertexPositionColor shoulderVert2(shoulderL, newColor);
-            VertexPositionColor thetaVert2(theta2, newColor);
-            VertexPositionColor betaVert2(beta2, newColor);
+            VertexPositionColor shoulderVert2(shoulderPos, shoulderColor);
+            VertexPositionColor thetaVert2(theta, handColor);
+            VertexPositionColor betaVert2(beta, clubHeadColor);
             m_batch->DrawLine(shoulderVert2, thetaVert2);
             m_batch->DrawLine(thetaVert2, betaVert2);
 
-            if (i == i)
+            if (i == m_swingPathStep -1)
             {               
                 
                 m_batch->DrawLine(betaVert2, clubHeadVert);
@@ -2227,561 +2215,6 @@ void Game::DrawSwing()
                 impactFaceNorm += toeGroove2;
                 VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
                 m_batch->DrawLine(toeGrooveVert2, faceNormVert);
-            }
-        }
-    }
-}
-
-void Game::DrawSwing4()
-{
-    std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
-
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
-    const float armLength = pGolf->GetArmLength() * pGolf->GetEnvironScale();
-    const float clubLength = pGolf->GetClubLength() * pGolf->GetEnvironScale();
-    const float shoulderHeight = armLength + clubLength;
-
-
-    float ballPlacemnt = pGolf->GetBallPlacementAngleForSwing();
-    DirectX::SimpleMath::Vector3 swingTest(0.0, shoulderHeight, 0.0);
-    swingTest = DirectX::SimpleMath::Vector3::Transform(swingTest, DirectX::SimpleMath::Matrix::CreateRotationZ(ballPlacemnt));
-
-    DirectX::SimpleMath::Vector3 posShift = swingTest;
-
-
-    DirectX::SimpleMath::Vector3 clubL(0.0, clubLength, 0.2);
-    DirectX::SimpleMath::Vector3 armL(0.0, armLength, 0.3);
-    DirectX::SimpleMath::Vector3 shoulderL(0.0, shoulderHeight, 0.0);
-    shoulderL = posShift + pGolf->GetShotStartPos();
-    VertexPositionColor clubVert(clubL, DirectX::Colors::Blue);
-    VertexPositionColor armVert(armL, DirectX::Colors::Red);
-    VertexPositionColor shoulderVert(shoulderL, DirectX::Colors::Yellow);
-
-    VertexPositionColor baseArmVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.3), DirectX::Colors::White);
-    VertexPositionColor baseClubVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.2), DirectX::Colors::White);
-    VertexPositionColor baseShoulderVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
-
-    m_batch->DrawLine(baseArmVert, armVert);
-    m_batch->DrawLine(baseClubVert, clubVert);
-    m_batch->DrawLine(shoulderVert, baseShoulderVert);
-
-    if (angles.size() > 1)
-    {
-        DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-        origin.x = 0.0;
-        DirectX::SimpleMath::Vector3 origin2(0.0, shoulderHeight, 0.0);
-        origin = origin2 + pGolf->GetShotStartPos();
-        origin2 += pGolf->GetShotStartPos();
-        //const float thetaOriginOffsetY = -.02f;
-        const float thetaOriginOffsetY = -armLength;
-        DirectX::SimpleMath::Vector3 thetaOrigin = DirectX::SimpleMath::Vector3::Zero;
-        thetaOrigin.y += thetaOriginOffsetY;
-
-        int swingStepCount = (int)angles.size();
-        if (m_swingPathStep >= swingStepCount)
-        {
-            m_swingPathStep = 0;
-        }
-        ++m_swingPathStep;
-
-        int impactPoint = pGolf->GetImpactStep();
-        DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-        DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-        DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
-        const float clubFaceLength = 0.005;
-        const float grooveGap = .0005;
-        const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
-        //const double clubFaceAngle = Utility::ToRadians(45.0);
-        bool isBallHit = false;
-        for (int i = 0; i < m_swingPathStep; ++i)
-        {
-            if (i > impactPoint)
-            {
-                shoulderColor = DirectX::Colors::Gray;
-                handColor = DirectX::Colors::Black;
-                clubHeadColor = DirectX::Colors::Green;
-                isBallHit = true;
-            }
-            if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
-            {
-                if (isBallHit == true)
-                {
-                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
-                    pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
-                    m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
-                }
-            }
-
-            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-
-            DirectX::SimpleMath::Vector3 theta2(0.0, -armLength, 0.0);
-            DirectX::SimpleMath::Vector3 beta2(0.0, -clubLength, 0.0);
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z));
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, rotMat);
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, rotMat);
-
-            //theta2 += shoulderL + pGolf->GetShotStartPos();
-            theta2 += shoulderL;
-            beta2 += theta2;
-
-            //DirectX::SimpleMath::Vector3 clubHeadBase = beta2;
-            DirectX::SimpleMath::Vector3 clubHeadBase = DirectX::SimpleMath::Vector3::Zero;
-            clubHeadBase.z += clubFaceLength;
-
-            // Rotate to point swing draw in direction of swing aim
-            theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
-            beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
-
-            theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-            beta += theta;
-            DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z + clubFaceAngle);
-            clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
-            //clubHeadBase += theta2;
-            clubHeadBase += beta2;
-            //DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z );
-            //DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(clubFaceAngle);
-
-            DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove1.y += grooveGap;
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
-            toeGroove1 += clubHeadBase;
-            VertexPositionColor toeGrooveVert1(toeGroove1, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove1.y += grooveGap;
-            heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
-            heelGroove1 += beta2;
-            VertexPositionColor heelGrooveVert1(heelGroove1, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Vector3 toeGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove2.y += grooveGap * 2;
-            toeGroove2 = DirectX::SimpleMath::Vector3::Transform(toeGroove2, clubFaceRot);
-            toeGroove2 += clubHeadBase;
-            VertexPositionColor toeGrooveVert2(toeGroove2, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove2.y += grooveGap * 2;
-            heelGroove2 = DirectX::SimpleMath::Vector3::Transform(heelGroove2, clubFaceRot);
-            heelGroove2 += beta2;
-            VertexPositionColor heelGrooveVert2(heelGroove2, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
-            DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove3.y += grooveGap * 3;
-
-            toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, clubFaceRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, rotMat);
-            toeGroove3 += clubHeadBase;
-            VertexPositionColor toeGrooveVert3(toeGroove3, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove3.y += grooveGap * 3;
-            heelGroove3 = DirectX::SimpleMath::Vector3::Transform(heelGroove3, clubFaceRot);
-            heelGroove3 += beta2;
-            VertexPositionColor heelGrooveVert3(heelGroove3, DirectX::Colors::White);
-
-            VertexPositionColor shoulder(origin, shoulderColor);
-            VertexPositionColor thetaVert(theta, handColor);
-            VertexPositionColor betaVert(beta, clubHeadColor);
-            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Yellow);
-
-            DirectX::XMVECTORF32 newColor = DirectX::Colors::Blue;
-
-
-            if (i < impactPoint)
-            {
-                newColor = DirectX::Colors::Gray;
-            }
-
-
-
-            VertexPositionColor shoulderVert2(shoulderL, newColor);
-            VertexPositionColor thetaVert2(theta2, newColor);
-            VertexPositionColor betaVert2(beta2, newColor);
-            m_batch->DrawLine(shoulderVert2, thetaVert2);
-            m_batch->DrawLine(thetaVert2, betaVert2);
-
-            if (i == i)
-            {
-                //m_batch->DrawLine(shoulder, thetaVert);
-                m_batch->DrawLine(thetaVert, betaVert);
-
-                m_batch->DrawLine(betaVert2, clubHeadVert);
-                m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert2, heelGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert3, heelGrooveVert3);
-                m_batch->DrawLine(toeGrooveVert2, toeGrooveVert3);
-
-                m_batch->DrawTriangle(betaVert2, clubHeadVert, toeGrooveVert3);
-            }
-
-            if (i == impactPoint)
-            {
-                DirectX::SimpleMath::Vector3 horNorm = toeGroove2 + heelGroove2;
-
-                DirectX::SimpleMath::Vector3 vertNorm = toeGroove2 + toeGroove3;
-                //DirectX::SimpleMath::Vector3 faceNorm = DirectX::SimpleMath::Vector3::Cross(horNorm, vertNorm, faceNorm);
-                DirectX::SimpleMath::Vector3 faceNorm = horNorm;
-                faceNorm.Normalize();
-                faceNorm += horNorm;
-                faceNorm.Cross(vertNorm, faceNorm);
-                VertexPositionColor faceVert(faceNorm, DirectX::Colors::Yellow);
-                m_batch->DrawLine(toeGrooveVert2, faceVert);
-
-                DirectX::SimpleMath::Vector3 impactFaceNorm = pGolf->GetFaceImpact();
-                impactFaceNorm += toeGroove2;
-                VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
-                m_batch->DrawLine(toeGrooveVert2, faceNormVert);
-            }
-
-        }
-    }
-}
-
-void Game::DrawSwing3()
-{
-    std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
-
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
-    const float armLength = pGolf->GetArmLength() * pGolf->GetEnvironScale();
-    const float clubLength = pGolf->GetClubLength() * pGolf->GetEnvironScale();
-    const float shoulderHeight = armLength + clubLength;
-
-
-    float ballPlacemnt = pGolf->GetBallPlacementAngleForSwing();
-    DirectX::SimpleMath::Vector3 swingTest(0.0, shoulderHeight, 0.0);
-    swingTest = DirectX::SimpleMath::Vector3::Transform(swingTest, DirectX::SimpleMath::Matrix::CreateRotationZ(ballPlacemnt));
-
-    DirectX::SimpleMath::Vector3 posShift = swingTest;
-
-
-    DirectX::SimpleMath::Vector3 clubL(0.0, clubLength, 0.2);
-    DirectX::SimpleMath::Vector3 armL(0.0, armLength, 0.3);
-    DirectX::SimpleMath::Vector3 shoulderL(0.0, shoulderHeight, 0.0);
-    shoulderL = posShift;
-    VertexPositionColor clubVert(clubL, DirectX::Colors::Blue);
-    VertexPositionColor armVert(armL, DirectX::Colors::Red);
-    VertexPositionColor shoulderVert(shoulderL, DirectX::Colors::Yellow);
-
-    VertexPositionColor baseArmVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.3), DirectX::Colors::White);
-    VertexPositionColor baseClubVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.2), DirectX::Colors::White);
-    VertexPositionColor baseShoulderVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
-
-    m_batch->DrawLine(baseArmVert, armVert);
-    m_batch->DrawLine(baseClubVert, clubVert);
-    m_batch->DrawLine(shoulderVert, baseShoulderVert);
-
-    if (angles.size() > 1)
-    {
-        DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-        origin.x = 0.0;
-        DirectX::SimpleMath::Vector3 origin2(0.0, shoulderHeight, 0.0);
-        origin = origin2;
-
-        //const float thetaOriginOffsetY = -.02f;
-        const float thetaOriginOffsetY = -armLength;
-        DirectX::SimpleMath::Vector3 thetaOrigin = DirectX::SimpleMath::Vector3::Zero;
-        thetaOrigin.y += thetaOriginOffsetY;
-
-        int swingStepCount = (int)angles.size();
-        if (m_swingPathStep >= swingStepCount)
-        {
-            m_swingPathStep = 0;
-        }
-        ++m_swingPathStep;
-
-        int impactPoint = pGolf->GetImpactStep();
-        DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-        DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-        DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
-        const float clubFaceLength = 0.005;
-        const float grooveGap = .0005;
-        // const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
-        const double clubFaceAngle = Utility::ToRadians(45.0);
-        bool isBallHit = false;
-        for (int i = 0; i < m_swingPathStep; ++i)
-        {
-            if (i > impactPoint)
-            {
-                shoulderColor = DirectX::Colors::Gray;
-                handColor = DirectX::Colors::Black;
-                clubHeadColor = DirectX::Colors::Green;
-                isBallHit = true;
-            }
-            if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
-            {
-                if (isBallHit == true)
-                {
-                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
-                    pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
-                    m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
-                }
-            }
-
-            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-
-            DirectX::SimpleMath::Vector3 theta2(0.0, -armLength, 0.0);
-            DirectX::SimpleMath::Vector3 beta2(0.0, -clubLength, 0.0);
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z));
-            theta2 = DirectX::SimpleMath::Vector3::Transform(theta2, rotMat);
-            beta2 = DirectX::SimpleMath::Vector3::Transform(beta2, rotMat);
-
-            //theta2 += shoulderL + pGolf->GetShotStartPos();
-            theta2 += shoulderL;
-            beta2 += theta2;
-
-
-            DirectX::SimpleMath::Vector3 clubHeadBase = beta;
-            clubHeadBase.z += clubFaceLength;
-
-            // Rotate to point swing draw in direction of swing aim
-            theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
-            beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
-
-            theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-            beta += theta;
-            clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
-            clubHeadBase += theta;
-
-            DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y - angles[i].z + clubFaceAngle);
-
-
-            DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove1.y += grooveGap;
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
-            toeGroove1 += clubHeadBase;
-            VertexPositionColor toeGrooveVert1(toeGroove1, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove1.y += grooveGap;
-            heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
-            heelGroove1 += beta;
-            VertexPositionColor heelGrooveVert1(heelGroove1, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Vector3 toeGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove2.y += grooveGap * 2;
-            toeGroove2 = DirectX::SimpleMath::Vector3::Transform(toeGroove2, clubFaceRot);
-            toeGroove2 += clubHeadBase;
-            VertexPositionColor toeGrooveVert2(toeGroove2, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove2.y += grooveGap * 2;
-            heelGroove2 = DirectX::SimpleMath::Vector3::Transform(heelGroove2, clubFaceRot);
-            heelGroove2 += beta;
-            VertexPositionColor heelGrooveVert2(heelGroove2, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
-            DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove3.y += grooveGap * 3;
-
-            toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, clubFaceRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, rotMat);
-            toeGroove3 += clubHeadBase;
-            VertexPositionColor toeGrooveVert3(toeGroove3, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove3.y += grooveGap * 3;
-            heelGroove3 = DirectX::SimpleMath::Vector3::Transform(heelGroove3, clubFaceRot);
-            heelGroove3 += beta;
-            VertexPositionColor heelGrooveVert3(heelGroove3, DirectX::Colors::White);
-
-            VertexPositionColor shoulder(origin, shoulderColor);
-            VertexPositionColor thetaVert(theta, handColor);
-            VertexPositionColor betaVert(beta, clubHeadColor);
-            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Yellow);
-
-            DirectX::XMVECTORF32 newColor = DirectX::Colors::Blue;
-
-
-            if (i < impactPoint)
-            {
-                newColor = DirectX::Colors::Gray;
-            }
-
-
-
-            VertexPositionColor shoulderVert2(shoulderL, newColor);
-            VertexPositionColor thetaVert2(theta2, newColor);
-            VertexPositionColor betaVert2(beta2, newColor);
-            m_batch->DrawLine(shoulderVert2, thetaVert2);
-            m_batch->DrawLine(thetaVert2, betaVert2);
-
-            if (i == i)
-            {
-                m_batch->DrawLine(shoulder, thetaVert);
-                m_batch->DrawLine(thetaVert, betaVert);
-
-                m_batch->DrawLine(betaVert, clubHeadVert);
-                m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert2, heelGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert3, heelGrooveVert3);
-                m_batch->DrawLine(toeGrooveVert2, toeGrooveVert3);
-
-                m_batch->DrawTriangle(betaVert, clubHeadVert, toeGrooveVert3);
-            }
-        }
-    }
-}
-
-void Game::DrawSwing2()
-{
-    std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
-
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
-    const float armLength = pGolf->GetArmLength() * pGolf->GetEnvironScale();
-    const float clubLength = pGolf->GetClubLength() * pGolf->GetEnvironScale();
-    const float shoulderHeight = armLength + clubLength;
-
-    DirectX::SimpleMath::Vector3 clubL(0.0, clubLength, 0.2);
-    DirectX::SimpleMath::Vector3 armL(0.0, armLength, 0.3);
-    DirectX::SimpleMath::Vector3 shoulderL(0.0, shoulderHeight, 0.0);
-
-    VertexPositionColor clubVert(clubL, DirectX::Colors::Blue);
-    VertexPositionColor armVert(armL, DirectX::Colors::Red);
-    VertexPositionColor shoulderVert(shoulderL, DirectX::Colors::Yellow);
-
-    VertexPositionColor baseArmVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.3), DirectX::Colors::White);
-    VertexPositionColor baseClubVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.2), DirectX::Colors::White);
-    VertexPositionColor baseShoulderVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
-
-    m_batch->DrawLine(baseArmVert, armVert);
-    m_batch->DrawLine(baseClubVert, clubVert);
-    m_batch->DrawLine(shoulderVert, baseShoulderVert);
-
-    if (angles.size() > 1)
-    {
-        DirectX::SimpleMath::Vector3 origin = pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-
-        const float thetaOriginOffsetY = -.02f;
-        DirectX::SimpleMath::Vector3 thetaOrigin = DirectX::SimpleMath::Vector3::Zero;
-        thetaOrigin.y += thetaOriginOffsetY;
-
-        int swingStepCount = (int)angles.size();
-        if (m_swingPathStep >= swingStepCount)
-        {
-            m_swingPathStep = 0;
-        }
-        ++m_swingPathStep;
-
-        int impactPoint = pGolf->GetImpactStep();
-        DirectX::XMVECTORF32 shoulderColor = DirectX::Colors::Blue;
-        DirectX::XMVECTORF32 handColor = DirectX::Colors::White;
-        DirectX::XMVECTORF32 clubHeadColor = DirectX::Colors::Red;
-
-        const float clubFaceLength = 0.005;
-        const float grooveGap = .0005;
-        // const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
-        const double clubFaceAngle = Utility::ToRadians(45.0);
-        bool isBallHit = false;
-        for (int i = 0; i < m_swingPathStep; ++i)
-        {
-            if (i > impactPoint)
-            {
-                shoulderColor = DirectX::Colors::Gray;
-                handColor = DirectX::Colors::Black;
-                clubHeadColor = DirectX::Colors::Green;
-                isBallHit = true;
-            }
-            if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
-            {
-                if (isBallHit == true)
-                {
-                    AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK::XACT_WAVEBANK_AUDIOBANK_IMPACTSFX1);
-                    pCamera->SetCameraState(CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW);
-                    m_projectileTimer = -0.05;  // Creates a slight delay before ball flight starts , removes abruptness of camera turn and looks/feels a little better I think
-                }
-            }
-            DirectX::SimpleMath::Vector3 theta = DirectX::SimpleMath::Vector3::Transform(thetaOrigin, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].z));
-            DirectX::SimpleMath::Vector3 beta = DirectX::SimpleMath::Vector3::Transform(theta, DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y));
-            DirectX::SimpleMath::Vector3 clubHeadBase = beta;
-            clubHeadBase.z += clubFaceLength;
-
-            // Rotate to point swing draw in direction of swing aim
-            theta = DirectX::SimpleMath::Vector3::Transform(theta, rotMat);
-            beta = DirectX::SimpleMath::Vector3::Transform(beta, rotMat);
-
-            theta += pGolf->GetSwingOriginOffsetPos() + pGolf->GetShotStartPos();
-            beta += theta;
-            clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
-            clubHeadBase += theta;
-
-            DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y - angles[i].z + clubFaceAngle);
-
-
-            DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove1.y += grooveGap;
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
-            toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
-            toeGroove1 += clubHeadBase;
-            VertexPositionColor toeGrooveVert1(toeGroove1, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove1.y += grooveGap;
-            heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
-            heelGroove1 += beta;
-            VertexPositionColor heelGrooveVert1(heelGroove1, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Vector3 toeGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove2.y += grooveGap * 2;
-            toeGroove2 = DirectX::SimpleMath::Vector3::Transform(toeGroove2, clubFaceRot);
-            toeGroove2 += clubHeadBase;
-            VertexPositionColor toeGrooveVert2(toeGroove2, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove2 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove2.y += grooveGap * 2;
-            heelGroove2 = DirectX::SimpleMath::Vector3::Transform(heelGroove2, clubFaceRot);
-            heelGroove2 += beta;
-            VertexPositionColor heelGrooveVert2(heelGroove2, DirectX::Colors::White);
-
-            DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
-            DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            toeGroove3.y += grooveGap * 3;
-
-            toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, clubFaceRot);
-            //toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, rotMat);
-            toeGroove3 += clubHeadBase;
-            VertexPositionColor toeGrooveVert3(toeGroove3, DirectX::Colors::Pink);
-
-            DirectX::SimpleMath::Vector3 heelGroove3 = DirectX::SimpleMath::Vector3::Zero;
-            heelGroove3.y += grooveGap * 3;
-            heelGroove3 = DirectX::SimpleMath::Vector3::Transform(heelGroove3, clubFaceRot);
-            heelGroove3 += beta;
-            VertexPositionColor heelGrooveVert3(heelGroove3, DirectX::Colors::White);
-
-            VertexPositionColor shoulder(origin, shoulderColor);
-            VertexPositionColor thetaVert(theta, handColor);
-            VertexPositionColor betaVert(beta, clubHeadColor);
-            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Yellow);
-
-            if (i == i)
-            {
-                m_batch->DrawLine(shoulder, thetaVert);
-                m_batch->DrawLine(thetaVert, betaVert);
-
-                m_batch->DrawLine(betaVert, clubHeadVert);
-                m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
-                m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert2, heelGrooveVert2);
-                m_batch->DrawLine(toeGrooveVert3, heelGrooveVert3);
-                m_batch->DrawLine(toeGrooveVert2, toeGrooveVert3);
-
-                m_batch->DrawTriangle(betaVert, clubHeadVert, toeGrooveVert3);
             }
         }
     }

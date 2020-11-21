@@ -210,7 +210,12 @@ DirectX::SimpleMath::Vector3 GolfSwing::GetShoulderPos()
         club = DirectX::SimpleMath::Vector3::Transform(club, DirectX::SimpleMath::Matrix::CreateRotationZ(clubAngle));
         DirectX::SimpleMath::Vector3 arm(0.0, GetArmLength(), 0.0);
         arm = DirectX::SimpleMath::Vector3::Transform(arm, DirectX::SimpleMath::Matrix::CreateRotationZ(armAngle));
-        return club + arm;
+
+        DirectX::SimpleMath::Vector3 shoulderPos = club + arm;
+
+        float halfClubHeadWidth = (GetClubLength() * 0.11) * .5; // 0.11 is the ratio of club length to club head width as measured, use half that so ball impacts center of club head
+        shoulderPos.z -= halfClubHeadWidth;  //use += for lefties once that functionality is implemented
+        return shoulderPos;
     }
 }
 

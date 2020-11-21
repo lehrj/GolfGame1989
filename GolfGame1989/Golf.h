@@ -25,6 +25,7 @@ public:
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
     double GetBallPlacementAngleForSwing() const { return pSwing->GetBallPlacementAngle(); };
     DirectX::SimpleMath::Vector3 GetBallPosition() const { return m_ballPos; };
+    double GetBallRadius() { return pBall->GetBallRadius(); };
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
     std::string GetCharacterArmMass(const int aCharacterIndex) const;
@@ -56,7 +57,7 @@ public:
     std::string GetShotDistanceString() const;
     std::vector<BallMotion>& GetShotPath() { return m_shotPath; };
     DirectX::SimpleMath::Vector3 GetShotStartPos() const { return m_shotStartPos; };
-    DirectX::SimpleMath::Vector3 GetSwingShoulderOrigin() { return pSwing->GetShoulderPos(); };
+    DirectX::SimpleMath::Vector3 GetSwingShoulderOrigin();
     DirectX::SimpleMath::Vector3 GetSwingOriginOffsetPos() const { return m_swingOriginOffset; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };

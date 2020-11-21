@@ -409,6 +409,16 @@ std::string Golf::GetShotDistanceString() const
     return distanceString;
 }
 
+// WLJ ToDo : Switch to a Build() and Get() to reduce calculation calls
+DirectX::SimpleMath::Vector3 Golf::GetSwingShoulderOrigin() 
+{ 
+    DirectX::SimpleMath::Vector3 swingOrigin = pSwing->GetShoulderPos();
+    swingOrigin.y -= GetBallRadius() * 2;
+    swingOrigin.y += pEnvironment->GetLauchHeight(); // WLJ ToDo : Adjust once height changes implemented
+    swingOrigin.z -= GetBallRadius() * 5;
+    return swingOrigin;
+}
+
 void Golf::LoadCharacterTraits()
 {
     pSwing->SetArmBalancePoint(pCharacter->GetArmBalancePoint(m_selectedCharacter));

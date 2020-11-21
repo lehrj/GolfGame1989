@@ -38,6 +38,7 @@ public:
     void FireProjectile(Utility::ImpactData aImpact);
 
     DirectX::SimpleMath::Vector3 GetBallPosInEnviron(DirectX::SimpleMath::Vector3 aPos) const;
+    double GetBallRadius() { return m_ball.radius; };
     int GetBounceCount() const { return m_bounceCount; };
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetDebugLines() const { return m_debugDrawLines; };
     double GetDebugValue01() const { return m_debugValue01; };
