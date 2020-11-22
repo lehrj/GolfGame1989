@@ -2066,7 +2066,6 @@ void Game::DrawSwing()
     shoulderPos += pGolf->GetShotStartPos();
 
     VertexPositionColor staticShoulderVert(shoulderPos, DirectX::Colors::Yellow);
-    //VertexPositionColor staticBaseVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
     VertexPositionColor staticBaseVert(pGolf->GetShotStartPos(), DirectX::Colors::White);
     m_batch->DrawLine(staticShoulderVert, staticBaseVert);
 
@@ -2081,6 +2080,7 @@ void Game::DrawSwing()
     DirectX::XMVECTORF32 shoulderColor = color1;
     DirectX::XMVECTORF32 handColor = color1;
     DirectX::XMVECTORF32 clubHeadColor = color1;
+    
     if (angles.size() > 1)
     {
         if (m_swingPathStep >= (int)angles.size())
@@ -2088,8 +2088,6 @@ void Game::DrawSwing()
             m_swingPathStep = 0;
         }
         ++m_swingPathStep;
-
-        
 
         const float grooveGap = .0005;
         const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
@@ -2149,8 +2147,7 @@ void Game::DrawSwing()
             DirectX::SimpleMath::Matrix clubFaceRot = DirectX::SimpleMath::Matrix::CreateRotationZ(-angles[i].y + -angles[i].z + clubFaceAngle);
             clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
             clubHeadBase += beta;
-
-            
+         
             DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
             toeGroove1.y += grooveGap;
             toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
@@ -2158,7 +2155,6 @@ void Game::DrawSwing()
             toeGroove1 += clubHeadBase;       
             VertexPositionColor toeGrooveVert1(toeGroove1, clubHeadColor);
             
-
             DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
             heelGroove1.y += grooveGap;
             heelGroove1 = DirectX::SimpleMath::Vector3::Transform(heelGroove1, clubFaceRot);
@@ -2190,22 +2186,45 @@ void Game::DrawSwing()
             heelGroove3 += beta;
             VertexPositionColor heelGrooveVert3(heelGroove3, clubHeadColor);
 
-            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Red); 
-            //VertexPositionColor clubHeadVert(clubHeadBase, clubHeadColor);
+
+            DirectX::XMVECTORF32 testColor = DirectX::Colors::Silver;
+            //(i == m_swingPathStep - 1);
+            int testVar = (m_swingPathStep - 1) - i;
+            float testDelta = testVar * .05;
+            testColor.f[0] -= testDelta;
+            testColor.f[1] -= testDelta;
+            testColor.f[2] -= testDelta;
+            testColor.f[3] -= testDelta;
+
+            DirectX::XMVECTORF32 testColor2 = DirectX::Colors::Blue;
+            //testColor2.f[0] -= testDelta;
+            //testColor2.f[1] -= testDelta;
+            testColor2.f[2] -= testDelta;
+            testColor2.f[3] -= testDelta;
+
+            //color5 = DirectX::Colors::Black;
+            //color4 = DirectX::Colors::Transparent;
+            VertexPositionColor clubHeadVert(clubHeadBase, clubHeadColor);
             VertexPositionColor shoulderVert(shoulderPos, shoulderColor);
-            VertexPositionColor shoulderTestVert(shoulderPos, color4);
-            VertexPositionColor thetaTestVert(theta, color4);
-            VertexPositionColor thetaTestLowerVert(theta, color5);
+            //VertexPositionColor shoulderTestVert(shoulderPos, color4);
+            VertexPositionColor shoulderTestVert(shoulderPos, testColor2);
+            //VertexPositionColor thetaTestVert(theta, color4);
+            VertexPositionColor thetaTestVert(theta, testColor2);
+            VertexPositionColor thetaTestLowerVert(theta, testColor);
+            //VertexPositionColor thetaTestLowerVert(theta, color5);
             VertexPositionColor thetaVert(theta, handColor);
-            VertexPositionColor betaTestVert(beta, color5);
+            VertexPositionColor betaTestVert(beta, testColor);
+            //VertexPositionColor betaTestVert(beta, color5);
             VertexPositionColor betaVert(beta, clubHeadColor);
             //m_batch->DrawLine(shoulderVert, thetaVert);
             //m_batch->DrawLine(shoulderVert, thetaVert);
             //m_batch->DrawLine(thetaVert, betaVert);
 
-            m_batch->DrawLine(shoulderTestVert, thetaTestVert);
-            m_batch->DrawLine(thetaTestLowerVert, betaTestVert);
-
+            if (((m_swingPathStep - 1) - i) < 30)
+            {
+                m_batch->DrawLine(shoulderTestVert, thetaTestVert);
+                m_batch->DrawLine(thetaTestLowerVert, betaTestVert);
+            }
             if (i == impactPoint)
             {
                 m_batch->DrawLine(shoulderVert, thetaVert);
@@ -2241,9 +2260,7 @@ void Game::DrawSwing()
                 DirectX::SimpleMath::Vector3 impactFaceNorm = pGolf->GetFaceImpact();
                 impactFaceNorm += toeGroove2;
                 VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
-                m_batch->DrawLine(toeGrooveVert2, faceNormVert);
-
-                
+                m_batch->DrawLine(toeGrooveVert2, faceNormVert);            
             }
         }
     }
