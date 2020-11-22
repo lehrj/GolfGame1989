@@ -221,7 +221,6 @@ DirectX::SimpleMath::Vector3 GolfSwing::GetShoulderPos()
 
 void GolfSwing::InputClub(int aInput)
 {
-
     if (aInput <= m_pBag->GetClubCount() || aInput > 0)
     {
         m_clubIndex = aInput;

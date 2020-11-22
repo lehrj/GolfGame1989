@@ -393,8 +393,8 @@ void Game::CreateResources()
     ////********* WLJ world start ----- deactivate to turn off world spin
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
-    const float viewPlaneNear = 0.001f;
-    const float viewPlaneFar = 400.0f;
+    const float viewPlaneNear = 0.0001f;
+    const float viewPlaneFar = 10.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -2060,17 +2060,24 @@ void Game::DrawSwing()
     const float clubLength = pGolf->GetClubLength() * pGolf->GetEnvironScale();
 
     //DirectX::SimpleMath::Vector3 shoulderPos = (pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale()) + pGolf->GetShotStartPos();
-    DirectX::SimpleMath::Vector3 shoulderPos = (pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale());
+    DirectX::SimpleMath::Vector3 shoulderPos = pGolf->GetSwingShoulderOrigin() * pGolf->GetEnvironScale();
+    const float clubFaceWidth = -shoulderPos.z * 2;
+    shoulderPos = DirectX::SimpleMath::Vector3::Transform(shoulderPos, rotMat);
+    shoulderPos += pGolf->GetShotStartPos();
 
     VertexPositionColor staticShoulderVert(shoulderPos, DirectX::Colors::Yellow);
-    VertexPositionColor staticBaseVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
-    //m_batch->DrawLine(staticShoulderVert, staticBaseVert);
+    //VertexPositionColor staticBaseVert(DirectX::SimpleMath::Vector3(0.0, 0.0, 0.0), DirectX::Colors::White);
+    VertexPositionColor staticBaseVert(pGolf->GetShotStartPos(), DirectX::Colors::White);
+    m_batch->DrawLine(staticShoulderVert, staticBaseVert);
 
     // DarkSlateGray, Silver, White, DimGray, WhiteSmoke
     DirectX::XMVECTORF32 preImpactShadowColor = DirectX::Colors::DarkSlateGray;
     DirectX::XMVECTORF32 postImpactShadowColor = DirectX::Colors::DarkSlateBlue;
     DirectX::XMVECTORF32 color1 = DirectX::Colors::White;
     DirectX::XMVECTORF32 color2 = DirectX::Colors::Red;
+    DirectX::XMVECTORF32 color3 = DirectX::Colors::Red;
+    DirectX::XMVECTORF32 color4 = DirectX::Colors::Blue;
+    DirectX::XMVECTORF32 color5 = DirectX::Colors::Yellow;
     DirectX::XMVECTORF32 shoulderColor = color1;
     DirectX::XMVECTORF32 handColor = color1;
     DirectX::XMVECTORF32 clubHeadColor = color1;
@@ -2082,7 +2089,7 @@ void Game::DrawSwing()
         }
         ++m_swingPathStep;
 
-        const float clubFaceWidth = -shoulderPos.z * 2;
+        
 
         const float grooveGap = .0005;
         const double clubFaceAngle = Utility::ToRadians(pGolf->GetClubFaceAngle());
@@ -2094,7 +2101,6 @@ void Game::DrawSwing()
                 shoulderColor = preImpactShadowColor;
                 handColor = preImpactShadowColor;
                 clubHeadColor = preImpactShadowColor;
-                isBallHit = true;
             }
             if (i > impactPoint)
             {
@@ -2108,6 +2114,12 @@ void Game::DrawSwing()
                 shoulderColor = color1;
                 handColor = color1;
                 clubHeadColor = color1;
+            }
+            if (i == impactPoint)
+            {
+                shoulderColor = color3;
+                handColor = color3;
+                clubHeadColor = color3;
             }
             if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW)
             {
@@ -2138,12 +2150,14 @@ void Game::DrawSwing()
             clubHeadBase = DirectX::SimpleMath::Vector3::Transform(clubHeadBase, rotMat);
             clubHeadBase += beta;
 
+            
             DirectX::SimpleMath::Vector3 toeGroove1 = DirectX::SimpleMath::Vector3::Zero;
             toeGroove1.y += grooveGap;
             toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, clubFaceRot);
             toeGroove1 = DirectX::SimpleMath::Vector3::Transform(toeGroove1, rotMat);
-            toeGroove1 += clubHeadBase;
+            toeGroove1 += clubHeadBase;       
             VertexPositionColor toeGrooveVert1(toeGroove1, clubHeadColor);
+            
 
             DirectX::SimpleMath::Vector3 heelGroove1 = DirectX::SimpleMath::Vector3::Zero;
             heelGroove1.y += grooveGap;
@@ -2166,7 +2180,6 @@ void Game::DrawSwing()
             DirectX::SimpleMath::Matrix testRot = clubFaceRot * rotMat;
             DirectX::SimpleMath::Vector3 toeGroove3 = DirectX::SimpleMath::Vector3::Zero;
             toeGroove3.y += grooveGap * 3;
-
             toeGroove3 = DirectX::SimpleMath::Vector3::Transform(toeGroove3, testRot);
             toeGroove3 += clubHeadBase;
             VertexPositionColor toeGrooveVert3(toeGroove3, clubHeadColor);
@@ -2177,18 +2190,32 @@ void Game::DrawSwing()
             heelGroove3 += beta;
             VertexPositionColor heelGrooveVert3(heelGroove3, clubHeadColor);
 
-            VertexPositionColor clubHeadVert(clubHeadBase, clubHeadColor);
-            
-            VertexPositionColor shoulderVert2(shoulderPos, shoulderColor);
-            VertexPositionColor thetaVert2(theta, handColor);
-            VertexPositionColor betaVert2(beta, clubHeadColor);
-            m_batch->DrawLine(shoulderVert2, thetaVert2);
-            m_batch->DrawLine(thetaVert2, betaVert2);
+            VertexPositionColor clubHeadVert(clubHeadBase, DirectX::Colors::Red); 
+            //VertexPositionColor clubHeadVert(clubHeadBase, clubHeadColor);
+            VertexPositionColor shoulderVert(shoulderPos, shoulderColor);
+            VertexPositionColor shoulderTestVert(shoulderPos, color4);
+            VertexPositionColor thetaTestVert(theta, color4);
+            VertexPositionColor thetaTestLowerVert(theta, color5);
+            VertexPositionColor thetaVert(theta, handColor);
+            VertexPositionColor betaTestVert(beta, color5);
+            VertexPositionColor betaVert(beta, clubHeadColor);
+            //m_batch->DrawLine(shoulderVert, thetaVert);
+            //m_batch->DrawLine(shoulderVert, thetaVert);
+            //m_batch->DrawLine(thetaVert, betaVert);
 
+            m_batch->DrawLine(shoulderTestVert, thetaTestVert);
+            m_batch->DrawLine(thetaTestLowerVert, betaTestVert);
+
+            if (i == impactPoint)
+            {
+                m_batch->DrawLine(shoulderVert, thetaVert);
+                m_batch->DrawLine(thetaVert, betaVert);
+            }
             if (i == m_swingPathStep -1)
             {               
-                
-                m_batch->DrawLine(betaVert2, clubHeadVert);
+                m_batch->DrawLine(shoulderVert, thetaVert);
+                m_batch->DrawLine(thetaVert, betaVert);
+                m_batch->DrawLine(betaVert, clubHeadVert);
                 m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
                 m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
                 m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
@@ -2215,6 +2242,8 @@ void Game::DrawSwing()
                 impactFaceNorm += toeGroove2;
                 VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
                 m_batch->DrawLine(toeGrooveVert2, faceNormVert);
+
+                
             }
         }
     }
@@ -4408,9 +4437,11 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
         pGolf->SetBallPosition(pGolf->GetTeePos());
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
-        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
+        //pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
+        pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetTeePos(), pGolf->GetDirectionToHoleInRads()));
         pCamera->SetTargetStartPos(pCamera->GetTargetPos());
-        pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
+        //pCamera->SetTargetEndPos(pCamera->GetPreSwingTargPos(pGolf->GetTeePos(), pGolf->GetTeeDirection()));
+        pCamera->SetTargetEndPos(pGolf->GetHolePosition());
         pCamera->SetCameraState(CameraState::CAMERASTATE_RESET);
         pGolf->ResetIsBallInHole();
         ResetGamePlay();

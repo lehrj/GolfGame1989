@@ -102,6 +102,13 @@ void Environment::CreateDataStrings()
     }
 }
 
+DirectX::SimpleMath::Vector3 Environment::GetGroundHeight(DirectX::SimpleMath::Vector3 aPos)
+{
+    DirectX::SimpleMath::Vector3 groundPos = aPos;
+    groundPos.y = m_testHeight;
+    return groundPos;
+}
+
 // While this could be done once per environment update, future updates could have moment to moment wind changes
 double Environment::GetWindDirection() const
 { 

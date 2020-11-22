@@ -67,6 +67,7 @@ public:
     double GetGravity() const { return m_currentEnviron.gravity; };
     std::string GetGravityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravityStr; };
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
+    DirectX::SimpleMath::Vector3 GetGroundHeight(DirectX::SimpleMath::Vector3 aPos);
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return m_flagVertex; };
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
     double GetHoleRadius() const { return m_holeRadius * m_currentEnviron.scale; };
@@ -122,6 +123,7 @@ private:
 
     double                              m_landingHeight = 0.0;     // in meters
     double                              m_launchHeight = 0.0;      // in meters
+    double                              m_testHeight = 0.0;        // in meters, for testing ground height functions
 
     // variables for bounce and roll functionality not yet implemented
     double                              m_landingFriction;

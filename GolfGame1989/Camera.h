@@ -76,6 +76,7 @@ public:
     void TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
     void TurnEndPosAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
 
+
 private:
     void InitializeOrthoganalMatrix(); //Pavel
     void InitializeProjectionMatrix(); //Pavel
