@@ -88,7 +88,7 @@ private:
     void DrawUI();
     void DrawWater();
     void DrawWorld();
-    void DrawWorld12th();
+    void DrawWorld12thHole();
 
     void OnDeviceLost();
     void Present();
