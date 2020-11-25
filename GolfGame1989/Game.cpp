@@ -2656,7 +2656,7 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
     m_batch->DrawLine(trunkTL, trunkBL);
     m_batch->DrawLine(trunkTR, trunkBR);
-    m_batch->DrawLine(treeRootBase, treeRootTop);
+    //m_batch->DrawLine(treeRootBase, treeRootTop);
 
     VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::ForestGreen);
     DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
@@ -2885,7 +2885,7 @@ void Game::DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     VertexPositionColor trunkBR(trunkBottomRight, Colors::Gray);
     VertexPositionColor trunkBL(trunkBottomLeft, Colors::Gray);
 
-    m_batch->DrawLine(treeRootBase, treeRootTop);
+    //m_batch->DrawLine(treeRootBase, treeRootTop);
     m_batch->DrawLine(trunkTL, trunkBL);
     m_batch->DrawLine(trunkTR, trunkBR);
 
@@ -2926,10 +2926,13 @@ void Game::DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         VertexPositionColor branchBaseLower(branchBaseLowerVert, branchColor2);
         VertexPositionColor branchBaseLowerLite(branchBaseLowerVert, branchColor5);
 
-        m_batch->DrawLine(branchBaseVertex, leafR);
-        m_batch->DrawLine(branchBaseVertex, leafL);
-        m_batch->DrawQuad(leafL, leafLeftLower, branchBaseLower, branchBaseVertexLite);
-        m_batch->DrawQuad(leafR, branchBaseVertex, branchBaseLower, leafRightLower);
+        //m_batch->DrawLine(branchBaseVertex, leafR);
+        //m_batch->DrawLine(branchBaseVertex, leafL);
+        //m_batch->DrawQuad(leafL, leafLeftLower, branchBaseLower, branchBaseVertexLite);
+        //m_batch->DrawTriangle(leafL, leafLeftLower, branchBaseLower);// , branchBaseVertexLite);
+        m_batch->DrawTriangle(leafL, branchBaseLower , branchBaseVertexLite);
+        //m_batch->DrawQuad(leafR, branchBaseVertex, branchBaseLower, leafRightLower);
+        m_batch->DrawTriangle(leafRightLower, branchBaseVertex, branchBaseLower);// , leafRightLower);
     }
 }
 
@@ -3209,7 +3212,7 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     VertexPositionColor trunkBR(trunkBottomRight, Colors::Gray);
     VertexPositionColor trunkBL(trunkBottomLeft, Colors::Gray);
 
-    m_batch->DrawLine(treeRootBase, treeRootTop);
+    //m_batch->DrawLine(treeRootBase, treeRootTop);
     m_batch->DrawLine(trunkTL, trunkBL);
     m_batch->DrawLine(trunkTR, trunkBR);
 
@@ -3253,8 +3256,8 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         VertexPositionColor prevBranchBaseBackground(branchBase, Colors::Black);
 
 
-        VertexPositionColor leafRBackground(branchEndR, Colors::Black);
-        VertexPositionColor leafLBackground(branchEndL, Colors::Black);
+        VertexPositionColor leafRBackground(branchEndR, Colors::PaleGreen);
+        VertexPositionColor leafLBackground(branchEndL, Colors::SpringGreen);
 
         //prevBranchBaseVertex = branchBaseVertex;
 
@@ -3262,14 +3265,13 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafLBackground);
 
         
-        m_batch->DrawLine(branchBaseVertex, leafR);
-        m_batch->DrawLine(branchBaseVertex, leafL);
+        //m_batch->DrawLine(branchBaseVertex, leafR);
+        //m_batch->DrawLine(branchBaseVertex, leafL);
 
         //////
 
-        m_batch->DrawLine(prevBranchBaseVertex, leafR);
-        m_batch->DrawLine(prevBranchBaseVertex, leafL);
-        
+        //m_batch->DrawLine(prevBranchBaseVertex, leafR);
+        //m_batch->DrawLine(prevBranchBaseVertex, leafL);
 
         prevBranchBaseVertex = branchBaseVertex;
     }
@@ -3886,18 +3888,18 @@ void Game::DrawWorld12thHole()
     DirectX::SimpleMath::Vector3 treePos3(-1.4, 0.0, -.2);
     DrawTree03(treePos3, 5.5f);
     */
-    /*
+    
     DirectX::SimpleMath::Vector3 treePos4(-1.4, 0.0, 0.9);
     DrawTree03(treePos4, .9f);
     DirectX::SimpleMath::Vector3 treePos5(-1.4, 0.0, 0.2);
-    //DrawTree04(treePos5, .1f);
+    DrawTree04(treePos5, .1f);
     DirectX::SimpleMath::Vector3 treePos6(-1.4, 0.0, 0.4);
-    //DrawTree06(treePos6, .1f);
+    DrawTree06(treePos6, .1f);
     DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
     DrawTree07(treePos8, .9f);
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree09(treePos9, .9f);
-    */
+    
 }
 
 // Properties
