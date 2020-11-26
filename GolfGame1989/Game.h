@@ -75,7 +75,6 @@ private:
     void DrawTeeBox();
     void DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
 
-    void DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);

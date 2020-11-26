@@ -30,7 +30,7 @@ enum class FixtureType
     FIXTURETYPE_TEEBOX,
     FIXTURETYPE_BRIDGE,
     //FIXTURETYPE_TREE01,
-    FIXTURETYPE_TREE02,
+    //FIXTURETYPE_TREE02,
     FIXTURETYPE_TREE03,
     FIXTURETYPE_TREE04,
     FIXTURETYPE_TREE05,
@@ -96,7 +96,8 @@ public:
     void UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos);
 
 private:
-    
+    bool LoadHeightMap(char*);
+
     void BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos);
     void BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos);
 

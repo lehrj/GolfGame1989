@@ -209,6 +209,7 @@
     <Image Include="EnvironmentSelectAlien.jpg" />
     <Image Include="EnvironmentSelectBreezy.png" />
     <Image Include="EnvironmentSelectCalm.png" />
+    <Image Include="heightmap01.bmp" />
     <Image Include="Icon.ico" />
     <Image Include="logoBMW.png" />
     <Image Include="logoJI.png" />

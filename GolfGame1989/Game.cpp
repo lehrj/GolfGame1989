@@ -32,7 +32,7 @@ Game::Game() noexcept :
     }
     else
     {
-        m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
+        /m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
     }
     m_currentUiState = UiState::UISTATE_SWING;
 }
@@ -2348,90 +2348,6 @@ void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const floa
     // end tee box draw
 }
 
-void Game::DrawTree02(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
-{
-    DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
-    double windDirection = pGolf->GetWindDirectionRad();
-    double windSpeed = windVector.Length();
-    DirectX::SimpleMath::Vector3 windNormalized = windVector;
-    windNormalized.Normalize();
-    const float scaleMod = .9;
-    float scale = pGolf->GetEnvironScale() * scaleMod;
-
-    //DirectX::SimpleMath::Vector3 swayVec = windVector * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds()));
-    DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * (cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation)));
-
-    DirectX::SimpleMath::Vector3 swayBase = swayVec;
-    swayBase = swayBase * 0.05;
-
-    DirectX::SimpleMath::Vector3 baseTop = aTreePos;
-    baseTop.y += .04;
-
-    DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
-    viewLine.Normalize();
-
-    //DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross(viewLine, (aTreePos + baseTop));
-    DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine);
-    //viewHorizontal = viewHorizontal / 2;
-
-    VertexPositionColor treeRootBase(aTreePos, Colors::Gray);
-    VertexPositionColor treeRootTop(baseTop, Colors::Gray);
-
-    DirectX::SimpleMath::Vector3 trunkTopLeft = baseTop + (viewHorizontal * .04f);
-    DirectX::SimpleMath::Vector3 trunkTopRight = baseTop + (-viewHorizontal * .04f);
-    DirectX::SimpleMath::Vector3 trunkBottomRight = aTreePos + (-viewHorizontal * .04f);
-    DirectX::SimpleMath::Vector3 trunkBottomLeft = aTreePos + (viewHorizontal * .04f);
-
-    trunkTopLeft += swayBase;
-    trunkTopRight += swayBase;
-    //trunkBottomRight += swayBase;
-    //trunkBottomLeft += swayBase;
-
-    VertexPositionColor trunkBackTL(trunkTopLeft, Colors::Black);
-    VertexPositionColor trunkBackTR(trunkTopRight, Colors::Black);
-    VertexPositionColor trunkBackBR(trunkBottomRight, Colors::Black);
-    VertexPositionColor trunkBackBL(trunkBottomLeft, Colors::Black);
-
-    m_batch->DrawQuad(trunkBackTL, trunkBackBL, trunkBackBR, trunkBackTR);
-
-    VertexPositionColor trunkTL(trunkTopLeft, Colors::Gray);
-    VertexPositionColor trunkTR(trunkTopRight, Colors::Gray);
-    VertexPositionColor trunkBR(trunkBottomRight, Colors::Gray);
-    VertexPositionColor trunkBL(trunkBottomLeft, Colors::Gray);
-
-    m_batch->DrawLine(trunkTL, trunkBL);
-    m_batch->DrawLine(trunkTR, trunkBR);
-    m_batch->DrawLine(treeRootBase, treeRootTop);
-
-    const float branchGap = .01;
-
-    VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::DarkGreen);
-    DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
-
-    DirectX::SimpleMath::Vector3 branchBase = baseTop;
-
-    const int layerCount = 30;
-    for (int i = 1; i < layerCount; ++i)
-    {
-        branchBase += swayBase;
-        VertexPositionColor branchBaseVertex(branchBase, Colors::ForestGreen);
-        branchBase.y += branchGap;
-
-        //treeRootTop2.position.y += branchGap;
-        //treeRootTop2.position += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
-        branchEndR.y += branchGap;
-        branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
-        branchEndL.y += branchGap;
-        branchEndL += swayVec;
-        VertexPositionColor leafR(branchEndR, Colors::ForestGreen);
-        VertexPositionColor leafL(branchEndL, Colors::ForestGreen);
-        m_batch->DrawLine(branchBaseVertex, leafR);
-        m_batch->DrawLine(branchBaseVertex, leafL);
-    }
-}
-
 void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
@@ -3618,10 +3534,7 @@ void Game::DrawWorld()
             DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
         }
 
-        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE02)
-        {
-            DrawTree02(fixtureList[i].position, fixtureList[i].animationVariation);
-        }
+
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
         {
             DrawTree03(fixtureList[i].position, fixtureList[i].animationVariation);
@@ -3651,32 +3564,6 @@ void Game::DrawWorld()
             DrawTree09(fixtureList[i].position, fixtureList[i].animationVariation);
         }
     }
-
-    /*
-    DirectX::SimpleMath::Vector3 treeTestPos1(.4, 0.0, 1.3);
-    DrawTree06(treeTestPos1, .9f);
-    DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
-    DrawTree07(treeTestPos, .9f);
-
-
-    DrawTree07(treePos, 0.3f);
-    DirectX::SimpleMath::Vector3 treePos2(-1.4, 0.0, -.4);
-    DrawTree02(treePos2, 0.7f);
-    DirectX::SimpleMath::Vector3 treePos3(-1.4, 0.0, -.2);
-    DrawTree03(treePos3, 5.5f);
-    */
-    /*
-    DirectX::SimpleMath::Vector3 treePos4(-1.4, 0.0, 0.9);
-    DrawTree03(treePos4, .9f);
-    DirectX::SimpleMath::Vector3 treePos5(-1.4, 0.0, 0.2);
-    DrawTree04(treePos5, .1f);
-    DirectX::SimpleMath::Vector3 treePos6(-1.4, 0.0, 0.4);
-    DrawTree06(treePos6, .1f);
-    DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
-    DrawTree07(treePos8, .9f);
-    DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
-    DrawTree09(treePos9, .9f);
-    */
 }
 
 void Game::DrawWorld12thHole()
@@ -3764,10 +3651,7 @@ void Game::DrawWorld12thHole()
             DrawBridge(fixtureList[i].position, fixtureList[i].animationVariation);
         }
 
-        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE02)
-        {
-            DrawTree02(fixtureList[i].position, fixtureList[i].animationVariation);
-        }
+
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
         {
             DrawTree03(fixtureList[i].position, fixtureList[i].animationVariation);
@@ -3799,21 +3683,15 @@ void Game::DrawWorld12thHole()
     }
 
 
-
-
     /*
     DirectX::SimpleMath::Vector3 treeTestPos1(.4, 0.0, 1.3);
     DrawTree10(treeTestPos1, .9f);
     DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
     DrawTree05(treeTestPos, .9f);
 
-    DrawTree08(treePos, 0.3f);
-    DirectX::SimpleMath::Vector3 treePos2(-1.4, 0.0, -.4);
-    DrawTree02(treePos2, 0.7f);
     DirectX::SimpleMath::Vector3 treePos3(-1.4, 0.0, -.2);
     DrawTree11(treePos3, 5.5f);
-    
-    
+       
     DirectX::SimpleMath::Vector3 treePos4(-1.4, 0.0, 0.9);
     DrawTree03(treePos4, .9f);
     DirectX::SimpleMath::Vector3 treePos5(-1.4, 0.0, 0.2);
@@ -3825,6 +3703,7 @@ void Game::DrawWorld12thHole()
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree09(treePos9, .9f);
     */
+    
 }
 
 // Properties

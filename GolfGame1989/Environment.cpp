@@ -677,3 +677,5 @@ void Environment::UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vecto
         m_fixtureBucket[i].distanceToCamera = DirectX::SimpleMath::Vector3::Distance(m_fixtureBucket[i].position, aCameraPos);
     }
 }
+
+

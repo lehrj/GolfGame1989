@@ -88,6 +88,9 @@
     <Image Include="logoJI.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="heightmap01.bmp">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">
