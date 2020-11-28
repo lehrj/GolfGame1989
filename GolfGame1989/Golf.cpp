@@ -581,3 +581,8 @@ bool Golf::InitializeHeightMap(ID3D11Device* device, char* heightMapFilename)
     }
     return result;
 }
+
+void Golf::RenderEnvironHeightMap(ID3D11DeviceContext* aDevice)
+{
+    pEnvironment->RenderHeightMap(aDevice);
+}

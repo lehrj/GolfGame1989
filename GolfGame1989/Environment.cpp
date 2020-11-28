@@ -1086,3 +1086,28 @@ bool Environment::Initialize(ID3D11Device* device, char* heightMapFilename)
     
     return true;
 }
+
+
+void Environment::RenderHeightMap(ID3D11DeviceContext* aDeviceContext)
+{
+
+    unsigned int stride;
+    unsigned int offset;
+
+
+    // Set vertex buffer stride and offset.
+    stride = sizeof(VertexType);
+    offset = 0;
+
+    // Set the vertex buffer to active in the input assembler so it can be rendered.
+    aDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+
+    // Set the index buffer to active in the input assembler so it can be rendered.
+    aDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+    // Set the type of primitive that should be rendered from this vertex buffer, in this case a line list.
+    aDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+    return;
+
+}

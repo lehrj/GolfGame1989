@@ -261,5 +261,6 @@ private:
 
 public:
     bool Initialize(ID3D11Device*, char*);
+    void RenderHeightMap(ID3D11DeviceContext*);
 };
 

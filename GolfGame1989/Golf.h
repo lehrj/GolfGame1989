@@ -125,4 +125,5 @@ private:
 public:
     // height map testing
     bool InitializeHeightMap(ID3D11Device*, char*);
+    void RenderEnvironHeightMap(ID3D11DeviceContext*);
 };

@@ -3901,7 +3901,11 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
+    
+
     m_batch->Begin();
+
+    
 
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
@@ -3962,7 +3966,7 @@ void Game::Render()
     }
 
     m_spriteBatch->End();
-
+    
     Present();
 }
 
