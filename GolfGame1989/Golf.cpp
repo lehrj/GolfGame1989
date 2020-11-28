@@ -570,3 +570,14 @@ void Golf::ZeroUIandRenderData()
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
 }
+
+
+bool Golf::InitializeHeightMap(ID3D11Device* device, char* heightMapFilename)
+{
+    bool result = pEnvironment->Initialize(device, heightMapFilename);
+    if (result == false)
+    {
+        // input error checking here
+    }
+    return result;
+}

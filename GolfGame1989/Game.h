@@ -105,7 +105,7 @@ private:
     HWND                                            m_window;
     int                                             m_outputWidth;
     int                                             m_outputHeight;
-
+    
     D3D_FEATURE_LEVEL                               m_featureLevel;
     Microsoft::WRL::ComPtr<ID3D11Device1>           m_d3dDevice;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext1>    m_d3dContext;
@@ -203,11 +203,12 @@ private:
     DirectX::SimpleMath::Vector2                    m_powerBarImpactOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarBackswingOrigin;
 
-
+    /*
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_testTex;
     DirectX::SimpleMath::Vector2                    m_testTexPos;
     DirectX::SimpleMath::Vector2                    m_testTexOrigin;
     RECT                                            m_testTexRect;
+    */
 
     RECT                                            m_powerMeterBarRect;
     RECT                                            m_powerMeterFrameRect;

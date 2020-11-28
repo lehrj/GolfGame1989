@@ -1,5 +1,56 @@
 #pragma once
+/*
+#include <windows.h>
+#include <d3d11.h>
+//#include <d3dx11.h>
+//#include <d3dx10.h>
+//#include <xnamath.h>
+#include <D3D10_1.h>
+#include <DXGI.h>
+#include <D2D1.h>
+#include <sstream>
+#include <dwrite.h>
+#include <dinput.h>
+*/
+/************************************New Stuff****************************************************/
+//#include <vector>
+/*************************************************************************************************/
+//#include "wingdi.h"
+//#include <wingdi.h>
+
+
+
+//#include <stdlib.h>
+//#include <string.h>
+
+
 #include "Utility.h"
+//#include <stdio.h>
+//#include <d3d11.h>
+
+
+
+typedef struct tagBITMAPINFOHEADER {
+    DWORD biSize;
+    LONG  biWidth;
+    LONG  biHeight;
+    WORD  biPlanes;
+    WORD  biBitCount;
+    DWORD biCompression;
+    DWORD biSizeImage;
+    LONG  biXPelsPerMeter;
+    LONG  biYPelsPerMeter;
+    DWORD biClrUsed;
+    DWORD biClrImportant;
+} BITMAPINFOHEADER, * LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
+
+typedef struct tagBITMAPFILEHEADER {
+    WORD  bfType;
+    DWORD bfSize;
+    WORD  bfReserved1;
+    WORD  bfReserved2;
+    DWORD bfOffBits;
+} BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
 
 struct Environ
 {
@@ -54,6 +105,35 @@ struct Fixture
 // Class to handle environment and gameplay world needs
 class Environment
 {
+
+// height map testing
+private:
+    struct VertexType
+    {
+        /*
+        D3DXVECTOR3 position;
+        D3DXVECTOR2 texture;
+        D3DXVECTOR3 normal;
+        */
+        DirectX::XMFLOAT3 position;
+        DirectX::XMFLOAT4 color;
+        DirectX::XMFLOAT3 normal;
+    };
+    struct HeightMapType
+    {
+        float x, y, z;
+        float tu, tv;
+        float nx, ny, nz;
+    };
+    struct VectorType
+    {
+        float x, y, z;
+    };
+    struct HeightMapInfo {        // Heightmap structure
+        int terrainWidth;        // Width of heightmap
+        int terrainHeight;        // Height (Length) of heightmap
+        DirectX::XMFLOAT3* heightMap;    // Array to store terrain's vertex positions
+    };
 public:
     Environment();
     
@@ -96,7 +176,6 @@ public:
     void UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos);
 
 private:
-    bool LoadHeightMap(char*);
 
     void BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos);
     void BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos);
@@ -107,8 +186,7 @@ private:
     void LoadFixtureBucket12th();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
-
-    
+  
     Environ                             m_currentEnviron;
     std::vector<Environ>                m_environs;
     const int                           m_environsAvailable = 3;
@@ -140,5 +218,23 @@ private:
     const double                        m_minMaxHeight = 450.0; // Launch & Landing min/max heights is just above the largest elevation change (>400 meters) of any real golf course which is the Extreme 19 in Limpopo Province South Africa
     const double                        m_minMaxWind = 667.0;   // highest know wind speed on Neptune
 
+
+    // testing heightmap
+    bool LoadHeightMap(char*);
+    bool LoadHeightMap2(char*);
+    bool InitializeBuffers(ID3D11Device*);
+    void NormalizeHeightMap();
+
+    int m_terrainWidth, m_terrainHeight;
+    HeightMapType* m_heightMap = 0;
+    HeightMapInfo m_hminfo;
+    //TextureClass* m_Texture;
+    int m_vertexCount;
+    int m_indexCount;
+    VertexType* m_vertices = 0;
+    ID3D11Buffer* m_vertexBuffer, * m_indexBuffer;
+
+public:
+    bool Initialize(ID3D11Device*, char*);
 };
 

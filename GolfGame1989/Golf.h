@@ -122,4 +122,7 @@ private:
     
     std::vector<std::vector<BallMotion>>        m_hydraData;
 
+public:
+    // height map testing
+    bool InitializeHeightMap(ID3D11Device*, char*);
 };

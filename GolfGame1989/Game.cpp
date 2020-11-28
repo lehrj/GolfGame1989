@@ -32,7 +32,7 @@ Game::Game() noexcept :
     }
     else
     {
-        /m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
+        m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
     }
     m_currentUiState = UiState::UISTATE_SWING;
 }
@@ -289,6 +289,7 @@ void Game::CreateDevice()
     logoJI->GetDesc(&logoJIDesc);
     m_jiLogoOrigin.x = float(logoJIDesc.Width / 2);
     m_jiLogoOrigin.y = float(logoJIDesc.Height / 2);
+
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -442,11 +443,12 @@ void Game::CreateResources()
     m_powerMeterBarScale = 1.0f - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
     // test char
+    /*
     m_testTexRect.left = static_cast<long>((backBufferWidth / 2.f) - m_powerBarFrameOrigin.x);
     m_testTexRect.right = static_cast<long>((backBufferWidth / 2.f) + m_powerBarFrameOrigin.x);
     m_testTexRect.top = static_cast<long>((backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y);
     m_testTexRect.bottom = static_cast<long>((backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y);
-        
+    */
 
     // Character textures  
     m_characterPos.x = backBufferWidth / 2.f;
@@ -478,6 +480,7 @@ void Game::CreateResources()
     m_jiLogoPos.x = backBufferWidth / 2.f;
     m_jiLogoPos.y = backBufferHeight / 2.f;
     // End Texture
+
 }
 
 void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
@@ -3746,6 +3749,16 @@ void Game::Initialize(HWND window, int width, int height)
     m_audioEngine = std::make_unique<AudioEngine>(eflags);
     m_retryAudio = false;
     m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
+
+
+    // height map testing
+    //bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "../GolfGame1989/heightmap01.bmp");
+    bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "heightmap01.bmp");
+    if (result == false)
+    {
+        // error checking here
+    }
+
 }
 
 // Message handlers
