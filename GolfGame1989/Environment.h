@@ -23,12 +23,35 @@
 //#include <stdlib.h>
 //#include <string.h>
 
-
+#include <wingdi.h>
 #include "Utility.h"
 //#include <stdio.h>
 //#include <d3d11.h>
 
 
+/*
+typedef struct tagBITMAPFILEHEADER {
+    WORD    bfType;
+    DWORD   bfSize;
+    WORD    bfReserved1;
+    WORD    bfReserved2;
+    DWORD   bfOffBits;
+} BITMAPFILEHEADER, FAR* LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
+
+typedef struct tagBITMAPINFOHEADER {
+    DWORD      biSize;
+    LONG       biWidth;
+    LONG       biHeight;
+    WORD       biPlanes;
+    WORD       biBitCount;
+    DWORD      biCompression;
+    DWORD      biSizeImage;
+    LONG       biXPelsPerMeter;
+    LONG       biYPelsPerMeter;
+    DWORD      biClrUsed;
+    DWORD      biClrImportant;
+} BITMAPINFOHEADER, FAR* LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
+*/
 
 typedef struct tagBITMAPINFOHEADER {
     DWORD biSize;
@@ -44,6 +67,7 @@ typedef struct tagBITMAPINFOHEADER {
     DWORD biClrImportant;
 } BITMAPINFOHEADER, * LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
 
+#pragma pack(2) 
 typedef struct tagBITMAPFILEHEADER {
     WORD  bfType;
     DWORD bfSize;
@@ -51,6 +75,7 @@ typedef struct tagBITMAPFILEHEADER {
     WORD  bfReserved2;
     DWORD bfOffBits;
 } BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
+#pragma pack() 
 
 struct Environ
 {

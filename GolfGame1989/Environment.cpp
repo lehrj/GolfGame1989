@@ -784,18 +784,24 @@ bool Environment::LoadHeightMap(char* filename)
     }
 
     // Read in the file header.
+    /*
     count = fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
     if (count != 1)
     {
         return false;
     }
+    */
+    fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
 
     // Read in the bitmap info header.
+    /*
     count = fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
     if (count != 1)
     {
         return false;
     }
+    */
+    fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
 
     int test = sizeof(BITMAPFILEHEADER);
 
@@ -803,8 +809,9 @@ bool Environment::LoadHeightMap(char* filename)
     // Save the dimensions of the terrain.
     m_terrainWidth = bitmapInfoHeader.biWidth;
     m_terrainHeight = bitmapInfoHeader.biHeight;
-    m_terrainWidth = 257;
-    m_terrainHeight = 257;
+
+    //m_terrainWidth = 257;
+    //m_terrainHeight = 257;
     // Calculate the size of the bitmap image data.
     imageSize = m_terrainWidth * m_terrainHeight * 3;
 
@@ -1070,12 +1077,12 @@ bool Environment::Initialize(ID3D11Device* device, char* heightMapFilename)
     NormalizeHeightMap();
 
     // Initialize the vertex and index buffer that hold the geometry for the terrain.
-    /*
+    
     result = InitializeBuffers(device);
     if (!result)
     {
         return false;
     }
-    */
+    
     return true;
 }
