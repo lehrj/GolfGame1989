@@ -3902,10 +3902,9 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     
-
     m_batch->Begin();
 
-    
+    //pGolf->RenderEnvironHeightMap(m_d3dContext.Get());
 
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)

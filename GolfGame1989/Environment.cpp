@@ -770,40 +770,38 @@ bool Environment::LoadHeightMap(char* filename)
     unsigned char height;
 
     // Open the height map file in binary.   
-    /*
+    ///*
     error = fopen_s(&filePtr, filename, "rb");
     if (error != 0)
     {
         return false;
     }
-    */
+    //*/
+    /*
     filePtr = fopen(filename, "rb");
     if (filePtr == NULL)
     {
         return 0;
     }
+    */
 
     // Read in the file header.
-    /*
+    ///*
     count = fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
     if (count != 1)
     {
         return false;
     }
-    */
-    fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
+    //*/
+    //fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
 
-    // Read in the bitmap info header.
-    /*
+    // Read in the bitmap info header.    
     count = fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
     if (count != 1)
     {
         return false;
-    }
-    */
-    fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
-
-    int test = sizeof(BITMAPFILEHEADER);
+    }   
+    //fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
 
 
     // Save the dimensions of the terrain.
@@ -867,6 +865,7 @@ bool Environment::LoadHeightMap(char* filename)
             k += 3;
         }
     }
+    int arraySize = sizeof(m_heightMap);
 
     // Release the bitmap image data.
     delete[] bitmapImage;
@@ -884,7 +883,6 @@ bool Environment::InitializeBuffers(ID3D11Device* device)
     D3D11_SUBRESOURCE_DATA vertexData, indexData;
     HRESULT result;
     int index1, index2, index3, index4;
-
 
     // Calculate the number of vertices in the terrain mesh.
     m_vertexCount = (m_terrainWidth - 1) * (m_terrainHeight - 1) * 12;
@@ -1049,7 +1047,6 @@ void Environment::NormalizeHeightMap()
 {
     int i, j;
 
-
     for (j = 0; j < m_terrainHeight; j++)
     {
         for (i = 0; i < m_terrainWidth; i++)
@@ -1063,7 +1060,6 @@ void Environment::NormalizeHeightMap()
 
 bool Environment::Initialize(ID3D11Device* device, char* heightMapFilename)
 {
-
     bool result;
 
     // Load in the height map for the terrain.
@@ -1087,13 +1083,10 @@ bool Environment::Initialize(ID3D11Device* device, char* heightMapFilename)
     return true;
 }
 
-
 void Environment::RenderHeightMap(ID3D11DeviceContext* aDeviceContext)
 {
-
     unsigned int stride;
     unsigned int offset;
-
 
     // Set vertex buffer stride and offset.
     stride = sizeof(VertexType);
@@ -1108,6 +1101,69 @@ void Environment::RenderHeightMap(ID3D11DeviceContext* aDeviceContext)
     // Set the type of primitive that should be rendered from this vertex buffer, in this case a line list.
     aDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-    return;
 
+    return;
 }
+
+
+
+/*
+bool Environment::GetHeightAtPosition(float inputX, float inputZ, float& height)
+{
+    int i, cellId, index;
+    float vertex1[3], vertex2[3], vertex3[3];
+    bool foundHeight;
+    float maxWidth, maxHeight, maxDepth, minWidth, minHeight, minDepth;
+
+
+    // Loop through all of the terrain cells to find out which one the inputX and inputZ would be inside.
+    cellId = -1;
+    for (i = 0; i < m_cellCount; i++)
+    {
+        // Get the current cell dimensions.
+        m_TerrainCells[i].GetCellDimensions(maxWidth, maxHeight, maxDepth, minWidth, minHeight, minDepth);
+
+        // Check to see if the positions are in this cell.
+        if ((inputX < maxWidth) && (inputX > minWidth) && (inputZ < maxDepth) && (inputZ > minDepth))
+        {
+            cellId = i;
+            i = m_cellCount;
+        }
+    }
+
+    // If we didn't find a cell then the input position is off the terrain grid.
+    if (cellId == -1)
+    {
+        return false;
+    }
+
+    // If this is the right cell then check all the triangles in this cell to see what the height of the triangle at this position is.
+    for (i = 0; i < (m_TerrainCells[cellId].GetVertexCount() / 3); i++)
+    {
+        index = i * 3;
+
+        vertex1[0] = m_TerrainCells[cellId].m_vertexList[index].x;
+        vertex1[1] = m_TerrainCells[cellId].m_vertexList[index].y;
+        vertex1[2] = m_TerrainCells[cellId].m_vertexList[index].z;
+        index++;
+
+        vertex2[0] = m_TerrainCells[cellId].m_vertexList[index].x;
+        vertex2[1] = m_TerrainCells[cellId].m_vertexList[index].y;
+        vertex2[2] = m_TerrainCells[cellId].m_vertexList[index].z;
+        index++;
+
+        vertex3[0] = m_TerrainCells[cellId].m_vertexList[index].x;
+        vertex3[1] = m_TerrainCells[cellId].m_vertexList[index].y;
+        vertex3[2] = m_TerrainCells[cellId].m_vertexList[index].z;
+
+        // Check to see if this is the polygon we are looking for.
+        foundHeight = CheckHeightOfTriangle(inputX, inputZ, height, vertex1, vertex2, vertex3);
+        if (foundHeight)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+*/
