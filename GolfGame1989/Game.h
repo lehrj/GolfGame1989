@@ -10,6 +10,7 @@
 #include "WICTextureLoader.h"
 #include "Camera.h"
 #include "sounds.h"
+#include "TerrainClass.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -100,6 +101,7 @@ private:
     Camera* pCamera;
     Golf* pGolf;
     GolfPlay* pPlay;
+    TerrainClass* pTerrain;
 
     // Device resources.
     HWND                                            m_window;

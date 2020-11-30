@@ -571,7 +571,7 @@ void Golf::ZeroUIandRenderData()
     pBall->ZeroDataForUI();
 }
 
-
+/*
 bool Golf::InitializeHeightMap(ID3D11Device* device, char* heightMapFilename)
 {
     bool result = pEnvironment->Initialize(device, heightMapFilename);
@@ -586,3 +586,4 @@ void Golf::RenderEnvironHeightMap(ID3D11DeviceContext* aDevice)
 {
     pEnvironment->RenderHeightMap(aDevice);
 }
+*/

@@ -16,9 +16,9 @@ Environment::Environment()
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
     LoadFixtureBucket12th();
-    m_vertexBuffer = 0;
-    m_indexBuffer = 0;
-    m_heightMap = 0;
+    //m_vertexBuffer = 0;
+    //m_indexBuffer = 0;
+    //m_heightMap = 0;
 
 }
 
@@ -684,7 +684,7 @@ void Environment::UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vecto
 
 ///////////////////////////////////////////////////////////////////////
 // testing height map implementation
-
+/*
 bool Environment::LoadHeightMap2(char* filename)
 {
     FILE* filePtr;                            // Point to the current position in the file
@@ -756,7 +756,9 @@ bool Environment::LoadHeightMap2(char* filename)
 
     return true;
 }
+*/
 
+/*
 bool Environment::LoadHeightMap(char* filename)
 {
     FILE* filePtr;
@@ -783,10 +785,10 @@ bool Environment::LoadHeightMap(char* filename)
     {
         return 0;
     }
-    */
+    ///*/
 
     // Read in the file header.
-    ///*
+    /*
     count = fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
     if (count != 1)
     {
@@ -794,7 +796,7 @@ bool Environment::LoadHeightMap(char* filename)
     }
     //*/
     //fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
-
+/*
     // Read in the bitmap info header.    
     count = fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
     if (count != 1)

@@ -23,6 +23,7 @@
     <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="sounds.h" />
+    <ClInclude Include="TerrainClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -38,6 +39,7 @@
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="TerrainClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -99,12 +101,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="myfile.spritefont" />
-    <None Include="bitwise16.spritefont" />
-    <None Include="audioBank.xwb" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CharacterSpriteSheetData.txt" />
+    <None Include="audioBank.xwb">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="bitwise16.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="myfile.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="AudioCoinPlay.wav">

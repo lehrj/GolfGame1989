@@ -23,7 +23,7 @@
 //#include <stdlib.h>
 //#include <string.h>
 
-#include <wingdi.h>
+//#include <wingdi.h>
 #include "Utility.h"
 //#include <stdio.h>
 //#include <d3d11.h>
@@ -52,7 +52,7 @@ typedef struct tagBITMAPINFOHEADER {
     DWORD      biClrImportant;
 } BITMAPINFOHEADER, FAR* LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
 */
-
+/*
 typedef struct tagBITMAPINFOHEADER {
     DWORD biSize;
     LONG  biWidth;
@@ -76,6 +76,7 @@ typedef struct tagBITMAPFILEHEADER {
     DWORD bfOffBits;
 } BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
 #pragma pack() 
+*/
 
 struct Environ
 {
@@ -124,22 +125,17 @@ struct Fixture
     FixtureType                     fixtureType;  // think of a better name later
     float                           animationVariation;
     float                           distanceToCamera;
-
 };
 
 // Class to handle environment and gameplay world needs
 class Environment
 {
-
+    /*
 // height map testing
 private:
     struct VertexType
     {
-        /*
-        D3DXVECTOR3 position;
-        D3DXVECTOR2 texture;
-        D3DXVECTOR3 normal;
-        */
+
         DirectX::XMFLOAT3 position;
         DirectX::XMFLOAT4 color;
         DirectX::XMFLOAT3 normal;
@@ -159,6 +155,8 @@ private:
         int terrainHeight;        // Height (Length) of heightmap
         DirectX::XMFLOAT3* heightMap;    // Array to store terrain's vertex positions
     };
+    */
+
 public:
     Environment();
     
@@ -245,6 +243,7 @@ private:
 
 
     // testing heightmap
+    /*
     bool LoadHeightMap(char*);
     bool LoadHeightMap2(char*);
     bool InitializeBuffers(ID3D11Device*);
@@ -264,5 +263,6 @@ public:
     void RenderHeightMap(ID3D11DeviceContext*);
 
     bool GetHeightAtPosition(float, float, float&);
+    */
 };
 

@@ -23,8 +23,9 @@ Game::Game() noexcept :
     pPlay = new GolfPlay;
 
     pCamera = new Camera(m_outputWidth, m_outputHeight);
-
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
+
+    pTerrain = new TerrainClass();
 
     if (m_isInDebugMode == false)
     {
@@ -49,6 +50,7 @@ Game::~Game()
     delete pGolf;
     delete pPlay;
     delete pCamera;
+    delete pTerrain;
 }
 
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
@@ -395,7 +397,7 @@ void Game::CreateResources()
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
     const float viewPlaneNear = 0.0001f;
-    const float viewPlaneFar = 10.0f;
+    const float viewPlaneFar = 300.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -3752,13 +3754,15 @@ void Game::Initialize(HWND window, int width, int height)
 
 
     // height map testing
+    /*
     //bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "../GolfGame1989/heightmap01.bmp");
     bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "heightmap01.bmp");
     if (result == false)
     {
         // error checking here
     }
-
+    */
+    pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
 }
 
 // Message handlers
@@ -3902,9 +3906,12 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     
+    
     m_batch->Begin();
-
+    
     //pGolf->RenderEnvironHeightMap(m_d3dContext.Get());
+    
+    //pTerrain->Render(m_d3dContext.Get());
 
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
