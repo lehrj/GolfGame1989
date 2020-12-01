@@ -444,14 +444,6 @@ void Game::CreateResources()
 
     m_powerMeterBarScale = 1.0f - (pPlay->GetMeterImpactPoint() / pPlay->GetMeterLength());
 
-    // test char
-    /*
-    m_testTexRect.left = static_cast<long>((backBufferWidth / 2.f) - m_powerBarFrameOrigin.x);
-    m_testTexRect.right = static_cast<long>((backBufferWidth / 2.f) + m_powerBarFrameOrigin.x);
-    m_testTexRect.top = static_cast<long>((backBufferHeight / 1.08f) - m_powerBarFrameOrigin.y);
-    m_testTexRect.bottom = static_cast<long>((backBufferHeight / 1.08f) + m_powerBarFrameOrigin.y);
-    */
-
     // Character textures  
     m_characterPos.x = backBufferWidth / 2.f;
     m_characterPos.y = backBufferHeight / 2.f;
@@ -483,6 +475,8 @@ void Game::CreateResources()
     m_jiLogoPos.y = backBufferHeight / 2.f;
     // End Texture
 
+    // heightmap load
+    pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
 }
 
 void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
@@ -3762,7 +3756,7 @@ void Game::Initialize(HWND window, int width, int height)
         // error checking here
     }
     */
-    pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
+    //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
 }
 
 // Message handlers
@@ -3903,15 +3897,11 @@ void Game::Render()
 
     m_effect->Apply(m_d3dContext.Get());
 
-    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-
-    
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
     
     m_batch->Begin();
     
-    //pGolf->RenderEnvironHeightMap(m_d3dContext.Get());
-    
-    //pTerrain->Render(m_d3dContext.Get());
+    pTerrain->Render(m_d3dContext.Get());
 
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
@@ -3937,11 +3927,11 @@ void Game::Render()
             //DrawDebugLines();
         }
     }
-
+    
     m_batch->End();
-
+    
     m_spriteBatch->Begin();
-
+    
     //DrawShotTimerUI();
 
     if (m_currentGameState == GameState::GAMESTATE_INTROSCREEN)

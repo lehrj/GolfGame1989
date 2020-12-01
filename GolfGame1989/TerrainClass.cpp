@@ -139,8 +139,8 @@ bool TerrainClass::LoadHeightMap(char* filename)
 	}
 
 	// Create the structure to hold the height map data.
-	//m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
-	m_heightMap = new DirectX::VertexPositionNormalColor[m_terrainWidth * m_terrainHeight];
+	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
+	//m_heightMap = new DirectX::VertexPositionNormalColor[m_terrainWidth * m_terrainHeight];
 
 	if (!m_heightMap)
 	{
@@ -158,26 +158,26 @@ bool TerrainClass::LoadHeightMap(char* filename)
 			height = bitmapImage[k];
 
 			index = (m_terrainHeight * j) + i;
+			
+			//m_heightMap[index].position.x = (float)i;
+			//m_heightMap[index].position.y = (float)height;
+			//m_heightMap[index].position.z = (float)j;
 
-			m_heightMap[index].position.x = (float)i;
-			m_heightMap[index].position.y = (float)height;
-			m_heightMap[index].position.z = (float)j;
-
-			m_heightMap[index].color = DirectX::SimpleMath::Color(1.0, 1.0, 1.0, 1.0);
-
+			//m_heightMap[index].color = DirectX::SimpleMath::Color(1.0, 1.0, 1.0, 1.0);
+			
 			/*
 			m_heightMap[index].vertPosNormColor.position.x = (float)i;
 			m_heightMap[index].vertPosNormColor.position.y = (float)height;
 			m_heightMap[index].vertPosNormColor.position.z = (float)j;
 			*/
-			/*
+			
 			m_heightMap[index].x = (float)i;
 			m_heightMap[index].y = (float)height;
 			m_heightMap[index].z = (float)j;
-			*/
+			
 			k += 3;
 
-			m_testVertVec.push_back(m_heightMap[index]);
+			//m_testVertVec.push_back(m_heightMap[index]);
 		}
 	}
 
@@ -196,9 +196,9 @@ void TerrainClass::NormalizeHeightMap()
 	{
 		for (i = 0; i < m_terrainWidth; i++)
 		{
-			m_heightMap[(m_terrainHeight * j) + i].position.y /= 15.0f;
+			//m_heightMap[(m_terrainHeight * j) + i].position.y /= 15.0f;
 			//m_heightMap[(m_terrainHeight * j) + i].vertPosNormColor.position.y /= 15.0f;
-			//m_heightMap[(m_terrainHeight * j) + i].y /= 15.0f;
+			m_heightMap[(m_terrainHeight * j) + i].y /= 15.0f;
 		}
 	}
 
@@ -226,7 +226,6 @@ bool TerrainClass::InitializeBuffers(ID3D11Device* device)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 	int index1, index2, index3, index4;
-
 
 	// Calculate the number of vertices in the terrain mesh.
 	m_vertexCount = (m_terrainWidth - 1) * (m_terrainHeight - 1) * 12;
@@ -257,85 +256,206 @@ bool TerrainClass::InitializeBuffers(ID3D11Device* device)
 	{
 		for (i = 0; i < (m_terrainWidth - 1); i++)
 		{
+
 			index1 = (m_terrainHeight * j) + i;          // Bottom left.
 			index2 = (m_terrainHeight * j) + (i + 1);      // Bottom right.
 			index3 = (m_terrainHeight * (j + 1)) + i;      // Upper left.
 			index4 = (m_terrainHeight * (j + 1)) + (i + 1);  // Upper right.
 
+															 // Upper left.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Upper right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Upper right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom left.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom left.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
 			// Upper left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].position.x, m_heightMap[index3].position.y, m_heightMap[index3].position.z);
-			//vertices[index].position = D3DXVECTOR3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom left.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Upper right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Upper right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].x, m_heightMap[index2].y, m_heightMap[index2].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom right.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].x, m_heightMap[index2].y, m_heightMap[index2].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+
+			// Bottom left.
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+			/*
+			index1 = (m_terrainHeight * j) + i;          // Bottom left.
+			index2 = (m_terrainHeight * j) + (i + 1);      // Bottom right.
+			index3 = (m_terrainHeight * (j + 1)) + i;      // Upper left.
+			index4 = (m_terrainHeight * (j + 1)) + (i + 1);  // Upper right.
+
+			/*
+			// Upper left.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].position.x, m_heightMap[index3].position.y, m_heightMap[index3].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
 			//vertices[index].color = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
 			indices[index] = index;
 			index++;
-
+			
 			// Upper right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
-
-			// Upper right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			
+			// Bottom right.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].position.x, m_heightMap[index2].position.y, m_heightMap[index2].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].x, m_heightMap[index2].y, m_heightMap[index2].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
-
+		
 			// Bottom left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
-
-			// Bottom left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
-			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-			indices[index] = index;
-			index++;
-
+			*/
+			///////////////////////////////////////////////////////////////////////////////////////////////
+			/*
 			// Upper left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].position.x, m_heightMap[index3].position.y, m_heightMap[index3].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].position.x, m_heightMap[index3].position.y, m_heightMap[index3].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
+			//vertices[index].color = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+			
+			// Upper right.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+		
+			// Upper right.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+			
+			// Bottom left.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+			
+			// Bottom left.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
+			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			indices[index] = index;
+			index++;
+			
+			// Upper left.
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].position.x, m_heightMap[index3].position.y, m_heightMap[index3].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index3].x, m_heightMap[index3].y, m_heightMap[index3].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Bottom left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Upper right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Upper right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].position.x, m_heightMap[index4].position.y, m_heightMap[index4].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index4].x, m_heightMap[index4].y, m_heightMap[index4].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Bottom right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].position.x, m_heightMap[index2].position.y, m_heightMap[index2].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].position.x, m_heightMap[index2].position.y, m_heightMap[index2].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].x, m_heightMap[index2].y, m_heightMap[index2].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Bottom right.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].position.x, m_heightMap[index2].position.y, m_heightMap[index2].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].position.x, m_heightMap[index2].position.y, m_heightMap[index2].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index2].x, m_heightMap[index2].y, m_heightMap[index2].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
 			index++;
 
 			// Bottom left.
-			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			//vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].position.x, m_heightMap[index1].position.y, m_heightMap[index1].position.z);
+			vertices[index].position = DirectX::XMFLOAT3(m_heightMap[index1].x, m_heightMap[index1].y, m_heightMap[index1].z);
 			vertices[index].color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 			indices[index] = index;
-			index++;
+			index++;			
+			*/
 		}
 	}
 
@@ -390,7 +510,6 @@ bool TerrainClass::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-
 void TerrainClass::ShutdownBuffers()
 {
 	// Release the index buffer.
@@ -410,15 +529,14 @@ void TerrainClass::ShutdownBuffers()
 	return;
 }
 
-
 void TerrainClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
 
 	// Set vertex buffer stride and offset.
-	//stride = sizeof(VertexType);
-	stride = sizeof(DirectX::VertexPositionNormalColor);
+	stride = sizeof(VertexType);
+	//stride = sizeof(DirectX::VertexPositionNormalColor);
 	offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.

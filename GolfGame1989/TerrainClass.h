@@ -1,5 +1,8 @@
 #pragma once
 
+#include <d3d11.h>
+#include "DDSTextureLoader.h"
+
 
 typedef struct tagBITMAPINFOHEADER {
     DWORD biSize;
@@ -35,16 +38,18 @@ private:
     {       
         DirectX::XMFLOAT3 position;
         DirectX::XMFLOAT4 color;
-        DirectX::XMFLOAT3 normal;
+        //DirectX::XMFLOAT3 normal;
     };
+    
     
     struct HeightMapType
     {
-        DirectX::VertexPositionNormalColor vertPosNormColor;
-        //float x, y, z;
+        //DirectX::VertexPositionNormalColor vertPosNormColor;
+        float x, y, z;
         //float tu, tv;
         //float nx, ny, nz;
     };
+    
     /*
     struct VectorType
     {
@@ -78,12 +83,16 @@ private:
     void RenderBuffers(ID3D11DeviceContext*);
 
 private:
-    int m_terrainWidth, m_terrainHeight;
-    int m_vertexCount, m_indexCount;
-    ID3D11Buffer* m_vertexBuffer, * m_indexBuffer;
-    //HeightMapType* m_heightMap;
+    
+    int m_terrainHeight;
+    int m_terrainWidth;
+    int m_vertexCount;
+    int m_indexCount;
+    ID3D11Buffer* m_vertexBuffer;
+    ID3D11Buffer* m_indexBuffer;
+    HeightMapType* m_heightMap;
 
-    DirectX::VertexPositionNormalColor* m_heightMap;
+    //DirectX::VertexPositionNormalColor* m_heightMap;
 
     std::vector < DirectX::VertexPositionNormalColor> m_testVertVec;
 };
