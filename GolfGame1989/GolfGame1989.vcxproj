@@ -163,6 +163,7 @@
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Environment.h" />
+    <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Golf.h" />
     <ClInclude Include="GolfBag.h" />
@@ -174,13 +175,16 @@
     <ClInclude Include="sounds.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="TerrainCellClass.h" />
     <ClInclude Include="TerrainClass.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
+    <ClInclude Include="ZoneClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Golf.cpp" />
     <ClCompile Include="GolfBag.cpp" />
@@ -195,9 +199,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TerrainCellClass.cpp" />
     <ClCompile Include="TerrainClass.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Vector4d.cpp" />
+    <ClCompile Include="ZoneClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

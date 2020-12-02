@@ -476,7 +476,8 @@ void Game::CreateResources()
     // End Texture
 
     // heightmap load
-    pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
+    //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
+    pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
 }
 
 void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
@@ -3900,8 +3901,8 @@ void Game::Render()
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
     
     m_batch->Begin();
-    
-    pTerrain->Render(m_d3dContext.Get());
+
+    //pTerrain->Render(m_d3dContext.Get());
 
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)

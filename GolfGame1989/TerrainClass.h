@@ -1,99 +1,141 @@
+////////////////////////////////////////////////////////////////////////////////
+// Filename: terrainclass.h
+////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#ifndef _TERRAINCLASS_H_
+#define _TERRAINCLASS_H_
+
+
+//////////////
+// INCLUDES //
+//////////////
+#include <fstream>
 #include <d3d11.h>
-#include "DDSTextureLoader.h"
+#include <DirectXMath.h>
+#include <stdio.h>
+using namespace DirectX;
+
+
+///////////////////////
+// MY CLASS INCLUDES //
+///////////////////////
+#include "terraincellclass.h"
+#include "frustumclass.h"
 
 
 typedef struct tagBITMAPINFOHEADER {
-    DWORD biSize;
-    LONG  biWidth;
-    LONG  biHeight;
-    WORD  biPlanes;
-    WORD  biBitCount;
-    DWORD biCompression;
-    DWORD biSizeImage;
-    LONG  biXPelsPerMeter;
-    LONG  biYPelsPerMeter;
-    DWORD biClrUsed;
-    DWORD biClrImportant;
+	DWORD biSize;
+	LONG  biWidth;
+	LONG  biHeight;
+	WORD  biPlanes;
+	WORD  biBitCount;
+	DWORD biCompression;
+	DWORD biSizeImage;
+	LONG  biXPelsPerMeter;
+	LONG  biYPelsPerMeter;
+	DWORD biClrUsed;
+	DWORD biClrImportant;
 } BITMAPINFOHEADER, * LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
 
 #pragma pack(2) 
 typedef struct tagBITMAPFILEHEADER {
-    WORD  bfType;
-    DWORD bfSize;
-    WORD  bfReserved1;
-    WORD  bfReserved2;
-    DWORD bfOffBits;
+	WORD  bfType;
+	DWORD bfSize;
+	WORD  bfReserved1;
+	WORD  bfReserved2;
+	DWORD bfOffBits;
 } BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
 #pragma pack() 
 
-
+////////////////////////////////////////////////////////////////////////////////
+// Class name: TerrainClass
+////////////////////////////////////////////////////////////////////////////////
 class TerrainClass
 {
-    // height map testing
 private:
-    
-    struct VertexType
-    {       
-        DirectX::XMFLOAT3 position;
-        DirectX::XMFLOAT4 color;
-        //DirectX::XMFLOAT3 normal;
-    };
-    
-    
-    struct HeightMapType
-    {
-        //DirectX::VertexPositionNormalColor vertPosNormColor;
-        float x, y, z;
-        //float tu, tv;
-        //float nx, ny, nz;
-    };
-    
-    /*
-    struct VectorType
-    {
-        float x, y, z;
-    };
-    struct HeightMapInfo {        // Heightmap structure
-        int terrainWidth;        // Width of heightmap
-        int terrainHeight;        // Height (Length) of heightmap
-        DirectX::XMFLOAT3* heightMap;    // Array to store terrain's vertex positions
-    };
-    */
+	struct VertexType
+	{
+		XMFLOAT3 position;
+		//XMFLOAT2 texture;
+		XMFLOAT3 normal;
+		XMFLOAT4 color;
+	};
+
+	struct HeightMapType
+	{
+		float x, y, z;
+		//float tu, tv;
+		float nx, ny, nz;
+		float r, g, b;
+	};
+
+	struct ModelType
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+		float tx, ty, tz;
+		float bx, by, bz;
+		float r, g, b;
+	};
+	struct VectorType
+	{
+		float x, y, z;
+	};
+
+	struct TempVertexType
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+	};
 
 public:
-    TerrainClass();
-    TerrainClass(const TerrainClass&);
-    ~TerrainClass();
+	TerrainClass();
+	TerrainClass(const TerrainClass&);
+	~TerrainClass();
 
-    bool Initialize(ID3D11Device*, char*);
-    void Shutdown();
-    void Render(ID3D11DeviceContext*);
+	bool Initialize(ID3D11Device*, char*);
+	void Shutdown();
+	void Frame();
 
-    int GetIndexCount();
+	bool RenderCell(ID3D11DeviceContext*, int, FrustumClass*);
+	void RenderCellLines(ID3D11DeviceContext*, int);
+
+	int GetCellIndexCount(int);
+	int GetCellLinesIndexCount(int);
+	int GetCellCount();
+	int GetRenderCount();
+	int GetCellsDrawn();
+	int GetCellsCulled();
+
+	bool GetHeightAtPosition(float, float, float&);
 
 private:
-    bool LoadHeightMap(char*);
-    void NormalizeHeightMap();
-    void ShutdownHeightMap();
-
-    bool InitializeBuffers(ID3D11Device*);
-    void ShutdownBuffers();
-    void RenderBuffers(ID3D11DeviceContext*);
+	bool LoadSetupFile(char*);
+	bool LoadRawHeightMap();
+	void ShutdownHeightMap();
+	void SetTerrainCoordinates();
+	bool CalculateNormals();
+	bool LoadColorMap();
+	bool BuildTerrainModel();
+	void ShutdownTerrainModel();
+	void CalculateTerrainVectors();
+	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
+	bool LoadTerrainCells(ID3D11Device*);
+	void ShutdownTerrainCells();
+	bool CheckHeightOfTriangle(float, float, float&, float[3], float[3], float[3]);
 
 private:
-    
-    int m_terrainHeight;
-    int m_terrainWidth;
-    int m_vertexCount;
-    int m_indexCount;
-    ID3D11Buffer* m_vertexBuffer;
-    ID3D11Buffer* m_indexBuffer;
-    HeightMapType* m_heightMap;
-
-    //DirectX::VertexPositionNormalColor* m_heightMap;
-
-    std::vector < DirectX::VertexPositionNormalColor> m_testVertVec;
+	int m_terrainHeight, m_terrainWidth, m_vertexCount;
+	float m_heightScale;
+	char* m_terrainFilename, * m_colorMapFilename;
+	HeightMapType* m_heightMap;
+	ModelType* m_terrainModel;
+	TerrainCellClass* m_TerrainCells;
+	int m_cellCount, m_renderCount, m_cellsDrawn, m_cellsCulled;
 };
 
+
+#endif

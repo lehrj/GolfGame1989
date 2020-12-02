@@ -70,6 +70,7 @@
 #define _WIN32_WInNT 0x0A00  // for Windows 7 support set _WIN32_WINT to 0x0601
 #include <sdkddkver.h>
 
+//#include <wingdi.h>
 // end
 
 namespace DX

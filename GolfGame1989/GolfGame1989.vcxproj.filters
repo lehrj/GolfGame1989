@@ -24,6 +24,9 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="sounds.h" />
     <ClInclude Include="TerrainClass.h" />
+    <ClInclude Include="TerrainCellClass.h" />
+    <ClInclude Include="FrustumClass.h" />
+    <ClInclude Include="ZoneClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -40,6 +43,9 @@
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="TerrainClass.cpp" />
+    <ClCompile Include="TerrainCellClass.cpp" />
+    <ClCompile Include="FrustumClass.cpp" />
+    <ClCompile Include="ZoneClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

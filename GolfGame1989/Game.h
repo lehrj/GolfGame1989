@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "sounds.h"
 #include "TerrainClass.h"
+#include "ZoneClass.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -102,6 +103,7 @@ private:
     Golf* pGolf;
     GolfPlay* pPlay;
     TerrainClass* pTerrain;
+    ZoneClass* pZone;
 
     // Device resources.
     HWND                                            m_window;
