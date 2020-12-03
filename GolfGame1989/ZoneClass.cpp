@@ -4,12 +4,12 @@
 
 ZoneClass::ZoneClass()
 {
-	m_UserInterface = 0;
-	m_Camera = 0;
-	m_Light = 0;
-	m_Position = 0;
+	//m_UserInterface = 0;
+	//m_Camera = 0;
+	//m_Light = 0;
+	//m_Position = 0;
 	m_Frustum = 0;
-	m_SkyDome = 0;
+	//m_SkyDome = 0;
 	m_Terrain = 0;
 }
 
@@ -24,18 +24,18 @@ ZoneClass::~ZoneClass()
 }
 
 
-bool ZoneClass::Initialize(D3DClass* Direct3D, HWND hwnd, int screenWidth, int screenHeight, float screenDepth)
+bool ZoneClass::Initialize(ID3D11Device1* Direct3D, HWND hwnd, int screenWidth, int screenHeight, float screenDepth)
 {
 	bool result;
 
-
+	/*
 	// Create the user interface object.
 	m_UserInterface = new UserInterfaceClass;
 	if (!m_UserInterface)
 	{
 		return false;
 	}
-
+	
 	// Initialize the user interface object.
 	result = m_UserInterface->Initialize(Direct3D, screenHeight, screenWidth);
 	if (!result)
@@ -84,10 +84,11 @@ bool ZoneClass::Initialize(D3DClass* Direct3D, HWND hwnd, int screenWidth, int s
 	{
 		return false;
 	}
-
+	*/
 	// Initialize the frustum object.
 	m_Frustum->Initialize(screenDepth);
 
+	/*
 	// Create the sky dome object.
 	m_SkyDome = new SkyDomeClass;
 	if (!m_SkyDome)
@@ -102,6 +103,7 @@ bool ZoneClass::Initialize(D3DClass* Direct3D, HWND hwnd, int screenWidth, int s
 		MessageBox(hwnd, L"Could not initialize the sky dome object.", L"Error", MB_OK);
 		return false;
 	}
+	*/
 
 	// Create the terrain object.
 	m_Terrain = new TerrainClass;
@@ -109,17 +111,20 @@ bool ZoneClass::Initialize(D3DClass* Direct3D, HWND hwnd, int screenWidth, int s
 	{
 		return false;
 	}
+	
 
 	// Initialize the terrain object.
+	/*
 	result = m_Terrain->Initialize(Direct3D->GetDevice(), "../Engine/data/setup.txt");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the terrain object.", L"Error", MB_OK);
 		return false;
 	}
+	*/
 
 	// Set the UI to display by default.
-	m_displayUI = true;
+	//m_displayUI = true;
 
 	// Set wire frame rendering initially to disabled.
 	m_wireFrame = false;
@@ -144,13 +149,16 @@ void ZoneClass::Shutdown()
 		m_Terrain = 0;
 	}
 
+
 	// Release the sky dome object.
+	/*
 	if (m_SkyDome)
 	{
 		m_SkyDome->Shutdown();
 		delete m_SkyDome;
 		m_SkyDome = 0;
 	}
+	*/
 
 	// Release the frustum object.
 	if (m_Frustum)
@@ -159,6 +167,7 @@ void ZoneClass::Shutdown()
 		m_Frustum = 0;
 	}
 
+	/*
 	// Release the position object.
 	if (m_Position)
 	{
@@ -187,18 +196,17 @@ void ZoneClass::Shutdown()
 		delete m_UserInterface;
 		m_UserInterface = 0;
 	}
-
+	*/
 	return;
 }
 
 
-bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass* ShaderManager, TextureManagerClass* TextureManager,
-	float frameTime, int fps)
+bool ZoneClass::Frame(ID3D11DeviceContext1* Direct3D, float frameTime, int fps)
 {
 	bool result, foundHeight;
 	float posX, posY, posZ, rotX, rotY, rotZ, height;
 
-
+	/*
 	// Do the frame input processing.
 	HandleMovementInput(Input, frameTime);
 
@@ -212,11 +220,13 @@ bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass*
 	{
 		return false;
 	}
+	*/
 
 	// Do the terrain frame processing.
 	m_Terrain->Frame();
 
 	// If the height is locked to the terrain then position the camera on top of it.
+	/*
 	if (m_heightLocked)
 	{
 		// Get the height of the triangle that is directly underneath the given camera position.
@@ -228,9 +238,9 @@ bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass*
 			m_Camera->SetPosition(posX, height + 1.0f, posZ);
 		}
 	}
-
+	*/
 	// Render the graphics.
-	result = Render(Direct3D, ShaderManager, TextureManager);
+	result = Render(Direct3D);
 	if (!result)
 	{
 		return false;
@@ -240,7 +250,8 @@ bool ZoneClass::Frame(D3DClass* Direct3D, InputClass* Input, ShaderManagerClass*
 }
 
 
-void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime)
+//void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime)
+/*
 {
 	bool keyDown;
 	float posX, posY, posZ, rotX, rotY, rotZ;
@@ -308,9 +319,14 @@ void ZoneClass::HandleMovementInput(InputClass* Input, float frameTime)
 
 	return;
 }
+*/
 
-
-bool ZoneClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderManager, TextureManagerClass* TextureManager)
+bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
+{
+	return false;
+}
+//bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
+/*
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, baseViewMatrix, orthoMatrix;
 	bool result;
@@ -369,6 +385,7 @@ bool ZoneClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderManager, Te
 	// Render the terrain cells (and cell lines if needed).
 	for (i = 0; i < m_Terrain->GetCellCount(); i++)
 	{
+		
 		// Render each terrain cell if it is visible only.
 		result = m_Terrain->RenderCell(Direct3D->GetDeviceContext(), i, m_Frustum);
 		if (result)
@@ -425,3 +442,4 @@ bool ZoneClass::Render(D3DClass* Direct3D, ShaderManagerClass* ShaderManager, Te
 
 	return true;
 }
+*/

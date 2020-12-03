@@ -20,21 +20,23 @@ public:
 	ZoneClass(const ZoneClass&);
 	~ZoneClass();
 
-	bool Initialize(D3DClass*, HWND, int, int, float);
+	//bool Initialize(D3DClass*, HWND, int, int, float);
+	bool Initialize(ID3D11Device1*, HWND, int, int, float);
 	void Shutdown();
-	bool Frame(D3DClass*, InputClass*, ShaderManagerClass*, TextureManagerClass*, float, int);
+	//bool Frame(D3DClass*, InputClass*, ShaderManagerClass*, TextureManagerClass*, float, int);
+	bool Frame(ID3D11DeviceContext1*, float, int);
 
 private:
-	void HandleMovementInput(InputClass*, float);
-	bool Render(D3DClass*, ShaderManagerClass*, TextureManagerClass*);
-
+	//void HandleMovementInput(InputClass*, float);
+	//bool Render(D3DClass*, ShaderManagerClass*, TextureManagerClass*);
+	bool Render(ID3D11DeviceContext1*);
 private:
-	UserInterfaceClass* m_UserInterface;
-	CameraClass* m_Camera;
-	LightClass* m_Light;
-	PositionClass* m_Position;
+	//UserInterfaceClass* m_UserInterface;
+	//CameraClass* m_Camera;
+	//LightClass* m_Light;
+	//PositionClass* m_Position;
 	FrustumClass* m_Frustum;
-	SkyDomeClass* m_SkyDome;
+	//SkyDomeClass* m_SkyDome;
 	TerrainClass* m_Terrain;
 	bool m_displayUI, m_wireFrame, m_cellLines, m_heightLocked;
 };
