@@ -21,14 +21,16 @@ public:
 	~ZoneClass();
 
 	//bool Initialize(D3DClass*, HWND, int, int, float);
-	bool Initialize(ID3D11Device1*, HWND, int, int, float);
+	bool Initialize(ID3D11Device1*);
 	void Shutdown();
 	//bool Frame(D3DClass*, InputClass*, ShaderManagerClass*, TextureManagerClass*, float, int);
-	bool Frame(ID3D11DeviceContext1*, float, int);
+	//bool Frame(ID3D11DeviceContext1*, float, int);
+	bool Frame(ID3D11DeviceContext1*);
 
 private:
 	//void HandleMovementInput(InputClass*, float);
 	//bool Render(D3DClass*, ShaderManagerClass*, TextureManagerClass*);
+	bool RenderOld(ID3D11DeviceContext1*);
 	bool Render(ID3D11DeviceContext1*);
 private:
 	//UserInterfaceClass* m_UserInterface;

@@ -125,7 +125,7 @@ private:
 
     // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
-
+    //using VertexType = DirectX::VertexPositionNormalColor;
     std::unique_ptr<DirectX::CommonStates>          m_states;
     std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
@@ -206,13 +206,6 @@ private:
     DirectX::SimpleMath::Vector2                    m_powerBarMeterOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarImpactOrigin;
     DirectX::SimpleMath::Vector2                    m_powerBarBackswingOrigin;
-
-    /*
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_testTex;
-    DirectX::SimpleMath::Vector2                    m_testTexPos;
-    DirectX::SimpleMath::Vector2                    m_testTexOrigin;
-    RECT                                            m_testTexRect;
-    */
 
     RECT                                            m_powerMeterBarRect;
     RECT                                            m_powerMeterFrameRect;

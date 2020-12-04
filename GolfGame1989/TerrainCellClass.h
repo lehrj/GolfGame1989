@@ -1,8 +1,8 @@
 #pragma once
 
-#include <d3d11.h>
-#include <directxmath.h>
-using namespace DirectX;
+//#include <d3d11.h>
+//#include <directxmath.h>
+//using namespace DirectX;
 
 
 class TerrainCellClass
@@ -20,12 +20,12 @@ private:
 
 	struct VertexType
 	{
-		XMFLOAT3 position;
-		XMFLOAT2 texture;
-		XMFLOAT3 normal;
-		XMFLOAT3 tangent;
-		XMFLOAT3 binormal;
-		XMFLOAT3 color;
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT2 texture;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT3 tangent;
+		DirectX::XMFLOAT3 binormal;
+		DirectX::XMFLOAT3 color;
 	};
 
 	struct VectorType
@@ -35,8 +35,8 @@ private:
 
 	struct ColorVertexType
 	{
-		XMFLOAT3 position;
-		XMFLOAT4 color;
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT4 color;
 	};
 
 public:

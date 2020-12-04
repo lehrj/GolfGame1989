@@ -25,11 +25,11 @@ void FrustumClass::Initialize(float screenDepth)
 }
 
 
-void FrustumClass::ConstructFrustum(XMMATRIX projectionMatrix, XMMATRIX viewMatrix)
+void FrustumClass::ConstructFrustum(DirectX::XMMATRIX projectionMatrix, DirectX::XMMATRIX viewMatrix)
 {
-	XMFLOAT4X4 pMatrix, matrix;
+	DirectX::XMFLOAT4X4 pMatrix, matrix;
 	float zMinimum, r, length;
-	XMMATRIX finalMatrix;
+	DirectX::XMMATRIX finalMatrix;
 
 
 	// Convert the projection matrix into a 4x4 float type.

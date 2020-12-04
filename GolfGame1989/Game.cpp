@@ -25,7 +25,8 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
 
-    pTerrain = new TerrainClass();
+    //pTerrain = new TerrainClass();
+    pZone = new ZoneClass();
 
     if (m_isInDebugMode == false)
     {
@@ -50,7 +51,8 @@ Game::~Game()
     delete pGolf;
     delete pPlay;
     delete pCamera;
-    delete pTerrain;
+    //delete pTerrain;
+    delete pZone;
 }
 
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
@@ -397,7 +399,7 @@ void Game::CreateResources()
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
     const float viewPlaneNear = 0.0001f;
-    const float viewPlaneFar = 300.0f;
+    const float viewPlaneFar = 3000.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -477,7 +479,8 @@ void Game::CreateResources()
 
     // heightmap load
     //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
-    pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
+    //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
+    pZone->Initialize(m_d3dDevice.Get());
 }
 
 void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
@@ -3757,7 +3760,10 @@ void Game::Initialize(HWND window, int width, int height)
         // error checking here
     }
     */
+
     //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
+    //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
+    
 }
 
 // Message handlers
@@ -3902,6 +3908,7 @@ void Game::Render()
     
     m_batch->Begin();
 
+    pZone->Frame(m_d3dContext.Get());
     //pTerrain->Render(m_d3dContext.Get());
 
     //DrawDebugLines();

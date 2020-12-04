@@ -130,12 +130,12 @@ bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, i
 	{
 		for (i = 0; i < ((cellWidth - 1) * 6); i++)
 		{
-			vertices[index].position = XMFLOAT3(terrainModel[modelIndex].x, terrainModel[modelIndex].y, terrainModel[modelIndex].z);
-			vertices[index].texture = XMFLOAT2(terrainModel[modelIndex].tu, terrainModel[modelIndex].tv);
-			vertices[index].normal = XMFLOAT3(terrainModel[modelIndex].nx, terrainModel[modelIndex].ny, terrainModel[modelIndex].nz);
-			vertices[index].tangent = XMFLOAT3(terrainModel[modelIndex].tx, terrainModel[modelIndex].ty, terrainModel[modelIndex].tz);
-			vertices[index].binormal = XMFLOAT3(terrainModel[modelIndex].bx, terrainModel[modelIndex].by, terrainModel[modelIndex].bz);
-			vertices[index].color = XMFLOAT3(terrainModel[modelIndex].r, terrainModel[modelIndex].g, terrainModel[modelIndex].b);
+			vertices[index].position = DirectX::XMFLOAT3(terrainModel[modelIndex].x, terrainModel[modelIndex].y, terrainModel[modelIndex].z);
+			vertices[index].texture = DirectX::XMFLOAT2(terrainModel[modelIndex].tu, terrainModel[modelIndex].tv);
+			vertices[index].normal = DirectX::XMFLOAT3(terrainModel[modelIndex].nx, terrainModel[modelIndex].ny, terrainModel[modelIndex].nz);
+			vertices[index].tangent = DirectX::XMFLOAT3(terrainModel[modelIndex].tx, terrainModel[modelIndex].ty, terrainModel[modelIndex].tz);
+			vertices[index].binormal = DirectX::XMFLOAT3(terrainModel[modelIndex].bx, terrainModel[modelIndex].by, terrainModel[modelIndex].bz);
+			vertices[index].color = DirectX::XMFLOAT3(terrainModel[modelIndex].r, terrainModel[modelIndex].g, terrainModel[modelIndex].b);
 			indices[index] = index;
 			modelIndex++;
 			index++;
@@ -254,6 +254,7 @@ void TerrainCellClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	return;
 }
@@ -327,12 +328,12 @@ bool TerrainCellClass::BuildLineBuffers(ID3D11Device* device)
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
-	XMFLOAT4 lineColor;
+	DirectX::XMFLOAT4 lineColor;
 	int index, vertexCount, indexCount;
 
 
 	// Set the color of the lines to orange.
-	lineColor = XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f);
+	lineColor = DirectX::XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f);
 
 	// Set the number of vertices in the vertex array.
 	vertexCount = 24;
@@ -384,123 +385,123 @@ bool TerrainCellClass::BuildLineBuffers(ID3D11Device* device)
 	index = 0;
 
 	// 8 Horizontal lines.
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
 	// 4 Verticle lines.
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_maxDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_maxWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_maxHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 	index++;
 
-	vertices[index].position = XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
+	vertices[index].position = DirectX::XMFLOAT3(m_minWidth, m_minHeight, m_minDepth);
 	vertices[index].color = lineColor;
 	indices[index] = index;
 

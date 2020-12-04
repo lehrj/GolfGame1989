@@ -11,10 +11,10 @@
 // INCLUDES //
 //////////////
 #include <fstream>
-#include <d3d11.h>
-#include <DirectXMath.h>
+//#include <d3d11.h>
+//#include <DirectXMath.h>
 #include <stdio.h>
-using namespace DirectX;
+//using namespace DirectX;
 
 
 ///////////////////////
@@ -56,10 +56,10 @@ class TerrainClass
 private:
 	struct VertexType
 	{
-		XMFLOAT3 position;
+		DirectX::XMFLOAT3 position;
 		//XMFLOAT2 texture;
-		XMFLOAT3 normal;
-		XMFLOAT4 color;
+		DirectX::XMFLOAT3 normal;
+		DirectX::XMFLOAT4 color;
 	};
 
 	struct HeightMapType
@@ -100,7 +100,8 @@ public:
 	void Shutdown();
 	void Frame();
 
-	bool RenderCell(ID3D11DeviceContext*, int, FrustumClass*);
+	//bool RenderCell(ID3D11DeviceContext*, int, FrustumClass*);
+	bool RenderCell(ID3D11DeviceContext*, int);
 	void RenderCellLines(ID3D11DeviceContext*, int);
 
 	int GetCellIndexCount(int);

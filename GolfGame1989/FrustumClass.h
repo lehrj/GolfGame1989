@@ -1,6 +1,6 @@
 #pragma once
-#include <directxmath.h>
-using namespace DirectX;
+//#include <directxmath.h>
+//using namespace DirectX;
 
 class FrustumClass
 {
@@ -11,7 +11,7 @@ public:
 
 	void Initialize(float);
 
-	void ConstructFrustum(XMMATRIX, XMMATRIX);
+	void ConstructFrustum(DirectX::XMMATRIX, DirectX::XMMATRIX);
 
 	bool CheckPoint(float, float, float);
 	bool CheckCube(float, float, float, float);
