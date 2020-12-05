@@ -60,6 +60,7 @@ private:
 		//XMFLOAT2 texture;
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT4 color;
+		DirectX::VertexPositionNormalColorTexture test;
 	};
 
 	struct HeightMapType

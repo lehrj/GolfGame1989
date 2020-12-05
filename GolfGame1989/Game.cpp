@@ -165,8 +165,9 @@ void Game::CreateDevice()
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
-
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
 
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
@@ -3787,6 +3788,7 @@ void Game::OnDeviceLost()
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
+    m_batch2.reset();
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
@@ -3938,6 +3940,26 @@ void Game::Render()
     
     m_batch->End();
     
+    m_batch2->Begin();
+    const float line = .25f;
+    DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
+    DirectX::SimpleMath::Vector3 yLine = focalPoint;
+    yLine.y += line;
+    DirectX::SimpleMath::Vector3 xLine = focalPoint;
+    xLine.x += line;
+    DirectX::SimpleMath::Vector3 zLine = focalPoint;
+    zLine.z += line;
+
+    VertexPositionColor origin(focalPoint, Colors::Yellow);
+    VertexPositionColor yOffset(yLine, Colors::Yellow);
+    VertexPositionColor xOffset(xLine, Colors::Yellow);
+    VertexPositionColor zOffset(zLine, Colors::Yellow);
+    m_batch2->DrawLine(origin, yOffset);
+    m_batch2->DrawLine(origin, xOffset);
+    m_batch2->DrawLine(origin, zOffset);
+
+    m_batch2->End();
+
     m_spriteBatch->Begin();
     
     //DrawShotTimerUI();

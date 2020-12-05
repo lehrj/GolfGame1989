@@ -332,7 +332,8 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 	// Construct the frustum.
 	//m_Frustum->ConstructFrustum(projectionMatrix, viewMatrix);
 
-	
+	int testCellCount = m_Terrain->GetCellCount();
+
 	// Render the terrain cells (and cell lines if needed).
 	for (i = 0; i < m_Terrain->GetCellCount(); i++)
 	{
