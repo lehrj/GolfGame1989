@@ -3941,6 +3941,9 @@ void Game::Render()
     m_batch->End();
     
     m_batch2->Begin();
+
+
+
     const float line = .25f;
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
@@ -3957,6 +3960,12 @@ void Game::Render()
     m_batch2->DrawLine(origin, yOffset);
     m_batch2->DrawLine(origin, xOffset);
     m_batch2->DrawLine(origin, zOffset);
+
+    DirectX::SimpleMath::Vector3 testBase(224.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 testTop(256.0, 10.0, 0.0);
+    VertexPositionColor baseVert(testBase, Colors::White);
+    VertexPositionColor topVert(testTop, Colors::White);
+    m_batch2->DrawLine(baseVert, topVert);
 
     m_batch2->End();
 

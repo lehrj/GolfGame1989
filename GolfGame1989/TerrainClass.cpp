@@ -5,7 +5,6 @@
 #include "TerrainClass.h"
 
 
-
 TerrainClass::TerrainClass()
 {
 	m_terrainFilename = 0;
@@ -15,21 +14,17 @@ TerrainClass::TerrainClass()
 	m_TerrainCells = 0;
 }
 
-
 TerrainClass::TerrainClass(const TerrainClass& other)
 {
 }
-
 
 TerrainClass::~TerrainClass()
 {
 }
 
-
 bool TerrainClass::Initialize(ID3D11Device* device, char* setupFilename)
 {
 	bool result;
-
 
 	// Get the terrain filename, dimensions, and so forth from the setup file.
 	result = LoadSetupFile(setupFilename);
@@ -38,12 +33,23 @@ bool TerrainClass::Initialize(ID3D11Device* device, char* setupFilename)
 		return false;
 	}
 
+	
 	// Initialize the terrain height map with the data from the raw file.
 	result = LoadRawHeightMap();
 	if (!result)
 	{
 		return false;
 	}
+	
+
+	// Load in the height map for the terrain.
+	/*
+	result = LoadHeightMap(m_terrainFilename);
+	if (!result)
+	{
+		return false;
+	}
+	*/
 
 	// Setup the X and Z coordinates for the height map as well as scale the terrain height by the height scale value.
 	SetTerrainCoordinates();
@@ -88,7 +94,6 @@ bool TerrainClass::Initialize(ID3D11Device* device, char* setupFilename)
 	return true;
 }
 
-
 void TerrainClass::Shutdown()
 {
 	// Release the terrain cells.
@@ -103,17 +108,13 @@ void TerrainClass::Shutdown()
 	return;
 }
 
-
 void TerrainClass::Frame()
 {
-
-
 	m_renderCount = 0;
 	m_cellsDrawn = 0;
 	m_cellsCulled = 0;
 	return;
 }
-
 
 bool TerrainClass::LoadSetupFile(char* filename)
 {
@@ -199,6 +200,102 @@ bool TerrainClass::LoadSetupFile(char* filename)
 	return true;
 }
 
+bool TerrainClass::LoadHeightMap(char* filename)
+{
+	FILE* filePtr;
+	int error;
+	size_t count;
+	BITMAPFILEHEADER bitmapFileHeader;
+	BITMAPINFOHEADER bitmapInfoHeader;
+	int imageSize, i, j, k, index;
+	unsigned char* bitmapImage;
+	unsigned char height;
+
+	// Open the height map file in binary.
+	error = fopen_s(&filePtr, filename, "rb");
+	if (error != 0)
+	{
+		return false;
+	}
+
+	// Read in the file header.
+	count = fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1, filePtr);
+	if (count != 1)
+	{
+		return false;
+	}
+
+	// Read in the bitmap info header.
+	count = fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
+	if (count != 1)
+	{
+		return false;
+	}
+
+	// Save the dimensions of the terrain.
+	m_terrainWidth = bitmapInfoHeader.biWidth;
+	m_terrainHeight = bitmapInfoHeader.biHeight;
+	
+	// Calculate the size of the bitmap image data.
+	imageSize = m_terrainWidth * m_terrainHeight * 3;
+
+	// Allocate memory for the bitmap image data.
+	bitmapImage = new unsigned char[imageSize];
+	if (!bitmapImage)
+	{
+		return false;
+	}
+
+	// Move to the beginning of the bitmap data.
+	fseek(filePtr, bitmapFileHeader.bfOffBits, SEEK_SET);
+
+	// Read in the bitmap image data.
+	count = fread(bitmapImage, 1, imageSize, filePtr);
+	if (count != imageSize)
+	{
+		return false;
+	}
+
+	// Close the file.
+	error = fclose(filePtr);
+	if (error != 0)
+	{
+		return false;
+	}
+
+	// Create the structure to hold the height map data.
+	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
+	if (!m_heightMap)
+	{
+		return false;
+	}
+
+	// Initialize the position in the image data buffer.
+	k = 0;
+
+	// Read the image data into the height map.
+	for (j = 0; j < m_terrainHeight; j++)
+	{
+		for (i = 0; i < m_terrainWidth; i++)
+		{
+			height = bitmapImage[k];
+
+			index = (m_terrainHeight * j) + i;
+
+			m_heightMap[index].x = (float)i;
+			m_heightMap[index].y = (float)height;
+			m_heightMap[index].z = (float)j;
+
+			k += 3;
+		}
+	}
+
+	// Release the bitmap image data.
+	delete[] bitmapImage;
+	bitmapImage = 0;
+
+	return true;
+}
 
 bool TerrainClass::LoadRawHeightMap()
 {
@@ -206,7 +303,6 @@ bool TerrainClass::LoadRawHeightMap()
 	FILE* filePtr;
 	unsigned long long imageSize, count;
 	unsigned short* rawImage;
-
 
 	// Create the float array to hold the height map data.
 	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
@@ -269,7 +365,6 @@ bool TerrainClass::LoadRawHeightMap()
 	return true;
 }
 
-
 void TerrainClass::ShutdownHeightMap()
 {
 	// Release the height map array.
@@ -282,11 +377,12 @@ void TerrainClass::ShutdownHeightMap()
 	return;
 }
 
-
 void TerrainClass::SetTerrainCoordinates()
 {
 	int i, j, index;
 
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
 
 	// Loop through all the elements in the height map array and adjust their coordinates correctly.
 	for (j = 0; j < m_terrainHeight; j++)
@@ -304,19 +400,24 @@ void TerrainClass::SetTerrainCoordinates()
 
 			// Scale the height.
 			m_heightMap[index].y /= m_heightScale;
+
+			DirectX::XMFLOAT3 pos;
+			pos.x = m_heightMap[index].x;
+			pos.y = m_heightMap[index].y;
+			pos.z = m_heightMap[index].z;
+			testTerrain.push_back(pos);
 		}
 	}
 
+	int test = 0;
 	return;
 }
-
 
 bool TerrainClass::CalculateNormals()
 {
 	int i, j, index1, index2, index3, index;
 	float vertex1[3], vertex2[3], vertex3[3], vector1[3], vector2[3], sum[3], length;
 	VectorType* normals;
-
 
 	// Create a temporary array to hold the face normal vectors.
 	normals = new VectorType[(m_terrainHeight - 1) * (m_terrainWidth - 1)];
@@ -443,7 +544,6 @@ bool TerrainClass::CalculateNormals()
 	return true;
 }
 
-
 bool TerrainClass::LoadColorMap()
 {
 	int error, imageSize, i, j, k, index;
@@ -452,7 +552,6 @@ bool TerrainClass::LoadColorMap()
 	BITMAPFILEHEADER bitmapFileHeader;
 	BITMAPINFOHEADER bitmapInfoHeader;
 	unsigned char* bitmapImage;
-
 
 	// Open the color map file in binary.
 	error = fopen_s(&filePtr, m_colorMapFilename, "rb");
@@ -542,11 +641,9 @@ bool TerrainClass::LoadColorMap()
 	return true;
 }
 
-
 bool TerrainClass::BuildTerrainModel()
 {
 	int i, j, index, index1, index2, index3, index4;
-
 
 	// Calculate the number of vertices in the 3D terrain model.
 	m_vertexCount = (m_terrainHeight - 1) * (m_terrainWidth - 1) * 6;
@@ -560,6 +657,9 @@ bool TerrainClass::BuildTerrainModel()
 
 	// Initialize the index into the height map array.
 	index = 0;
+
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
 
 	// Load the 3D terrain model with the height map terrain data.
 	// We will be creating 2 triangles for each of the four points in a quad.
@@ -586,6 +686,13 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index1].r;
 			m_terrainModel[index].g = m_heightMap[index1].g;
 			m_terrainModel[index].b = m_heightMap[index1].b;
+
+			DirectX::XMFLOAT3 pos;
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 
 			// Triangle 1 - Upper right.
@@ -600,6 +707,12 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index2].r;
 			m_terrainModel[index].g = m_heightMap[index2].g;
 			m_terrainModel[index].b = m_heightMap[index2].b;
+
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 
 			// Triangle 1 - Bottom left.
@@ -614,6 +727,12 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index3].r;
 			m_terrainModel[index].g = m_heightMap[index3].g;
 			m_terrainModel[index].b = m_heightMap[index3].b;
+
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 
 			// Triangle 2 - Bottom left.
@@ -628,6 +747,12 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index3].r;
 			m_terrainModel[index].g = m_heightMap[index3].g;
 			m_terrainModel[index].b = m_heightMap[index3].b;
+
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 
 			// Triangle 2 - Upper right.
@@ -642,6 +767,12 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index2].r;
 			m_terrainModel[index].g = m_heightMap[index2].g;
 			m_terrainModel[index].b = m_heightMap[index2].b;
+
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 
 			// Triangle 2 - Bottom right.
@@ -656,13 +787,20 @@ bool TerrainClass::BuildTerrainModel()
 			m_terrainModel[index].r = m_heightMap[index4].r;
 			m_terrainModel[index].g = m_heightMap[index4].g;
 			m_terrainModel[index].b = m_heightMap[index4].b;
+
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			index++;
 		}
 	}
 
+	int test = 0;
+	test++;
 	return true;
 }
-
 
 void TerrainClass::ShutdownTerrainModel()
 {
@@ -676,13 +814,11 @@ void TerrainClass::ShutdownTerrainModel()
 	return;
 }
 
-
 void TerrainClass::CalculateTerrainVectors()
 {
 	int faceCount, i, index;
 	TempVertexType vertex1, vertex2, vertex3;
 	VectorType tangent, binormal;
-
 
 	// Calculate the number of faces in the terrain model.
 	faceCount = m_vertexCount / 3;
@@ -690,9 +826,14 @@ void TerrainClass::CalculateTerrainVectors()
 	// Initialize the index to the model data.
 	index = 0;
 
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
+
 	// Go through all the faces and calculate the the tangent, binormal, and normal vectors.
 	for (i = 0; i < faceCount; i++)
 	{
+
+
 		// Get the three vertices for this face from the terrain model.
 		vertex1.x = m_terrainModel[index].x;
 		vertex1.y = m_terrainModel[index].y;
@@ -748,11 +889,16 @@ void TerrainClass::CalculateTerrainVectors()
 		m_terrainModel[index - 3].bx = binormal.x;
 		m_terrainModel[index - 3].by = binormal.y;
 		m_terrainModel[index - 3].bz = binormal.z;
+
+		DirectX::XMFLOAT3 pos;
+		pos.x = m_terrainModel[index].x;
+		pos.y = m_terrainModel[index].y;
+		pos.z = m_terrainModel[index].z;
+		testTerrain.push_back(pos);
 	}
 
 	return;
 }
-
 
 void TerrainClass::CalculateTangentBinormal(TempVertexType vertex1, TempVertexType vertex2, TempVertexType vertex3, VectorType& tangent, VectorType& binormal)
 {
@@ -760,7 +906,6 @@ void TerrainClass::CalculateTangentBinormal(TempVertexType vertex1, TempVertexTy
 	float tuVector[2], tvVector[2];
 	float den;
 	float length;
-
 
 	// Calculate the two vectors for this face.
 	vector1[0] = vertex2.x - vertex1.x;
@@ -809,17 +954,16 @@ void TerrainClass::CalculateTangentBinormal(TempVertexType vertex1, TempVertexTy
 	return;
 }
 
-
 bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 {
 	int cellHeight, cellWidth, cellRowCount, i, j, index;
 	bool result;
 
-
 	// Set the height and width of each terrain cell to a fixed 33x33 vertex array.
+	//cellHeight = 33;
+	//cellWidth = 33;
 	cellHeight = 33;
 	cellWidth = 33;
-
 	// Calculate the number of cells needed to store the terrain data.
 	cellRowCount = (m_terrainWidth - 1) / (cellWidth - 1);
 	m_cellCount = cellRowCount * cellRowCount;
@@ -831,6 +975,9 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 		return false;
 	}
 
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
+
 	// Loop through and initialize all the terrain cells.
 	for (j = 0; j < cellRowCount; j++)
 	{
@@ -838,22 +985,29 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 		{
 			index = (cellRowCount * j) + i;
 
+			DirectX::XMFLOAT3 pos;
+			pos.x = m_terrainModel[index].x;
+			pos.y = m_terrainModel[index].y;
+			pos.z = m_terrainModel[index].z;
+			testTerrain.push_back(pos);
+
 			result = m_TerrainCells[index].Initialize(device, m_terrainModel, i, j, cellHeight, cellWidth, m_terrainWidth);
 			if (!result)
 			{
 				return false;
 			}
+
 		}
 	}
-
+	
+	int testXX = 0;
+	testXX++;
 	return true;
 }
-
 
 void TerrainClass::ShutdownTerrainCells()
 {
 	int i;
-
 
 	// Release the terrain cell array.
 	if (m_TerrainCells)
@@ -875,7 +1029,6 @@ bool TerrainClass::RenderCell(ID3D11DeviceContext* deviceContext, int cellId)
 {
 	float maxWidth, maxHeight, maxDepth, minWidth, minHeight, minDepth;
 	bool result;
-
 
 	// Get the dimensions of the terrain cell.
 	m_TerrainCells[cellId].GetCellDimensions(maxWidth, maxHeight, maxDepth, minWidth, minHeight, minDepth);
@@ -903,49 +1056,41 @@ bool TerrainClass::RenderCell(ID3D11DeviceContext* deviceContext, int cellId)
 	return true;
 }
 
-
 void TerrainClass::RenderCellLines(ID3D11DeviceContext* deviceContext, int cellId)
 {
 	m_TerrainCells[cellId].RenderLineBuffers(deviceContext);
 	return;
 }
 
-
 int TerrainClass::GetCellIndexCount(int cellId)
 {
 	return m_TerrainCells[cellId].GetIndexCount();
 }
-
 
 int TerrainClass::GetCellLinesIndexCount(int cellId)
 {
 	return m_TerrainCells[cellId].GetLineBuffersIndexCount();
 }
 
-
 int TerrainClass::GetCellCount()
 {
 	return m_cellCount;
 }
-
 
 int TerrainClass::GetRenderCount()
 {
 	return m_renderCount;
 }
 
-
 int TerrainClass::GetCellsDrawn()
 {
 	return m_cellsDrawn;
 }
 
-
 int TerrainClass::GetCellsCulled()
 {
 	return m_cellsCulled;
 }
-
 
 bool TerrainClass::GetHeightAtPosition(float inputX, float inputZ, float& height)
 {
@@ -953,7 +1098,6 @@ bool TerrainClass::GetHeightAtPosition(float inputX, float inputZ, float& height
 	float vertex1[3], vertex2[3], vertex3[3];
 	bool foundHeight;
 	float maxWidth, maxHeight, maxDepth, minWidth, minHeight, minDepth;
-
 
 	// Loop through all of the terrain cells to find out which one the inputX and inputZ would be inside.
 	cellId = -1;
@@ -1006,13 +1150,11 @@ bool TerrainClass::GetHeightAtPosition(float inputX, float inputZ, float& height
 	return false;
 }
 
-
 bool TerrainClass::CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3])
 {
 	float startVector[3], directionVector[3], edge1[3], edge2[3], normal[3];
 	float Q[3], e1[3], e2[3], e3[3], edgeNormal[3], temp[3];
 	float magnitude, D, denominator, numerator, t, determinant;
-
 
 	// Starting position of the ray that is being cast.
 	startVector[0] = x;

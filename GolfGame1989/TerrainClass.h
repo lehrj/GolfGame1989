@@ -57,16 +57,16 @@ private:
 	struct VertexType
 	{
 		DirectX::XMFLOAT3 position;
-		//XMFLOAT2 texture;
+		DirectX::XMFLOAT2 texture; ////////
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT4 color;
-		DirectX::VertexPositionNormalColorTexture test;
+		//DirectX::VertexPositionNormalColorTexture test;
 	};
 
 	struct HeightMapType
 	{
 		float x, y, z;
-		//float tu, tv;
+		float tu, tv; /////
 		float nx, ny, nz;
 		float r, g, b;
 	};
@@ -117,6 +117,7 @@ public:
 private:
 	bool LoadSetupFile(char*);
 	bool LoadRawHeightMap();
+	bool LoadHeightMap(char* filename); // sorry ODB, we are taking a pass on liking it raw for now, Bitmaps will work better for what we need
 	void ShutdownHeightMap();
 	void SetTerrainCoordinates();
 	bool CalculateNormals();

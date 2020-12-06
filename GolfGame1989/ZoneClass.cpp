@@ -128,10 +128,10 @@ bool ZoneClass::Initialize(ID3D11Device1* Direct3D)
 	//m_displayUI = true;
 
 	// Set wire frame rendering initially to disabled.
-	m_wireFrame = false;
+	m_wireFrame = true;
 
 	// Set the rendering of cell lines initially to disabled.
-	m_cellLines = false;
+	m_cellLines = true;
 
 	// Set the user locked to the terrain height for movement.
 	m_heightLocked = true;
@@ -332,7 +332,6 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 	// Construct the frustum.
 	//m_Frustum->ConstructFrustum(projectionMatrix, viewMatrix);
 
-	int testCellCount = m_Terrain->GetCellCount();
 
 	// Render the terrain cells (and cell lines if needed).
 	for (i = 0; i < m_Terrain->GetCellCount(); i++)

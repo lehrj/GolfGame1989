@@ -100,6 +100,8 @@ bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, i
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
 
 	// Calculate the number of vertices in this terrain cell.
 	m_vertexCount = (cellHeight - 1) * (cellWidth - 1) * 6;
@@ -136,6 +138,13 @@ bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, i
 			vertices[index].tangent = DirectX::XMFLOAT3(terrainModel[modelIndex].tx, terrainModel[modelIndex].ty, terrainModel[modelIndex].tz);
 			vertices[index].binormal = DirectX::XMFLOAT3(terrainModel[modelIndex].bx, terrainModel[modelIndex].by, terrainModel[modelIndex].bz);
 			vertices[index].color = DirectX::XMFLOAT3(terrainModel[modelIndex].r, terrainModel[modelIndex].g, terrainModel[modelIndex].b);
+
+			DirectX::XMFLOAT3 pos;
+			pos.x = vertices[index].position.x;
+			pos.y = vertices[index].position.y;
+			pos.z = vertices[index].position.z;
+			testTerrain.push_back(pos);
+
 			indices[index] = index;
 			modelIndex++;
 			index++;
@@ -196,6 +205,14 @@ bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, i
 		m_vertexList[i].x = vertices[i].position.x;
 		m_vertexList[i].y = vertices[i].position.y;
 		m_vertexList[i].z = vertices[i].position.z;
+
+		
+		DirectX::XMFLOAT3 pos;
+		pos.x = m_vertexList[i].x;
+		pos.y = m_vertexList[i].y;
+		pos.z = m_vertexList[i].z;
+		testTerrain.push_back(pos);
+		
 	}
 
 	// Release the arrays now that the buffers have been created and loaded.
@@ -265,6 +282,8 @@ void TerrainCellClass::CalculateCellDimensions()
 	int i;
 	float width, height, depth;
 
+	//DirectX::XMFLOAT3 prePos; 
+	//DirectX::XMFLOAT3 postPos;
 
 	// Initialize the dimensions of the node.
 	m_maxWidth = -1000000.0f;
@@ -275,11 +294,20 @@ void TerrainCellClass::CalculateCellDimensions()
 	m_minHeight = 1000000.0f;
 	m_minDepth = 1000000.0f;
 
+	std::vector<DirectX::XMFLOAT3> testTerrain;
+	testTerrain.clear();
+
 	for (i = 0; i < m_vertexCount; i++)
 	{
 		width = m_vertexList[i].x;
 		height = m_vertexList[i].y;
 		depth = m_vertexList[i].z;
+
+		DirectX::XMFLOAT3 pos;
+		pos.x = m_vertexList[i].x;
+		pos.y = m_vertexList[i].y;
+		pos.z = m_vertexList[i].z;
+		testTerrain.push_back(pos);
 
 		// Check if the width exceeds the minimum or maximum.
 		if (width > m_maxWidth)
@@ -311,10 +339,13 @@ void TerrainCellClass::CalculateCellDimensions()
 			m_minDepth = depth;
 		}
 	}
-
+	
 	// Calculate the center position of this cell.
 	m_positionX = (m_maxWidth - m_minWidth) + m_minWidth;
 	m_positionY = (m_maxHeight - m_minHeight) + m_minHeight;
+
+	//float testZ = m_maxDepth - m_minDepth;
+	//m_positionZ = m_minDepth + (testZ * .5);
 	m_positionZ = (m_maxDepth - m_minDepth) + m_minDepth;
 
 	return;

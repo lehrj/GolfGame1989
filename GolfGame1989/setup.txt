@@ -1,6 +1,5 @@
-Terrain Filename: heightmapSmall01.bmp
-Terrain Height: 21
-Terrain Width: 21
-Terrain Scaling: 300.0
-Color Map Filename: colormapSmall01.bmp
-
+Terrain Filename: output.r16
+Terrain Height: 257
+Terrain Width: 257
+Terrain Scaling: 10.0
+Color Map Filename: colormap.bmp
