@@ -398,6 +398,10 @@ void TerrainClass::SetTerrainCoordinates()
 			// Move the terrain depth into the positive range.  For example from (0, -256) to (256, 0).
 			m_heightMap[index].z += (float)(m_terrainHeight - 1);
 
+
+			//m_heightMap[index].z *= -1; // testing fliping z axis
+
+
 			// Scale the height.
 			m_heightMap[index].y /= m_heightScale;
 

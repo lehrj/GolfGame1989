@@ -3912,7 +3912,7 @@ void Game::Render()
 
     pZone->Frame(m_d3dContext.Get());
     //pTerrain->Render(m_d3dContext.Get());
-
+    
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -3966,6 +3966,19 @@ void Game::Render()
     VertexPositionColor baseVert(testBase, Colors::White);
     VertexPositionColor topVert(testTop, Colors::White);
     m_batch2->DrawLine(baseVert, topVert);
+
+
+    DirectX::SimpleMath::Vector3 testBase1(0.0, 0.0, 224.0);
+    DirectX::SimpleMath::Vector3 testTop1(0.0, 10.0, 256.0);
+    VertexPositionColor baseVert1(testBase1, Colors::White);
+    VertexPositionColor topVert1(testTop1, Colors::White);
+    m_batch2->DrawLine(baseVert1, topVert1);
+
+    DirectX::SimpleMath::Vector3 testBase2(224.0, 0.0, 224.0);
+    DirectX::SimpleMath::Vector3 testTop2(256.0, 10.0, 256.0);
+    VertexPositionColor baseVert2(testBase2, Colors::White);
+    VertexPositionColor topVert2(testTop2, Colors::White);
+    m_batch2->DrawLine(baseVert2, topVert2);
 
     m_batch2->End();
 
