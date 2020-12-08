@@ -45,6 +45,7 @@ public:
 	~TerrainCellClass();
 
 	bool Initialize(ID3D11Device*, void*, int, int, int, int, int);
+	//bool Initialize(ID3D11Device*, std::vector<ModelType>, int, int, int, int, int);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 	void RenderLineBuffers(ID3D11DeviceContext*);
@@ -56,6 +57,7 @@ public:
 
 private:
 	bool InitializeBuffers(ID3D11Device*, int, int, int, int, int, ModelType*);
+	//bool InitializeBuffers(ID3D11Device*, int, int, int, int, int, std::vector<ModelType>);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 	void CalculateCellDimensions();
@@ -66,7 +68,9 @@ public:
 	VectorType* m_vertexList;
 
 private:
-	int m_vertexCount, m_indexCount, m_lineIndexCount;
+	int m_vertexCount;
+	int m_indexCount;
+	int m_lineIndexCount;
 	ID3D11Buffer* m_vertexBuffer, * m_indexBuffer, * m_lineVertexBuffer, * m_lineIndexBuffer;;
 	float m_maxWidth, m_maxHeight, m_maxDepth, m_minWidth, m_minHeight, m_minDepth;
 	float m_positionX, m_positionY, m_positionZ;

@@ -2,4 +2,4 @@ Terrain Filename: output.r16
 Terrain Height: 257
 Terrain Width: 257
 Terrain Scaling: 10.0
-Color Map Filename: colormap.bmp
+Color Map Filename: colormap2.bmp

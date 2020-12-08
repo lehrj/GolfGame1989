@@ -22,16 +22,17 @@ TerrainCellClass::~TerrainCellClass()
 {
 }
 
-
-bool TerrainCellClass::Initialize(ID3D11Device* device, void* terrainModelPtr, int nodeIndexX, int nodeIndexY,
-	int cellHeight, int cellWidth, int terrainWidth)
+bool TerrainCellClass::Initialize(ID3D11Device* device, void* terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
+//bool TerrainCellClass::Initialize(ID3D11Device* device, std::vector<ModelType> terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
+//bool TerrainCellClass::Initialize(ID3D11Device* device, std::vector<ModelType> terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
 {
 	ModelType* terrainModel;
+	//std::vector<ModelType> terrainModel;
 	bool result;
-
 
 	// Coerce the pointer to the terrain model into the model type.
 	terrainModel = (ModelType*)terrainModelPtr;
+	//terrainModel = terrainModelPtr;
 
 	// Load the rendering buffers with the terrain data for this cell index.
 	result = InitializeBuffers(device, nodeIndexX, nodeIndexY, cellHeight, cellWidth, terrainWidth, terrainModel);
@@ -89,9 +90,8 @@ int TerrainCellClass::GetIndexCount()
 	return m_indexCount;
 }
 
-
-bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth,
-	int terrainWidth, ModelType* terrainModel)
+bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth, ModelType* terrainModel)
+//bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth, std::vector<ModelType> terrainModel)
 {
 	VertexType* vertices;
 	unsigned long* indices;
@@ -139,6 +139,10 @@ bool TerrainCellClass::InitializeBuffers(ID3D11Device* device, int nodeIndexX, i
 			vertices[index].binormal = DirectX::XMFLOAT3(terrainModel[modelIndex].bx, terrainModel[modelIndex].by, terrainModel[modelIndex].bz);
 			vertices[index].color = DirectX::XMFLOAT3(terrainModel[modelIndex].r, terrainModel[modelIndex].g, terrainModel[modelIndex].b);
 
+			DirectX::XMFLOAT3 testColor(1.0, 1.0, 1.0);
+			vertices[index].color = testColor;
+			
+			
 			DirectX::XMFLOAT3 pos;
 			pos.x = vertices[index].position.x;
 			pos.y = vertices[index].position.y;
@@ -251,31 +255,6 @@ void TerrainCellClass::ShutdownBuffers()
 
 	return;
 }
-
-
-void TerrainCellClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
-{
-	unsigned int stride;
-	unsigned int offset;
-
-
-	// Set vertex buffer stride and offset.
-	stride = sizeof(VertexType);
-	offset = 0;
-
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
-
-	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	
-	return;
-}
-
 
 void TerrainCellClass::CalculateCellDimensions()
 {
@@ -583,17 +562,47 @@ void TerrainCellClass::ShutdownLineBuffers()
 	return;
 }
 
+void TerrainCellClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
+{
+	unsigned int stride;
+	unsigned int offset;
+
+	unsigned int test1 = sizeof(VertexType);
+	unsigned int test2 = sizeof(ColorVertexType);
+
+	// Set vertex buffer stride and offset.
+	stride = sizeof(VertexType);
+	//stride = sizeof(ColorVertexType);
+	offset = 0;
+
+	// Set the vertex buffer to active in the input assembler so it can be rendered.
+	deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+
+	// Set the index buffer to active in the input assembler so it can be rendered.
+	//deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+
+	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+	return;
+}
 
 void TerrainCellClass::RenderLineBuffers(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
 
+	unsigned int test1 = sizeof(VertexType);
+	unsigned int test2 = sizeof(ColorVertexType);
 
 	// Set vertex buffer stride and offset.
-	stride = sizeof(ColorVertexType);
+	//stride = sizeof(ColorVertexType);
+	stride = sizeof(VertexType);
 	offset = 0;
-
+	
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetVertexBuffers(0, 1, &m_lineVertexBuffer, &stride, &offset);
 

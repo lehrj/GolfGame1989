@@ -9,8 +9,10 @@ TerrainClass::TerrainClass()
 {
 	m_terrainFilename = 0;
 	m_colorMapFilename = 0;
-	m_heightMap = 0;
+	m_heightMap.clear();
+	//m_heightMap = 0;
 	m_terrainModel = 0;
+	//m_terrainModelVector.clear();
 	m_TerrainCells = 0;
 }
 
@@ -264,11 +266,14 @@ bool TerrainClass::LoadHeightMap(char* filename)
 	}
 
 	// Create the structure to hold the height map data.
-	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
+	m_heightMap.resize(m_terrainWidth * m_terrainHeight);
+	/*
+	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];	
 	if (!m_heightMap)
 	{
 		return false;
 	}
+	*/
 
 	// Initialize the position in the image data buffer.
 	k = 0;
@@ -305,11 +310,14 @@ bool TerrainClass::LoadRawHeightMap()
 	unsigned short* rawImage;
 
 	// Create the float array to hold the height map data.
+	m_heightMap.resize(m_terrainWidth * m_terrainHeight);
+	/*
 	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
 	if (!m_heightMap)
 	{
 		return false;
 	}
+	*/
 
 	// Open the 16 bit raw height map file for reading in binary.
 	error = fopen_s(&filePtr, m_terrainFilename, "rb");
@@ -368,12 +376,14 @@ bool TerrainClass::LoadRawHeightMap()
 void TerrainClass::ShutdownHeightMap()
 {
 	// Release the height map array.
+	m_heightMap.clear();
+	/*
 	if (m_heightMap)
 	{
 		delete[] m_heightMap;
 		m_heightMap = 0;
 	}
-
+	*/
 	return;
 }
 
@@ -398,9 +408,7 @@ void TerrainClass::SetTerrainCoordinates()
 			// Move the terrain depth into the positive range.  For example from (0, -256) to (256, 0).
 			m_heightMap[index].z += (float)(m_terrainHeight - 1);
 
-
 			//m_heightMap[index].z *= -1; // testing fliping z axis
-
 
 			// Scale the height.
 			m_heightMap[index].y /= m_heightScale;
@@ -410,6 +418,8 @@ void TerrainClass::SetTerrainCoordinates()
 			pos.y = m_heightMap[index].y;
 			pos.z = m_heightMap[index].z;
 			testTerrain.push_back(pos);
+
+			//m_heightMap[index].z += (float)(m_terrainHeight - 1);
 		}
 	}
 
@@ -622,11 +632,11 @@ bool TerrainClass::LoadColorMap()
 		{
 			// Bitmaps are upside down so load bottom to top into the array.
 			index = (m_terrainWidth * (m_terrainHeight - 1 - j)) + i;
-
+			
 			m_heightMap[index].b = (float)bitmapImage[k] / 255.0f;
 			m_heightMap[index].g = (float)bitmapImage[k + 1] / 255.0f;
 			m_heightMap[index].r = (float)bitmapImage[k + 2] / 255.0f;
-
+	
 			k += 3;
 		}
 
@@ -653,12 +663,13 @@ bool TerrainClass::BuildTerrainModel()
 	m_vertexCount = (m_terrainHeight - 1) * (m_terrainWidth - 1) * 6;
 
 	// Create the 3D terrain model array.
+	//m_terrainModelVector.resize(m_vertexCount);
 	m_terrainModel = new ModelType[m_vertexCount];
 	if (!m_terrainModel)
 	{
 		return false;
 	}
-
+	
 	// Initialize the index into the height map array.
 	index = 0;
 
@@ -809,12 +820,14 @@ bool TerrainClass::BuildTerrainModel()
 void TerrainClass::ShutdownTerrainModel()
 {
 	// Release the terrain model data.
+	//m_terrainModel.clear();
+	
 	if (m_terrainModel)
 	{
 		delete[] m_terrainModel;
 		m_terrainModel = 0;
 	}
-
+	
 	return;
 }
 
@@ -980,8 +993,9 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 	}
 
 	std::vector<DirectX::XMFLOAT3> testTerrain;
+	std::vector<ModelType> testTerrain2;
 	testTerrain.clear();
-
+	testTerrain2.clear();
 	// Loop through and initialize all the terrain cells.
 	for (j = 0; j < cellRowCount; j++)
 	{
@@ -994,13 +1008,21 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 			pos.y = m_terrainModel[index].y;
 			pos.z = m_terrainModel[index].z;
 			testTerrain.push_back(pos);
+			ModelType testMod = m_terrainModel[index];
+			testTerrain2.push_back(testMod);
+			
 
+			DirectX::XMFLOAT3 testColor(1.0, 1.0, 1.0);
+			m_terrainModel[index] = testMod;
+			m_terrainModel[index].r = 1.0;
+			m_terrainModel[index].b = 1.0;
+			m_terrainModel[index].g = 1.0;
+			//result = m_TerrainCells[index].Initialize(device, m_terrainModel[index], i, j, cellHeight, cellWidth, m_terrainWidth);
 			result = m_TerrainCells[index].Initialize(device, m_terrainModel, i, j, cellHeight, cellWidth, m_terrainWidth);
 			if (!result)
 			{
 				return false;
-			}
-
+			}	
 		}
 	}
 	

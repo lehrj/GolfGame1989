@@ -131,7 +131,7 @@ private:
     std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType2>> m_batch2;
-
+    
     Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_inputLayout;
     // End
 

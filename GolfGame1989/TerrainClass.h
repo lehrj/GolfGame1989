@@ -56,11 +56,14 @@ class TerrainClass
 private:
 	struct VertexType
 	{
+		
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT2 texture; ////////
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT4 color;
 		//DirectX::VertexPositionNormalColorTexture test;
+
+
 	};
 
 	struct HeightMapType
@@ -134,8 +137,10 @@ private:
 	int m_terrainHeight, m_terrainWidth, m_vertexCount;
 	float m_heightScale;
 	char* m_terrainFilename, * m_colorMapFilename;
-	HeightMapType* m_heightMap;
+	std::vector<HeightMapType> m_heightMap;
+	//HeightMapType* m_heightMap;
 	ModelType* m_terrainModel;
+	//std::vector<ModelType> m_terrainModelVector;
 	TerrainCellClass* m_TerrainCells;
 	int m_cellCount, m_renderCount, m_cellsDrawn, m_cellsCulled;
 };

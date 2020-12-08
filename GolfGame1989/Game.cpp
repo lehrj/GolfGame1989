@@ -3943,7 +3943,7 @@ void Game::Render()
     m_batch2->Begin();
 
 
-
+   
     const float line = .25f;
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
