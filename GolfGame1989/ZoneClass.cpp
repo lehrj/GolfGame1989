@@ -337,7 +337,7 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 
 	// Render the terrain cells (and cell lines if needed).
 	for (i = 0; i < m_Terrain->GetCellCount(); i++)
-	//for (i = 0; i < 3; i++)
+	//for (i = 0; i < 1; i++)
 	{
 		
 		// Render each terrain cell if it is visible only.
@@ -375,6 +375,8 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 			//m_Terrain->RenderCellLines(Direct3D, i);
 		}
 	}
+
+
 	
 	return true;
 }
