@@ -3908,11 +3908,11 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
     
-    m_batch->Begin();
+    
 
     pZone->Frame(m_d3dContext.Get());
     //pTerrain->Render(m_d3dContext.Get());
-    
+    m_batch->Begin();
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -3961,24 +3961,36 @@ void Game::Render()
     m_batch2->DrawLine(origin, xOffset);
     m_batch2->DrawLine(origin, zOffset);
 
-    DirectX::SimpleMath::Vector3 testBase(224.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 testBase(256.0, 0.0, 0.0);
     DirectX::SimpleMath::Vector3 testTop(256.0, 10.0, 0.0);
     VertexPositionColor baseVert(testBase, Colors::White);
     VertexPositionColor topVert(testTop, Colors::White);
     m_batch2->DrawLine(baseVert, topVert);
 
 
-    DirectX::SimpleMath::Vector3 testBase1(0.0, 0.0, 224.0);
+    DirectX::SimpleMath::Vector3 testBase1(0.0, 0.0, 256.0);
     DirectX::SimpleMath::Vector3 testTop1(0.0, 10.0, 256.0);
     VertexPositionColor baseVert1(testBase1, Colors::White);
     VertexPositionColor topVert1(testTop1, Colors::White);
     m_batch2->DrawLine(baseVert1, topVert1);
 
-    DirectX::SimpleMath::Vector3 testBase2(224.0, 0.0, 224.0);
+    DirectX::SimpleMath::Vector3 testBase2(256.0, 0.0, 256.0);
     DirectX::SimpleMath::Vector3 testTop2(256.0, 10.0, 256.0);
     VertexPositionColor baseVert2(testBase2, Colors::White);
     VertexPositionColor topVert2(testTop2, Colors::White);
     m_batch2->DrawLine(baseVert2, topVert2);
+
+    DirectX::SimpleMath::Vector3 originBase(0.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 originTop(0.0, 10.0, 0.0);
+    VertexPositionColor originBaseVert(originBase, Colors::White);
+    VertexPositionColor originTopVert(originTop, Colors::White);
+    m_batch2->DrawLine(originBaseVert, originTopVert);
+
+
+    m_batch2->DrawLine(originBaseVert, baseVert);
+    m_batch2->DrawLine(originBaseVert, baseVert1);
+    m_batch2->DrawLine(baseVert1, baseVert2);
+    m_batch2->DrawLine(baseVert2, baseVert);
 
     m_batch2->End();
 

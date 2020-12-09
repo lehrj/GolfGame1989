@@ -334,6 +334,7 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 
 	int cellCount = m_Terrain->GetCellCount();
 
+	//result = m_Terrain->RenderCell(Direct3D, 56);
 
 	// Render the terrain cells (and cell lines if needed).
 	for (i = 0; i < m_Terrain->GetCellCount(); i++)
@@ -376,8 +377,6 @@ bool ZoneClass::Render(ID3D11DeviceContext1* Direct3D)
 		}
 	}
 
-
-	
 	return true;
 }
 
