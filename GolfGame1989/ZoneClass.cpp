@@ -128,17 +128,16 @@ bool ZoneClass::Initialize(ID3D11Device1* Direct3D)
 	//m_displayUI = true;
 
 	// Set wire frame rendering initially to disabled.
-	m_wireFrame = true;
+	m_wireFrame = false;
 
 	// Set the rendering of cell lines initially to disabled.
-	m_cellLines = true;
+	m_cellLines = false;
 
 	// Set the user locked to the terrain height for movement.
 	m_heightLocked = true;
 
 	return true;
 }
-
 
 void ZoneClass::Shutdown()
 {

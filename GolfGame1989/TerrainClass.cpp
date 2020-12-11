@@ -35,23 +35,23 @@ bool TerrainClass::Initialize(ID3D11Device* device, char* setupFilename)
 		return false;
 	}
 
-	
+	/*
 	// Initialize the terrain height map with the data from the raw file.
 	result = LoadRawHeightMap();
 	if (!result)
 	{
 		return false;
 	}
-	
+	*/
 
 	// Load in the height map for the terrain.
-	/*
-	result = LoadHeightMap(m_terrainFilename);
+	
+	result = LoadHeightMap("heightmap01.bmp");
 	if (!result)
 	{
 		return false;
 	}
-	*/
+	
 
 	// Setup the X and Z coordinates for the height map as well as scale the terrain height by the height scale value.
 	SetTerrainCoordinates();
@@ -277,7 +277,7 @@ bool TerrainClass::LoadHeightMap(char* filename)
 
 	// Initialize the position in the image data buffer.
 	k = 0;
-
+	
 	// Read the image data into the height map.
 	for (j = 0; j < m_terrainHeight; j++)
 	{
@@ -285,14 +285,18 @@ bool TerrainClass::LoadHeightMap(char* filename)
 		{
 			height = bitmapImage[k];
 
-			index = (m_terrainHeight * j) + i;
+			//index = (m_terrainHeight * j) + i;
+			//index = (m_terrainHeight * j) + i;
+			//index = (m_terrainHeight * j) + i;
+			index = j * m_terrainWidth + i;
 
 			m_heightMap[index].x = (float)i;
 			m_heightMap[index].y = (float)height;
 			m_heightMap[index].z = (float)j;
-
+		
 			k += 3;
 		}
+		k += 1;
 	}
 
 	// Release the bitmap image data.
@@ -311,6 +315,7 @@ bool TerrainClass::LoadRawHeightMap()
 
 	// Create the float array to hold the height map data.
 	m_heightMap.resize(m_terrainWidth * m_terrainHeight);
+	
 	/*
 	m_heightMap = new HeightMapType[m_terrainWidth * m_terrainHeight];
 	if (!m_heightMap)
@@ -418,8 +423,6 @@ void TerrainClass::SetTerrainCoordinates()
 			pos.y = m_heightMap[index].y;
 			pos.z = m_heightMap[index].z;
 			testTerrain.push_back(pos);
-
-			//m_heightMap[index].z += (float)(m_terrainHeight - 1);
 		}
 	}
 
