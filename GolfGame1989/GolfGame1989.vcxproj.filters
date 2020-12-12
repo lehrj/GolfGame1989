@@ -27,6 +27,12 @@
     <ClInclude Include="TerrainCellClass.h" />
     <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="ZoneClass.h" />
+    <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="ColorShaderClass.h" />
+    <ClInclude Include="TextureShaderClass.h" />
+    <ClInclude Include="TerrainShaderClass.h" />
+    <ClInclude Include="LightShaderClass.h" />
+    <ClInclude Include="SkyDomeShaderClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -46,6 +52,12 @@
     <ClCompile Include="TerrainCellClass.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="ZoneClass.cpp" />
+    <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="ColorShaderClass.cpp" />
+    <ClCompile Include="TextureShaderClass.cpp" />
+    <ClCompile Include="TerrainShaderClass.cpp" />
+    <ClCompile Include="LightShaderClass.cpp" />
+    <ClCompile Include="SkyDomeShaderClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

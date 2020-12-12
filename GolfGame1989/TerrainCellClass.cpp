@@ -72,6 +72,8 @@ void TerrainCellClass::Shutdown()
 
 void TerrainCellClass::Render(ID3D11DeviceContext* deviceContext)
 {
+
+
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	RenderBuffers(deviceContext);
 
@@ -344,7 +346,7 @@ bool TerrainCellClass::BuildLineBuffers(ID3D11Device* device)
 
 	// Set the color of the lines to orange.
 	lineColor = DirectX::XMFLOAT4(1.0f, 0.5f, 0.0f, 1.0f);
-
+		
 	// Set the number of vertices in the vertex array.
 	vertexCount = 24;
 
@@ -368,6 +370,7 @@ bool TerrainCellClass::BuildLineBuffers(ID3D11Device* device)
 	// Set up the description of the vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(ColorVertexType) * vertexCount;
+	
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;

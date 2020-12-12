@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ColorShaderClass.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="Game.h" />
@@ -171,18 +172,24 @@
     <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
+    <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="SkyDomeShaderClass.h" />
     <ClInclude Include="sounds.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="TerrainCellClass.h" />
     <ClInclude Include="TerrainClass.h" />
+    <ClInclude Include="TerrainShaderClass.h" />
+    <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
     <ClInclude Include="ZoneClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ColorShaderClass.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -192,6 +199,7 @@
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfSwing.cpp" />
+    <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -199,8 +207,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="SkyDomeShaderClass.cpp" />
     <ClCompile Include="TerrainCellClass.cpp" />
     <ClCompile Include="TerrainClass.cpp" />
+    <ClCompile Include="TerrainShaderClass.cpp" />
+    <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Vector4d.cpp" />
     <ClCompile Include="ZoneClass.cpp" />

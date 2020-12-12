@@ -35,8 +35,9 @@ bool TerrainClass::Initialize(ID3D11Device* device, char* setupFilename)
 		return false;
 	}
 
-	/*
+	
 	// Initialize the terrain height map with the data from the raw file.
+	/*
 	result = LoadRawHeightMap();
 	if (!result)
 	{
@@ -638,8 +639,8 @@ bool TerrainClass::LoadColorMap()
 			
 			m_heightMap[index].b = (float)bitmapImage[k] / 255.0f;
 			m_heightMap[index].g = (float)bitmapImage[k + 1] / 255.0f;
-			m_heightMap[index].r = (float)bitmapImage[k + 2] / 255.0f;
-	
+			m_heightMap[index].r = (float)bitmapImage[k + 2] / 255.0f;			
+
 			k += 3;
 		}
 
@@ -1017,9 +1018,12 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 
 			DirectX::XMFLOAT3 testColor(1.0, 1.0, 1.0);
 			m_terrainModel[index] = testMod;
+			
 			m_terrainModel[index].r = 1.0;
 			m_terrainModel[index].b = 1.0;
 			m_terrainModel[index].g = 1.0;
+			
+
 			//result = m_TerrainCells[index].Initialize(device, m_terrainModel[index], i, j, cellHeight, cellWidth, m_terrainWidth);
 			result = m_TerrainCells[index].Initialize(device, m_terrainModel, i, j, cellHeight, cellWidth, m_terrainWidth);
 			if (!result)
@@ -1028,7 +1032,8 @@ bool TerrainClass::LoadTerrainCells(ID3D11Device* device)
 			}	
 		}
 	}
-	
+
+
 	int testXX = 0;
 	testXX++;
 	return true;

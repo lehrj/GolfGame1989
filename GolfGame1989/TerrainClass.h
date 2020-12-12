@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#ifndef _TERRAINCLASS_H_
-#define _TERRAINCLASS_H_
+//#ifndef _TERRAINCLASS_H_
+//#define _TERRAINCLASS_H_
 
 
 //////////////
@@ -54,18 +54,16 @@ typedef struct tagBITMAPFILEHEADER {
 class TerrainClass
 {
 private:
+	/*
 	struct VertexType
-	{
-		
+	{		
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT2 texture; ////////
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT4 color;
 		//DirectX::VertexPositionNormalColorTexture test;
-
-
 	};
-
+	*/
 	struct HeightMapType
 	{
 		float x, y, z;
@@ -146,4 +144,4 @@ private:
 };
 
 
-#endif
+//#endif

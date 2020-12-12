@@ -26,19 +26,20 @@ private:
 		DirectX::XMFLOAT3 tangent;
 		DirectX::XMFLOAT3 binormal;
 		DirectX::XMFLOAT3 color;
+		
 	};
 
 	struct VectorType
 	{
 		float x, y, z;
 	};
-
+	
 	struct ColorVertexType
 	{
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT4 color;
 	};
-
+	
 public:
 	TerrainCellClass();
 	TerrainCellClass(const TerrainCellClass&);
