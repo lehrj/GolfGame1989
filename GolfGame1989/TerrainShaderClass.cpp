@@ -88,8 +88,8 @@ bool TerrainShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	pixelShaderBuffer = 0;
 
 	// Compile the vertex shader code.
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "TerrainVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
-		&vertexShaderBuffer, &errorMessage);
+	//result = D3DCompileFromFile(vsFilename, NULL, NULL, "TerrainVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
+	result = false;
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
@@ -107,8 +107,7 @@ bool TerrainShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	}
 
 	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "TerrainPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
-		&pixelShaderBuffer, &errorMessage);
+	//result = D3DCompileFromFile(psFilename, NULL, NULL, "TerrainPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
@@ -192,8 +191,7 @@ bool TerrainShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),
-		vertexShaderBuffer->GetBufferSize(), &m_layout);
+	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), &m_layout);
 	if (FAILED(result))
 	{
 		return false;
