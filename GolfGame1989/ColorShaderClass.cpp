@@ -29,7 +29,8 @@ bool ColorShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../Engine/color.vs", L"../Engine/color.ps");
+	//result = InitializeShader(device, hwnd, L"../Engine/color.vs", L"../Engine/color.ps");
+	result = InitializeShader(device, hwnd, L"../GolfGame1989/color.vs", L"../GolfGame1989/color.ps");
 	if (!result)
 	{
 		return false;
@@ -85,7 +86,7 @@ bool ColorShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	pixelShaderBuffer = 0;
 
 	// Compile the vertex shader code.
-	//result = D3DCompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
+	result = D3DCompileFromFile(vsFilename, NULL, NULL, "ColorVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer, &errorMessage);
 	result = false;
 	if (FAILED(result))
 	{

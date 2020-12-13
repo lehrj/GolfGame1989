@@ -33,6 +33,7 @@
     <ClInclude Include="TerrainShaderClass.h" />
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="SkyDomeShaderClass.h" />
+    <ClInclude Include="ReadData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -128,6 +129,8 @@
     <None Include="myfile.spritefont">
       <Filter>Assets</Filter>
     </None>
+    <None Include="color.ps" />
+    <None Include="color.vs" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="AudioCoinPlay.wav">
