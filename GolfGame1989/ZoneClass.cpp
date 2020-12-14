@@ -6,10 +6,10 @@ ZoneClass::ZoneClass()
 {
 	//m_UserInterface = 0;
 	//m_Camera = 0;
-	//m_Light = 0;
+	m_Light = 0;
 	//m_Position = 0;
 	m_Frustum = 0;
-	//m_SkyDome = 0;
+	m_SkyDome = 0;
 	m_Terrain = 0;
 }
 
@@ -151,14 +151,14 @@ void ZoneClass::Shutdown()
 
 
 	// Release the sky dome object.
-	/*
+	
 	if (m_SkyDome)
 	{
 		m_SkyDome->Shutdown();
 		delete m_SkyDome;
 		m_SkyDome = 0;
 	}
-	*/
+	
 
 	// Release the frustum object.
 	if (m_Frustum)
@@ -174,6 +174,7 @@ void ZoneClass::Shutdown()
 		delete m_Position;
 		m_Position = 0;
 	}
+	*/
 
 	// Release the light object.
 	if (m_Light)
@@ -181,7 +182,7 @@ void ZoneClass::Shutdown()
 		delete m_Light;
 		m_Light = 0;
 	}
-
+	/*
 	// Release the camera object.
 	if (m_Camera)
 	{

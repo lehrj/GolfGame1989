@@ -23,8 +23,6 @@ TerrainCellClass::~TerrainCellClass()
 }
 
 bool TerrainCellClass::Initialize(ID3D11Device* device, void* terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
-//bool TerrainCellClass::Initialize(ID3D11Device* device, std::vector<ModelType> terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
-//bool TerrainCellClass::Initialize(ID3D11Device* device, std::vector<ModelType> terrainModelPtr, int nodeIndexX, int nodeIndexY, int cellHeight, int cellWidth, int terrainWidth)
 {
 	ModelType* terrainModel;
 	//std::vector<ModelType> terrainModel;

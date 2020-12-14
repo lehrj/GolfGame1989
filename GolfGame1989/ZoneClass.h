@@ -2,16 +2,16 @@
 
 //#include "d3dclass.h"
 //#include "inputclass.h"
-//#include "shadermanagerclass.h"
-//#include "texturemanagerclass.h"
+#include "ShaderManagerClass.h"
+#include "TextureManagerClass.h"
 //#include "timerclass.h"
 //#include "userinterfaceclass.h"
 //#include "cameraclass.h"
-//#include "lightclass.h"
+#include "LightClass.h"
 //#include "positionclass.h"
-#include "frustumclass.h"
-//#include "skydomeclass.h"
-#include "terrainclass.h"
+#include "FrustumClass.h"
+#include "SkyDomeClass.h"
+#include "TerrainClass.h"
 
 class ZoneClass
 {
@@ -35,10 +35,10 @@ private:
 private:
 	//UserInterfaceClass* m_UserInterface;
 	//CameraClass* m_Camera;
-	//LightClass* m_Light;
+	LightClass* m_Light;
 	//PositionClass* m_Position;
 	FrustumClass* m_Frustum;
-	//SkyDomeClass* m_SkyDome;
+	SkyDomeClass* m_SkyDome;
 	TerrainClass* m_Terrain;
 	bool m_displayUI, m_wireFrame, m_cellLines, m_heightLocked;
 

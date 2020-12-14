@@ -172,10 +172,12 @@
     <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
+    <ClInclude Include="LightClass.h" />
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="SkyDomeClass.h" />
     <ClInclude Include="SkyDomeShaderClass.h" />
     <ClInclude Include="sounds.h" />
     <ClInclude Include="SpriteSheet.h" />
@@ -183,6 +185,8 @@
     <ClInclude Include="TerrainCellClass.h" />
     <ClInclude Include="TerrainClass.h" />
     <ClInclude Include="TerrainShaderClass.h" />
+    <ClInclude Include="TextureClass.h" />
+    <ClInclude Include="TextureManagerClass.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector4d.h" />
@@ -200,6 +204,7 @@
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfSwing.cpp" />
+    <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -209,10 +214,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="SkyDomeClass.cpp" />
     <ClCompile Include="SkyDomeShaderClass.cpp" />
     <ClCompile Include="TerrainCellClass.cpp" />
     <ClCompile Include="TerrainClass.cpp" />
     <ClCompile Include="TerrainShaderClass.cpp" />
+    <ClCompile Include="TextureClass.cpp" />
+    <ClCompile Include="TextureManagerClass.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Vector4d.cpp" />
@@ -227,6 +235,8 @@
     <Image Include="Chacter2SpriteSheet.png" />
     <Image Include="ChacterSpriteSheet.png" />
     <Image Include="CharacterBackground.png" />
+    <Image Include="Data\textures\dirt01d.tga" />
+    <Image Include="Data\textures\dirt01n.tga" />
     <Image Include="EnvironmentSelectAlien.jpg" />
     <Image Include="EnvironmentSelectBreezy.png" />
     <Image Include="EnvironmentSelectCalm.png" />
@@ -245,34 +255,37 @@
   <ItemGroup>
     <None Include="audioBank.xwb" />
     <None Include="bitwise16.spritefont" />
-    <FxCompile Include="color.ps">
+    <None Include="color.ps">
       <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NULL</EntryPointName>
-    </FxCompile>
-    <FxCompile Include="color.vs">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </None>
+    <None Include="color.vs">
       <FileType>Document</FileType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NULL</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NULL</EntryPointName>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </None>
+    <None Include="light.ps" />
+    <None Include="light.vs" />
     <None Include="myfile.spritefont" />
     <None Include="packages.config" />
+    <None Include="skydome.ps" />
+    <None Include="skydome.vs" />
+    <None Include="terrain.ps" />
+    <None Include="terrain.vs" />
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="AudioCoinPlay.wav" />
     <Media Include="Music01.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data\skydome\skydome.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

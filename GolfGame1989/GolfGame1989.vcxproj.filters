@@ -34,6 +34,10 @@
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="SkyDomeShaderClass.h" />
     <ClInclude Include="ReadData.h" />
+    <ClInclude Include="TextureClass.h" />
+    <ClInclude Include="TextureManagerClass.h" />
+    <ClInclude Include="SkyDomeClass.h" />
+    <ClInclude Include="LightClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -59,6 +63,10 @@
     <ClCompile Include="TerrainShaderClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="SkyDomeShaderClass.cpp" />
+    <ClCompile Include="TextureClass.cpp" />
+    <ClCompile Include="TextureManagerClass.cpp" />
+    <ClCompile Include="SkyDomeClass.cpp" />
+    <ClCompile Include="LightClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -112,6 +120,12 @@
     <Image Include="heightmap01.bmp">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Data\textures\dirt01d.tga">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Data\textures\dirt01n.tga">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest">
@@ -129,8 +143,16 @@
     <None Include="myfile.spritefont">
       <Filter>Assets</Filter>
     </None>
+    <None Include="texture.ps" />
+    <None Include="texture.vs" />
     <None Include="color.ps" />
     <None Include="color.vs" />
+    <None Include="terrain.ps" />
+    <None Include="terrain.vs" />
+    <None Include="skydome.ps" />
+    <None Include="skydome.vs" />
+    <None Include="light.ps" />
+    <None Include="light.vs" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="AudioCoinPlay.wav">
@@ -139,5 +161,10 @@
     <Media Include="Music01.wav">
       <Filter>Assets</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data\skydome\skydome.txt">
+      <Filter>Assets</Filter>
+    </Text>
   </ItemGroup>
 </Project>

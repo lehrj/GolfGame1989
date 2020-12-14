@@ -13,6 +13,7 @@
 #include "TerrainClass.h"
 #include "ZoneClass.h"
 #include "ShaderManagerClass.h"
+#include "TextureManagerClass.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -100,11 +101,13 @@ private:
     void Update(DX::StepTimer const& aTimer);
     void UpdateInput(DX::StepTimer const& aTimer);
 
-    Camera* pCamera;
-    Golf* pGolf;
-    GolfPlay* pPlay;
-    TerrainClass* pTerrain;
-    ZoneClass* pZone;
+    Camera*                                         pCamera;
+    Golf*                                           pGolf;
+    GolfPlay*                                       pPlay;
+    
+    ZoneClass*                                      pZone;
+    ShaderManagerClass*                             pShaderManager;
+    TextureManagerClass*                            pTextureManager;
 
     // Device resources.
     HWND                                            m_window;

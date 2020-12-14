@@ -24,9 +24,10 @@ Game::Game() noexcept :
 
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
-
-    //pTerrain = new TerrainClass();
+   
     pZone = new ZoneClass();
+    pShaderManager = new ShaderManagerClass();
+    pTextureManager = new TextureManagerClass();
 
     if (m_isInDebugMode == false)
     {
@@ -51,8 +52,10 @@ Game::~Game()
     delete pGolf;
     delete pPlay;
     delete pCamera;
-    //delete pTerrain;
+    
     delete pZone;
+    delete pShaderManager;
+    delete pTextureManager;
 }
 
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
@@ -481,7 +484,7 @@ void Game::CreateResources()
     // heightmap load
     //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
     //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
-    pZone->Initialize(m_d3dDevice.Get());
+    //pZone->Initialize(m_d3dDevice.Get());
 }
 
 void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
@@ -3764,7 +3767,47 @@ void Game::Initialize(HWND window, int width, int height)
 
     //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
     //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
-    
+    bool result;
+    bool isInitSuccessTrue = true;
+
+    result = pZone->Initialize(m_d3dDevice.Get());
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+
+    result = pShaderManager->Initialize(m_d3dDevice.Get(), window);
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+
+    const int textureCount = 10;
+    result = pTextureManager->Initialize(textureCount);
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+
+    // Load textures into the texture manager.
+    result = pTextureManager->LoadTexture(m_d3dDevice.Get(), m_d3dContext.Get(), "../GolfGame1989/data/textures/dirt01d.tga", 0);
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+    result = pTextureManager->LoadTexture(m_d3dDevice.Get(), m_d3dContext.Get(), "../GolfGame1989/data/textures/dirt01n.tga", 1);
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+
+    if (!isInitSuccessTrue)
+    {
+        // add initialization failure testing  here;
+        int errorBreak = 0;
+        errorBreak++;
+    }
+
 }
 
 // Message handlers

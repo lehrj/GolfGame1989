@@ -72,7 +72,9 @@
 
 // shaders
 #include "ReadData.h"
-
+#pragma comment(lib,"d3d11.lib")
+#include <d3dcompiler.h>
+#pragma comment(lib,"D3dcompiler.lib")
 
 // end
 
