@@ -114,6 +114,7 @@ public:
 	int GetCellsCulled();
 
 	bool GetHeightAtPosition(float, float, float&);
+	std::vector<DirectX::VertexPositionColor> LoadTerrainMap();
 
 private:
 	bool LoadSetupFile(char*);
@@ -141,6 +142,8 @@ private:
 	//std::vector<ModelType> m_terrainModelVector;
 	TerrainCellClass* m_TerrainCells;
 	int m_cellCount, m_renderCount, m_cellsDrawn, m_cellsCulled;
+
+	std::vector<DirectX::XMFLOAT3> m_terrainVector;
 };
 
 

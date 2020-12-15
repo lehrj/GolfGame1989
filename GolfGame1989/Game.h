@@ -264,4 +264,6 @@ private:
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
 
     const bool                                  m_isInDebugMode = true;
+
+    std::vector<DirectX::VertexPositionColor>   m_terrainVector;
 };

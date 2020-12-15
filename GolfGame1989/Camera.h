@@ -105,7 +105,7 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = 100.3f;
+    const float                     m_posTravelSpeed = 25.3f;
     const float                     m_rotationTravelSpeed = 1.3f;
     const float                     m_aimTurnRate = 0.3f;
 

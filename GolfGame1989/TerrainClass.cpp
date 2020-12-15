@@ -14,6 +14,7 @@ TerrainClass::TerrainClass()
 	m_terrainModel = 0;
 	//m_terrainModelVector.clear();
 	m_TerrainCells = 0;
+	m_terrainVector.clear();
 }
 
 TerrainClass::TerrainClass(const TerrainClass& other)
@@ -815,6 +816,7 @@ bool TerrainClass::BuildTerrainModel()
 			index++;
 		}
 	}
+	m_terrainVector = testTerrain;
 
 	int test = 0;
 	test++;
@@ -1313,4 +1315,21 @@ bool TerrainClass::CheckHeightOfTriangle(float x, float z, float& height, float 
 	height = Q[1];
 
 	return true;
+}
+
+std::vector<DirectX::VertexPositionColor> TerrainClass::LoadTerrainMap()
+{
+	std::vector<DirectX::VertexPositionColor> vertPosColor;
+	vertPosColor.clear();
+	DirectX::XMFLOAT4 terrainColor(0.000000000f, 0.501960814f, 0.000000000f, 1.000000000f);
+	
+	for (int i = 0; i < m_terrainVector.size(); ++i)
+	{
+		DirectX::VertexPositionColor vert;
+		vert.position = m_terrainVector[i];
+		vert.color = terrainColor;
+		vertPosColor.push_back(vert);
+	}
+	m_terrainVector.clear();
+	return vertPosColor;
 }

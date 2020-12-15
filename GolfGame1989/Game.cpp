@@ -3711,6 +3711,41 @@ void Game::DrawWorld12thHole()
     DrawTree09(treePos9, .9f);
     */
     
+    /*
+    //for (int i = 0; i < m_terrainVector.size() - 1; ++i)
+    for (int i = 0; i < 5000; ++i)
+    {
+        //m_batch->DrawLine(m_terrainVector[i], m_terrainVector[i + 1]);
+        m_batch->DrawTriangle(m_terrainVector[i], m_terrainVector[i + 1], m_terrainVector[i+2]);
+        //m_batch->DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, 
+    }
+    */
+
+    /*
+    DirectX::XMFLOAT4 colorBase(1.0, 1.0, 1.0, 1.0);
+
+    VertexPositionColor testVerts[2000];
+    VertexPositionColor colorVerts[2000];
+    for (int i = 0; i < 2000; ++i)
+    {
+        testVerts[i] = m_terrainVector[i];
+        colorVerts[i] = m_terrainVector[i];
+        colorVerts[i].color = colorBase;
+    }
+    */
+
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0); // doesnt facecull
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+    //m_effect->Apply(m_d3dContext.Get());
+    //m_batch->DrawIndexed(D3D_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), verts, 8);
+    //m_batch->DrawIndexed(D3D_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), testVerts, 1000);
+
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, testVerts, _countof(testVerts));
+    
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, colorVerts, _countof(colorVerts));
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+    //m_effect->Apply(m_d3dContext.Get());
 }
 
 // Properties
@@ -3770,7 +3805,7 @@ void Game::Initialize(HWND window, int width, int height)
     bool result;
     bool isInitSuccessTrue = true;
 
-    result = pZone->Initialize(m_d3dDevice.Get());
+    result = pZone->Initialize(m_d3dDevice.Get(), pCamera);
     if (!result)
     {
         isInitSuccessTrue = false;
@@ -3808,6 +3843,9 @@ void Game::Initialize(HWND window, int width, int height)
         errorBreak++;
     }
 
+    // testeing new terrain map
+    m_terrainVector.clear();
+    m_terrainVector = pZone->GetTerrainMap();
 }
 
 // Message handlers
@@ -3929,9 +3967,9 @@ void Game::Render()
     {
         return;
     }
-
+    
     Clear();
-
+    
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -3951,11 +3989,12 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
     
+     
     
+    //pZone->Frame(m_d3dContext.Get(), pShaderManager, pTextureManager);
 
-    pZone->Frame(m_d3dContext.Get());
-    //pTerrain->Render(m_d3dContext.Get());
     m_batch->Begin();
+    
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -4071,6 +4110,8 @@ void Game::Render()
     m_spriteBatch->End();
     
     Present();
+
+
 }
 
 void Game::ResetGamePlay()
