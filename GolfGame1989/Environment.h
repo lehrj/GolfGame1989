@@ -1,57 +1,8 @@
 #pragma once
-/*
-#include <windows.h>
-#include <d3d11.h>
-//#include <d3dx11.h>
-//#include <d3dx10.h>
-//#include <xnamath.h>
-#include <D3D10_1.h>
-#include <DXGI.h>
-#include <D2D1.h>
-#include <sstream>
-#include <dwrite.h>
-#include <dinput.h>
-*/
-/************************************New Stuff****************************************************/
-//#include <vector>
-/*************************************************************************************************/
-//#include "wingdi.h"
-//#include <wingdi.h>
-
-
-
-//#include <stdlib.h>
-//#include <string.h>
-
-//#include <wingdi.h>
+#include <fstream>
 #include "Utility.h"
-//#include <stdio.h>
-//#include <d3d11.h>
+#include "TerrainClass.h"
 
-
-/*
-typedef struct tagBITMAPFILEHEADER {
-    WORD    bfType;
-    DWORD   bfSize;
-    WORD    bfReserved1;
-    WORD    bfReserved2;
-    DWORD   bfOffBits;
-} BITMAPFILEHEADER, FAR* LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
-
-typedef struct tagBITMAPINFOHEADER {
-    DWORD      biSize;
-    LONG       biWidth;
-    LONG       biHeight;
-    WORD       biPlanes;
-    WORD       biBitCount;
-    DWORD      biCompression;
-    DWORD      biSizeImage;
-    LONG       biXPelsPerMeter;
-    LONG       biYPelsPerMeter;
-    DWORD      biClrUsed;
-    DWORD      biClrImportant;
-} BITMAPINFOHEADER, FAR* LPBITMAPINFOHEADER, * PBITMAPINFOHEADER;
-*/
 /*
 typedef struct tagBITMAPINFOHEADER {
     DWORD biSize;
@@ -130,36 +81,9 @@ struct Fixture
 // Class to handle environment and gameplay world needs
 class Environment
 {
-    /*
-// height map testing
-private:
-    struct VertexType
-    {
-
-        DirectX::XMFLOAT3 position;
-        DirectX::XMFLOAT4 color;
-        DirectX::XMFLOAT3 normal;
-    };
-    struct HeightMapType
-    {
-        float x, y, z;
-        float tu, tv;
-        float nx, ny, nz;
-    };
-    struct VectorType
-    {
-        float x, y, z;
-    };
-    struct HeightMapInfo {        // Heightmap structure
-        int terrainWidth;        // Width of heightmap
-        int terrainHeight;        // Height (Length) of heightmap
-        DirectX::XMFLOAT3* heightMap;    // Array to store terrain's vertex positions
-    };
-    */
-
 public:
     Environment();
-    
+
     double GetAirDensity() const { return m_currentEnviron.airDensity; };
     std::string GetAirDensityString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensityStr; };
     double GetAirDensity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].airDensity; };
@@ -191,25 +115,28 @@ public:
     double GetWindY() const { return m_currentEnviron.wind.y; };
     std::string GetWindYString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windYStr; };
     double GetWindZ() const { return m_currentEnviron.wind.z; };
-    std::string GetWindZString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZStr; };    
-
+    std::string GetWindZString(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].windZStr; };
+    bool InitializeTerrain();
+    
     void SortFixtureBucketByDistance();
     void UpdateEnvironment(const int aIndex);
-    void UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vector3 &aCameraPos);
-    void UpdateFixtures(const DirectX::SimpleMath::Vector3 &aPos);
+    void UpdateFixtureDistanceToCamera(const DirectX::SimpleMath::Vector3& aCameraPos);
+    void UpdateFixtures(const DirectX::SimpleMath::Vector3& aPos);
 
 private:
 
     void BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos);
     void BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos);
-
+    bool BuildTerrainModel();
+    bool CalculateTerrainNormals();
     void CreateDataStrings();
     void LoadEnvironmentData();
     void LoadFixtureBucket();
     void LoadFixtureBucket12th();
+    bool LoadHeightMap();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
-  
+
     Environ                             m_currentEnviron;
     std::vector<Environ>                m_environs;
     const int                           m_environsAvailable = 3;
@@ -218,6 +145,7 @@ private:
     std::vector<Fixture>                m_fixtureBucket;
 
     std::vector<DirectX::VertexPositionColor> m_flagVertex;
+
     std::vector<DirectX::VertexPositionColor> m_holeVertex;
     const int                           m_holeResolution = 30;          // number of vertices used to draw hole circle
     //const double                        m_holeRadius = 0.10795;              // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
@@ -226,7 +154,14 @@ private:
     double                              m_landingHeight = 0.0;     // in meters
     double                              m_launchHeight = 0.0;      // in meters
     double                              m_testHeight = 0.0;        // in meters, for testing ground height functions
-
+   
+    //std::vector<DirectX::XMFLOAT3>      m_heightMap;
+    std::vector<DirectX::VertexPositionNormal> m_heightMap;
+    const float                         m_heightScale = 1.0;
+    int                                 m_terrainHeight = 0;
+    int                                 m_terrainLength = 0;
+    int                                 m_terrainWidth = 0;
+    std::vector<DirectX::VertexPositionNormal> m_terrainModel;
     // variables for bounce and roll functionality not yet implemented
     double                              m_landingFriction;
     double                              m_landingHardness;
@@ -242,27 +177,7 @@ private:
     const double                        m_minMaxWind = 667.0;   // highest know wind speed on Neptune
 
 
-    // testing heightmap
-    /*
-    bool LoadHeightMap(char*);
-    bool LoadHeightMap2(char*);
-    bool InitializeBuffers(ID3D11Device*);
-    void NormalizeHeightMap();
-
-    int m_terrainWidth, m_terrainHeight;
-    HeightMapType* m_heightMap = 0;
-    HeightMapInfo m_hminfo;
-    //TextureClass* m_Texture;
-    int m_vertexCount;
-    int m_indexCount;
-    VertexType* m_vertices = 0;
-    ID3D11Buffer* m_vertexBuffer, * m_indexBuffer;
-
-public:
-    bool Initialize(ID3D11Device*, char*);
-    void RenderHeightMap(ID3D11DeviceContext*);
-
-    bool GetHeightAtPosition(float, float, float&);
-    */
 };
+
+
 

@@ -295,7 +295,7 @@ bool TerrainClass::LoadHeightMap(char* filename)
 			m_heightMap[index].x = (float)i;
 			m_heightMap[index].y = (float)height;
 			m_heightMap[index].z = (float)j;
-		
+			
 			k += 3;
 		}
 		k += 1;
@@ -1330,6 +1330,7 @@ std::vector<DirectX::VertexPositionColor> TerrainClass::LoadTerrainMap()
 		vert.color = terrainColor;
 		vertPosColor.push_back(vert);
 	}
+
 	m_terrainVector.clear();
 	return vertPosColor;
 }

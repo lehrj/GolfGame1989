@@ -71,6 +71,7 @@ public:
 
     void InputData();
     void LoadEnvironment(const int aIndex);
+    bool InitializeEnvironmentTerrain();
     void ResetBallData() { pBall->ResetBallData(); };
     void ResetIsBallInHole() { pBall->ResetIsInHole(); };
     void SelectInputClub(int aInput);
@@ -122,8 +123,4 @@ private:
     
     std::vector<std::vector<BallMotion>>        m_hydraData;
 
-public:
-    // height map testing
-    bool InitializeHeightMap(ID3D11Device*, char*);
-    void RenderEnvironHeightMap(ID3D11DeviceContext*);
 };

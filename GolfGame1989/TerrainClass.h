@@ -1,25 +1,6 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: terrainclass.h
-////////////////////////////////////////////////////////////////////////////////
 #pragma once
-
-//#ifndef _TERRAINCLASS_H_
-//#define _TERRAINCLASS_H_
-
-
-//////////////
-// INCLUDES //
-//////////////
 #include <fstream>
-//#include <d3d11.h>
-//#include <DirectXMath.h>
 #include <stdio.h>
-//using namespace DirectX;
-
-
-///////////////////////
-// MY CLASS INCLUDES //
-///////////////////////
 #include "terraincellclass.h"
 #include "frustumclass.h"
 
@@ -48,9 +29,7 @@ typedef struct tagBITMAPFILEHEADER {
 } BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
 #pragma pack() 
 
-////////////////////////////////////////////////////////////////////////////////
-// Class name: TerrainClass
-////////////////////////////////////////////////////////////////////////////////
+
 class TerrainClass
 {
 private:
@@ -146,5 +125,3 @@ private:
 	std::vector<DirectX::XMFLOAT3> m_terrainVector;
 };
 
-
-//#endif

@@ -3721,18 +3721,57 @@ void Game::DrawWorld12thHole()
     }
     */
 
-    /*
-    DirectX::XMFLOAT4 colorBase(1.0, 1.0, 1.0, 1.0);
 
-    VertexPositionColor testVerts[2000];
-    VertexPositionColor colorVerts[2000];
-    for (int i = 0; i < 2000; ++i)
+    
+    DirectX::XMFLOAT4 colorBase(1.0, 1.0, 1.0, 1.0);
+    m_terrainVector.clear();
+    m_terrainVector.resize(1000);
+    VertexPositionColor testVerts[1000];
+    VertexPositionColor colorVerts[1000];
+    VertexPositionColor testVerts1[1000];
+    VertexPositionColor colorVerts1[1000];
+    for (int i = 0; i < 1000; ++i)
     {
-        testVerts[i] = m_terrainVector[i];
-        colorVerts[i] = m_terrainVector[i];
-        colorVerts[i].color = colorBase;
+        if (i < 1000)
+        {
+            testVerts[i] = m_terrainVector[i];
+            colorVerts[i] = m_terrainVector[i];
+            colorVerts[i].color = colorBase;
+        }
+        /*
+        else
+        {
+            testVerts1[i] = m_terrainVector[i];
+            colorVerts1[i] = m_terrainVector[i];
+            colorVerts1[i].color = colorBase;
+        }
+        */
+    }
+    
+
+    /*
+    for (int i = 1000; i < 1500; ++i)
+    {
+        testVerts1[i] = m_terrainVector[i];
+        colorVerts1[i] = m_terrainVector[i];
+        colorVerts1[i].color = colorBase;
     }
     */
+    /*
+    VertexPositionColor testVerts2[1000];
+    VertexPositionColor colorVerts2[1000];
+    for (int i = 2000; i < 3000; ++i)
+    {
+        testVerts2[i] = m_terrainVector[i];
+        colorVerts2[i] = m_terrainVector[i];
+        colorVerts2[i].color = colorBase;
+    }
+    */
+
+    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
+
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts1, _countof(testVerts1));
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts2, _countof(testVerts2));
 
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0); // doesnt facecull
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
@@ -3804,7 +3843,7 @@ void Game::Initialize(HWND window, int width, int height)
     //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
     bool result;
     bool isInitSuccessTrue = true;
-
+    /*
     result = pZone->Initialize(m_d3dDevice.Get(), pCamera);
     if (!result)
     {
@@ -3835,17 +3874,24 @@ void Game::Initialize(HWND window, int width, int height)
     {
         isInitSuccessTrue = false;
     }
+    */
 
+    result = pGolf->InitializeEnvironmentTerrain();
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+    
     if (!isInitSuccessTrue)
     {
         // add initialization failure testing  here;
         int errorBreak = 0;
         errorBreak++;
     }
-
+    
     // testeing new terrain map
     m_terrainVector.clear();
-    m_terrainVector = pZone->GetTerrainMap();
+    //m_terrainVector = pZone->GetTerrainMap();
 }
 
 // Message handlers

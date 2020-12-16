@@ -286,6 +286,16 @@ void Golf::CycleNextClub(const bool aIsCycleClubUp)
     BuildUISwingStrings();
 }
 
+bool Golf::InitializeEnvironmentTerrain()
+{
+    bool result = pEnvironment->InitializeTerrain();
+    if (!result)
+    {
+        return false;
+    }
+    return true;
+}
+
 void Golf::InputData()
 {
     m_shotPath.clear();
