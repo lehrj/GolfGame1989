@@ -108,6 +108,7 @@ public:
     float GetTeeDirectionDegrees() const { return m_currentEnviron.teeDirection; };
 
     DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
+    std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
     double GetWindDirection() const;
     DirectX::SimpleMath::Vector3 GetWindVector() const { return m_currentEnviron.wind; };
     double GetWindX() const { return m_currentEnviron.wind.x; };
@@ -136,6 +137,7 @@ private:
     bool LoadHeightMap();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
+    void ScaleTerrain();
 
     Environ                             m_currentEnviron;
     std::vector<Environ>                m_environs;
@@ -157,11 +159,12 @@ private:
    
     //std::vector<DirectX::XMFLOAT3>      m_heightMap;
     std::vector<DirectX::VertexPositionNormal> m_heightMap;
-    const float                         m_heightScale = 1.0;
+    const float                         m_heightScale = .01;
     int                                 m_terrainHeight = 0;
     int                                 m_terrainLength = 0;
     int                                 m_terrainWidth = 0;
     std::vector<DirectX::VertexPositionNormal> m_terrainModel;
+
     // variables for bounce and roll functionality not yet implemented
     double                              m_landingFriction;
     double                              m_landingHardness;

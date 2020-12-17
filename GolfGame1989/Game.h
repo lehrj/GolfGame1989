@@ -266,4 +266,9 @@ private:
     const bool                                  m_isInDebugMode = true;
 
     std::vector<DirectX::VertexPositionColor>   m_terrainVector;
+
+    DirectX::VertexPositionColor*               m_terrainVertexArray;
+    DirectX::VertexPositionColor*               m_terrainVertexArrayBase;
+    int                                         m_terrainVertexCount;
+    bool InitializeTerrainArray();
 };

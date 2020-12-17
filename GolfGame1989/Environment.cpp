@@ -247,6 +247,22 @@ DirectX::SimpleMath::Vector3 Environment::GetGroundHeight(DirectX::SimpleMath::V
     return groundPos;
 }
 
+std::vector<DirectX::VertexPositionColor> Environment::GetTerrainColorVertex()
+{
+    std::vector<DirectX::VertexPositionColor> vertPosColor;
+    vertPosColor.clear();
+    vertPosColor.resize(m_terrainModel.size());
+    DirectX::XMFLOAT4 terrainColor(1.0, 1.0, 1.0, 1.0); // ToDo: for testing, implement color control
+
+    for (int i = 0; i < vertPosColor.size(); ++i)
+    {
+        vertPosColor[i].position = m_terrainModel[i].position;
+        vertPosColor[i].color = terrainColor;
+    }
+
+    return vertPosColor;
+}
+
 // While this could be done once per environment update, future updates could have moment to moment wind changes
 double Environment::GetWindDirection() const
 { 
@@ -280,6 +296,8 @@ bool Environment::InitializeTerrain()
     {
         return false;
     }
+
+    ScaleTerrain();
 
     return true;
 }
@@ -890,6 +908,43 @@ bool Environment::LoadHeightMap()
     bitmapImage = 0;
 
     return true;
+}
+
+void Environment::ScaleTerrain()
+{
+    const float scale = .2;
+    const float transform = -2.0;
+    
+    for (int i = 0; i < m_heightMap.size(); ++i)
+    {
+        //m_heightMap[i].position.x = (m_heightMap[i].position.x * scale) + transform;
+        //m_heightMap[i].position.y = (m_heightMap[i].position.y * scale) + transform;
+        //m_heightMap[i].position.z = (m_heightMap[i].position.z * scale) + transform;
+
+        m_heightMap[i].position.x *= scale;
+        m_heightMap[i].position.y *= scale;
+        m_heightMap[i].position.z *= scale;
+
+        m_heightMap[i].position.x += transform;
+        //m_heightMap[i].position.y += transform;
+        m_heightMap[i].position.z += transform;
+
+    }
+    
+    for (int i = 0; i < m_terrainModel.size(); ++i)
+    {
+        //m_terrainModel[i].position.x = (m_terrainModel[i].position.x * scale) + transform;
+        //m_terrainModel[i].position.y = (m_terrainModel[i].position.y * scale);
+        //m_terrainModel[i].position.z = (m_terrainModel[i].position.z * scale) + transform;
+
+        m_terrainModel[i].position.x *= scale;
+        m_terrainModel[i].position.y *= scale;
+        m_terrainModel[i].position.z *= scale;
+
+        m_terrainModel[i].position.x += transform;
+        //m_terrainModel[i].position.y += transform;
+        m_terrainModel[i].position.z += transform;
+    }
 }
 
 void Environment::SetLandingHeight(double aLandingHeight)

@@ -56,6 +56,11 @@ Game::~Game()
     delete pZone;
     delete pShaderManager;
     delete pTextureManager;
+
+    delete[] m_terrainVertexArray;
+    m_terrainVertexArray = 0;
+    delete[] m_terrainVertexArrayBase;
+    m_terrainVertexArrayBase = 0;
 }
 
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
@@ -402,8 +407,8 @@ void Game::CreateResources()
     ////********* WLJ world start ----- 
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
-    const float viewPlaneNear = 0.0001f;
-    const float viewPlaneFar = 3000.0f;
+    const float viewPlaneNear = 0.001f;
+    const float viewPlaneFar = 300.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -3722,7 +3727,7 @@ void Game::DrawWorld12thHole()
     */
 
 
-    
+    /*
     DirectX::XMFLOAT4 colorBase(1.0, 1.0, 1.0, 1.0);
     m_terrainVector.clear();
     m_terrainVector.resize(1000);
@@ -3738,6 +3743,7 @@ void Game::DrawWorld12thHole()
             colorVerts[i] = m_terrainVector[i];
             colorVerts[i].color = colorBase;
         }
+        */
         /*
         else
         {
@@ -3745,9 +3751,9 @@ void Game::DrawWorld12thHole()
             colorVerts1[i] = m_terrainVector[i];
             colorVerts1[i].color = colorBase;
         }
-        */
+        
     }
-    
+    */
 
     /*
     for (int i = 1000; i < 1500; ++i)
@@ -3768,7 +3774,12 @@ void Game::DrawWorld12thHole()
     }
     */
 
-    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthRead(), .01);
+    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
+    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
+    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
 
     //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts1, _countof(testVerts1));
     //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts2, _countof(testVerts2));
@@ -3882,16 +3893,43 @@ void Game::Initialize(HWND window, int width, int height)
         isInitSuccessTrue = false;
     }
     
+    result = InitializeTerrainArray();
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
+
     if (!isInitSuccessTrue)
     {
         // add initialization failure testing  here;
         int errorBreak = 0;
         errorBreak++;
     }
-    
+
     // testeing new terrain map
     m_terrainVector.clear();
     //m_terrainVector = pZone->GetTerrainMap();
+}
+
+// Testing Terrain Vertex
+bool Game::InitializeTerrainArray()
+{
+    std::vector<DirectX::VertexPositionColor> vertexPC = pGolf->GetTerrainVertex();
+    m_terrainVertexCount = vertexPC.size();
+    m_terrainVertexArray = new DirectX::VertexPositionColor[m_terrainVertexCount];
+    m_terrainVertexArrayBase = new DirectX::VertexPositionColor[m_terrainVertexCount];
+    DirectX::XMFLOAT4 baseColor(0.0, 0.0, 1.0, 0.0);
+
+    for (int i = 0; i < m_terrainVertexCount; ++i)
+    {
+        m_terrainVertexArray[i].position = vertexPC[i].position;
+        //m_terrainVertexArray[i].position.y += .01;
+        m_terrainVertexArray[i].color = vertexPC[i].color;
+        m_terrainVertexArrayBase[i].position = vertexPC[i].position;
+        m_terrainVertexArrayBase[i].color = baseColor;
+    }
+
+    return true;
 }
 
 // Message handlers
@@ -4034,8 +4072,7 @@ void Game::Render()
     m_effect->Apply(m_d3dContext.Get());
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
-    
-     
+   
     
     //pZone->Frame(m_d3dContext.Get(), pShaderManager, pTextureManager);
 

@@ -61,6 +61,7 @@ public:
     DirectX::SimpleMath::Vector3 GetSwingOriginOffsetPos() const { return m_swingOriginOffset; };
     int GetSwingStepIncCount() const { return pSwing->GetSwingStepIncrementCount(); };
     DirectX::XMVECTORF32 GetTerrainColor() const { return pEnvironment->GetEnvironColor(); };
+    std::vector<DirectX::VertexPositionColor> GetTerrainVertex() { return pEnvironment->GetTerrainColorVertex(); };
     DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
     float GetTeeDirection() const { return pEnvironment->GetTeeDirectionDegrees(); };
     std::vector<std::string> GetUIShotStrings() const { return m_uiShotStrings; };
