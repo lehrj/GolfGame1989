@@ -281,10 +281,41 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos)
             DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
             ++count;
             foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+            if (i == 497)
+            {
+                //foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+                //bool testIsTrue = foundHeight;
+
+            }
+            //////////////////////////////////////////////////
+            // start test debugging
+
+            float x = aPos.x;
+            float y = aPos.z;
+            float height = aPos.y;
+            float testV0[3];
+            testV0[0] = vertex1.x;
+            testV0[1] = vertex1.y;
+            testV0[2] = vertex1.z;
+            float testV1[3];
+            testV1[0] = vertex2.x;
+            testV1[1] = vertex2.y;
+            testV1[2] = vertex2.z;
+            float testV2[3];
+            testV2[0] = vertex3.x;
+            testV2[1] = vertex3.y;
+            testV2[2] = vertex3.z;
+            //foundHeight = CheckHeightOfTriangle(x, y, height, testV0, testV1, testV2, aPos);
+
+            //CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3])
+
+            //////////////////////////////////////////////////
             if (foundHeight)
             {
                 int testBreak = 0;
                 ++testBreak;
+                return aPos.y;
             }
         }
     }
@@ -298,6 +329,138 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos)
         float errorHeight = -2.0;
         return errorHeight;
     }
+}
+
+bool Environment::CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3], DirectX::XMFLOAT3& aPos)
+{
+    float startVector[3], directionVector[3], edge1[3], edge2[3], normal[3];
+    float Q[3], e1[3], e2[3], e3[3], edgeNormal[3], temp[3];
+    float magnitude, D, denominator, numerator, t, determinant;
+
+    // Starting position of the ray that is being cast.
+    startVector[0] = x;
+    startVector[1] = 0.0f;
+    startVector[2] = z;
+
+    // The direction the ray is being cast.
+    directionVector[0] = 0.0f;
+    directionVector[1] = -1.0f;
+    directionVector[2] = 0.0f;
+
+    // Calculate the two edges from the three points given.
+    edge1[0] = v1[0] - v0[0];
+    edge1[1] = v1[1] - v0[1];
+    edge1[2] = v1[2] - v0[2];
+
+    edge2[0] = v2[0] - v0[0];
+    edge2[1] = v2[1] - v0[1];
+    edge2[2] = v2[2] - v0[2];
+
+    // Calculate the normal of the triangle from the two edges.
+    normal[0] = (edge1[1] * edge2[2]) - (edge1[2] * edge2[1]);
+    normal[1] = (edge1[2] * edge2[0]) - (edge1[0] * edge2[2]);
+    normal[2] = (edge1[0] * edge2[1]) - (edge1[1] * edge2[0]);
+
+    magnitude = (float)sqrt((normal[0] * normal[0]) + (normal[1] * normal[1]) + (normal[2] * normal[2]));
+    normal[0] = normal[0] / magnitude;
+    normal[1] = normal[1] / magnitude;
+    normal[2] = normal[2] / magnitude;
+
+    // Find the distance from the origin to the plane.
+    D = ((-normal[0] * v0[0]) + (-normal[1] * v0[1]) + (-normal[2] * v0[2]));
+
+    // Get the denominator of the equation.
+    denominator = ((normal[0] * directionVector[0]) + (normal[1] * directionVector[1]) + (normal[2] * directionVector[2]));
+
+    // Make sure the result doesn't get too close to zero to prevent divide by zero.
+    if (fabs(denominator) < 0.0001f)
+    {
+        return false;
+    }
+
+    // Get the numerator of the equation.
+    numerator = -1.0f * (((normal[0] * startVector[0]) + (normal[1] * startVector[1]) + (normal[2] * startVector[2])) + D);
+
+    // Calculate where we intersect the triangle.
+    t = numerator / denominator;
+
+    // Find the intersection vector.
+    Q[0] = startVector[0] + (directionVector[0] * t);
+    Q[1] = startVector[1] + (directionVector[1] * t);
+    Q[2] = startVector[2] + (directionVector[2] * t);
+
+    // Find the three edges of the triangle.
+    e1[0] = v1[0] - v0[0];
+    e1[1] = v1[1] - v0[1];
+    e1[2] = v1[2] - v0[2];
+
+    e2[0] = v2[0] - v1[0];
+    e2[1] = v2[1] - v1[1];
+    e2[2] = v2[2] - v1[2];
+
+    e3[0] = v0[0] - v2[0];
+    e3[1] = v0[1] - v2[1];
+    e3[2] = v0[2] - v2[2];
+
+    // Calculate the normal for the first edge.
+    edgeNormal[0] = (e1[1] * normal[2]) - (e1[2] * normal[1]);
+    edgeNormal[1] = (e1[2] * normal[0]) - (e1[0] * normal[2]);
+    edgeNormal[2] = (e1[0] * normal[1]) - (e1[1] * normal[0]);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp[0] = Q[0] - v0[0];
+    temp[1] = Q[1] - v0[1];
+    temp[2] = Q[2] - v0[2];
+
+    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the second edge.
+    edgeNormal[0] = (e2[1] * normal[2]) - (e2[2] * normal[1]);
+    edgeNormal[1] = (e2[2] * normal[0]) - (e2[0] * normal[2]);
+    edgeNormal[2] = (e2[0] * normal[1]) - (e2[1] * normal[0]);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp[0] = Q[0] - v1[0];
+    temp[1] = Q[1] - v1[1];
+    temp[2] = Q[2] - v1[2];
+
+    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the third edge.
+    edgeNormal[0] = (e3[1] * normal[2]) - (e3[2] * normal[1]);
+    edgeNormal[1] = (e3[2] * normal[0]) - (e3[0] * normal[2]);
+    edgeNormal[2] = (e3[0] * normal[1]) - (e3[1] * normal[0]);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp[0] = Q[0] - v2[0];
+    temp[1] = Q[1] - v2[1];
+    temp[2] = Q[2] - v2[2];
+
+    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Now we have our height.
+    height = Q[1];
+    aPos.y = Q[1];
+
+    return true;
 }
 
 bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2)
@@ -326,7 +489,7 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     edge1.Cross(edge2, normalTestCross);
     normalTestCross.Normalize();
     normal.Normalize();
-
+    normal = normalTestCross;
     // Find the distance from the origin to the plane.
     float distance = ((-normal.x * v0.x) + (-normal.y * v0.y) + (-normal.z * v0.z));
 
@@ -359,7 +522,8 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     // Calculate the normal for the first edge.
     DirectX::SimpleMath::Vector3 edgeNormal;
     edgeNormal.x = (e1.y * normal.z) - (e1.z * normal.y);
-    edgeNormal.y = (e1.z * normal.x) - (e1.x * normal.x);
+    //edgeNormal.y = (e1.z * normal.x) - (e1.x * normal.x);
+    edgeNormal.y = (e1.z * normal.x) - (e1.x * normal.z);
     edgeNormal.z = (e1.x * normal.y) - (e1.y * normal.x);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
@@ -372,6 +536,28 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     {
         return false;
     }
+
+    /////// start add
+
+    // Calculate the normal for the second edge
+    edgeNormal.x = (e2.y * normal.z) - (e2.z * normal.y);
+    edgeNormal.y = (e2.z * normal.x) - (e2.x * normal.z);
+    edgeNormal.z = (e2.x * normal.y) - (e2.y * normal.x);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp.x = Q.x - v1.x;
+    temp.y = Q.y - v1.y;
+    temp.z = Q.z - v1.z;
+
+    determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    /////// end add
 
     // Calculate the normal for the third edge.
     edgeNormal.x = (e3.y * normal.z) - (e3.z * normal.y);

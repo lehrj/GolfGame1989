@@ -407,8 +407,9 @@ void Game::CreateResources()
     ////********* WLJ world start ----- 
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
-    const float viewPlaneNear = 0.001f;
-    const float viewPlaneFar = 300.0f;
+    // Hook values into the camera class variables for uniform view field when switching window size/fullscreen
+    const float viewPlaneNear = 0.001f;  
+    const float viewPlaneFar = 400.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);

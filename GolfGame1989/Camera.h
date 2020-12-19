@@ -98,8 +98,8 @@ private:
     //float                           m_frustumAngle;
     int                             m_clientWidth;
     int                             m_clientHeight;
-    float                           m_nearPlane;
-    float                           m_farPlane;
+    float                           m_nearPlane = .1;
+    float                           m_farPlane = 18.f;
 
     DirectX::SimpleMath::Matrix     m_viewMatrix;
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
