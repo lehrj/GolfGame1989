@@ -3652,7 +3652,11 @@ void Game::DrawWorld12thHole()
     {
         if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
         {
-            DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+
+            float height = pGolf->GetTerrainHeight(fixtureList[i].position);
+            DirectX::XMFLOAT3 newPos(fixtureList[i].position.x, height, fixtureList[i].position.z);
+            //DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+            DrawFlagHoleFixture(newPos, fixtureList[i].animationVariation);
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
         {
@@ -3918,15 +3922,29 @@ bool Game::InitializeTerrainArray()
     m_terrainVertexCount = vertexPC.size();
     m_terrainVertexArray = new DirectX::VertexPositionColor[m_terrainVertexCount];
     m_terrainVertexArrayBase = new DirectX::VertexPositionColor[m_terrainVertexCount];
-    DirectX::XMFLOAT4 baseColor(0.0, 0.0, 1.0, 0.0);
 
+
+    //lawngreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
+    //DirectX::XMFLOAT4 lineColor(0.0, 0.501960814f, 0.0, 1.0);
+    DirectX::XMFLOAT4 lineColor(.486274540f, .988235354f, 0.0, 1.0);
+    DirectX::XMFLOAT4 baseColor(0.0, 0.0, 0.0, 1.0);
+    DirectX::XMFLOAT4 baseColor2(0.3, 0.3, 0.3, 1.0);
     for (int i = 0; i < m_terrainVertexCount; ++i)
     {
         m_terrainVertexArray[i].position = vertexPC[i].position;
         //m_terrainVertexArray[i].position.y += .01;
-        m_terrainVertexArray[i].color = vertexPC[i].color;
+        //m_terrainVertexArray[i].color = vertexPC[i].color;
+        m_terrainVertexArray[i].color = lineColor;
         m_terrainVertexArrayBase[i].position = vertexPC[i].position;
-        m_terrainVertexArrayBase[i].color = baseColor;
+
+        if (i % 2 == 0)
+        {
+            m_terrainVertexArrayBase[i].color = baseColor;
+        }
+        else
+        {
+            m_terrainVertexArrayBase[i].color = baseColor;
+        }
     }
 
     return true;

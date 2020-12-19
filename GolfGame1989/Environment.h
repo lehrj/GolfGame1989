@@ -96,6 +96,7 @@ public:
     double GetGravity(const int aEnvironmentIndex) const { return m_environs[aEnvironmentIndex].gravity; };
     DirectX::SimpleMath::Vector3 GetGroundHeight(DirectX::SimpleMath::Vector3 aPos);
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return m_flagVertex; };
+    
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
     double GetHoleRadius() const { return m_holeRadius * m_currentEnviron.scale; };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return m_holeVertex; };
@@ -109,6 +110,8 @@ public:
 
     DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
     std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
+    float GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos);
+    bool CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2);
     double GetWindDirection() const;
     DirectX::SimpleMath::Vector3 GetWindVector() const { return m_currentEnviron.wind; };
     double GetWindX() const { return m_currentEnviron.wind.x; };
