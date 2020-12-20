@@ -15,6 +15,8 @@ Environment::Environment()
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
+    bool result = InitializeTerrain();
+    
     LoadFixtureBucket12th();
     //m_vertexBuffer = 0;
     //m_indexBuffer = 0;
@@ -264,208 +266,34 @@ std::vector<DirectX::VertexPositionColor> Environment::GetTerrainColorVertex()
 }
 
 float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos)
-{  
+{
     bool foundHeight = false;
     int index = 0;
-    int count = 0;
-    //m_terrainModel[index].normal = m_heightMap[index4].normal;
+
     for (int i = 0; i < m_terrainModel.size() / 3; ++i)
     {
-        //if (foundHeight == false)
+        int index = i * 3;
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+        if (foundHeight)
         {
-            int index = i * 3;
-            DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
-            ++index;
-            DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
-            ++index;
-            DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
-            ++count;
-            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-            if (i == 497)
-            {
-                //foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-
-                //bool testIsTrue = foundHeight;
-
-            }
-            //////////////////////////////////////////////////
-            // start test debugging
-
-            float x = aPos.x;
-            float y = aPos.z;
-            float height = aPos.y;
-            float testV0[3];
-            testV0[0] = vertex1.x;
-            testV0[1] = vertex1.y;
-            testV0[2] = vertex1.z;
-            float testV1[3];
-            testV1[0] = vertex2.x;
-            testV1[1] = vertex2.y;
-            testV1[2] = vertex2.z;
-            float testV2[3];
-            testV2[0] = vertex3.x;
-            testV2[1] = vertex3.y;
-            testV2[2] = vertex3.z;
-            //foundHeight = CheckHeightOfTriangle(x, y, height, testV0, testV1, testV2, aPos);
-
-            //CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3])
-
-            //////////////////////////////////////////////////
-            if (foundHeight)
-            {
-                int testBreak = 0;
-                ++testBreak;
-                return aPos.y;
-            }
+            return aPos.y;
         }
     }
 
-    if (foundHeight)
-    {
-        return aPos.y;
-    }
-    else
-    {
-        float errorHeight = -2.0;
-        return errorHeight;
-    }
+    float errorHeight = -2.0;
+    return errorHeight;
 }
 
-bool Environment::CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3], DirectX::XMFLOAT3& aPos)
-{
-    float startVector[3], directionVector[3], edge1[3], edge2[3], normal[3];
-    float Q[3], e1[3], e2[3], e3[3], edgeNormal[3], temp[3];
-    float magnitude, D, denominator, numerator, t, determinant;
-
-    // Starting position of the ray that is being cast.
-    startVector[0] = x;
-    startVector[1] = 0.0f;
-    startVector[2] = z;
-
-    // The direction the ray is being cast.
-    directionVector[0] = 0.0f;
-    directionVector[1] = -1.0f;
-    directionVector[2] = 0.0f;
-
-    // Calculate the two edges from the three points given.
-    edge1[0] = v1[0] - v0[0];
-    edge1[1] = v1[1] - v0[1];
-    edge1[2] = v1[2] - v0[2];
-
-    edge2[0] = v2[0] - v0[0];
-    edge2[1] = v2[1] - v0[1];
-    edge2[2] = v2[2] - v0[2];
-
-    // Calculate the normal of the triangle from the two edges.
-    normal[0] = (edge1[1] * edge2[2]) - (edge1[2] * edge2[1]);
-    normal[1] = (edge1[2] * edge2[0]) - (edge1[0] * edge2[2]);
-    normal[2] = (edge1[0] * edge2[1]) - (edge1[1] * edge2[0]);
-
-    magnitude = (float)sqrt((normal[0] * normal[0]) + (normal[1] * normal[1]) + (normal[2] * normal[2]));
-    normal[0] = normal[0] / magnitude;
-    normal[1] = normal[1] / magnitude;
-    normal[2] = normal[2] / magnitude;
-
-    // Find the distance from the origin to the plane.
-    D = ((-normal[0] * v0[0]) + (-normal[1] * v0[1]) + (-normal[2] * v0[2]));
-
-    // Get the denominator of the equation.
-    denominator = ((normal[0] * directionVector[0]) + (normal[1] * directionVector[1]) + (normal[2] * directionVector[2]));
-
-    // Make sure the result doesn't get too close to zero to prevent divide by zero.
-    if (fabs(denominator) < 0.0001f)
-    {
-        return false;
-    }
-
-    // Get the numerator of the equation.
-    numerator = -1.0f * (((normal[0] * startVector[0]) + (normal[1] * startVector[1]) + (normal[2] * startVector[2])) + D);
-
-    // Calculate where we intersect the triangle.
-    t = numerator / denominator;
-
-    // Find the intersection vector.
-    Q[0] = startVector[0] + (directionVector[0] * t);
-    Q[1] = startVector[1] + (directionVector[1] * t);
-    Q[2] = startVector[2] + (directionVector[2] * t);
-
-    // Find the three edges of the triangle.
-    e1[0] = v1[0] - v0[0];
-    e1[1] = v1[1] - v0[1];
-    e1[2] = v1[2] - v0[2];
-
-    e2[0] = v2[0] - v1[0];
-    e2[1] = v2[1] - v1[1];
-    e2[2] = v2[2] - v1[2];
-
-    e3[0] = v0[0] - v2[0];
-    e3[1] = v0[1] - v2[1];
-    e3[2] = v0[2] - v2[2];
-
-    // Calculate the normal for the first edge.
-    edgeNormal[0] = (e1[1] * normal[2]) - (e1[2] * normal[1]);
-    edgeNormal[1] = (e1[2] * normal[0]) - (e1[0] * normal[2]);
-    edgeNormal[2] = (e1[0] * normal[1]) - (e1[1] * normal[0]);
-
-    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v0[0];
-    temp[1] = Q[1] - v0[1];
-    temp[2] = Q[2] - v0[2];
-
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
-
-    // Check if it is outside.
-    if (determinant > 0.001f)
-    {
-        return false;
-    }
-
-    // Calculate the normal for the second edge.
-    edgeNormal[0] = (e2[1] * normal[2]) - (e2[2] * normal[1]);
-    edgeNormal[1] = (e2[2] * normal[0]) - (e2[0] * normal[2]);
-    edgeNormal[2] = (e2[0] * normal[1]) - (e2[1] * normal[0]);
-
-    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v1[0];
-    temp[1] = Q[1] - v1[1];
-    temp[2] = Q[2] - v1[2];
-
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
-
-    // Check if it is outside.
-    if (determinant > 0.001f)
-    {
-        return false;
-    }
-
-    // Calculate the normal for the third edge.
-    edgeNormal[0] = (e3[1] * normal[2]) - (e3[2] * normal[1]);
-    edgeNormal[1] = (e3[2] * normal[0]) - (e3[0] * normal[2]);
-    edgeNormal[2] = (e3[0] * normal[1]) - (e3[1] * normal[0]);
-
-    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v2[0];
-    temp[1] = Q[1] - v2[1];
-    temp[2] = Q[2] - v2[2];
-
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
-
-    // Check if it is outside.
-    if (determinant > 0.001f)
-    {
-        return false;
-    }
-
-    // Now we have our height.
-    height = Q[1];
-    aPos.y = Q[1];
-
-    return true;
-}
 
 bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2)
 {
-
     // Starting position of the ray that is being cast
     DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
 
@@ -473,23 +301,13 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     DirectX::XMFLOAT3 directionVector(0.0f, -1.0f, 0.0f);
 
     // Calculate the two edges from the three points given
-    //DirectX::XMFLOAT3 edge1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
-    //DirectX::XMFLOAT3 edge2(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
     DirectX::SimpleMath::Vector3 edge1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
     DirectX::SimpleMath::Vector3 edge2(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
 
     // Calculate the normal of the triangle from the two edges // ToDo use cross prod funcs
-    //DirectX::XMFLOAT3 normal;
     DirectX::SimpleMath::Vector3 normal;
-    normal.x = (edge1.x * edge2.z) - (edge1.z * edge2.y);
-    normal.y = (edge1.z * edge2.x) - (edge1.x * edge2.z);
-    normal.z = (edge1.x * edge2.y) - (edge1.y * edge2.x);
+    edge1.Cross(edge2, normal);
 
-    DirectX::SimpleMath::Vector3 normalTestCross;
-    edge1.Cross(edge2, normalTestCross);
-    normalTestCross.Normalize();
-    normal.Normalize();
-    normal = normalTestCross;
     // Find the distance from the origin to the plane.
     float distance = ((-normal.x * v0.x) + (-normal.y * v0.y) + (-normal.z * v0.z));
 
@@ -521,10 +339,13 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
 
     // Calculate the normal for the first edge.
     DirectX::SimpleMath::Vector3 edgeNormal;
+    /*
     edgeNormal.x = (e1.y * normal.z) - (e1.z * normal.y);
-    //edgeNormal.y = (e1.z * normal.x) - (e1.x * normal.x);
     edgeNormal.y = (e1.z * normal.x) - (e1.x * normal.z);
     edgeNormal.z = (e1.x * normal.y) - (e1.y * normal.x);
+    */
+    //edge1.Cross(edge2, normal);
+    e1.Cross(normal, edgeNormal);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
     DirectX::SimpleMath::Vector3 temp(Q.x - v1.x, Q.y - v1.y, Q.z - v1.z);
@@ -537,12 +358,13 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
         return false;
     }
 
-    /////// start add
-
     // Calculate the normal for the second edge
+    /*
     edgeNormal.x = (e2.y * normal.z) - (e2.z * normal.y);
     edgeNormal.y = (e2.z * normal.x) - (e2.x * normal.z);
     edgeNormal.z = (e2.x * normal.y) - (e2.y * normal.x);
+    */
+    e2.Cross(normal, edgeNormal);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
     temp.x = Q.x - v1.x;
@@ -557,12 +379,14 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
         return false;
     }
 
-    /////// end add
-
     // Calculate the normal for the third edge.
+    /*
     edgeNormal.x = (e3.y * normal.z) - (e3.z * normal.y);
     edgeNormal.y = (e3.z * normal.x) - (e3.x * normal.z);
     edgeNormal.z = (e3.x * normal.y) - (e3.y * normal.x);
+    */
+    e3.Cross(normal, edgeNormal);
+
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
     temp.x = Q.x - v2.x;
@@ -578,8 +402,7 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     }
 
     // Now we have our height.
-    float height = Q.y;
-    aPos.y = height;
+    aPos.y = Q.y;
 
     return true;
 }
@@ -921,14 +744,68 @@ void Environment::LoadFixtureBucket()
     m_fixtureBucket.push_back(fixt);
 }
 
+bool Environment::SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos)
+{
+    bool foundHeight = false;
+    int index = 0;
+
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    {
+        int index = i * 3;
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+        if (foundHeight)
+        {
+
+            return true;
+            //return aPos.y;
+        }
+    }
+
+    return false;
+}
+
+void Environment::SetPosToTerrain(DirectX::XMFLOAT3& aPos)
+{
+    bool foundHeight = false;
+    int index = 0;
+
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    {
+        if (foundHeight == false)
+        {
+            int index = i * 3;
+            DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+            ++index;
+            DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+            ++index;
+            DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+        }
+    } 
+}
+
 void Environment::LoadFixtureBucket12th()
 {
+    bool result;
+    DirectX::XMFLOAT3 fixtPos;
+
     m_fixtureBucket.clear();
 
     // add FlagStick   
     Fixture flagStick;
     flagStick.idNumber = 0;
-    flagStick.position = m_currentEnviron.holePosition;
+    // set position to allign with terrain height
+    fixtPos = m_currentEnviron.holePosition;
+    result = SetPosToTerrain(fixtPos);
+    flagStick.position = fixtPos;
     flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
     flagStick.animationVariation = 0.0;
     flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
@@ -937,7 +814,10 @@ void Environment::LoadFixtureBucket12th()
     // add Tee Box;
     Fixture teeBox;
     teeBox.idNumber = 1;
-    teeBox.position = m_currentEnviron.teePosition;
+    // set position to allign with terrain height
+    fixtPos = m_currentEnviron.teePosition;
+    result = SetPosToTerrain(fixtPos);
+    teeBox.position = fixtPos;
     teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
     teeBox.animationVariation = 0.0;
     teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
@@ -970,7 +850,11 @@ void Environment::LoadFixtureBucket12th()
         Fixture fixt;
 
         fixt.idNumber = i;
-        fixt.position = DirectX::SimpleMath::Vector3(x, y, z);
+
+        // set position to allign with terrain height
+        fixtPos = DirectX::XMFLOAT3(x, y, z);       
+        result = SetPosToTerrain(fixtPos);
+        fixt.position = fixtPos;
 
         int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
         if (fixtureNum == 1)
@@ -1010,7 +894,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(4.9, 0.0, 0.1);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.9, 0.0, 0.1);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1018,7 +905,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(4.5, 0.0, -1.4);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.5, 0.0, -1.4);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1026,7 +916,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    fixt.position = DirectX::SimpleMath::Vector3(4.65, 0.0, -1.14);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.65, 0.0, -1.14);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1034,7 +927,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(4.85, 0.0, -0.99);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.85, 0.0, -0.99);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1042,7 +938,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(4.89, 0.0, -0.81);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.89, 0.0, -0.81);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1050,7 +949,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(4.91, 0.0, -0.72);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.91, 0.0, -0.72);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1058,7 +960,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(4.85, 0.0, -0.39);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.85, 0.0, -0.39);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1066,7 +971,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(4.76, 0.0, -0.17);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.76, 0.0, -0.17);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1076,7 +984,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(4.92, 0.0, -0.17);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.92, 0.0, -0.17);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1084,7 +995,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    fixt.position = DirectX::SimpleMath::Vector3(4.96, 0.0, 0.47);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.96, 0.0, 0.47);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1092,7 +1006,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    fixt.position = DirectX::SimpleMath::Vector3(4.82, 0.0, 0.66);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.82, 0.0, 0.66);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1100,7 +1017,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(4.79, 0.0, 0.93);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.79, 0.0, 0.93);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1108,7 +1028,10 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(4.69, 0.0, 1.23);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.69, 0.0, 1.23);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
@@ -1116,24 +1039,31 @@ void Environment::LoadFixtureBucket12th()
     fixt.idNumber = i;
     fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    fixt.position = DirectX::SimpleMath::Vector3(4.539, 0.0, 1.45);
+    // set position to allign with terrain height
+    fixtPos = DirectX::XMFLOAT3(4.539, 0.0, 1.45);
+    result = SetPosToTerrain(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
     
-    DirectX::SimpleMath::Vector3 bridge1(1.225, 0.0, -.9);
     ++i;
     fixt.idNumber = i;
     fixt.animationVariation = Utility::ToRadians(45.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    // set position to allign with terrain height
+    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
+    result = SetPosToTerrain(bridge1);
     fixt.position = bridge1;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
-    DirectX::SimpleMath::Vector3 bridge2(3.6, 0.0, 1.5);
     ++i;
     fixt.idNumber = i;
     fixt.animationVariation = Utility::ToRadians(45.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    // set position to allign with terrain height
+    DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
+    result = SetPosToTerrain(bridge2);
     fixt.position = bridge2;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1209,8 +1139,10 @@ bool Environment::LoadHeightMap()
     
     // Read the image data into the height map.
     for (int i = 0; i < m_terrainHeight; i++)
+    //for (int j = 0; j < m_terrainWidth; j++)
     {
         for (int j = 0; j < m_terrainWidth; j++)
+        //for (int i = 0; i < m_terrainHeight; i++)
         {
             height = bitmapImage[k];
             index = (i * m_terrainWidth) + j;
@@ -1234,37 +1166,30 @@ bool Environment::LoadHeightMap()
 void Environment::ScaleTerrain()
 {
     const float scale = .2;
-    const float transform = -2.0;
-    
+    const float xTransform = -2.0f;
+    const float yTransform = 1.0f;
+    const float zTransform = -3.2f;
+
     for (int i = 0; i < m_heightMap.size(); ++i)
     {
-        //m_heightMap[i].position.x = (m_heightMap[i].position.x * scale) + transform;
-        //m_heightMap[i].position.y = (m_heightMap[i].position.y * scale) + transform;
-        //m_heightMap[i].position.z = (m_heightMap[i].position.z * scale) + transform;
-
         m_heightMap[i].position.x *= scale;
         m_heightMap[i].position.y *= scale;
         m_heightMap[i].position.z *= scale;
 
-        m_heightMap[i].position.x += transform;
-        //m_heightMap[i].position.y += transform;
-        m_heightMap[i].position.z += transform;
-
+        m_heightMap[i].position.x += xTransform;
+        m_heightMap[i].position.y += yTransform;
+        m_heightMap[i].position.z += zTransform;
     }
     
     for (int i = 0; i < m_terrainModel.size(); ++i)
     {
-        //m_terrainModel[i].position.x = (m_terrainModel[i].position.x * scale) + transform;
-        //m_terrainModel[i].position.y = (m_terrainModel[i].position.y * scale);
-        //m_terrainModel[i].position.z = (m_terrainModel[i].position.z * scale) + transform;
-
         m_terrainModel[i].position.x *= scale;
         m_terrainModel[i].position.y *= scale;
         m_terrainModel[i].position.z *= scale;
 
-        m_terrainModel[i].position.x += transform;
-        //m_terrainModel[i].position.y += transform;
-        m_terrainModel[i].position.z += transform;
+        m_terrainModel[i].position.x += xTransform;
+        m_terrainModel[i].position.y += yTransform;
+        m_terrainModel[i].position.z += zTransform;
     }
 }
 

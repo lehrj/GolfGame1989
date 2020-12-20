@@ -3634,6 +3634,7 @@ void Game::DrawWorld12thHole()
         }
     }
 
+    // green
     const float height = 0.0;
     DirectX::XMVECTORF32 greenColor = DirectX::Colors::Green;
     VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, height, -0.7f), greenColor);
@@ -3653,11 +3654,7 @@ void Game::DrawWorld12thHole()
     {
         if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
         {
-
-            float height = pGolf->GetTerrainHeight(fixtureList[i].position);
-            DirectX::XMFLOAT3 newPos(fixtureList[i].position.x, height, fixtureList[i].position.z);
-            //DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);
-            DrawFlagHoleFixture(newPos, fixtureList[i].animationVariation);
+            DrawFlagHoleFixture(fixtureList[i].position, fixtureList[i].animationVariation);           
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
         {
@@ -3891,13 +3888,14 @@ void Game::Initialize(HWND window, int width, int height)
         isInitSuccessTrue = false;
     }
     */
-
+    /*
     result = pGolf->InitializeEnvironmentTerrain();
     if (!result)
     {
         isInitSuccessTrue = false;
     }
-    
+    */
+
     result = InitializeTerrainArray();
     if (!result)
     {

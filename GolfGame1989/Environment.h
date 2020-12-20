@@ -111,9 +111,9 @@ public:
     DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
     std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
     float GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos);
-    
+    bool SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos);
+    void SetPosToTerrain(DirectX::XMFLOAT3& aPos);
     bool CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2);
-    bool CheckHeightOfTriangle(float x, float z, float& height, float v0[3], float v1[3], float v2[3], DirectX::XMFLOAT3& aPos);
 
     double GetWindDirection() const;
     DirectX::SimpleMath::Vector3 GetWindVector() const { return m_currentEnviron.wind; };
