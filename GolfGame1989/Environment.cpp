@@ -9,13 +9,14 @@
 
 Environment::Environment()
 {
+    bool result = InitializeTerrain();
     LoadEnvironmentData();
     CreateDataStrings();
     const int startEnviron = 0;  // ToDo: add error checking 
     m_currentEnviron = m_environs[startEnviron];
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
-    bool result = InitializeTerrain();
+    
     
     LoadFixtureBucket12th();
     //m_vertexBuffer = 0;
@@ -457,12 +458,14 @@ void Environment::LoadEnvironmentData()
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
     m_environs[i].holePosition = DirectX::SimpleMath::Vector3(3.0f, 0.0f, -0.5f); // 12th positon
+    SetPosToTerrain(m_environs[i].holePosition);
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f); 
+    SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
 
@@ -804,7 +807,7 @@ void Environment::LoadFixtureBucket12th()
     flagStick.idNumber = 0;
     // set position to allign with terrain height
     fixtPos = m_currentEnviron.holePosition;
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     flagStick.position = fixtPos;
     flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
     flagStick.animationVariation = 0.0;
@@ -816,7 +819,7 @@ void Environment::LoadFixtureBucket12th()
     teeBox.idNumber = 1;
     // set position to allign with terrain height
     fixtPos = m_currentEnviron.teePosition;
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     teeBox.position = fixtPos;
     teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
     teeBox.animationVariation = 0.0;
@@ -853,7 +856,7 @@ void Environment::LoadFixtureBucket12th()
 
         // set position to allign with terrain height
         fixtPos = DirectX::XMFLOAT3(x, y, z);       
-        result = SetPosToTerrain(fixtPos);
+        result = SetPosToTerrainWithCheck(fixtPos);
         fixt.position = fixtPos;
 
         int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
@@ -896,7 +899,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.9, 0.0, 0.1);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -907,7 +910,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.5, 0.0, -1.4);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -918,7 +921,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.65, 0.0, -1.14);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -929,7 +932,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.85, 0.0, -0.99);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -940,7 +943,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.89, 0.0, -0.81);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -951,7 +954,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.91, 0.0, -0.72);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -962,7 +965,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.85, 0.0, -0.39);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -973,7 +976,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.76, 0.0, -0.17);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -986,7 +989,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.92, 0.0, -0.17);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -997,7 +1000,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.96, 0.0, 0.47);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1008,7 +1011,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.82, 0.0, 0.66);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1019,7 +1022,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.79, 0.0, 0.93);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1030,7 +1033,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.69, 0.0, 1.23);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1041,7 +1044,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
     // set position to allign with terrain height
     fixtPos = DirectX::XMFLOAT3(4.539, 0.0, 1.45);
-    result = SetPosToTerrain(fixtPos);
+    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1052,7 +1055,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
     // set position to allign with terrain height
     DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
-    result = SetPosToTerrain(bridge1);
+    result = SetPosToTerrainWithCheck(bridge1);
     fixt.position = bridge1;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
@@ -1063,7 +1066,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
     // set position to allign with terrain height
     DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
-    result = SetPosToTerrain(bridge2);
+    result = SetPosToTerrainWithCheck(bridge2);
     fixt.position = bridge2;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
