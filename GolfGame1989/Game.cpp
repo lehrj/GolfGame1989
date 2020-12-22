@@ -662,8 +662,13 @@ void Game::DrawCameraFocus()
 {
     const float line = .25f;
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
+
+    //pGolf->SetPosToTerrain(focalPoint);
+    float height = pGolf->GetTerrainHeight(focalPoint);
+    height += .1;
+    focalPoint.y = height;
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
-    yLine.y += line;
+    yLine.y -= line;
     DirectX::SimpleMath::Vector3 xLine = focalPoint;
     xLine.x += line;
     DirectX::SimpleMath::Vector3 zLine = focalPoint;
@@ -4115,7 +4120,7 @@ void Game::Render()
         }
         if (m_isInDebugMode == true)
         {
-            //DrawCameraFocus();
+            DrawCameraFocus();
             //DrawDebugLines();
         }
     }
@@ -4125,7 +4130,7 @@ void Game::Render()
     m_batch2->Begin();
 
 
-   
+   /*
     const float line = .25f;
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
@@ -4142,7 +4147,7 @@ void Game::Render()
     m_batch2->DrawLine(origin, yOffset);
     m_batch2->DrawLine(origin, xOffset);
     m_batch2->DrawLine(origin, zOffset);
-
+    */
     DirectX::SimpleMath::Vector3 testBase(256.0, 0.0, 0.0);
     DirectX::SimpleMath::Vector3 testTop(256.0, 10.0, 0.0);
     VertexPositionColor baseVert(testBase, Colors::White);

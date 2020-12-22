@@ -39,6 +39,7 @@ public:
 
     DirectX::SimpleMath::Vector3 GetBallPosInEnviron(DirectX::SimpleMath::Vector3 aPos) const;
     double GetBallRadius() { return m_ball.radius; };
+
     int GetBounceCount() const { return m_bounceCount; };
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetDebugLines() const { return m_debugDrawLines; };
     double GetDebugValue01() const { return m_debugValue01; };
@@ -73,7 +74,7 @@ private:
     void AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor);
     bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime);
     DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop);
-
+    float GetBallFlightAltitude(DirectX::XMFLOAT3 aPos);
     void LandProjectile();
     void LaunchProjectile();
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };

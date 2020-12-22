@@ -266,7 +266,7 @@ std::vector<DirectX::VertexPositionColor> Environment::GetTerrainColorVertex()
     return vertPosColor;
 }
 
-float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos)
+float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
 {
     bool foundHeight = false;
     int index = 0;
@@ -292,12 +292,41 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos)
     return errorHeight;
 }
 
+DirectX::XMFLOAT3 Environment::GetTerrainPosition(DirectX::XMFLOAT3 aPos)
+{
+    bool foundHeight = false;
+    int index = 0;
 
-bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2)
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    {
+        int index = i * 3;
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+        if (foundHeight)
+        {
+            return aPos;
+        }
+    }
+    if (!foundHeight)
+    {
+        // height cannot be found
+        throw std::exception();
+    }
+    
+    return aPos;
+}
+
+bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
 {
     // Starting position of the ray that is being cast
     DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
-
+    
     // The direction the ray is being cast
     DirectX::XMFLOAT3 directionVector(0.0f, -1.0f, 0.0f);
 
@@ -404,7 +433,7 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
 
     // Now we have our height.
     aPos.y = Q.y;
-
+    //aPos.y = -t;
     return true;
 }
 
@@ -464,7 +493,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f); 
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f); 
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
@@ -1170,7 +1199,7 @@ void Environment::ScaleTerrain()
 {
     const float scale = .2;
     const float xTransform = -2.0f;
-    const float yTransform = 1.0f;
+    const float yTransform = 20.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)
