@@ -665,22 +665,33 @@ void Game::DrawCameraFocus()
 
     //pGolf->SetPosToTerrain(focalPoint);
     float height = pGolf->GetTerrainHeight(focalPoint);
-    height += .1;
+    //height += .1;
     focalPoint.y = height;
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
-    yLine.y -= line;
+    yLine.y += line;
     DirectX::SimpleMath::Vector3 xLine = focalPoint;
     xLine.x += line;
     DirectX::SimpleMath::Vector3 zLine = focalPoint;
     zLine.z += line;
 
+    DirectX::SimpleMath::Vector3 negZLine = focalPoint;
+    negZLine.z -= line;
+    DirectX::SimpleMath::Vector3 negXLine = focalPoint;
+    negXLine.x -= line;
+
     VertexPositionColor origin(focalPoint, Colors::Yellow);
     VertexPositionColor yOffset(yLine, Colors::Yellow);
     VertexPositionColor xOffset(xLine, Colors::Yellow);
     VertexPositionColor zOffset(zLine, Colors::Yellow);
+
+    VertexPositionColor negXOffset(negXLine, Colors::Yellow);
+    VertexPositionColor negZOffset(negZLine, Colors::Yellow);
+
     m_batch->DrawLine(origin, yOffset);
     m_batch->DrawLine(origin, xOffset);
     m_batch->DrawLine(origin, zOffset);
+    m_batch->DrawLine(origin, negZOffset);
+    m_batch->DrawLine(origin, negXOffset);
 }
 
 void Game::DrawDebugLines()
@@ -3722,64 +3733,8 @@ void Game::DrawWorld12thHole()
     DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
     DrawTree09(treePos9, .9f);
     */
-    
-    /*
-    //for (int i = 0; i < m_terrainVector.size() - 1; ++i)
-    for (int i = 0; i < 5000; ++i)
-    {
-        //m_batch->DrawLine(m_terrainVector[i], m_terrainVector[i + 1]);
-        m_batch->DrawTriangle(m_terrainVector[i], m_terrainVector[i + 1], m_terrainVector[i+2]);
-        //m_batch->DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, 
-    }
-    */
 
 
-    /*
-    DirectX::XMFLOAT4 colorBase(1.0, 1.0, 1.0, 1.0);
-    m_terrainVector.clear();
-    m_terrainVector.resize(1000);
-    VertexPositionColor testVerts[1000];
-    VertexPositionColor colorVerts[1000];
-    VertexPositionColor testVerts1[1000];
-    VertexPositionColor colorVerts1[1000];
-    for (int i = 0; i < 1000; ++i)
-    {
-        if (i < 1000)
-        {
-            testVerts[i] = m_terrainVector[i];
-            colorVerts[i] = m_terrainVector[i];
-            colorVerts[i].color = colorBase;
-        }
-        */
-        /*
-        else
-        {
-            testVerts1[i] = m_terrainVector[i];
-            colorVerts1[i] = m_terrainVector[i];
-            colorVerts1[i].color = colorBase;
-        }
-        
-    }
-    */
-
-    /*
-    for (int i = 1000; i < 1500; ++i)
-    {
-        testVerts1[i] = m_terrainVector[i];
-        colorVerts1[i] = m_terrainVector[i];
-        colorVerts1[i].color = colorBase;
-    }
-    */
-    /*
-    VertexPositionColor testVerts2[1000];
-    VertexPositionColor colorVerts2[1000];
-    for (int i = 2000; i < 3000; ++i)
-    {
-        testVerts2[i] = m_terrainVector[i];
-        colorVerts2[i] = m_terrainVector[i];
-        colorVerts2[i].color = colorBase;
-    }
-    */
 
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthRead(), .01);
@@ -3803,6 +3758,61 @@ void Game::DrawWorld12thHole()
     //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
     //m_effect->Apply(m_d3dContext.Get());
+
+
+    DirectX::XMFLOAT4 testColor(1.0, 0.0, 0.0, 1.0);
+    DirectX::XMFLOAT4 testColor1(0.0, 0.0, 1.0, 1.0);
+
+    DirectX::VertexPositionColor testVert0 = m_terrainVertexArray[0];
+    DirectX::VertexPositionColor testVert1 = m_terrainVertexArray[1];
+    DirectX::VertexPositionColor testVert2 = m_terrainVertexArray[2];
+
+    DirectX::VertexPositionColor testVert3 = m_terrainVertexArray[3];
+    DirectX::VertexPositionColor testVert4 = m_terrainVertexArray[4];
+    DirectX::VertexPositionColor testVert5 = m_terrainVertexArray[5];
+
+    DirectX::VertexPositionColor testVert6 = m_terrainVertexArray[6];
+    DirectX::VertexPositionColor testVert7 = m_terrainVertexArray[7];
+    DirectX::VertexPositionColor testVert8 = m_terrainVertexArray[8];
+
+    testVert0.position.y += .1;
+    testVert1.position.y += .1;
+    testVert2.position.y += .1;
+
+    testVert3.position.y += .1;
+    testVert4.position.y += .1;
+    testVert5.position.y += .1;
+    testVert3.color = testColor;
+    testVert4.color = testColor;
+    testVert5.color = testColor;
+
+    testVert6.position.y += .1;
+    testVert7.position.y += .1;
+    testVert8.position.y += .1;
+    testVert6.color = testColor;
+    testVert7.color = testColor;
+    testVert8.color = testColor;
+
+    m_batch->DrawLine(m_terrainVertexArray[0], testVert0);  
+    m_batch->DrawLine(m_terrainVertexArray[1], testVert1);
+    m_batch->DrawLine(m_terrainVertexArray[2], testVert2);
+
+    //m_batch->DrawLine(m_terrainVertexArray[3], testVert3);
+    m_batch->DrawLine(m_terrainVertexArray[4], testVert4);
+    m_batch->DrawLine(m_terrainVertexArray[5], testVert5);
+
+    m_batch->DrawLine(testVert0, testVert1);
+    m_batch->DrawLine(testVert1, testVert2);
+    m_batch->DrawLine(testVert2, testVert0);
+    
+    m_batch->DrawLine(testVert3, testVert4);
+    m_batch->DrawLine(testVert4, testVert5);
+    //m_batch->DrawLine(testVert5, testVert3);
+
+    m_batch->DrawLine(testVert6, testVert7);
+    m_batch->DrawLine(testVert7, testVert8);
+    m_batch->DrawLine(testVert8, testVert6);
+
 }
 
 // Properties
@@ -3947,7 +3957,7 @@ bool Game::InitializeTerrainArray()
         }
         else
         {
-            m_terrainVertexArrayBase[i].color = baseColor;
+            m_terrainVertexArrayBase[i].color = baseColor2;
         }
     }
 

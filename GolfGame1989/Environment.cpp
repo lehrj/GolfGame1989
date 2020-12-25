@@ -272,6 +272,84 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
     int index = 0;
 
     for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    //for (int i = 0; i < m_terrainModel.size(); ++i)
+    {      
+        int index = i * 3;
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+        
+        /*
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[i].position;
+        ++i;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[i].position;
+        ++i;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[i].position;
+        */
+        
+
+        auto isInside = [](DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 vert1, DirectX::XMFLOAT3 vert2, DirectX::XMFLOAT3 vert3)       
+        {
+            auto area = [](DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2, DirectX::XMFLOAT3 v3)
+            {
+                return abs((v1.x * (v2.y - v3.y) + v2.x * (v3.y - v1.y) + v3.x * (v1.y - v2.y)) / 2.0);
+            };
+
+            float a = area(vert1, vert2, vert3);
+            float a1 = area(pos, vert2, vert3);
+            float a2 = area(vert1, pos, vert3);
+            float a3 = area(vert1, vert2, pos);
+
+            float sum = a1 + a2 + a3;
+            bool result = (a == sum);
+            if (result == true)
+            {
+                int testBreak = 0; 
+                ++testBreak;
+            }
+            
+            return (a == a1 + a2 + a3);
+        };
+        
+        bool foundHeight2 = isInside(aPos, vertex1, vertex2, vertex3);
+        
+        DirectX::SimpleMath::Vector3 testPos = aPos;
+
+        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+        if (foundHeight2 == true && foundHeight == true)
+        {
+            int testBreak = 0;
+            ++testBreak;
+        }
+
+        if (foundHeight)
+        {
+                  
+            float f = testPos.x;
+            float g = testPos.z;
+            DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g, testPos);
+            DirectX::SimpleMath::Vector3 testPos2 = aPos;
+            //return testPos;
+            int testBreak = 0;
+            ++testBreak;
+            return testPos.y;
+            //return aPos.y;
+        }
+    }
+
+    float errorHeight = -2.0;
+    return errorHeight;
+}
+
+float Environment::GetTerrainHeightAtPos2(DirectX::XMFLOAT3 aPos) const
+{
+    bool foundHeight = false;
+    int index = 0;
+
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
     {
         int index = i * 3;
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
@@ -280,11 +358,23 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
         ++index;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
 
+        DirectX::SimpleMath::Vector3 testPos = aPos;
+
         foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
 
         if (foundHeight)
         {
-            return aPos.y;
+
+
+            float f = testPos.x;
+            float g = testPos.z;
+            DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, g, f, testPos);
+            DirectX::SimpleMath::Vector3 testPos2 = aPos;
+            //return testPos;
+            int testBreak = 0;
+            ++testBreak;
+            return testPos.y;
+            //return aPos.y;
         }
     }
 
@@ -306,10 +396,19 @@ DirectX::XMFLOAT3 Environment::GetTerrainPosition(DirectX::XMFLOAT3 aPos)
         ++index;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
 
+
+        DirectX::SimpleMath::Vector3 testPos = aPos;
         foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
 
         if (foundHeight)
         {
+            float f = testPos.x;
+            float g = testPos.z;
+            DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g, testPos);
+            DirectX::SimpleMath::Vector3 testPos2 = aPos;
+            //return testPos;
+            int testBreak = 0;
+            ++testBreak;
             return aPos;
         }
     }
@@ -430,10 +529,59 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     {
         return false;
     }
-
+    
     // Now we have our height.
+
+    ////////////////////////
+    DirectX::SimpleMath::Vector3 testPos;
+    DirectX::SimpleMath::Vector3 testPos2;
+    DirectX::SimpleMath::Vector3 testPos3 = aPos;
+    DirectX::SimpleMath::Vector3 testPos4 = Q;
+    float f = aPos.x;
+    float g = aPos.z;
+
+    DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, f, g, testPos);
+    DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, g, f, testPos2);
+    int testBreak = 0;
+    ++testBreak;
+
+    DirectX::SimpleMath::Vector3 newVec = testPos;
+
+
+    DirectX::SimpleMath::Vector3 xResult;
+    DirectX::SimpleMath::Vector3 x0(0.0, 1.0, 0.0);
+    DirectX::SimpleMath::Vector3 x1(1.0, 0.0, 0.0);
+    DirectX::SimpleMath::Vector3 x2(0.0, 0.4, 1.0);
+
+    float xF = .0f;
+    float xG = .5f;
+
+    DirectX::SimpleMath::Vector3::Barycentric(x0, x1, x2, xG, xF, xResult);
+
+    //aPos.y = testPos.y;
+
+    ////////////////////////
     aPos.y = Q.y;
     //aPos.y = -t;
+    return true;
+    //return CheckTerrainTriangleHeightTest(aPos, v0, v1, v2);
+}
+
+bool Environment::CheckTerrainTriangleHeightTest(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
+{
+    DirectX::SimpleMath::Vector3 testPos;
+    DirectX::SimpleMath::Vector3 testPos2;
+    float f = aPos.x;
+    float g = aPos.z;
+
+    DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, f, g, testPos);
+    DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, g, f, testPos2);
+    int testBreak = 0;
+    ++testBreak;
+
+    DirectX::SimpleMath::Vector3 newVec = testPos;
+    aPos.y = testPos.y;
+
     return true;
 }
 
