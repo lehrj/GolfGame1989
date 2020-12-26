@@ -431,12 +431,16 @@ void GolfBall::LaunchProjectile()
             time = m_ball.q.time;
         }
         
+        
         if (m_ballPath.size() > 1)
         {
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
+        
+
+
         /*
         if (count == 0)
         {

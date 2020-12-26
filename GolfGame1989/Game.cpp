@@ -3738,6 +3738,7 @@ void Game::DrawWorld12thHole()
 
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthRead(), .01);
+
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
     //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
@@ -3957,7 +3958,7 @@ bool Game::InitializeTerrainArray()
         }
         else
         {
-            m_terrainVertexArrayBase[i].color = baseColor2;
+            m_terrainVertexArrayBase[i].color = baseColor;
         }
     }
 
