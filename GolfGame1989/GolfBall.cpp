@@ -22,13 +22,16 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeigh
     double b = aHeight1 - (m * aTime1);
     double impactTime = -b / m;
     double dt = aTime2 - impactTime;
+
+    dt = abs(dt);
+
     return dt;
 }
 
 bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime)
 {
     // s = (1/2) a t^2
-    // s = Vit (1/2) a t^2 // with initil velocity
+    // s = Vit (1/2) a t^2 // with initial velocity
 
     float traversalDistance = (aEnterRadiusPos - aExitRadiusPos).Length();
     double traversalTime = aExitRadiusTime - aEnterRadiusTime;
@@ -429,18 +432,18 @@ void GolfBall::LaunchProjectile()
             time = m_ball.q.time;
         }    
         
-        /*
+        
         if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
         {
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
-        */
+        
 
 
 
-        /*
+        
         if (count == 0)
         {
             m_landingImpactCordinates = m_ball.q.position;
@@ -463,7 +466,7 @@ void GolfBall::LaunchProjectile()
             isBallFlyOrBounce = false;
         }
         bounceHeight = m_ball.landingHeight;
-        */
+        
         isBallFlyOrBounce = false;
     }
 
@@ -471,7 +474,8 @@ void GolfBall::LaunchProjectile()
 
     m_ball.q.velocity.y = 0.0;
     //m_ball.q.position.y = pBallEnvironment->GetLandingHeight();
-    //RollBall();
+    //m_ball.q.position.y += .2f;
+    RollBall();
     SetLandingCordinates(m_ball.q.position);
    
 }
