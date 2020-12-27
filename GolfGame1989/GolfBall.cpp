@@ -179,7 +179,6 @@ double GolfBall::GetShotDistance() const
 
     float distance2 = DirectX::SimpleMath::Vector3(origin - landingPos).Length();
 
-
     return distance;
 }
 
@@ -419,7 +418,6 @@ void GolfBall::LaunchProjectile()
         while (GetBallFlightAltitude(m_ball.q.position) > 0.0f)
         //while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
         {
-
             //float testHeight = GetBallFlightAltitude(m_ball.q.position);
 
             previousY = flightData.position.y;
@@ -429,16 +427,17 @@ void GolfBall::LaunchProjectile()
             flightData = this->m_ball.q;
             PushFlightData();
             time = m_ball.q.time;
-        }
+        }    
         
-        
-        if (m_ballPath.size() > 1)
+        /*
+        if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
         {
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
-        
+        */
+
 
 
         /*
@@ -581,15 +580,18 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 }
 
 void GolfBall::PushFlightData()
-{
+{    
     // Prevent push of data below ground level
     if (m_ball.q.position.y >= m_ball.landingHeight)
+    //if (GetBallFlightAltitude(m_ball.q.position) > 0.0f)
     {
         m_ballPath.push_back(m_ball.q);
     }
     else
     {
         // add check for if ball is in the hole
+        int testBreak = 0;
+        ++testBreak;
     }
 }
 

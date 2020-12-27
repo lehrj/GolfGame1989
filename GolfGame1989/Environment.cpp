@@ -1236,7 +1236,7 @@ void Environment::ScaleTerrain()
 {
     const float scale = .2;
     const float xTransform = -2.0f;
-    const float yTransform = 20.0f;
+    const float yTransform = 0.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

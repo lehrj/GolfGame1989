@@ -173,9 +173,7 @@ void Game::CreateDevice()
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
-    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
-    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
 
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
@@ -3712,107 +3710,8 @@ void Game::DrawWorld12thHole()
         }
     }
 
-
-    /*
-    DirectX::SimpleMath::Vector3 treeTestPos1(.4, 0.0, 1.3);
-    DrawTree10(treeTestPos1, .9f);
-    DirectX::SimpleMath::Vector3 treeTestPos(.4, 0.0, 1.0);
-    DrawTree05(treeTestPos, .9f);
-
-    DirectX::SimpleMath::Vector3 treePos3(-1.4, 0.0, -.2);
-    DrawTree11(treePos3, 5.5f);
-       
-    DirectX::SimpleMath::Vector3 treePos4(-1.4, 0.0, 0.9);
-    DrawTree03(treePos4, .9f);
-    DirectX::SimpleMath::Vector3 treePos5(-1.4, 0.0, 0.2);
-    DrawTree04(treePos5, .1f);
-    DirectX::SimpleMath::Vector3 treePos6(-1.4, 0.0, 0.4);
-    DrawTree06(treePos6, .1f);
-    DirectX::SimpleMath::Vector3 treePos8(-1.4, 0.0, 1.1);
-    DrawTree07(treePos8, .9f);
-    DirectX::SimpleMath::Vector3 treePos9(-1.4, 0.0, 0.0);
-    DrawTree09(treePos9, .9f);
-    */
-
-
-
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0);
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthRead(), .01);
-
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
-
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts1, _countof(testVerts1));
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts2, _countof(testVerts2));
-
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthNone(), 0); // doesnt facecull
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-    //m_effect->Apply(m_d3dContext.Get());
-    //m_batch->DrawIndexed(D3D_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), verts, 8);
-    //m_batch->DrawIndexed(D3D_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), testVerts, 1000);
-
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, testVerts, _countof(testVerts));
-    
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, colorVerts, _countof(colorVerts));
-    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, testVerts, _countof(testVerts));
-    //m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-    //m_effect->Apply(m_d3dContext.Get());
-
-
-    DirectX::XMFLOAT4 testColor(1.0, 0.0, 0.0, 1.0);
-    DirectX::XMFLOAT4 testColor1(0.0, 0.0, 1.0, 1.0);
-
-    DirectX::VertexPositionColor testVert0 = m_terrainVertexArray[0];
-    DirectX::VertexPositionColor testVert1 = m_terrainVertexArray[1];
-    DirectX::VertexPositionColor testVert2 = m_terrainVertexArray[2];
-
-    DirectX::VertexPositionColor testVert3 = m_terrainVertexArray[3];
-    DirectX::VertexPositionColor testVert4 = m_terrainVertexArray[4];
-    DirectX::VertexPositionColor testVert5 = m_terrainVertexArray[5];
-
-    DirectX::VertexPositionColor testVert6 = m_terrainVertexArray[6];
-    DirectX::VertexPositionColor testVert7 = m_terrainVertexArray[7];
-    DirectX::VertexPositionColor testVert8 = m_terrainVertexArray[8];
-
-    testVert0.position.y += .1;
-    testVert1.position.y += .1;
-    testVert2.position.y += .1;
-
-    testVert3.position.y += .1;
-    testVert4.position.y += .1;
-    testVert5.position.y += .1;
-    testVert3.color = testColor;
-    testVert4.color = testColor;
-    testVert5.color = testColor;
-
-    testVert6.position.y += .1;
-    testVert7.position.y += .1;
-    testVert8.position.y += .1;
-    testVert6.color = testColor;
-    testVert7.color = testColor;
-    testVert8.color = testColor;
-
-    m_batch->DrawLine(m_terrainVertexArray[0], testVert0);  
-    m_batch->DrawLine(m_terrainVertexArray[1], testVert1);
-    m_batch->DrawLine(m_terrainVertexArray[2], testVert2);
-
-    //m_batch->DrawLine(m_terrainVertexArray[3], testVert3);
-    m_batch->DrawLine(m_terrainVertexArray[4], testVert4);
-    m_batch->DrawLine(m_terrainVertexArray[5], testVert5);
-
-    m_batch->DrawLine(testVert0, testVert1);
-    m_batch->DrawLine(testVert1, testVert2);
-    m_batch->DrawLine(testVert2, testVert0);
-    
-    m_batch->DrawLine(testVert3, testVert4);
-    m_batch->DrawLine(testVert4, testVert5);
-    //m_batch->DrawLine(testVert5, testVert3);
-
-    m_batch->DrawLine(testVert6, testVert7);
-    m_batch->DrawLine(testVert7, testVert8);
-    m_batch->DrawLine(testVert8, testVert6);
 
 }
 
@@ -3857,60 +3756,8 @@ void Game::Initialize(HWND window, int width, int height)
     m_retryAudio = false;
     m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
 
-
-    // height map testing
-    /*
-    //bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "../GolfGame1989/heightmap01.bmp");
-    bool result = pGolf->InitializeHeightMap(m_d3dDevice.Get(), "heightmap01.bmp");
-    if (result == false)
-    {
-        // error checking here
-    }
-    */
-
-    //pTerrain->Initialize(m_d3dDevice.Get(), "heightmap01.bmp");
-    //pTerrain->Initialize(m_d3dDevice.Get(), "setup.txt");
     bool result;
     bool isInitSuccessTrue = true;
-    /*
-    result = pZone->Initialize(m_d3dDevice.Get(), pCamera);
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-
-    result = pShaderManager->Initialize(m_d3dDevice.Get(), window);
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-
-    const int textureCount = 10;
-    result = pTextureManager->Initialize(textureCount);
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-
-    // Load textures into the texture manager.
-    result = pTextureManager->LoadTexture(m_d3dDevice.Get(), m_d3dContext.Get(), "../GolfGame1989/data/textures/dirt01d.tga", 0);
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-    result = pTextureManager->LoadTexture(m_d3dDevice.Get(), m_d3dContext.Get(), "../GolfGame1989/data/textures/dirt01n.tga", 1);
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-    */
-    /*
-    result = pGolf->InitializeEnvironmentTerrain();
-    if (!result)
-    {
-        isInitSuccessTrue = false;
-    }
-    */
 
     result = InitializeTerrainArray();
     if (!result)
@@ -3925,7 +3772,7 @@ void Game::Initialize(HWND window, int width, int height)
         errorBreak++;
     }
 
-    // testeing new terrain map
+    // testing new terrain map
     m_terrainVector.clear();
     //m_terrainVector = pZone->GetTerrainMap();
 }
@@ -3947,8 +3794,6 @@ bool Game::InitializeTerrainArray()
     for (int i = 0; i < m_terrainVertexCount; ++i)
     {
         m_terrainVertexArray[i].position = vertexPC[i].position;
-        //m_terrainVertexArray[i].position.y += .01;
-        //m_terrainVertexArray[i].color = vertexPC[i].color;
         m_terrainVertexArray[i].color = lineColor;
         m_terrainVertexArrayBase[i].position = vertexPC[i].position;
 
@@ -3986,7 +3831,6 @@ void Game::OnDeviceLost()
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
-    m_batch2.reset();
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
@@ -4106,9 +3950,6 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
    
-    
-    //pZone->Frame(m_d3dContext.Get(), pShaderManager, pTextureManager);
-
     m_batch->Begin();
     
     //DrawDebugLines();
@@ -4138,60 +3979,7 @@ void Game::Render()
     
     m_batch->End();
     
-    m_batch2->Begin();
-
-
-   /*
-    const float line = .25f;
-    DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
-    DirectX::SimpleMath::Vector3 yLine = focalPoint;
-    yLine.y += line;
-    DirectX::SimpleMath::Vector3 xLine = focalPoint;
-    xLine.x += line;
-    DirectX::SimpleMath::Vector3 zLine = focalPoint;
-    zLine.z += line;
-
-    VertexPositionColor origin(focalPoint, Colors::Yellow);
-    VertexPositionColor yOffset(yLine, Colors::Yellow);
-    VertexPositionColor xOffset(xLine, Colors::Yellow);
-    VertexPositionColor zOffset(zLine, Colors::Yellow);
-    m_batch2->DrawLine(origin, yOffset);
-    m_batch2->DrawLine(origin, xOffset);
-    m_batch2->DrawLine(origin, zOffset);
-    */
-    DirectX::SimpleMath::Vector3 testBase(256.0, 0.0, 0.0);
-    DirectX::SimpleMath::Vector3 testTop(256.0, 10.0, 0.0);
-    VertexPositionColor baseVert(testBase, Colors::White);
-    VertexPositionColor topVert(testTop, Colors::White);
-    m_batch2->DrawLine(baseVert, topVert);
-
-
-    DirectX::SimpleMath::Vector3 testBase1(0.0, 0.0, 256.0);
-    DirectX::SimpleMath::Vector3 testTop1(0.0, 10.0, 256.0);
-    VertexPositionColor baseVert1(testBase1, Colors::White);
-    VertexPositionColor topVert1(testTop1, Colors::White);
-    m_batch2->DrawLine(baseVert1, topVert1);
-
-    DirectX::SimpleMath::Vector3 testBase2(256.0, 0.0, 256.0);
-    DirectX::SimpleMath::Vector3 testTop2(256.0, 10.0, 256.0);
-    VertexPositionColor baseVert2(testBase2, Colors::White);
-    VertexPositionColor topVert2(testTop2, Colors::White);
-    m_batch2->DrawLine(baseVert2, topVert2);
-
-    DirectX::SimpleMath::Vector3 originBase(0.0, 0.0, 0.0);
-    DirectX::SimpleMath::Vector3 originTop(0.0, 10.0, 0.0);
-    VertexPositionColor originBaseVert(originBase, Colors::White);
-    VertexPositionColor originTopVert(originTop, Colors::White);
-    m_batch2->DrawLine(originBaseVert, originTopVert);
-
-
-    m_batch2->DrawLine(originBaseVert, baseVert);
-    m_batch2->DrawLine(originBaseVert, baseVert1);
-    m_batch2->DrawLine(baseVert1, baseVert2);
-    m_batch2->DrawLine(baseVert2, baseVert);
-
-    m_batch2->End();
-
+    
     m_spriteBatch->Begin();
     
     //DrawShotTimerUI();

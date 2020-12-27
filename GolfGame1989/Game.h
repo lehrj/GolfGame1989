@@ -129,12 +129,10 @@ private:
 
     // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
-    using VertexType2 = DirectX::VertexPositionColor;
-    //using VertexType = DirectX::VertexPositionNormalColor;
+
     std::unique_ptr<DirectX::CommonStates>          m_states;
     std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
-    std::unique_ptr<DirectX::PrimitiveBatch<VertexType2>> m_batch2;
     
     Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_inputLayout;
     // End
