@@ -269,4 +269,6 @@ private:
     DirectX::VertexPositionColor*               m_terrainVertexArrayBase;
     int                                         m_terrainVertexCount;
     bool InitializeTerrainArray();
+
+    float m_debugHeight = 0.0;
 };

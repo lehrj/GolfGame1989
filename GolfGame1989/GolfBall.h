@@ -77,6 +77,7 @@ private:
     float GetBallFlightAltitude(DirectX::XMFLOAT3 aPos);
     void LandProjectile();
     void LaunchProjectile();
+    void SetBallToTerrain(DirectX::XMFLOAT3& aPos);
     void SetInitialSpinRate(const double aSpinRate) { m_initialSpinRate = aSpinRate; };
     void SetLandingSpinRate(const double aSprinRate) { m_landingSpinRate = aSprinRate; };
     void SetLandingCordinates(DirectX::SimpleMath::Vector3 aCord);

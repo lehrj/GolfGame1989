@@ -377,25 +377,6 @@ float Golf::GetDirectionToHoleInRads() const
         direction = -direction;
     }
 
-    /////////////////////////////////////////////
-    /*
-    DirectX::SimpleMath::Vector3 start2 = m_shotStartPos;
-    DirectX::SimpleMath::Vector3 end2 = pEnvironment->GetHolePosition();
-    DirectX::SimpleMath::Vector3 lineToHole = end2 - start2;
-
-    start2.Normalize();
-    end2.Normalize();
-    lineToHole.Normalize();
-
-    DirectX::SimpleMath::Vector3 unitX = DirectX::SimpleMath::Vector3::UnitX;
-
-    float angle = acos(lineToHole.Dot(unitX));
-    float angleDegrees = Utility::ToDegrees(angle);
-
-    float direction2 = -angle;
-    float directionDegrees2 = -angleDegrees;
-    */
-
     return direction;
 }
 
@@ -555,6 +536,7 @@ void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
 void Golf::TransformCordinates(const int aIndex)
 {
     m_shotPath[aIndex].position += m_shotStartPos;
+
 }
 
 void Golf::UpdateEnvironmentSortingForDraw(DirectX::SimpleMath::Vector3 aCameraPos)
@@ -580,20 +562,3 @@ void Golf::ZeroUIandRenderData()
     pSwing->ZeroDataForUI();
     pBall->ZeroDataForUI();
 }
-
-/*
-bool Golf::InitializeHeightMap(ID3D11Device* device, char* heightMapFilename)
-{
-    bool result = pEnvironment->Initialize(device, heightMapFilename);
-    if (result == false)
-    {
-        // input error checking here
-    }
-    return result;
-}
-
-void Golf::RenderEnvironHeightMap(ID3D11DeviceContext* aDevice)
-{
-    pEnvironment->RenderHeightMap(aDevice);
-}
-*/

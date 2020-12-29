@@ -685,6 +685,8 @@ void Game::DrawCameraFocus()
     VertexPositionColor negXOffset(negXLine, Colors::Yellow);
     VertexPositionColor negZOffset(negZLine, Colors::Yellow);
 
+    m_debugHeight = focalPoint.y;
+
     m_batch->DrawLine(origin, yOffset);
     m_batch->DrawLine(origin, xOffset);
     m_batch->DrawLine(origin, zOffset);
@@ -1866,6 +1868,7 @@ void Game::DrawProjectileRealTime()
 {
     //std::vector<DirectX::SimpleMath::Vector3> shotPath = pGolf->GetShotPath();
     std::vector<BallMotion> shotPath = pGolf->GetShotPath();
+
     if (shotPath.size() > 1)
     {
         //std::vector<float> shotTimeStep = pGolf->GetShotPathTimeSteps();
@@ -3418,6 +3421,12 @@ void Game::DrawUI()
         DirectX::SimpleMath::Vector2 lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
         fontPos.y += 35;
+
+        // temp for testing terrain height
+        uiLine = "Height = " + std::to_string(m_debugHeight);
+        lineOrigin = m_font->MeasureString(uiLine.c_str());
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
     }
 
     if (m_currentUiState == UiState::UISTATE_SHOT)
@@ -3712,6 +3721,24 @@ void Game::DrawWorld12thHole()
 
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
+
+
+    DirectX::XMFLOAT4 testColor(1.0, 1.0, 1.0, 1.0);
+    float x = 2.55f;
+    float y = .308 + 0.015999995;
+
+    DirectX::XMFLOAT3 point1(x, .308, -2.0);
+    DirectX::XMFLOAT3 point2(x, .308, 1.0);
+    DirectX::XMFLOAT3 point3(x, y, -2.0);
+    DirectX::XMFLOAT3 point4(x, y, 1.0);
+    DirectX::VertexPositionColor vert1(point1, testColor);
+    DirectX::VertexPositionColor vert2(point2, testColor);
+
+    DirectX::VertexPositionColor vert3(point3, testColor);
+    DirectX::VertexPositionColor vert4(point4, testColor);
+
+    m_batch->DrawLine(vert1, vert2);
+    m_batch->DrawLine(vert3, vert4);
 
 }
 
