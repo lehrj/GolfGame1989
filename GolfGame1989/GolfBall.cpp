@@ -18,12 +18,24 @@ void GolfBall::AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, Direct
 
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2)
 {
+    //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
+    double impactHeight = pBallEnvironment->GetTerrainHeightAtPos(m_ball.q.position);
+    DirectX::XMFLOAT3 pos = GetBallPosInEnviron(m_ball.q.position);
+    double posHeight = pBallEnvironment->GetTerrainHeightAtPos(pos);
+
+    //aHeight2 -= 15.4000006;
+    //aHeight1 -= 15.4000006;
+    aHeight2 -= 14.5491858;
+    aHeight1 -= 14.5491858;
+
+    double heightDelta = aHeight2 - aHeight1;
+    double timeDelta = aTime2 - aTime1;
     double m = (aHeight2 - aHeight1) / (aTime2 - aTime1);
     double b = aHeight1 - (m * aTime1);
     double impactTime = -b / m;
     double dt = aTime2 - impactTime;
 
-    dt = abs(dt);
+    //dt = abs(dt);
 
     return dt;
 }
@@ -426,14 +438,17 @@ void GolfBall::LaunchProjectile()
             time = m_ball.q.time;
         }    
         
-        /*
-        if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
+        
+        //if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
+        if (m_ballPath.size() > 1)
         {
             double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
-        */
+        
+
+
         if (count == 0)
         {
             m_landingImpactCordinates = m_ball.q.position;
@@ -470,9 +485,11 @@ void GolfBall::LaunchProjectile()
     float testheightScaled = testHeight / pBallEnvironment->GetScale();
 
     SetBallToTerrain(m_ball.q.position);
-    //PushFlightData();
+    PushFlightData();
+
     RollBall();
     SetLandingCordinates(m_ball.q.position);
+    
 }
 
 void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)

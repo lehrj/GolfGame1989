@@ -46,6 +46,5 @@ private:
 	TerrainClass* m_Terrain;
 	bool m_displayUI, m_wireFrame, m_cellLines, m_heightLocked;
 
-
 };
 

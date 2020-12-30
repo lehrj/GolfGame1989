@@ -528,13 +528,16 @@ void Environment::LoadEnvironmentData()
     m_environs[i].landingFrictionScale = 1.0;
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].par = 3;
-    //m_environs[i].scale = 0.02;
     m_environs[i].scale = 0.02;
+    //m_environs[i].scale = 1.0;
     m_environs[i].teeDirection = 0.0f;
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f); 
+    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f);
+    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
+    //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     ++i;
     m_environs[i].name = "Breezy";    
@@ -1236,6 +1239,7 @@ bool Environment::LoadHeightMap()
 void Environment::ScaleTerrain()
 {
     const float scale = .2;
+    //const float scale = 10.0;
     const float xTransform = -2.0f;
     const float yTransform = 0.0f;
     const float zTransform = -3.2f;

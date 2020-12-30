@@ -191,6 +191,10 @@ void Golf::BuildTrajectoryData()
 
     InputData();
     ScaleCordinates();
+
+    int testBreak = 0;
+    ++testBreak;
+
 }
 
 void Golf::BuildUIShotStrings()
@@ -535,8 +539,9 @@ void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
 //Transform shotpath to start at tee position or end position of last shot
 void Golf::TransformCordinates(const int aIndex)
 {
-    m_shotPath[aIndex].position += m_shotStartPos;
-
+    //m_shotPath[aIndex].position += m_shotStartPos;
+    m_shotPath[aIndex].position.x += m_shotStartPos.x;
+    m_shotPath[aIndex].position.z += m_shotStartPos.z;
 }
 
 void Golf::UpdateEnvironmentSortingForDraw(DirectX::SimpleMath::Vector3 aCameraPos)

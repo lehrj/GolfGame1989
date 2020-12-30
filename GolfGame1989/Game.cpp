@@ -3724,6 +3724,7 @@ void Game::DrawWorld12thHole()
 
 
     DirectX::XMFLOAT4 testColor(1.0, 1.0, 1.0, 1.0);
+    DirectX::XMFLOAT4 testColor2(0.0, 0.0, 1.0, 1.0);
     float x = 2.55f;
     float y = .308 + 0.015999995;
 
@@ -3734,8 +3735,8 @@ void Game::DrawWorld12thHole()
     DirectX::VertexPositionColor vert1(point1, testColor);
     DirectX::VertexPositionColor vert2(point2, testColor);
 
-    DirectX::VertexPositionColor vert3(point3, testColor);
-    DirectX::VertexPositionColor vert4(point4, testColor);
+    DirectX::VertexPositionColor vert3(point3, testColor2);
+    DirectX::VertexPositionColor vert4(point4, testColor2);
 
     m_batch->DrawLine(vert1, vert2);
     m_batch->DrawLine(vert3, vert4);
@@ -3830,7 +3831,7 @@ bool Game::InitializeTerrainArray()
         }
         else
         {
-            m_terrainVertexArrayBase[i].color = baseColor;
+            m_terrainVertexArrayBase[i].color = baseColor2;
         }
     }
 
