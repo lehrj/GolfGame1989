@@ -89,74 +89,16 @@ DirectX::SimpleMath::Vector3 GolfBall::GetBallPosInEnviron(DirectX::SimpleMath::
     return scaledPos;
 }
 
-float GolfBall::GetBallFlightAltitude(DirectX::XMFLOAT3 aPos)
-{
-    DirectX::XMFLOAT3 pos = aPos;
-    //  Calculate ball decent path until it reaches landing area height
-    //while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
-    //GetBallPosInEnviron
-    //GetTerrainHeightAtPos
-    //GetBallPosInEnviron(m_ball.q.position.y + m_ball.launchHeight)
-    // m_shotOrigin
+float GolfBall::GetBallFlightAltitude(DirectX::SimpleMath::Vector3 aPos)
+{  
+    float scale = pBallEnvironment->GetScale();   
+    aPos *= scale;
+    aPos += m_shotOrigin;
+    float terrainHeight = pBallEnvironment->GetTerrainHeightAtPos(aPos);
+    float scaledBallHeight = m_ball.q.position.y * scale;
+    float aboveGroundLevelHeight = scaledBallHeight - terrainHeight;
 
-    aPos.x += m_shotOrigin.x;
-    aPos.y += m_shotOrigin.y;
-    aPos.z += m_shotOrigin.z;
-
-    //DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(m_ball.q.position);
-    DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(aPos);
-
-
-    //environPos += m_shotOrigin;
-    //DirectX::SimpleMath::Vector3 environPos2 = environPos + m_shotOrigin;
-    DirectX::SimpleMath::Vector3 delta = environPos - m_shotOrigin;
-    
-    //DirectX::SimpleMath::Vector3 testPos = environPos;
-
-    float terrainHeight =  pBallEnvironment->GetTerrainHeightAtPos(environPos);
-
-    //float height = environPos.y - terrainHeight;  // redundant causing ball path overflow below ground?
-    //float height = terrainHeight - environPos.y;
-    float height = environPos.y - terrainHeight;
-    if (height < 0.0)
-    {
-        int testBreak = 0;
-        ++testBreak;
-    }
-    //height /= pBallEnvironment->GetScale();
-
-    //////////////////////////////////////////////////////////////////////
-    DirectX::XMFLOAT3 testPos = pos;
-    testPos.x += m_shotOrigin.x;
-    testPos.y += m_shotOrigin.y;
-    testPos.z += m_shotOrigin.z;
-
-    //DirectX::XMFLOAT3 testPos2 = testPos;
-    DirectX::SimpleMath::Vector3 testPos2 = testPos;
-    testPos2 /= .02f;
-    
-    DirectX::SimpleMath::Vector3 testPos3 = pos;
-    testPos3 *= .02f;
-    testPos3.x += m_shotOrigin.x;
-    testPos3.y += m_shotOrigin.y;
-    testPos3.z += m_shotOrigin.z;
-
-    //float testHeight = pBallEnvironment->GetTerrainHeightAtPos(pos);
-    //float testHeight1 = pBallEnvironment->GetTerrainHeightAtPos(testPos);
-    //float testHeight2 = pBallEnvironment->GetTerrainHeightAtPos(testPos2);
-    float testHeight3 = pBallEnvironment->GetTerrainHeightAtPos(testPos3);
-
-    float scaleBallHeight = m_ball.q.position.y * .02f;
-    float testHeight4 = scaleBallHeight - testHeight3;
-
-    if (m_ball.q.position.y <= 15.4)
-    {
-        int testBreak = 0;
-        ++testBreak;
-        //height = 0.0f;
-    }
-
-    return testHeight4;
+    return aboveGroundLevelHeight;
 }
 
 float GolfBall::GetDistanceToHole() const
@@ -421,6 +363,7 @@ void GolfBall::LandProjectile()
 
 void GolfBall::LaunchProjectile()
 {
+
     PushFlightData();
 
     // Fly ball on an upward trajectory until it stops climbing
@@ -441,8 +384,6 @@ void GolfBall::LaunchProjectile()
         bool isBallAscending = true;
         while (isBallAscending == true)
         {
-            //float testHeight = GetBallFlightAltitude(m_ball.q.position);
-
             ProjectileRungeKutta4(&m_ball, dt);
             UpdateSpinRate(dt);
             flightData = this->m_ball.q;
@@ -476,8 +417,6 @@ void GolfBall::LaunchProjectile()
         //while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
         {
             xPrevFlightAlt = GetBallFlightAltitude(m_ball.q.position);
-
-            //float testHeight = GetBallFlightAltitude(m_ball.q.position);
 
             previousY = flightData.position.y;
             previousTime = m_ball.q.time;
@@ -555,6 +494,7 @@ void GolfBall::LaunchProjectile()
     //PushFlightData();
 
     RollBall();
+
     SetLandingCordinates(m_ball.q.position);
 }
 

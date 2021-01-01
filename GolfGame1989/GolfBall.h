@@ -74,7 +74,7 @@ private:
     void AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor);
     bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime);
     DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop);
-    float GetBallFlightAltitude(DirectX::XMFLOAT3 aPos);
+    float GetBallFlightAltitude(DirectX::SimpleMath::Vector3 aPos);
     void LandProjectile();
     void LaunchProjectile();
     void SetBallToTerrain(DirectX::XMFLOAT3& aPos);
