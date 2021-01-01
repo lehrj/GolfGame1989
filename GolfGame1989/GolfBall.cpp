@@ -91,6 +91,7 @@ DirectX::SimpleMath::Vector3 GolfBall::GetBallPosInEnviron(DirectX::SimpleMath::
 
 float GolfBall::GetBallFlightAltitude(DirectX::XMFLOAT3 aPos)
 {
+    DirectX::XMFLOAT3 pos = aPos;
     //  Calculate ball decent path until it reaches landing area height
     //while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
     //GetBallPosInEnviron
@@ -98,24 +99,64 @@ float GolfBall::GetBallFlightAltitude(DirectX::XMFLOAT3 aPos)
     //GetBallPosInEnviron(m_ball.q.position.y + m_ball.launchHeight)
     // m_shotOrigin
 
-    DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(m_ball.q.position);
+    aPos.x += m_shotOrigin.x;
+    aPos.y += m_shotOrigin.y;
+    aPos.z += m_shotOrigin.z;
+
+    //DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(m_ball.q.position);
+    DirectX::SimpleMath::Vector3 environPos = GetBallPosInEnviron(aPos);
+
+
     //environPos += m_shotOrigin;
     //DirectX::SimpleMath::Vector3 environPos2 = environPos + m_shotOrigin;
     DirectX::SimpleMath::Vector3 delta = environPos - m_shotOrigin;
     
-    DirectX::SimpleMath::Vector3 testPos = environPos;
+    //DirectX::SimpleMath::Vector3 testPos = environPos;
 
     float terrainHeight =  pBallEnvironment->GetTerrainHeightAtPos(environPos);
 
+    //float height = environPos.y - terrainHeight;  // redundant causing ball path overflow below ground?
+    //float height = terrainHeight - environPos.y;
     float height = environPos.y - terrainHeight;
-
     if (height < 0.0)
     {
         int testBreak = 0;
         ++testBreak;
     }
     //height /= pBallEnvironment->GetScale();
-    return height;
+
+    //////////////////////////////////////////////////////////////////////
+    DirectX::XMFLOAT3 testPos = pos;
+    testPos.x += m_shotOrigin.x;
+    testPos.y += m_shotOrigin.y;
+    testPos.z += m_shotOrigin.z;
+
+    //DirectX::XMFLOAT3 testPos2 = testPos;
+    DirectX::SimpleMath::Vector3 testPos2 = testPos;
+    testPos2 /= .02f;
+    
+    DirectX::SimpleMath::Vector3 testPos3 = pos;
+    testPos3 *= .02f;
+    testPos3.x += m_shotOrigin.x;
+    testPos3.y += m_shotOrigin.y;
+    testPos3.z += m_shotOrigin.z;
+
+    //float testHeight = pBallEnvironment->GetTerrainHeightAtPos(pos);
+    //float testHeight1 = pBallEnvironment->GetTerrainHeightAtPos(testPos);
+    //float testHeight2 = pBallEnvironment->GetTerrainHeightAtPos(testPos2);
+    float testHeight3 = pBallEnvironment->GetTerrainHeightAtPos(testPos3);
+
+    float scaleBallHeight = m_ball.q.position.y * .02f;
+    float testHeight4 = scaleBallHeight - testHeight3;
+
+    if (m_ball.q.position.y <= 15.4)
+    {
+        int testBreak = 0;
+        ++testBreak;
+        //height = 0.0f;
+    }
+
+    return testHeight4;
 }
 
 float GolfBall::GetDistanceToHole() const
@@ -445,6 +486,8 @@ void GolfBall::LaunchProjectile()
             flightData = this->m_ball.q;
             PushFlightData();
             time = m_ball.q.time;
+
+
         }    
         
         float testHeight = 69.0;
@@ -453,6 +496,7 @@ void GolfBall::LaunchProjectile()
             testHeight = GetBallFlightAltitude(m_ball.q.position);
         }
         
+        float testHeight2 = GetBallFlightAltitude(m_ball.q.position);
         
         //if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
         if (m_ballPath.size() > 1)
@@ -510,9 +554,8 @@ void GolfBall::LaunchProjectile()
     //SetBallToTerrain(m_ball.q.position);
     //PushFlightData();
 
-    //RollBall();
+    RollBall();
     SetLandingCordinates(m_ball.q.position);
-    
 }
 
 void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
