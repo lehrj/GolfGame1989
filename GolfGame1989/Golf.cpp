@@ -186,15 +186,12 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
 
 void Golf::BuildTrajectoryData()
 {
+
     pBall->SetLaunchPosition(m_shotStartPos);   
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 
     InputData();
     ScaleCordinates();
-
-    int testBreak = 0;
-    ++testBreak;
-
 }
 
 void Golf::BuildUIShotStrings()
@@ -541,6 +538,7 @@ void Golf::TransformCordinates(const int aIndex)
 {
     //m_shotPath[aIndex].position += m_shotStartPos;
     m_shotPath[aIndex].position.x += m_shotStartPos.x;
+    m_shotPath[aIndex].position.y += m_shotStartPos.y;
     m_shotPath[aIndex].position.z += m_shotStartPos.z;
 }
 

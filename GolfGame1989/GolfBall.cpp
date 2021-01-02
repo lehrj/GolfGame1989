@@ -94,6 +94,7 @@ float GolfBall::GetBallFlightAltitude(DirectX::SimpleMath::Vector3 aPos)
     float scale = pBallEnvironment->GetScale();   
     aPos *= scale;
     aPos += m_shotOrigin;
+
     float terrainHeight = pBallEnvironment->GetTerrainHeightAtPos(aPos);
     float scaledBallHeight = m_ball.q.position.y * scale;
     float aboveGroundLevelHeight = scaledBallHeight - terrainHeight;
@@ -370,7 +371,6 @@ void GolfBall::LaunchProjectile()
     double dt = m_timeStep;
     double maxHeight = m_ball.launchHeight;
     double bounceHeight = m_ball.launchHeight;
-    double time = 0.0;
     SetInitialSpinRate(m_ball.omega);
 
     int count = 0;
@@ -404,12 +404,8 @@ void GolfBall::LaunchProjectile()
         float xPrevFlightAlt = GetBallFlightAltitude(m_ball.q.position);
         float currentAlt = xPrevFlightAlt;
         //  Calculate ball decent path until it reaches landing area height
-        //while (GetBallFlightAltitude(m_ball.q.position) > 0.0f)
-        //while (xPrevFlightAlt > 0.0f)
         while (currentAlt > 0.0f)
-        //while (m_ball.q.position.y + m_ball.launchHeight >= m_ball.landingHeight)
         {
-            //xPrevFlightAlt = GetBallFlightAltitude(m_ball.q.position);
             xPrevFlightAlt = currentAlt;
 
             previousY = flightData.position.y;
@@ -418,38 +414,27 @@ void GolfBall::LaunchProjectile()
             UpdateSpinRate(dt);
             flightData = this->m_ball.q;
             PushFlightData();
-            time = m_ball.q.time;
             currentAlt = GetBallFlightAltitude(m_ball.q.position);
         }    
         
-        //if (m_ballPath.size() > 1 && GetBallFlightAltitude(m_ball.q.position) < 0.0f)
         if (m_ballPath.size() > 1)
         {
-            //float currentAlt = GetBallFlightAltitude(m_ball.q.position);
-            //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
-            double rollBackTime = CalculateImpactTime(previousTime, time, xPrevFlightAlt, currentAlt);
+            double rollBackTime = CalculateImpactTime(previousTime, m_ball.q.time, xPrevFlightAlt, currentAlt);
 
             ProjectileRungeKutta4(&m_ball, -rollBackTime);
             m_ballPath[m_ballPath.size() - 1] = m_ball.q;
         }
         
 
-        /*
-        if (count == 0)
-        {
-            m_landingImpactCordinates = m_ball.q.position;
-        }
-        */
-
         SetLandingSpinRate(m_ball.omega);
 
         ++m_bounceCount;
-
+        /*
         if (m_debugValue01 == 0.0)
         {
             m_debugValue01 = m_ball.omega;
         }
-
+        */
         LandProjectile();
 
         ++count;
