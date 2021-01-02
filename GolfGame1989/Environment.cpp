@@ -283,8 +283,6 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[i].position;
-        
-        DirectX::SimpleMath::Vector3 testPos = aPos;
 
         foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
 

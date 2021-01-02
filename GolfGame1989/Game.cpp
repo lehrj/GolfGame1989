@@ -3551,10 +3551,6 @@ void Game::DrawWorld()
         }
     }
 
-    //DrawTeeBox();
-    //DrawFlagAndHole();
-
-
     pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos());
 
     std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
@@ -3721,26 +3717,6 @@ void Game::DrawWorld12thHole()
 
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
     m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
-
-
-    DirectX::XMFLOAT4 testColor(1.0, 1.0, 1.0, 1.0);
-    DirectX::XMFLOAT4 testColor2(0.0, 0.0, 1.0, 1.0);
-    float x = 2.55f;
-    float y = .308 + 0.015999995;
-
-    DirectX::XMFLOAT3 point1(x, .308, -2.0);
-    DirectX::XMFLOAT3 point2(x, .308, 1.0);
-    DirectX::XMFLOAT3 point3(x, y, -2.0);
-    DirectX::XMFLOAT3 point4(x, y, 1.0);
-    DirectX::VertexPositionColor vert1(point1, testColor);
-    DirectX::VertexPositionColor vert2(point2, testColor);
-
-    DirectX::VertexPositionColor vert3(point3, testColor2);
-    DirectX::VertexPositionColor vert4(point4, testColor2);
-
-    m_batch->DrawLine(vert1, vert2);
-    m_batch->DrawLine(vert3, vert4);
-
 }
 
 // Properties
