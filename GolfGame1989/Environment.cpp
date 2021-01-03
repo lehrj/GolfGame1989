@@ -291,8 +291,8 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
             return aPos.y;
         }
     }
-
-    float errorHeight = -2.0;
+    //float errorHeight = -2.0;
+    float errorHeight = aPos.y;
     return errorHeight;
 }
 
