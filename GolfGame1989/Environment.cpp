@@ -266,24 +266,24 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
     bool foundHeight = false;
     int index = 0;
 
-    //for (int i = 0; i < m_terrainModel.size() / 3; ++i)
-    for (int i = 0; i < m_terrainModel.size(); ++i)
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    //for (int i = 0; i < m_terrainModel.size(); ++i)
     {
-        /*
+        
         int index = i * 3;
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
         ++index;
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
         ++index;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
-        */
         
+        /*
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[i].position;
-
+        */
         foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
 
         if (foundHeight)
@@ -531,7 +531,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 1.0f);
-    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.64432287f, 0.308427006f, -1.86075854f);
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);

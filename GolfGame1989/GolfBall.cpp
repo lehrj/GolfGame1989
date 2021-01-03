@@ -18,10 +18,12 @@ void GolfBall::AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, Direct
 
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, double aHeight1, double aHeight2)
 {
+
     //double rollBackTime = CalculateImpactTime(previousTime, time, previousY, m_ball.q.position.y);
-    double impactHeight = pBallEnvironment->GetTerrainHeightAtPos(m_ball.q.position);
-    DirectX::XMFLOAT3 pos = GetBallPosInEnviron(m_ball.q.position);
-    double posHeight = pBallEnvironment->GetTerrainHeightAtPos(pos);
+    
+    //double impactHeight = pBallEnvironment->GetTerrainHeightAtPos(m_ball.q.position);
+    //DirectX::XMFLOAT3 pos = GetBallPosInEnviron(m_ball.q.position);
+    //double posHeight = pBallEnvironment->GetTerrainHeightAtPos(pos);
 
     //aHeight2 -= 15.4000006;
     //aHeight1 -= 15.4000006;
@@ -93,10 +95,14 @@ float GolfBall::GetBallFlightAltitude(DirectX::SimpleMath::Vector3 aPos)
 {  
     float scale = pBallEnvironment->GetScale();   
     aPos *= scale;
-    aPos += m_shotOrigin;
+    //aPos += m_shotOrigin;
+    aPos.x += m_shotOrigin.x;
+    aPos.y += m_shotOrigin.y;
+    aPos.z += m_shotOrigin.z;
 
     float terrainHeight = pBallEnvironment->GetTerrainHeightAtPos(aPos);
-    float scaledBallHeight = m_ball.q.position.y * scale;
+    //float scaledBallHeight = m_ball.q.position.y * scale;
+    float scaledBallHeight = (m_ball.q.position.y * scale) + m_shotOrigin.y ;
     float aboveGroundLevelHeight = scaledBallHeight - terrainHeight;
 
     return aboveGroundLevelHeight;
@@ -365,6 +371,7 @@ void GolfBall::LandProjectile()
 void GolfBall::LaunchProjectile()
 {
     PushFlightData();
+    //m_ball.q.position = m_shotOrigin /  pBallEnvironment->GetScale();
 
     // Fly ball on an upward trajectory until it stops climbing
     BallMotion flightData;
@@ -402,10 +409,21 @@ void GolfBall::LaunchProjectile()
         double previousY = flightData.position.y;
         double previousTime = m_ball.q.time;
         float xPrevFlightAlt = GetBallFlightAltitude(m_ball.q.position);
+        float thirdFlightAlt = xPrevFlightAlt;
+        float forthFlightAlt = thirdFlightAlt;
         float currentAlt = xPrevFlightAlt;
         //  Calculate ball decent path until it reaches landing area height
-        while (currentAlt > 0.0f)
+        float heightOffSet2 =  - (m_shotOrigin.y / pBallEnvironment->GetScale());
+        //float heightOffSet = -m_shotOrigin.y;
+        float heightOffSet = 0.0;
+        //while (currentAlt > 0.0f)
+
+        float testHeight = 15.4 + heightOffSet2;
+        //while (m_ball.q.position.y > testHeight)
+        while (currentAlt > heightOffSet)
         {
+            forthFlightAlt = thirdFlightAlt;
+            thirdFlightAlt = xPrevFlightAlt;
             xPrevFlightAlt = currentAlt;
 
             previousY = flightData.position.y;
@@ -415,7 +433,18 @@ void GolfBall::LaunchProjectile()
             flightData = this->m_ball.q;
             PushFlightData();
             currentAlt = GetBallFlightAltitude(m_ball.q.position);
+
+            /*
+            if (m_ball.q.position.y <= 15.4)
+            {
+                float xCurrentAlt = currentAlt / pBallEnvironment->GetScale();
+                float xHeightOffSet = heightOffSet / pBallEnvironment->GetScale();
+                int testBreak = 0;
+                testBreak++;
+            }
+            */
         }    
+        
         
         if (m_ballPath.size() > 1)
         {
@@ -450,7 +479,7 @@ void GolfBall::LaunchProjectile()
     SetMaxHeight(maxHeight);
 
     m_ball.q.velocity.y = 0.0;
-    //SetBallToTerrain(m_ball.q.position);
+    //SetBallToTerrain(m_ball.q.position - m_shotOrigin);
     //PushFlightData();
 
     RollBall();
@@ -563,7 +592,11 @@ void GolfBall::PrepProjectileLaunch(Utility::ImpactData aImpactData)
 
 void GolfBall::PushFlightData()
 {    
+
+    m_ballPath.push_back(m_ball.q);
+
     // Prevent push of data below ground level
+    /*
     if (m_ball.q.position.y >= m_ball.landingHeight)
     //if (GetBallFlightAltitude(m_ball.q.position) > 0.0f)
     {
@@ -573,6 +606,7 @@ void GolfBall::PushFlightData()
     {
         // add check for if ball is in the hole
     }
+    */
 }
 
 //  This method loads the right-hand sides for the projectile ODEs
@@ -873,7 +907,8 @@ void GolfBall::SetBallToTerrain(DirectX::XMFLOAT3& aPos)
 
     terrainHeight = terrainHeight / pBallEnvironment->GetScale();
 
-    aPos.y = terrainHeight;
+    //aPos.y = terrainHeight;
+    aPos.y = terrainHeight - originScaled + m_ball.radius;
 }
 
 void GolfBall::SetDefaultBallValues(Environment* pEnviron)
