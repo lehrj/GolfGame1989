@@ -112,6 +112,7 @@ public:
     std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
     float GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const;
     float GetTerrainHeightAtPos2(DirectX::XMFLOAT3 aPos) const;
+    DirectX::SimpleMath::Vector3 GetTerrainNormal(DirectX::SimpleMath::Vector3 aPos) const;
     DirectX::XMFLOAT3 GetTerrainPosition(DirectX::XMFLOAT3 aPos);
     bool SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos);
     void SetPosToTerrain(DirectX::XMFLOAT3& aPos);
@@ -166,7 +167,8 @@ private:
    
     //std::vector<DirectX::XMFLOAT3>      m_heightMap;
     std::vector<DirectX::VertexPositionNormal> m_heightMap;
-    const float                         m_heightScale = .01;
+    //const float                         m_heightScale = .01;
+    const float                         m_heightScale = 0.1;
     int                                 m_terrainHeight = 0;
     int                                 m_terrainLength = 0;
     int                                 m_terrainWidth = 0;

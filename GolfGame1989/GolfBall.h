@@ -49,6 +49,7 @@ public:
     float GetDistanceToHole() const;
     double GetImpactAngle() const;
     double GetImpactDirection() const;
+    double GetImpactDirection2() const;
     DirectX::SimpleMath::Plane GetImpactPlane() const;
     double GetInitialSpinRate() const { return m_initialSpinRate; };
     bool GetIsInHole() const { return m_isBallInHole; };

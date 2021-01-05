@@ -130,6 +130,30 @@ double GolfBall::GetImpactDirection() const
     return direction;
 }
 
+double GolfBall::GetImpactDirection2() const
+{
+    DirectX::SimpleMath::Vector3 scalledPos = GetBallPosInEnviron(m_ball.q.position);
+    DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(scalledPos);
+
+    DirectX::SimpleMath::Vector3 testZeroD = terrainNorm;
+    //DirectX::SimpleMath::Vector3 testZeroD = DirectX::SimpleMath::Vector3::UnitY;
+    //DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+    testZeroD = DirectX::SimpleMath::Vector3::Transform(testZeroD, DirectX::SimpleMath::Matrix::CreateRotationZ(static_cast<float>(- Utility::GetPi() * 0.5)));
+
+    DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
+    //DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
+    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
+    zeroDirection = testZeroD;
+    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
+
+    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
+    {
+        direction = -direction;
+    }
+    //direction = direction * -1;
+    return direction;
+}
+
 DirectX::SimpleMath::Plane GolfBall::GetImpactPlane() const
 {
     // create a default horizontal plane at 0,0,0. fill in later for non-horizontal plane gameplay
@@ -220,7 +244,7 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 //     : Work on pause until 3D terrain work is finished
 void GolfBall::LandProjectile()
 {
-    double direction = GetImpactDirection();
+    double direction = GetImpactDirection2();
     double impactAngle = GetImpactAngle();
     double directionDeg = Utility::ToDegrees(direction);
 
@@ -231,6 +255,8 @@ void GolfBall::LandProjectile()
     //impactSpinRate = impactSpinRate * 9.5493;
     //impactSpinRate = impactSpinRate / m_ball.radius;
 
+
+    // WTF?
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(direction)));
 
     double vix = m_ball.q.velocity.x;
@@ -342,7 +368,46 @@ void GolfBall::LandProjectile()
     //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
+    // m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
+    ///////////////////////////////////////////////////////////////////////////
+    // Start Test Work
+    ///////////////////////////////////////////////////////////////////////////
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-1.570796)));
+    
+    
+    DirectX::SimpleMath::Vector3 scalledPos = GetBallPosInEnviron(m_ball.q.position);
+
+    DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(scalledPos);
+
+    DirectX::SimpleMath::Vector3 preBallPos = m_ball.q.position;
+
+    DirectX::SimpleMath::Vector3 preVelocity = m_ball.q.velocity;
+
+    float newDirection = direction;
+    newDirection -= Utility::GetPi();
+
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, newDirection));
+
+    /*
     m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
+    DirectX::SimpleMath::Vector3 testVelocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));  
+    DirectX::SimpleMath::Vector3 testVelocity2 = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, direction));
+       
+    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, -direction));
+    */
+    m_ball.q.position += terrainNorm;
+    PushFlightData();
+    m_ball.q.position = preBallPos;
+    PushFlightData();
+    
+
+    //DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, -direction);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // End Test Work
+    ///////////////////////////////////////////////////////////////////////////
+
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
     m_ball.omega = omegaR;
@@ -360,10 +425,11 @@ void GolfBall::LaunchProjectile()
     double bounceHeight = m_ball.launchHeight;
     SetInitialSpinRate(m_ball.omega);
 
-    int count = 0;
+    int count = 0;    
     bool isBallFlyOrBounce = true;
     while (isBallFlyOrBounce == true)
     {
+        bool doesCollisionBeforeApex = false;
         bool isBallAscending = true;
         while (isBallAscending == true)
         {
@@ -384,31 +450,42 @@ void GolfBall::LaunchProjectile()
                 }
                 isBallAscending = false;
             }
+
+            if (GetBallFlightAltitude(m_ball.q.position) < 0.0)
+            {
+                //isBallAscending = false;
+                //doesCollisionBeforeApex = true;
+                //SetLandingSpinRate(m_ball.omega);
+                //LandProjectile();
+            }
         }
 
-        double previousTime = m_ball.q.time;
-        float currentAlt = GetBallFlightAltitude(m_ball.q.position);
-        float prevFlightAlt = currentAlt;
-        //  Calculate ball decent path until it reaches landing area height
- 
-        while (currentAlt > 0.0)
+        if (doesCollisionBeforeApex == false)
         {
-            prevFlightAlt = currentAlt;
-            previousTime = m_ball.q.time;
-            ProjectileRungeKutta4(&m_ball, dt);
-            UpdateSpinRate(dt);
-            flightData = this->m_ball.q;
-            PushFlightData();
-            currentAlt = GetBallFlightAltitude(m_ball.q.position);
-        }    
-              
-        if (m_ballPath.size() > 1)
-        {
-            double rollBackTime = CalculateImpactTime(previousTime, m_ball.q.time, prevFlightAlt, currentAlt);
-            ProjectileRungeKutta4(&m_ball, -rollBackTime);
-            m_ballPath[m_ballPath.size() - 1] = m_ball.q;
+            double previousTime = m_ball.q.time;
+            float currentAlt = GetBallFlightAltitude(m_ball.q.position);
+            float prevFlightAlt = currentAlt;
+            //  Calculate ball decent path until it reaches landing area height
+            while (currentAlt > 0.0)
+            {
+                prevFlightAlt = currentAlt;
+                previousTime = m_ball.q.time;
+                ProjectileRungeKutta4(&m_ball, dt);
+                UpdateSpinRate(dt);
+                flightData = this->m_ball.q;
+                PushFlightData();
+                currentAlt = GetBallFlightAltitude(m_ball.q.position);
+            }
+
+
+            if (m_ballPath.size() > 1)
+            {
+                double rollBackTime = CalculateImpactTime(previousTime, m_ball.q.time, prevFlightAlt, currentAlt);
+                ProjectileRungeKutta4(&m_ball, -rollBackTime);
+                m_ballPath[m_ballPath.size() - 1] = m_ball.q;
+            }
         }
-        
+
         SetLandingSpinRate(m_ball.omega);
         LandProjectile();
 
@@ -419,8 +496,8 @@ void GolfBall::LaunchProjectile()
             isBallFlyOrBounce = false;
         }
         bounceHeight = m_ball.landingHeight;
-        
-        isBallFlyOrBounce = false;
+        SetBallToTerrain(m_ball.q.position - m_shotOrigin);
+        //isBallFlyOrBounce = false;
     }
 
     SetMaxHeight(maxHeight);
