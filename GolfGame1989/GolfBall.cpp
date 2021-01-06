@@ -386,73 +386,12 @@ void GolfBall::LandProjectile()
     //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
-    // m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
-    ///////////////////////////////////////////////////////////////////////////
-    // Start Test Work
-    ///////////////////////////////////////////////////////////////////////////
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-1.570796)));
-    
-    
-    DirectX::SimpleMath::Vector3 scalledPos = GetBallPosInEnviron(m_ball.q.position);
 
-    DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(scalledPos);
-
-    DirectX::SimpleMath::Vector3 preBallPos = m_ball.q.position;
-
-    
-
-    float newDirection = direction;
-    newDirection -= Utility::GetPi();
-
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, newDirection));
-
-    /*
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction))); 
-    DirectX::SimpleMath::Vector3 testVelocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));  
-    DirectX::SimpleMath::Vector3 testVelocity2 = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, direction));
-       
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, -direction));
-    */
-
-    m_ball.q.position += terrainNorm;
-    PushFlightData();
-    m_ball.q.position = preBallPos;
-    PushFlightData();
-
-    double normDirection = GetImpactDirection3(terrainNorm);
-
-    //terrainNorm = DirectX::SimpleMath::Vector3::Transform(terrainNorm, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-normDirection)));
-
-
-
-    //ym_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
-    
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, -direction));
-    //DirectX::SimpleMath::Matrix::CreateFromAxisAngle(terrainNorm, -direction);
-
-    ///////////////////////////////////////////////////////////////////////////
-    // End Test Work
-    ///////////////////////////////////////////////////////////////////////////
-    // Crazy test work
-    
     //  ::: Vnew = b * (-2 * (V dot N) * N + V)
     const float b = .5f;
-    float vDotN = preVelocity.Dot(terrainNorm);
-    DirectX::SimpleMath::Vector3 testV;
-    testV = b * (-2 * (vDotN)*terrainNorm + preVelocity);   
-    m_ball.q.velocity = testV;
+    DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
+    m_ball.q.velocity = b * (-2 * (preVelocity.Dot(terrainNorm)) * terrainNorm + preVelocity);;
    
-    /*
-    //////////////////////////////////
-    //DirectX::SimpleMath::Vector3 reflectVelocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
-    DirectX::SimpleMath::Vector3 reflectVelocity = m_ball.q.velocity;
-    float vDotN = reflectVelocity.Dot(terrainNorm);
-    //m_ball.q.velocity = 2 * (vDotN)*terrainNorm - reflectVelocity;
-    m_ball.q.velocity = -2 * (vDotN)*terrainNorm + reflectVelocity;
-    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(3.14 - direction)));
-    */
-    ////////////////////////
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
     m_ball.omega = omegaR;
