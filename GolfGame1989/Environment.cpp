@@ -360,7 +360,7 @@ DirectX::SimpleMath::Vector3 Environment::GetTerrainNormal(DirectX::SimpleMath::
             DirectX::SimpleMath::Vector3 norm(x, y, z);
 
             norm *= -1;
-
+            norm.Normalize();
             return norm;
             //return aPos;
         }
@@ -566,7 +566,7 @@ void Environment::LoadEnvironmentData()
     //m_environs[i].scale = 1.0;
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(3.0f, 0.0f, 1.0f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 1.0f);
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.64432287f, 0.308427006f, -1.86075854f);
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
