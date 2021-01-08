@@ -86,6 +86,7 @@ private:
     void SetMaxHeight(const double aMaxHeight) { m_maxHeight = aMaxHeight; };
     void SetSpinAxis(DirectX::SimpleMath::Vector3 aAxis);
     void RollBall();
+    void RollBall2();
     void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double aTimeDelta, double aQScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aTimeDelta);
     void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aTimeDelta);
