@@ -358,7 +358,7 @@ DirectX::SimpleMath::Vector3 Environment::GetTerrainNormal(DirectX::SimpleMath::
             float z = (norm1.z + norm2.z + norm3.z) / 3.0f;
 
             DirectX::SimpleMath::Vector3 norm(x, y, z);
-
+ 
             norm *= -1;
             norm.Normalize();
             return norm;
