@@ -386,12 +386,12 @@ void GolfBall::LandProjectile()
     //m_ball.q.velocity.z = vrz;
     m_ball.q.velocity.z = 0.0; // doing it dirty until calculations can be sorted in 3d
 
-    m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
+    //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
 
     //  ::: Vnew = b * (-2 * (V dot N) * N + V)
     const float b = .5f;
     DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
-    //m_ball.q.velocity = b * (-2 * (preVelocity.Dot(terrainNorm)) * terrainNorm + preVelocity);;
+    m_ball.q.velocity = b * (-2 * (preVelocity.Dot(terrainNorm)) * terrainNorm + preVelocity);;
    
     //m_ball.omega = omegaR * m_ball.radius;
     omegaR = omegaR * -1;
@@ -472,7 +472,7 @@ void GolfBall::LaunchProjectile()
         }
 
         SetLandingSpinRate(m_ball.omega);
-        //LandProjectile();
+        LandProjectile();
 
         ++m_bounceCount;
         ++count;
@@ -482,7 +482,7 @@ void GolfBall::LaunchProjectile()
         }
         bounceHeight = m_ball.landingHeight;
         SetBallToTerrain(m_ball.q.position - m_shotOrigin);
-        isBallFlyOrBounce = false;
+        //isBallFlyOrBounce = false;
     }
 
     SetMaxHeight(maxHeight);
@@ -819,7 +819,7 @@ void GolfBall::RollBall()
     double decelFactor = a;
     decelFactor = .99999;
     //double stopTolerance = 0.05;
-    double stopTolerance = 5.;
+    double stopTolerance = .05;
     int overflowTolerance = 650;
 
     //DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;

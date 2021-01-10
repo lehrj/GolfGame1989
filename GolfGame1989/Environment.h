@@ -168,7 +168,7 @@ private:
     //std::vector<DirectX::XMFLOAT3>      m_heightMap;
     std::vector<DirectX::VertexPositionNormal> m_heightMap;
     //const float                         m_heightScale = .01;
-    const float                         m_heightScale = 0.001;
+    const float                         m_heightScale = 0.1;
     int                                 m_terrainHeight = 0;
     int                                 m_terrainLength = 0;
     int                                 m_terrainWidth = 0;
