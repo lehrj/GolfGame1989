@@ -817,7 +817,9 @@ void GolfBall::RollBall()
     double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
 
     double decelFactor = a;
-    double stopTolerance = 0.05;
+    decelFactor = .99999;
+    //double stopTolerance = 0.05;
+    double stopTolerance = 5.;
     int overflowTolerance = 650;
 
     //DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
@@ -912,6 +914,9 @@ void GolfBall::RollBall()
             DirectX::SimpleMath::Vector3 preVelocity = m_ball.q.velocity;
             DirectX::SimpleMath::Vector3 gravity(0.0, 9.8, 0.0);
             DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
+            float terrainLength = terrainNorm.Length();
+            DirectX::SimpleMath::Vector3 terrainNormTest = terrainNorm;
+            terrainNormTest.Normalize();
 
             DirectX::SimpleMath::Vector3 testV1 = gravity + terrainNorm;
             DirectX::SimpleMath::Vector3 testV2 = gravity * terrainNorm;
@@ -922,7 +927,13 @@ void GolfBall::RollBall()
             DirectX::SimpleMath::Vector3 testV4 = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
             DirectX::SimpleMath::Vector3 testV5 = tragectoryNormilized * static_cast<float>(velocity) + testV3 ;
 
-            m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
+            DirectX::SimpleMath::Vector3 terrainAcceleration = terrainNorm;
+            terrainAcceleration *= (m_ball.gravity * m_timeStep);
+            terrainAcceleration.y = 0.0f;
+            terrainAcceleration *= decelFactor;
+            //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
+
+            m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) - terrainAcceleration * decelFactor;
             m_ball.q.position += m_ball.q.velocity * m_timeStep;
 
             // Temp while soriting out terrain following ball path
@@ -947,6 +958,9 @@ void GolfBall::RollBall()
         PushFlightData();
         ++i;
     }
+    m_ball.q.position.y += 10.0;
+    m_ball.q.position.z += 10.0;
+    PushFlightData();
 }
 
 void GolfBall::RollBall2()

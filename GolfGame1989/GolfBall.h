@@ -108,8 +108,8 @@ private:
 
     DirectX::SimpleMath::Vector3                m_shotOrigin;
     const double                                m_spinRateDecay = 0.04; // Rate at which the spinrate slows over time, using value from Trackman launch monitors of 4% per second
+    //const float                                 m_timeStep = 0.01f;
     const float                                 m_timeStep = 0.01f;
-
     double                                      m_debugValue01 = 0.0;
     double                                      m_debugValue02 = 0.0;
     double                                      m_debugValue03 = 0.0;
