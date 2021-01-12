@@ -116,6 +116,7 @@ void Game::CreateDevice()
         D3D_FEATURE_LEVEL_9_3,
         D3D_FEATURE_LEVEL_9_2,
         D3D_FEATURE_LEVEL_9_1,
+        
     };
 
     // Create the DX11 API device object, and get a corresponding context.
@@ -185,6 +186,13 @@ void Game::CreateDevice()
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, TRUE, TRUE); // Multisampling
     */
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc, m_raster.ReleaseAndGetAddressOf()));
+
+
+    // Shape for skydome
+    //m_shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get());
+    //m_shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get(), 100, false);
+    //m_shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get(), 3, true, true);
+    m_shape = GeometricPrimitive::CreateBox(m_d3dContext.Get(), XMFLOAT3(10, 10, 10), false, false);
 
     m_font = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"myfile.spritefont");
     m_titleFont = std::make_unique<SpriteFont>(m_d3dDevice.Get(), L"titleFont.spritefont");
@@ -3835,6 +3843,9 @@ void Game::OnDeviceLost()
     m_states.reset();
     m_effect.reset();
     m_batch.reset();
+
+    m_shape.reset();
+
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
@@ -3954,6 +3965,8 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
    
+    
+
     m_batch->Begin();
     
     //DrawDebugLines();
@@ -3983,7 +3996,13 @@ void Game::Render()
     
     m_batch->End();
     
-    
+    // Testing shapes for skydome
+    //void XM_CALLCONV Draw(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color = Colors::White, _In_opt_ ID3D11ShaderResourceView * texture = nullptr, bool wireframe = false,
+    //   _In_opt_ std::function<void __cdecl()> setCustomState = nullptr) const;
+    //m_shape->Draw(m_world, m_view, m_proj);
+    //m_shape->Draw(m_world, m_view, m_proj);
+    //m_shape->Draw(m_world, m_view, m_proj, DirectX::Colors::White, nullptr, true);
+
     m_spriteBatch->Begin();
     
     //DrawShotTimerUI();
@@ -4018,8 +4037,6 @@ void Game::Render()
     m_spriteBatch->End();
     
     Present();
-
-
 }
 
 void Game::ResetGamePlay()

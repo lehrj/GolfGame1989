@@ -66,9 +66,9 @@
 
 // audio adds
 #include "Audio.h"
-#include <winsdkver.h>
+//#include <winsdkver.h>
 #define _WIN32_WInNT 0x0A00  // for Windows 7 support set _WIN32_WINT to 0x0601
-#include <sdkddkver.h>
+//#include <sdkddkver.h>
 
 // shaders
 #include "ReadData.h"

@@ -1179,7 +1179,7 @@ void Environment::LoadFixtureBucket12th()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap01.bmp";
+    char* filename = "heightmap09.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -1219,13 +1219,23 @@ bool Environment::LoadHeightMap()
     }
 
     // Move to the beginning of the bitmap data.
-    fseek(filePtr, bitmapFileHeader.bfOffBits, SEEK_SET);
+    fseek(filePtr, bitmapFileHeader.bfOffBits-1, SEEK_SET);
+    
 
     // Read in the bitmap image data.
     count = fread(bitmapImage, 1, imageSize, filePtr);
+    //count = fread(bitmapImage, sizeof(unsigned char) * m_terrainWidth * 1, imageSize, filePtr);
+    //count = fread(bitmapImage, sizeof(char16_t) - 1, imageSize, filePtr);
     if (count != imageSize)
     {
         return false;
+    }
+
+    std::vector<char> testMap;
+    testMap.clear();
+    for (int i = 0; i < imageSize; ++i)
+    {
+        testMap.push_back(bitmapImage[i]);
     }
 
     // Close the file.
@@ -1240,10 +1250,11 @@ bool Environment::LoadHeightMap()
     m_heightMap.resize(m_terrainWidth * m_terrainHeight);
 
     // Initialize the position in the image data buffer.
-    int k = 0;
+    int k = 1;
     int index;
     unsigned char height;
     
+    int testCount = 0;
     // Read the image data into the height map.
     for (int i = 0; i < m_terrainHeight; i++)
     //for (int j = 0; j < m_terrainWidth; j++)
@@ -1251,16 +1262,22 @@ bool Environment::LoadHeightMap()
         for (int j = 0; j < m_terrainWidth; j++)
         //for (int i = 0; i < m_terrainHeight; i++)
         {
-            height = bitmapImage[k];
+            height = bitmapImage[k+1];
+            
             index = (i * m_terrainWidth) + j;
-
+            //index = (i * m_terrainHeight) + j;
             m_heightMap[index].position.x = (float)j;
             m_heightMap[index].position.y = (float)height * m_heightScale; // scale height during input
             m_heightMap[index].position.z = (float)i;
             
+
             k += 3;
+            ++testCount;
         }
-        k += 1;
+
+        int testBreak = 0;
+        testBreak++;
+        //k += 1;
     }
 
     // Release the bitmap image data.
