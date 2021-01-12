@@ -1179,7 +1179,7 @@ void Environment::LoadFixtureBucket12th()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap09.bmp";
+    char* filename = "heightmap01.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -1209,7 +1209,9 @@ bool Environment::LoadHeightMap()
     m_terrainHeight = bitmapInfoHeader.biHeight;
 
     // Calculate the size of the bitmap image data.
-    int imageSize = m_terrainWidth * m_terrainHeight * 3;
+    //int imageSize = m_terrainWidth * m_terrainHeight * 3;
+    //int imageSize = m_terrainWidth * m_terrainHeight * 3 + m_terrainHeight;
+    int imageSize = m_terrainWidth * m_terrainHeight * 3 + m_terrainWidth;
 
     // Allocate memory for the bitmap image data.
     unsigned char* bitmapImage = new unsigned char[imageSize];
@@ -1219,13 +1221,19 @@ bool Environment::LoadHeightMap()
     }
 
     // Move to the beginning of the bitmap data.
-    fseek(filePtr, bitmapFileHeader.bfOffBits-1, SEEK_SET);
+    fseek(filePtr, bitmapFileHeader.bfOffBits, SEEK_SET);
     
+    UINT pitch = m_terrainWidth * 3;
+    UINT excessPitch = 0;
+    while (double(pitch / 4) != double(pitch) / 4.0)
+    {
+        pitch++;
+        excessPitch++;
+    }
 
     // Read in the bitmap image data.
-    count = fread(bitmapImage, 1, imageSize, filePtr);
-    //count = fread(bitmapImage, sizeof(unsigned char) * m_terrainWidth * 1, imageSize, filePtr);
-    //count = fread(bitmapImage, sizeof(char16_t) - 1, imageSize, filePtr);
+    //count = fread(bitmapImage, 1, imageSize, filePtr);
+    count = fread(bitmapImage, 1, pitch * m_terrainHeight, filePtr);
     if (count != imageSize)
     {
         return false;
@@ -1250,11 +1258,10 @@ bool Environment::LoadHeightMap()
     m_heightMap.resize(m_terrainWidth * m_terrainHeight);
 
     // Initialize the position in the image data buffer.
-    int k = 1;
+    int k = 0;
     int index;
     unsigned char height;
     
-    int testCount = 0;
     // Read the image data into the height map.
     for (int i = 0; i < m_terrainHeight; i++)
     //for (int j = 0; j < m_terrainWidth; j++)
@@ -1262,7 +1269,7 @@ bool Environment::LoadHeightMap()
         for (int j = 0; j < m_terrainWidth; j++)
         //for (int i = 0; i < m_terrainHeight; i++)
         {
-            height = bitmapImage[k+1];
+            height = bitmapImage[k];
             
             index = (i * m_terrainWidth) + j;
             //index = (i * m_terrainHeight) + j;
@@ -1270,13 +1277,9 @@ bool Environment::LoadHeightMap()
             m_heightMap[index].position.y = (float)height * m_heightScale; // scale height during input
             m_heightMap[index].position.z = (float)i;
             
-
             k += 3;
-            ++testCount;
         }
-
-        int testBreak = 0;
-        testBreak++;
+        k += excessPitch;
         //k += 1;
     }
 
@@ -1292,7 +1295,7 @@ void Environment::ScaleTerrain()
     const float scale = .2;
     //const float scale = 10.0;
     const float xTransform = -2.0f;
-    const float yTransform = 0.0f;
+    const float yTransform = 2.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)
