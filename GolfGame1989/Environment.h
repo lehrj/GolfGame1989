@@ -158,17 +158,15 @@ private:
 
     std::vector<DirectX::VertexPositionColor> m_holeVertex;
     const int                           m_holeResolution = 30;          // number of vertices used to draw hole circle
-    //const double                        m_holeRadius = 0.10795;              // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
+    //const double                        m_holeRadius = 0.10795;       // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
     const double                        m_holeRadius = .50795;
 
     double                              m_landingHeight = 0.0;     // in meters
     double                              m_launchHeight = 0.0;      // in meters
     double                              m_testHeight = 0.0;        // in meters, for testing ground height functions
    
-    //std::vector<DirectX::XMFLOAT3>      m_heightMap;
     std::vector<DirectX::VertexPositionNormal> m_heightMap;
-    //const float                         m_heightScale = .01;
-    const float                         m_heightScale = 0.1;
+    const float                         m_heightScale = 0.015;
     int                                 m_terrainHeight = 0;
     int                                 m_terrainLength = 0;
     int                                 m_terrainWidth = 0;

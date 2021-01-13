@@ -271,4 +271,6 @@ private:
     bool InitializeTerrainArray();
 
     float m_debugHeight = 0.0;
+    float m_debugXpoint = 0.0;
+    float m_debugZpoint = 0.0;
 };

@@ -694,6 +694,8 @@ void Game::DrawCameraFocus()
     VertexPositionColor negZOffset(negZLine, Colors::Yellow);
 
     m_debugHeight = focalPoint.y;
+    m_debugXpoint = focalPoint.x;
+    m_debugZpoint = focalPoint.z;
 
     m_batch->DrawLine(origin, yOffset);
     m_batch->DrawLine(origin, xOffset);
@@ -3435,6 +3437,17 @@ void Game::DrawUI()
         lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
         fontPos.y += 35;
+
+        uiLine = "X = " + std::to_string(m_debugXpoint);
+        lineOrigin = m_font->MeasureString(uiLine.c_str());
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
+
+        uiLine = "Z = " + std::to_string(m_debugZpoint);
+        lineOrigin = m_font->MeasureString(uiLine.c_str());
+        m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
+        fontPos.y += 35;
+
     }
 
     if (m_currentUiState == UiState::UISTATE_SHOT)
@@ -3475,7 +3488,10 @@ void Game::DrawWater()
     DirectX::XMVECTORF32 waterColorDeep = DirectX::Colors::Navy;
     DirectX::XMVECTORF32 waterHighlight = DirectX::Colors::SkyBlue;
 
-    const float height = 0.003;
+    //const float height = 0.003;
+    const float height = 0.09;
+    const float offset = .2;
+    /*
     DirectX::SimpleMath::Vector3 nw(0.8, height, -2.001);
     DirectX::SimpleMath::Vector3 ne(4.7, height, 2.001);
     DirectX::SimpleMath::Vector3 se(4.3, height, 2.001);
@@ -3483,6 +3499,16 @@ void Game::DrawWater()
 
     DirectX::SimpleMath::Vector3 e(4.55, height, 2.001);
     DirectX::SimpleMath::Vector3 w(0.55, height, -2.001);
+    */
+
+    DirectX::SimpleMath::Vector3 nw(-0.457775 + offset, height, -3.184981);
+    DirectX::SimpleMath::Vector3 ne(4.998624, height, 2.250326 - offset);
+    DirectX::SimpleMath::Vector3 se(4.998624, height, 2.601 + offset);
+    //DirectX::SimpleMath::Vector3 se(4.3, height, 2.001);
+    DirectX::SimpleMath::Vector3 sw(-0.980228 - offset, height, -3.184981);
+
+    DirectX::SimpleMath::Vector3 e(4.998624, height, 2.425663);
+    DirectX::SimpleMath::Vector3 w(-0.7190015, height, -3.184981);
 
     VertexPositionColor v1(nw, waterColor);
     VertexPositionColor v2(ne, waterColor);
@@ -3797,19 +3823,79 @@ bool Game::InitializeTerrainArray()
     m_terrainVertexArray = new DirectX::VertexPositionColor[m_terrainVertexCount];
     m_terrainVertexArrayBase = new DirectX::VertexPositionColor[m_terrainVertexCount];
 
-
     //lawngreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
     //DirectX::XMFLOAT4 lineColor(0.0, 0.501960814f, 0.0, 1.0);
     DirectX::XMFLOAT4 lineColor(.486274540f, .988235354f, 0.0, 1.0);
     DirectX::XMFLOAT4 baseColor(0.0, 0.0, 0.0, 1.0);
     DirectX::XMFLOAT4 baseColor2(0.3, 0.3, 0.3, 1.0);
+
+    DirectX::XMFLOAT4 sandColor1(0.956862807f, 0.643137276f, 0.376470625f, 1.0);
+    DirectX::XMFLOAT4 sandColor2(0.960784376f, 0.960784376f, 0.862745166f, 1.0);
+    DirectX::XMFLOAT4 greenColor1 = DirectX::XMFLOAT4(0.0, 0.501960814f, 0.0, 1.0);
+    DirectX::XMFLOAT4 greenColor2 = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.0, 1.0);
+
+    //baseColor = DirectX::XMFLOAT4(0.0, 0.501960814f, 0.0, 1.0);
+    //baseColor2 = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.0, 1.0);
+    //XMGLOBALCONST XMVECTORF32 SandyBrown = { { { 0.956862807f, 0.643137276f, 0.376470625f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 Beige = { { { 0.960784376f, 0.960784376f, 0.862745166f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 Green = { { { 0.000000000f, 0.501960814f, 0.000000000f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 LawnGreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
     for (int i = 0; i < m_terrainVertexCount; ++i)
     {
         m_terrainVertexArray[i].position = vertexPC[i].position;
         m_terrainVertexArray[i].color = lineColor;
         m_terrainVertexArrayBase[i].position = vertexPC[i].position;
 
-        if (i % 2 == 0)
+        // Green
+        //if (i > 1802 && i < 1818 || i > 1991 && i < 2007 || i > 2183 && i < 2190)
+        if (i > 1805 && i < 1818 || i > 1991 && i < 2007 || i > 2183 && i < 2190)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase[i].color = greenColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase[i].color = greenColor2;
+            }
+        }
+        // bunker 1
+        else if (i > 2195 && i < 2202 || i > 2381 && i < 2391)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase[i].color = sandColor2;
+            }
+        }
+        // bunker 2
+        else if (i > 1613 && i < 1617 || i > 1424 && i < 1428 )
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase[i].color = sandColor2;
+            }
+        }
+        // bunker 3
+        else if (i > 1796 && i < 1803 )
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase[i].color = sandColor2;
+            }
+        }
+        else if (i % 2 == 0)
         {
             m_terrainVertexArrayBase[i].color = baseColor;
         }
@@ -4001,7 +4087,7 @@ void Game::Render()
     //   _In_opt_ std::function<void __cdecl()> setCustomState = nullptr) const;
     //m_shape->Draw(m_world, m_view, m_proj);
     //m_shape->Draw(m_world, m_view, m_proj);
-    //m_shape->Draw(m_world, m_view, m_proj, DirectX::Colors::White, nullptr, true);
+    //m_shape->Draw(m_world, m_view, m_proj, DirectX::Colors::SkyBlue, nullptr, false);
 
     m_spriteBatch->Begin();
     

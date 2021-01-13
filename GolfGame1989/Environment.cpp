@@ -563,11 +563,9 @@ void Environment::LoadEnvironmentData()
     m_environs[i].landingHardnessScale = 1.0;
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
-    //m_environs[i].scale = 1.0;
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 1.0f);
-    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(2.64432287f, 0.308427006f, -1.86075854f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.1f, 0.0f, 0.0f);
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
@@ -1179,7 +1177,7 @@ void Environment::LoadFixtureBucket12th()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap01.bmp";
+    char* filename = "heightmap14.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -1210,7 +1208,6 @@ bool Environment::LoadHeightMap()
 
     // Calculate the size of the bitmap image data.
     //int imageSize = m_terrainWidth * m_terrainHeight * 3;
-    //int imageSize = m_terrainWidth * m_terrainHeight * 3 + m_terrainHeight;
     int imageSize = m_terrainWidth * m_terrainHeight * 3 + m_terrainWidth;
 
     // Allocate memory for the bitmap image data.
@@ -1263,16 +1260,17 @@ bool Environment::LoadHeightMap()
     unsigned char height;
     
     // Read the image data into the height map.
-    for (int i = 0; i < m_terrainHeight; i++)
-    //for (int j = 0; j < m_terrainWidth; j++)
+    //for (int i = 0; i < m_terrainHeight; i++)
+    for (int j = 0; j < m_terrainWidth; j++)
     {
-        for (int j = 0; j < m_terrainWidth; j++)
-        //for (int i = 0; i < m_terrainHeight; i++)
+        //for (int j = 0; j < m_terrainWidth; j++)
+        for (int i = 0; i < m_terrainHeight; i++)
         {
             height = bitmapImage[k];
             
-            index = (i * m_terrainWidth) + j;
-            //index = (i * m_terrainHeight) + j;
+            // To read values in backwards since bitmap read in is fliped
+            index = (m_terrainWidth * (m_terrainHeight - 1 - j)) + i;
+            
             m_heightMap[index].position.x = (float)j;
             m_heightMap[index].position.y = (float)height * m_heightScale; // scale height during input
             m_heightMap[index].position.z = (float)i;
@@ -1294,8 +1292,9 @@ void Environment::ScaleTerrain()
 {
     const float scale = .2;
     //const float scale = 10.0;
-    const float xTransform = -2.0f;
-    const float yTransform = 2.0f;
+    const float xTransform = -1.4f;
+    //const float yTransform = -.08f;
+    const float yTransform = 0.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

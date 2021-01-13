@@ -942,12 +942,6 @@ void GolfBall::RollBall()
 
 
             m_ball.q.time = m_ball.q.time + m_timeStep;
-
-            if (i == overflowTolerance - 1)
-            {
-                m_ball.q.position.y += 1.0;
-                PushFlightData();
-            }
         }
         else //stop the ball motion if its in the hole
         {
@@ -958,9 +952,6 @@ void GolfBall::RollBall()
         PushFlightData();
         ++i;
     }
-    m_ball.q.position.y += 10.0;
-    m_ball.q.position.z += 10.0;
-    PushFlightData();
 }
 
 void GolfBall::RollBall2()
