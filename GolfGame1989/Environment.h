@@ -59,13 +59,13 @@ enum class FixtureType
     FIXTURETYPE_BRIDGE,
     //FIXTURETYPE_TREE01,
     //FIXTURETYPE_TREE02,
-    FIXTURETYPE_TREE03,
-    FIXTURETYPE_TREE04,
+    FIXTURETYPE_TREE03,     // V tree
+    FIXTURETYPE_TREE04,     // Circle pink tree
     FIXTURETYPE_TREE05,
-    FIXTURETYPE_TREE06,
-    FIXTURETYPE_TREE07,
+    FIXTURETYPE_TREE06,     // A shape tree w black right shadow with delta base
+    FIXTURETYPE_TREE07,     // A shape tree chevron shape
     FIXTURETYPE_TREE08,
-    FIXTURETYPE_TREE09,
+    FIXTURETYPE_TREE09,     // A shape tree chevron shape with white highlights
     FIXTURETYPE_TREE10,
 };
 
