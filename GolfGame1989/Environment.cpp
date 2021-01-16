@@ -263,9 +263,11 @@ std::vector<DirectX::VertexPositionColor> Environment::GetTerrainColorVertex()
 
 float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
 {
+    DirectX::SimpleMath::Vector3 prePos = aPos;
+    bool foundHeightBarry = false;
     bool foundHeight = false;
     int index = 0;
-
+    
     for (int i = 0; i < m_terrainModel.size() / 3; ++i)
     //for (int i = 0; i < m_terrainModel.size(); ++i)
     {
@@ -286,8 +288,34 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
         */
         foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
 
+        float f = prePos.x;
+        float g = prePos.z;
+        DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g);
+
+        if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+        {
+            foundHeightBarry = true;
+        }
+        else
+        {
+            foundHeightBarry = false;
+        }
+
+        if (foundHeight != foundHeightBarry)
+        {
+            int testBreak2 = 0;
+            testBreak2++;
+        }
+
+        int testBreak = 0;
+
         if (foundHeight)
         {
+            f = prePos.x;
+            g = prePos.z;
+            baryPos = DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g);
+
+            testBreak = 0;
             return aPos.y;
         }
     }
@@ -411,6 +439,33 @@ DirectX::XMFLOAT3 Environment::GetTerrainPosition(DirectX::XMFLOAT3 aPos)
 
 bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
 {
+    bool foundHeightBarry = false;
+    float f = aPos.x;
+    float g = aPos.z;
+    DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, f, g);
+
+    if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+    {
+        DirectX::SimpleMath::Vector3 vZero = v0;
+        DirectX::SimpleMath::Vector3 vOne = v1;
+        DirectX::SimpleMath::Vector3 vTwo = v2;
+
+        DirectX::SimpleMath::Vector3 cartPos;
+        cartPos = baryPos.x * vZero + baryPos.y * vOne + baryPos.z * vTwo;
+        
+        //aPos.y = aPos.y - cartPos.y;
+        //aPos.y = cartPos.y;
+        aPos.y = cartPos.y + v2.y;
+        //bool testBool = CheckTerrainTriangleHeight2(aPos, v0, v1, v2);
+        foundHeightBarry = true;
+    }
+    else
+    {
+        foundHeightBarry = false;
+    }
+
+    return foundHeightBarry;
+    /*
     // Starting position of the ray that is being cast
     DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
     
@@ -503,6 +558,106 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
         return false;
     }
     
+    // Now we have our height.
+    aPos.y = Q.y;
+    return true;
+    */
+}
+
+bool Environment::CheckTerrainTriangleHeight2(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
+{
+    // Starting position of the ray that is being cast
+    DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
+
+    // The direction the ray is being cast
+    DirectX::XMFLOAT3 directionVector(0.0f, -1.0f, 0.0f);
+
+    // Calculate the two edges from the three points given
+    DirectX::SimpleMath::Vector3 edge1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+    DirectX::SimpleMath::Vector3 edge2(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
+
+    // Calculate the normal of the triangle from the two edges // ToDo use cross prod funcs
+    DirectX::SimpleMath::Vector3 normal;
+
+    edge1.Cross(edge2, normal);
+    normal.Normalize();
+
+    // Find the distance from the origin to the plane.
+    float distance = ((-normal.x * v0.x) + (-normal.y * v0.y) + (-normal.z * v0.z));
+
+    // Get the denominator of the equation.
+    float denominator = ((normal.x * directionVector.x) + (normal.y * directionVector.y) + (normal.z * directionVector.z));
+
+    // Make sure the result doesn't get too close to zero to prevent divide by zero.
+    if (fabs(denominator) < 0.0001f)
+    {
+        return false;
+    }
+
+    // Get the numerator of the equation.
+    float numerator = -1.0f * (((normal.x * startVector.x) + (normal.y * startVector.y) + (normal.z * startVector.z)) + distance);
+
+    // Calculate where we intersect the triangle.
+    float t = numerator / denominator;
+
+    // Find the intersection vector.
+    DirectX::SimpleMath::Vector3 Q;
+    Q.x = startVector.x + (directionVector.x * t);
+    Q.y = startVector.y + (directionVector.y * t);
+    Q.z = startVector.z + (directionVector.z * t);
+
+    // Find the three edges of the triangle.
+    DirectX::SimpleMath::Vector3 e1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+    DirectX::SimpleMath::Vector3 e2(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+    DirectX::SimpleMath::Vector3 e3(v0.x - v2.x, v0.y - v2.y, v0.z - v2.z);
+
+    // Calculate the normal for the first edge.
+    DirectX::SimpleMath::Vector3 edgeNormal;
+    e1.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    DirectX::SimpleMath::Vector3 temp(Q.x - v1.x, Q.y - v1.y, Q.z - v1.z);
+
+    float determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the second edge
+    e2.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp.x = Q.x - v1.x;
+    temp.y = Q.y - v1.y;
+    temp.z = Q.z - v1.z;
+
+    determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the third edge.
+    e3.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp.x = Q.x - v2.x;
+    temp.y = Q.y - v2.y;
+    temp.z = Q.z - v2.z;
+
+    determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
     // Now we have our height.
     aPos.y = Q.y;
     return true;
