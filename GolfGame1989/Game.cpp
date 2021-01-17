@@ -670,9 +670,9 @@ void Game::DrawCameraFocus()
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
 
     //pGolf->SetPosToTerrain(focalPoint);
-    float height = pGolf->GetTerrainHeight(focalPoint);
+    //float height = pGolf->GetTerrainHeight(focalPoint);
     //height += .1;
-    focalPoint.y = height;
+    //focalPoint.y = height;
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
     yLine.y += line;
     DirectX::SimpleMath::Vector3 xLine = focalPoint;
