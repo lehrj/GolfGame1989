@@ -292,13 +292,21 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
         float g = prePos.z;
         DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g);
 
-        if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+        //if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+        if (baryPos.x <= 1.0f && baryPos.x >= 0.0f && baryPos.y <= 1.0f && baryPos.y >= 0.0f && baryPos.z <= 1.0f && baryPos.z >= 0.0f)
         {
             foundHeightBarry = true;
         }
         else
         {
             foundHeightBarry = false;
+        }
+
+
+        if (foundHeight == true && foundHeightBarry == false)
+        {
+            int testBreak2 = 0;
+            testBreak2++;
         }
 
         if (foundHeight != foundHeightBarry)
@@ -439,23 +447,41 @@ DirectX::XMFLOAT3 Environment::GetTerrainPosition(DirectX::XMFLOAT3 aPos)
 
 bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
 {
+    /*
     bool foundHeightBarry = false;
     float f = aPos.x;
     float g = aPos.z;
     DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(v0, v1, v2, f, g);
 
-    if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+    //if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
+    if (baryPos.x <= 1.0f && baryPos.x >= 0.0f && baryPos.y <= 1.0f && baryPos.y >= 0.0f && baryPos.z <= 1.0f && baryPos.z >= 0.0f)
     {
         DirectX::SimpleMath::Vector3 vZero = v0;
         DirectX::SimpleMath::Vector3 vOne = v1;
         DirectX::SimpleMath::Vector3 vTwo = v2;
 
+        baryPos.Normalize();
+
         DirectX::SimpleMath::Vector3 cartPos;
         cartPos = baryPos.x * vZero + baryPos.y * vOne + baryPos.z * vTwo;
         
-        //aPos.y = aPos.y - cartPos.y;
+        float testSum = baryPos.x + baryPos.y + baryPos.z;
+        //float pY = (baryPos.x * v0.y) + (baryPos.y * v1.y) + (baryPos.z * v2.y);
+        //float pY = ((1 - f - g) * v0.y) + (f * v1.y) + (g * v2.y);
+        float pY = ((1 - baryPos.y - baryPos.z) * v0.y) + (baryPos.y * v1.y) + (baryPos.z * v2.y);
+
+        //bool testCheck = CheckTerrainTriangleHeight2(aPos, v0, v1, v2);
+
+        DirectX::SimpleMath::Vector3 cartTest = baryPos.x * vZero + baryPos.y * vOne + baryPos.z * vTwo;
+
+
+        int testBreak = 0;
+        //aPos = cartTest;
+
+        //aPos.y += baryPos.y;
+        //aPos.y = aPos.y * cartPos.y;
         //aPos.y = cartPos.y;
-        aPos.y = cartPos.y + v2.y;
+        //aPos.y = cartPos.y + v2.y;
         //bool testBool = CheckTerrainTriangleHeight2(aPos, v0, v1, v2);
         foundHeightBarry = true;
     }
@@ -465,7 +491,11 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     }
 
     return foundHeightBarry;
-    /*
+    */
+
+
+
+    
     // Starting position of the ray that is being cast
     DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
     
@@ -561,7 +591,7 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
     // Now we have our height.
     aPos.y = Q.y;
     return true;
-    */
+    
 }
 
 bool Environment::CheckTerrainTriangleHeight2(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
