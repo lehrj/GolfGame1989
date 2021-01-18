@@ -263,31 +263,53 @@ std::vector<DirectX::VertexPositionColor> Environment::GetTerrainColorVertex()
 
 float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
 {
+    /*
+    DirectX::SimpleMath::Vector3 vZero = m_terrainModel[0].position;
+    DirectX::SimpleMath::Vector3 vOne = m_terrainModel[1].position;
+    DirectX::SimpleMath::Vector3 vTwo = m_terrainModel[2].position;
+    vZero.y = 0.0;
+    vOne.y = 0.0;
+    vTwo.y = 0.0;
+    float maxDistance0 = DirectX::SimpleMath::Vector3::Distance(vZero, vOne);
+    float maxDistance1 = DirectX::SimpleMath::Vector3::Distance(vOne, vTwo);
+    float maxDistance2 = DirectX::SimpleMath::Vector3::Distance(vTwo, vZero);
+    */
     DirectX::SimpleMath::Vector3 prePos = aPos;
     bool foundHeightBarry = false;
     bool foundHeight = false;
     int index = 0;
     
-    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
-    //for (int i = 0; i < m_terrainModel.size(); ++i)
+    int i = 0;
+    
+    if (aPos.z >= 0.0)
     {
-        
+        //i = m_terrainModel.size() / 2;
+        //i -= 3;
+        i == 2001;
+    }
+    //for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    //for (int i = 0; i < m_terrainModel.size(); ++i)
+    for (i; i < m_terrainModel.size(); ++i)
+    {
+        /*
         int index = i * 3;
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
         ++index;
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
         ++index;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+        */
         
-        /*
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[i].position;
-        */
-        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-
+        
+        if (abs(aPos.x - vertex2.x) < .3 && abs(aPos.z - vertex2.z) < .3)
+        {
+            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+        }
         float f = prePos.x;
         float g = prePos.z;
         DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g);
@@ -377,8 +399,15 @@ float Environment::GetTerrainHeightAtPos2(DirectX::XMFLOAT3 aPos) const
 DirectX::SimpleMath::Vector3 Environment::GetTerrainNormal(DirectX::SimpleMath::Vector3 aPos) const
 {
     bool foundHeight = false;
+    int i = 0;
+    if (aPos.z >= 0.0)
+    {
+        //i = m_terrainModel.size() / 2;
+        //i -= 3;
+        i == 2001;
+    }
 
-    for (int i = 0; i < m_terrainModel.size(); ++i)
+    for (i; i < m_terrainModel.size(); ++i)
     {
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[i].position;
         ++i;
@@ -387,8 +416,10 @@ DirectX::SimpleMath::Vector3 Environment::GetTerrainNormal(DirectX::SimpleMath::
         DirectX::XMFLOAT3 vertex3 = m_terrainModel[i].position;
         
         DirectX::SimpleMath::Vector3 pos = aPos;
-        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-
+        if (abs(aPos.x - vertex2.x) < .3 && abs(aPos.z - vertex2.z) < .3)
+        {
+            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+        }
         if (foundHeight)
         {
             DirectX::SimpleMath::Vector3 norm1 = m_terrainModel[i-2].normal;
@@ -451,7 +482,7 @@ DirectX::XMFLOAT3 Environment::GetTerrainPosition(DirectX::XMFLOAT3 aPos)
     return aPos;
 }
 
-bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
+bool Environment::CheckTerrainTriangleHeight2(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
 {
     /*
     bool foundHeightBarry = false;
@@ -799,7 +830,106 @@ bool Environment::CheckTerrainTriangleHeight3(DirectX::XMFLOAT3& aPos, DirectX::
 
 }
 
-bool Environment::CheckTerrainTriangleHeight2(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
+bool Environment::CheckTerrainTriangleHeight4(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
+{
+    // Starting position of the ray that is being cast
+    DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
+
+    // The direction the ray is being cast
+    DirectX::XMFLOAT3 directionVector(0.0f, -1.0f, 0.0f);
+
+    // Calculate the two edges from the three points given
+    DirectX::SimpleMath::Vector3 edge1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+    DirectX::SimpleMath::Vector3 edge2(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
+
+    // Calculate the normal of the triangle from the two edges // ToDo use cross prod funcs
+    DirectX::SimpleMath::Vector3 normal;
+
+    edge1.Cross(edge2, normal);
+    normal.Normalize();
+
+    // Find the distance from the origin to the plane.
+    float distance = ((-normal.x * v0.x) + (-normal.y * v0.y) + (-normal.z * v0.z));
+
+    // Get the denominator of the equation.
+    float denominator = ((normal.x * directionVector.x) + (normal.y * directionVector.y) + (normal.z * directionVector.z));
+
+    // Make sure the result doesn't get too close to zero to prevent divide by zero.
+    if (fabs(denominator) < 0.0001f)
+    {
+        return false;
+    }
+
+    // Get the numerator of the equation.
+    float numerator = -1.0f * (((normal.x * startVector.x) + (normal.y * startVector.y) + (normal.z * startVector.z)) + distance);
+
+    // Calculate where we intersect the triangle.
+    float t = numerator / denominator;
+
+    // Find the intersection vector.
+    DirectX::SimpleMath::Vector3 Q;
+    Q.x = startVector.x + (directionVector.x * t);
+    Q.y = startVector.y + (directionVector.y * t);
+    Q.z = startVector.z + (directionVector.z * t);
+
+    // Find the three edges of the triangle.
+    DirectX::SimpleMath::Vector3 e1(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+    DirectX::SimpleMath::Vector3 e2(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+    DirectX::SimpleMath::Vector3 e3(v0.x - v2.x, v0.y - v2.y, v0.z - v2.z);
+
+    // Calculate the normal for the first edge.
+    DirectX::SimpleMath::Vector3 edgeNormal;
+    e1.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    DirectX::SimpleMath::Vector3 temp(Q.x - v1.x, Q.y - v1.y, Q.z - v1.z);
+
+    float determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the second edge
+    e2.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp.x = Q.x - v1.x;
+    temp.y = Q.y - v1.y;
+    temp.z = Q.z - v1.z;
+
+    determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Calculate the normal for the third edge.
+    e3.Cross(normal, edgeNormal);
+
+    // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
+    temp.x = Q.x - v2.x;
+    temp.y = Q.y - v2.y;
+    temp.z = Q.z - v2.z;
+
+    determinant = ((edgeNormal.x * temp.x) + (edgeNormal.y * temp.y) + (edgeNormal.z * temp.z));
+
+    // Check if it is outside.
+    if (determinant > 0.001f)
+    {
+        return false;
+    }
+
+    // Now we have our height.
+    aPos.y = Q.y;
+    return true;
+}
+
+bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const
 {
     // Starting position of the ray that is being cast
     DirectX::XMFLOAT3 startVector(aPos.x, 0.0f, aPos.z);
@@ -955,7 +1085,8 @@ void Environment::LoadEnvironmentData()
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.1f, 0.0f, 0.0f);
+    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.1f, 0.0f, 0.0f);
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f);
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
@@ -1546,7 +1677,8 @@ void Environment::LoadFixtureBucket12th()
     fixt.animationVariation = Utility::ToRadians(45.0);
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
     // set position to allign with terrain height
-    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
+    //DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
+    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(0.966966, 0.0, -1.08);
     result = SetPosToTerrainWithCheck(bridge1);
     fixt.position = bridge1;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
@@ -1567,7 +1699,7 @@ void Environment::LoadFixtureBucket12th()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap14.bmp";
+    char* filename = "heightmap12InP.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -1683,8 +1815,7 @@ void Environment::ScaleTerrain()
     const float scale = .2;
     //const float scale = 10.0;
     const float xTransform = -1.4f;
-    //const float yTransform = -.08f;
-    const float yTransform = 5.0f;
+    const float yTransform = -.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

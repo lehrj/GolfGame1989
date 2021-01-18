@@ -670,9 +670,9 @@ void Game::DrawCameraFocus()
     DirectX::SimpleMath::Vector3 focalPoint = pCamera->GetTargetPos();
 
     //pGolf->SetPosToTerrain(focalPoint);
-    //float height = pGolf->GetTerrainHeight(focalPoint);
+    float height = pGolf->GetTerrainHeight(focalPoint);
     //height += .1;
-    //focalPoint.y = height;
+    focalPoint.y = height;
     DirectX::SimpleMath::Vector3 yLine = focalPoint;
     yLine.y += line;
     DirectX::SimpleMath::Vector3 xLine = focalPoint;
@@ -3501,8 +3501,10 @@ void Game::DrawWater()
     DirectX::SimpleMath::Vector3 w(0.55, height, -2.001);
     */
 
-    DirectX::SimpleMath::Vector3 nw(-0.457775 + offset, height, -3.184981);
-    DirectX::SimpleMath::Vector3 ne(4.998624, height, 2.250326 - offset);
+    //DirectX::SimpleMath::Vector3 nw(-0.457775 + offset, height, -3.184981);
+    DirectX::SimpleMath::Vector3 nw(-0.077775 + offset, height, -3.184981);
+    //DirectX::SimpleMath::Vector3 ne(4.998624, height, 2.250326 - offset);
+    DirectX::SimpleMath::Vector3 ne(5.378624, height, 2.250326 - offset);
     DirectX::SimpleMath::Vector3 se(4.998624, height, 2.601 + offset);
     //DirectX::SimpleMath::Vector3 se(4.3, height, 2.001);
     DirectX::SimpleMath::Vector3 sw(-0.980228 - offset, height, -3.184981);
