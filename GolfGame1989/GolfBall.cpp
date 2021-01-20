@@ -62,11 +62,7 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
 void GolfBall::FireProjectile(Utility::ImpactData aImpactData)
 {   
     PrepProjectileLaunch(aImpactData);
-
     LaunchProjectile();
-
-    int testBreak = 0;
-    testBreak++;
 }
 
 DirectX::SimpleMath::Vector3 GolfBall::GetBallPosInEnviron(DirectX::SimpleMath::Vector3 aPos) const

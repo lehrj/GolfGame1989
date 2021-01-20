@@ -1104,8 +1104,9 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teeDirection = 0.0f;
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, 0.0f);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(-10.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(-10.0f, 0.0f, 5.0f);
 
+    ++i;
     m_environs[i].name = "Calm";
     m_environs[i].airDensity = 1.225;
     m_environs[i].gravity = -9.8;
@@ -1418,7 +1419,7 @@ void Environment::SetPosToTerrain(DirectX::XMFLOAT3& aPos)
     } 
 }
 
-void Environment::LoadFixtureBucket12th()
+void Environment::LoadFixtureBucket12thOld()
 {
     bool result;
     DirectX::XMFLOAT3 fixtPos;
@@ -1462,7 +1463,7 @@ void Environment::LoadFixtureBucket12th()
 
     const int fixtureTypeNumMin = 1;
     const int fixtureTypeNumMax = 6;
-    const int fixtureCount = 25;
+    const int fixtureCount = 100;
     int leftOrRightFairwayPlacement = 1;
     for (int i = 2; i < fixtureCount; ++i)  // start at 2 due to 0 being flag/hole and 1 being the tee box
     {
@@ -1478,7 +1479,7 @@ void Environment::LoadFixtureBucket12th()
         fixt.idNumber = i;
 
         // set position to allign with terrain height
-        fixtPos = DirectX::XMFLOAT3(x, y, z);       
+        fixtPos = DirectX::XMFLOAT3(x, y, z);
         result = SetPosToTerrainWithCheck(fixtPos);
         fixt.position = fixtPos;
 
@@ -1671,7 +1672,7 @@ void Environment::LoadFixtureBucket12th()
     fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
-    
+
     ++i;
     fixt.idNumber = i;
     fixt.animationVariation = Utility::ToRadians(45.0);
@@ -1696,10 +1697,174 @@ void Environment::LoadFixtureBucket12th()
     m_fixtureBucket.push_back(fixt);
 }
 
+
+void Environment::LoadFixtureBucket12th()
+{
+    bool result;
+    DirectX::XMFLOAT3 fixtPos;
+
+    m_fixtureBucket.clear();
+    int i = 0;
+    // add FlagStick   
+    Fixture flagStick;
+    flagStick.idNumber = i;
+    // set position to allign with terrain height
+    fixtPos = m_currentEnviron.holePosition;
+    result = SetPosToTerrainWithCheck(fixtPos);
+    flagStick.position = fixtPos;
+    flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
+    flagStick.animationVariation = 0.0;
+    flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(flagStick);
+
+    // add Tee Box;
+    ++i;
+    Fixture teeBox;
+    teeBox.idNumber = i;
+    // set position to allign with terrain height
+    fixtPos = m_currentEnviron.teePosition;
+    result = SetPosToTerrainWithCheck(fixtPos);
+    teeBox.position = fixtPos;
+    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
+    teeBox.animationVariation = 0.0;
+    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(teeBox);
+
+
+    Fixture fixt;
+    
+    // Bridges setup
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    // set position to allign with terrain height
+    //DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
+    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(0.966966, 0.0, -1.08);
+    result = SetPosToTerrainWithCheck(bridge1);
+    fixt.position = bridge1;
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+    ++i;
+    fixt.idNumber = i;
+    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
+    // set position to allign with terrain height
+    DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
+    //DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.4, 0.0, 1.2);
+    result = SetPosToTerrainWithCheck(bridge2);
+    fixt.position = bridge2;
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+
+
+    ///////////////////////////////////////////////////////////////////
+    // Start placing trees
+    ///////////////////////////////////////////////////////////////////
+
+    std::vector<std::pair<DirectX::SimpleMath::Vector3, FixtureType>> posList;
+    posList.clear();
+
+    // tee side of river trees on the left
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.754723, 0.0, -1.338842), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.610597, 0.0, -1.201794), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.565788, 0.0, -1.387254), FixtureType::FIXTURETYPE_TREE09));
+
+    // hole side north of bridge 1
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.224668, 0.0, -1.717163), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.645601, 0.0, -1.347533), FixtureType::FIXTURETYPE_TREE07));
+
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.77, 0.0, -1.703125), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.404886, 0.0, -1.970618), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.044166, 0.0, -1.691923), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.265936, 0.0, -1.441618), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.569589, 0.0, -1.624084), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.252271, 0.0, -2.133154), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.550634, 0.0, -1.715711), FixtureType::FIXTURETYPE_TREE06));
+
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.979814, 0.0, -1.55047), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.412508, 0.0, -1.676900), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.639267, 0.0, -1.527454), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.969401, 0.0, -1.702111), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.231420, 0.0, -1.314580), FixtureType::FIXTURETYPE_TREE06));
+
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.646301, 0.0, -2.034500), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.157145, 0.0, -1.800968), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.806665, 0.0, -1.724052), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.623988, 0.0, -2.066484), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.326875, 0.0, -1.982778), FixtureType::FIXTURETYPE_TREE07));
+
+
+    // hole side north of bridge 1 flowers
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.899832, 0.0, -1.347126), FixtureType::FIXTURETYPE_TREE04));
+
+    // Green backside
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.385089, 0.0, -0.916399), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.424135, 0.0, -1.165066), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.426411, 0.0, -0.392249), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.727715, 0.0, -0.514076), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.559572, 0.0, -0.701670), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.974284, 0.0, -0.441012), FixtureType::FIXTURETYPE_TREE07));
+    // green backside flowers
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.855693, 0.0, -0.365309), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.060923, 0.0, -0.664320), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.310882, 0.0, -1.144863), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.775608, 0.0, -0.771029), FixtureType::FIXTURETYPE_TREE04));
+
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.051198, 0.0, -0.861848), FixtureType::FIXTURETYPE_TREE05));
+    // right of 13th tee
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.926144, 0.0, 0.399093), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.727443, 0.0, 0.521191), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.487859, 0.0, 0.834862), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.266743, 0.0, 1.110051), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.04757, 0.0, 1.212949), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.446557, 0.0, 1.325734), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.660378, 0.0, 0.972358), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.900714, 0.0, 0.721872), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.687621, 0.0, 1.213947), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.749363, 0.0, 1.748063), FixtureType::FIXTURETYPE_TREE07));
+    // right of 13th tee flowers
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.281779, 0.0, 0.968520), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.420808, 0.0, 0.820265), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.548911, 0.0, 0.687745), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.657969, 0.0, 0.539641), FixtureType::FIXTURETYPE_TREE04));
+
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.091162, 0.0, 0.986251), FixtureType::FIXTURETYPE_TREE05));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.213689, 0.0, 0.819230), FixtureType::FIXTURETYPE_TREE05));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.345440, 0.0, 0.630162), FixtureType::FIXTURETYPE_TREE05));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.464575, 0.0, 0.469798), FixtureType::FIXTURETYPE_TREE05));
+
+    // tee side of stream, right of 13th fairway
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.412789, 0.0, 1.526376), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.759058, 0.0, 1.826558), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.827974, 0.0, 2.067842), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.432009, 0.0, 2.153586), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.016640, 0.0, 1.875701), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.740923, 0.0, 2.051027), FixtureType::FIXTURETYPE_TREE07));
+
+
+
+    for (int j = 0; j < posList.size(); ++j)
+    {
+        ++i;
+        fixt.idNumber = i;
+        fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
+        fixt.fixtureType = posList[j].second;
+        // set position to allign with terrain height
+        fixtPos = posList[j].first;
+        result = SetPosToTerrainWithCheck(fixtPos);
+        fixt.position = fixtPos;
+        fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+        m_fixtureBucket.push_back(fixt);
+    }
+}
+
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap12InP.bmp";
+    //char* filename = "heightmap12InP.bmp";
+    char* filename = "heightmap12test2.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");

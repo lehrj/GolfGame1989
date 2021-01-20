@@ -61,7 +61,7 @@ enum class FixtureType
     //FIXTURETYPE_TREE02,
     FIXTURETYPE_TREE03,     // V tree
     FIXTURETYPE_TREE04,     // Circle pink tree
-    FIXTURETYPE_TREE05,
+    FIXTURETYPE_TREE05,     // Circle white tree
     FIXTURETYPE_TREE06,     // A shape tree w black right shadow with delta base
     FIXTURETYPE_TREE07,     // A shape tree chevron shape
     FIXTURETYPE_TREE08,
@@ -145,6 +145,7 @@ private:
     void LoadEnvironmentData();
     void LoadFixtureBucket();
     void LoadFixtureBucket12th();
+    void LoadFixtureBucket12thOld();
     bool LoadHeightMap();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);
