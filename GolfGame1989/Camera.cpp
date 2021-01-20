@@ -42,23 +42,55 @@ DirectX::SimpleMath::Vector3 Camera::GetPreSwingCamPos(DirectX::SimpleMath::Vect
 
 DirectX::SimpleMath::Vector3 Camera::GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
 {
+
+	
 	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingTargetPosOffset,
 		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
 	return newTargetPosition;
+	
+	/*
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_preSwingTargetPosOffset,
+		DirectX::SimpleMath::Matrix::CreateRotationY(aDirectionDegrees)) + aPosition;
+	return newTargetPosition;
+	*/
 }
 
 DirectX::SimpleMath::Vector3 Camera::GetSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
 {
+	
 	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(m_swingCamPosOffset,
 		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
+	return newCamPosition;
+	
+	/*
+	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(aPosition,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + m_swingCamPosOffset;
+	*/
+	/*
+	DirectX::SimpleMath::Vector3 newCamPosition = DirectX::SimpleMath::Vector3::Transform(aPosition,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + DirectX::SimpleMath::Vector3::Transform(m_swingCamPosOffset,
+			DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees)));
+	*/
 	return newCamPosition;
 }
 
 DirectX::SimpleMath::Vector3 Camera::GetSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees)
 {
+	
 	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(m_swingTargetPosOffset,
 		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + aPosition;
 	return newTargetPosition;
+	
+	/*
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(aPosition,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + m_swingTargetPosOffset;
+	*/
+	/*
+	DirectX::SimpleMath::Vector3 newTargetPosition = DirectX::SimpleMath::Vector3::Transform(aPosition,
+		DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees))) + DirectX::SimpleMath::Vector3::Transform(m_swingTargetPosOffset,
+			DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(aDirectionDegrees)));
+	return newTargetPosition;
+	*/
 }
 
 void Camera::InitializeOrthoganalMatrix()
@@ -341,6 +373,7 @@ void Camera::UpdateTransitionCamera(DX::StepTimer const& aTimer)
 	if (DirectX::SimpleMath::Vector3::Distance(cameraStartPos, m_position) >= cameraDistance && DirectX::SimpleMath::Vector3::Distance(targetStartPos, m_target) >= targetDistance)
 	{
 		m_position = cameraEndPos;
+		m_target = targetEndPos;
 		m_isCameraAtDestination = true;
 	}
 	else

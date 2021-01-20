@@ -415,7 +415,7 @@ void Game::CreateResources()
 
     // Hook values into the camera class variables for uniform view field when switching window size/fullscreen
     const float viewPlaneNear = 0.001f;  
-    const float viewPlaneFar = 400.0f;
+    const float viewPlaneFar = 40.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -3005,7 +3005,6 @@ void Game::DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
     ///////////////////////////////////////////
 
-
     DirectX::SimpleMath::Vector3 trunkTopLeft = baseTop + (viewHorizontal * .04f);
     DirectX::SimpleMath::Vector3 trunkTopRight = baseTop + (-viewHorizontal * .04f);
     DirectX::SimpleMath::Vector3 trunkBottomRight = aTreePos + (-viewHorizontal * .04f);
@@ -3034,7 +3033,6 @@ void Game::DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     baseTop.y -= branchGap;
     baseTop.y -= branchGap;
     branchBase.y += branchGap;
-
 
     DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::ForestGreen;
     DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::White;
@@ -3096,7 +3094,7 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     swayBase = swayBase * 0.05;
 
     DirectX::SimpleMath::Vector3 baseTop = aTreePos;
-    const float trunkLength = .08;
+    const float trunkLength = .1;
     baseTop.y += trunkLength;
 
     DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
@@ -3139,7 +3137,6 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     m_batch->DrawLine(trunkTL, trunkBL);
     m_batch->DrawLine(trunkTR, trunkBR);
 
-
     baseTop.y -= branchGap * 7;  /// adjust the angle of the tree branches and overall tree pointy'ness
 
     DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Green;
@@ -3148,8 +3145,8 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
     VertexPositionColor prevBranchBaseVertex(prevBBV, branchColor2);
     const float heightLayer = 1.05f;
-    float widthMod = 1.0f;
-    const int layerCount = 20;
+    float widthMod = 1.1f;
+    const int layerCount = 24;
     for (int i = 1; i < layerCount; ++i)
     {
         swayBase *= heightLayer;
@@ -3171,13 +3168,11 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
         VertexPositionColor leafR(branchEndR, Colors::DarkGreen);
         VertexPositionColor leafL(branchEndL, Colors::LawnGreen);
 
-
         VertexPositionColor branchBaseBackground = branchBaseVertex;
         //VertexPositionColor branchBaseBackground(branchBase, Colors::Black);
 
         //VertexPositionColor prevBranchBaseBackground = prevBranchBaseVertex;
         VertexPositionColor prevBranchBaseBackground(branchBase, Colors::Black);
-
 
         VertexPositionColor leafRBackground(branchEndR, Colors::PaleGreen);
         VertexPositionColor leafLBackground(branchEndL, Colors::SpringGreen);
@@ -3186,7 +3181,6 @@ void Game::DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 
         m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafRBackground);
         m_batch->DrawTriangle(branchBaseBackground, prevBranchBaseBackground, leafLBackground);
-
         
         //m_batch->DrawLine(branchBaseVertex, leafR);
         //m_batch->DrawLine(branchBaseVertex, leafL);
@@ -4497,6 +4491,7 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
+
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));
