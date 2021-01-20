@@ -245,9 +245,11 @@ void Golf::BuildUISwingStrings()
     inVal << std::fixed << pEnvironment->GetWindX();
     m_uiSwingStrings.push_back("Wind X = " + inVal.str() + " m/s");
 
+    /*
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindY();
     m_uiSwingStrings.push_back("Wind Y = " + inVal.str() + " m/s");
+    */
 
     inVal.str(std::string());
     inVal << std::fixed << pEnvironment->GetWindZ();
@@ -407,6 +409,7 @@ DirectX::SimpleMath::Vector3 Golf::GetSwingShoulderOrigin()
     DirectX::SimpleMath::Vector3 swingOrigin = pSwing->GetShoulderPos();
     swingOrigin.y -= GetBallRadius() * 2;
     swingOrigin.y += pEnvironment->GetLauchHeight(); // WLJ ToDo : Adjust once height changes implemented
+    //swingOrigin.y += m_shotStartPos.y;
     //swingOrigin.z -= GetBallRadius() * 5;
     return swingOrigin;
 }
@@ -530,7 +533,9 @@ void Golf::SetShotCordMax()
 
 void Golf::SetShotStartPos(const DirectX::SimpleMath::Vector3 aShotStartPos)
 {
-    m_shotStartPos = aShotStartPos;
+    DirectX::XMFLOAT3 updatedPos = aShotStartPos;
+    SetPosToTerrain(updatedPos);
+    m_shotStartPos = updatedPos;
 }
 
 //Transform shotpath to start at tee position or end position of last shot

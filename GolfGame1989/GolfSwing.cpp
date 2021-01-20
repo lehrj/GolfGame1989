@@ -21,6 +21,12 @@ GolfSwing::~GolfSwing()
 
 Utility::ImpactData GolfSwing::CalculateLaunchVector()
 {
+    if (m_club.clubName == "Putter")
+    {
+        //m_impactData.velocity *= .2;
+        //m_impactData.power *= .2;
+    }
+
     m_alphaBetaThetaVec.clear();
     m_launchAngle = 0.0;
     m_launchVelocity = 0.0;
@@ -139,6 +145,8 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     m_impactData.vHeadNormal = m_impactData.vHead.Dot(m_impactData.vFaceNormal) * m_impactData.vFaceNormal;
     m_impactData.vHeadParallel = m_impactData.vHead - m_impactData.vHeadNormal;
+
+
 
     return m_impactData;
 }

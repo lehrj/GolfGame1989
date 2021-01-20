@@ -415,7 +415,7 @@ void Game::CreateResources()
 
     // Hook values into the camera class variables for uniform view field when switching window size/fullscreen
     const float viewPlaneNear = 0.001f;  
-    const float viewPlaneFar = 40.0f;
+    const float viewPlaneFar = 9.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
     m_effect->SetView(m_view);
@@ -2098,7 +2098,8 @@ void Game::DrawStartScreen()
 void Game::DrawSwing()
 {
     std::vector<DirectX::SimpleMath::Vector3> angles = pGolf->GetRawSwingAngles();
-    if (angles.size() > 1)
+
+    if (angles.size() >= 1)
     {
         const int impactPoint = pGolf->GetImpactStep();
         DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::ToRadians(pPlay->GetShotDirection()));
@@ -2267,22 +2268,23 @@ void Game::DrawSwing()
 
             if (((m_swingPathStep - 1) - i) < 40)
             {
-                m_batch->DrawLine(shoulderTestVert, thetaTestVert);
+                //m_batch->DrawLine(shoulderTestVert, thetaTestVert);
                 m_batch->DrawLine(thetaTestLowerVert, betaTestVert);
                 //m_batch->DrawLine(shoulderVert, thetaVert);
                 //m_batch->DrawLine(thetaVert, betaVert);
-                //m_batch->DrawLine(betaVert, clubHeadVert);
+                m_batch->DrawLine(betaVert, clubHeadVert);
                 m_batch->DrawLine(clubHeadVert, toeGrooveVert1);
                 m_batch->DrawLine(toeGrooveVert1, heelGrooveVert1);
                 m_batch->DrawLine(toeGrooveVert1, toeGrooveVert2);
                 m_batch->DrawLine(toeGrooveVert2, heelGrooveVert2);
                 m_batch->DrawLine(toeGrooveVert3, heelGrooveVert3);
                 m_batch->DrawLine(toeGrooveVert2, toeGrooveVert3);
+                m_batch->DrawLine(betaVert, heelGrooveVert3);
             }
             if (i == impactPoint)
             {
-                m_batch->DrawLine(shoulderVert, thetaVert);
-                m_batch->DrawLine(thetaVert, betaVert);
+                //m_batch->DrawLine(shoulderVert, thetaVert);
+                //m_batch->DrawLine(thetaVert, betaVert);
             }
             if (i == m_swingPathStep - 1)
             {
@@ -2322,7 +2324,7 @@ void Game::DrawSwing()
                 DirectX::SimpleMath::Vector3 impactFaceNorm = pGolf->GetFaceImpact();
                 impactFaceNorm += toeGroove2;
                 VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
-                m_batch->DrawLine(toeGrooveVert2, faceNormVert);
+                //m_batch->DrawLine(toeGrooveVert2, faceNormVert);
             }
         }
     }
@@ -3464,6 +3466,7 @@ void Game::DrawUI()
         fontPos.y += 35;
 
         // temp for testing terrain height
+        /*
         uiLine = "Height = " + std::to_string(m_debugHeight);
         lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
@@ -3478,7 +3481,7 @@ void Game::DrawUI()
         lineOrigin = m_font->MeasureString(uiLine.c_str());
         m_font->DrawString(m_spriteBatch.get(), uiLine.c_str(), fontPos, Colors::White, 0.f, lineOrigin);
         fontPos.y += 35;
-
+        */
     }
 
     if (m_currentUiState == UiState::UISTATE_SHOT)
@@ -3667,6 +3670,7 @@ void Game::DrawWorld()
 
 void Game::DrawWorld12thHole()
 {
+    /*
     // draw world grid
     DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
     DirectX::SimpleMath::Vector3 xFarAxis(5.f, 0.f, 0.f);
@@ -3728,9 +3732,9 @@ void Game::DrawWorld12thHole()
     VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, height, -0.1f), greenColor);
     VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, height, -0.75f), greenColor);
     m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
-
+    */
     DrawWater();
-    DrawSand();
+    //DrawSand();
 
     //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos()); // disabled since not needed when deapth buffer is enabled
 
@@ -4115,7 +4119,7 @@ void Game::Render()
         }
         if (m_isInDebugMode == true)
         {
-            DrawCameraFocus();
+            //DrawCameraFocus();
             //DrawDebugLines();
         }
     }
@@ -4491,7 +4495,6 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.B) // move cameras to new ball position and prep for next shot
     {
-
         pGolf->SetShotStartPos(pGolf->GetBallPosition());
         pCamera->SetCameraStartPos(pCamera->GetPos());
         pCamera->SetCameraEndPos(pCamera->GetPreSwingCamPos(pGolf->GetShotStartPos(), pGolf->GetDirectionToHoleInRads()));

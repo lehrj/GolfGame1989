@@ -389,7 +389,7 @@ void GolfBall::LandProjectile()
     //m_ball.q.velocity = DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
 
     //  ::: Vnew = b * (-2 * (V dot N) * N + V)
-    const float b = .5f;
+    const float b = .3f;
     DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
     m_ball.q.velocity = b * (-2 * (preVelocity.Dot(terrainNorm)) * terrainNorm + preVelocity);;
    

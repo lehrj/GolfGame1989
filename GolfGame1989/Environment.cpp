@@ -1086,11 +1086,11 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teeDirection = 0.0f;
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
     //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.1f, 0.0f, 0.0f);
-    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f);    
+    m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f); 
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(-4.0f, 0.0f, -6.9f);
 
     ++i;
     m_environs[i].name = "Breezy";    
@@ -1805,22 +1805,21 @@ void Environment::LoadFixtureBucket12th()
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.113931, 0.0, -2.273377), FixtureType::FIXTURETYPE_TREE06));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.411862, 0.0, -2.356335), FixtureType::FIXTURETYPE_TREE06));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.859739, 0.0, -2.286177), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.908542, 0.0, -2.072040), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.508119, 0.0, -2.427412), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.691578, 0.0, -2.668026), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.349274, 0.0, -2.678213), FixtureType::FIXTURETYPE_TREE06));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.207840, 0.0, -2.659259), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.466686, 0.0, -2.923956), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.015694, 0.0, -2.721106), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.818119, 0.0, -2.490582), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.158826, 0.0, -2.275261), FixtureType::FIXTURETYPE_TREE09));
 
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.652420, 0.0, -2.145675), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.227628, 0.0, -2.629072), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.833724, 0.0, -2.643342), FixtureType::FIXTURETYPE_TREE07));
 
+
     // hole side north of bridge 1 flowers
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.899832, 0.0, -1.347126), FixtureType::FIXTURETYPE_TREE04));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.616034, 0.0, -1.427947), FixtureType::FIXTURETYPE_TREE04));
 
     // Green backside
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.385089, 0.0, -0.916399), FixtureType::FIXTURETYPE_TREE09));
@@ -1844,28 +1843,26 @@ void Environment::LoadFixtureBucket12th()
 
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.521004, 0.0, -2.682222), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.740935, 0.0, -2.391389), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.835458, 0.0, -2.338160), FixtureType::FIXTURETYPE_TREE07));
 
     // green backside flowers
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.855693, 0.0, -0.365309), FixtureType::FIXTURETYPE_TREE04));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.060923, 0.0, -0.664320), FixtureType::FIXTURETYPE_TREE04));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.310882, 0.0, -1.144863), FixtureType::FIXTURETYPE_TREE04));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.775608, 0.0, -0.771029), FixtureType::FIXTURETYPE_TREE04));
-
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.826207, 0.0, -1.087361), FixtureType::FIXTURETYPE_TREE04));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.051198, 0.0, -0.861848), FixtureType::FIXTURETYPE_TREE05));
     // right of 13th tee
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.926144, 0.0, 0.399093), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.727443, 0.0, 0.521191), FixtureType::FIXTURETYPE_TREE06));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.487859, 0.0, 0.834862), FixtureType::FIXTURETYPE_TREE06));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.266743, 0.0, 1.110051), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.04757, 0.0, 1.212949), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.446557, 0.0, 1.325734), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.660378, 0.0, 0.972358), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.900714, 0.0, 0.721872), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.687621, 0.0, 1.213947), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.749363, 0.0, 1.748063), FixtureType::FIXTURETYPE_TREE06));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.927847, 0.0, 1.506925), FixtureType::FIXTURETYPE_TREE07));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.446281, 0.0, 1.471418), FixtureType::FIXTURETYPE_TREE09));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.894632, 0.0, 2.039021), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.446281, 0.0, 1.471418), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.894632, 0.0, 2.039021), FixtureType::FIXTURETYPE_TREE09));
 
     // right of 13th tee flowers
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.281779, 0.0, 0.968520), FixtureType::FIXTURETYPE_TREE04));
@@ -1889,6 +1886,11 @@ void Environment::LoadFixtureBucket12th()
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.297212, 0.0, 2.395568), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(3.628024, 0.0, 2.639376), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(4.493286, 0.0, 2.972688), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.019776, 0.0, 2.499317), FixtureType::FIXTURETYPE_TREE09));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.705706, 0.0, 2.658614), FixtureType::FIXTURETYPE_TREE06));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.142902, 0.0, 2.035940), FixtureType::FIXTURETYPE_TREE06));
+
+
 
 
     for (int j = 0; j < posList.size(); ++j)
@@ -2026,7 +2028,7 @@ void Environment::ScaleTerrain()
     const float scale = .2;
     //const float scale = 10.0;
     const float xTransform = -1.4f;
-    const float yTransform = -.0f;
+    const float yTransform = 9.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

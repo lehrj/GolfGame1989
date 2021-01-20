@@ -255,8 +255,10 @@ private:
     // audio 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;
-    float                                       m_musicVolume = 0.9f;
-    float                                       m_sfxVolume = 0.5f;
+    //float                                       m_musicVolume = 0.9f;
+    //float                                       m_sfxVolume = 0.5f;
+    float                                       m_musicVolume = 0.0f;
+    float                                       m_sfxVolume = 0.0f;
     std::unique_ptr<DirectX::WaveBank>          m_audioBank;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
