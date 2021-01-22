@@ -21,12 +21,6 @@ GolfSwing::~GolfSwing()
 
 Utility::ImpactData GolfSwing::CalculateLaunchVector()
 {
-    if (m_club.clubName == "Putter")
-    {
-        //m_impactData.velocity *= .2;
-        //m_impactData.power *= .2;
-    }
-
     m_alphaBetaThetaVec.clear();
     m_launchAngle = 0.0;
     m_launchVelocity = 0.0;
@@ -90,7 +84,17 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         m_alpha_dot = at + (ak1 + 2 * ak2 + 2 * ak3 + ak4) / 6;
         m_beta_dot = bt + (bk1 + 2 * bk2 + 2 * bk3 + bk4) / 6;
         m_alpha = a + m_alpha_dot * dt;
-        m_beta = b + m_beta_dot * dt;
+        
+        // No wrist hinge when putting
+        if (m_club.clubName != "Putter")
+        {
+            m_beta = b + m_beta_dot * dt;
+        }
+        else
+        {
+            m_beta = 0.09;
+        }
+        
         m_theta = m_gamma - m_alpha;
 
         Vc2 = (m_armLength * m_armLength + m_club.length * m_club.length + 2 * m_armLength * m_club.length * cos(m_beta))

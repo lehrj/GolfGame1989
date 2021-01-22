@@ -98,8 +98,8 @@ private:
     //float                           m_frustumAngle;
     int                             m_clientWidth;
     int                             m_clientHeight;
-    float                           m_nearPlane = .1;
-    float                           m_farPlane = 18.f;
+    float                           m_nearPlane = 0.0001f;
+    float                           m_farPlane = 9.0f;
 
     DirectX::SimpleMath::Matrix     m_viewMatrix;
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
@@ -107,7 +107,7 @@ private:
 
     const float                     m_posTravelSpeed = .3f;
     const float                     m_rotationTravelSpeed = 1.3f;
-    const float                     m_aimTurnRate = 0.3f;
+    const float                     m_aimTurnRate = 0.1f;
 
     bool                            m_isCameraAtDestination;
 

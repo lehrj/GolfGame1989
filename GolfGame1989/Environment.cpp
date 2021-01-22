@@ -1090,7 +1090,7 @@ void Environment::LoadEnvironmentData()
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
     //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(-4.0f, 0.0f, -6.9f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     ++i;
     m_environs[i].name = "Breezy";    
@@ -1913,6 +1913,7 @@ bool Environment::LoadHeightMap()
     FILE* filePtr;    
     //char* filename = "heightmap12InP.bmp";
     char* filename = "heightmap12test2.bmp";
+    //char* filename = "heightmapFlat.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -2028,7 +2029,7 @@ void Environment::ScaleTerrain()
     const float scale = .2;
     //const float scale = 10.0;
     const float xTransform = -1.4f;
-    const float yTransform = 9.0f;
+    const float yTransform = 0.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

@@ -186,7 +186,6 @@ void Golf::BuildHyrdraShotData(const double aDirectionDeg)
 
 void Golf::BuildTrajectoryData()
 {
-
     pBall->SetLaunchPosition(m_shotStartPos);   
     pBall->FireProjectile(pSwing->CalculateLaunchVector());
 

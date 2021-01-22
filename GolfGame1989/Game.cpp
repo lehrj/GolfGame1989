@@ -414,7 +414,7 @@ void Game::CreateResources()
     m_view = DirectX::SimpleMath::Matrix::CreateLookAt(DirectX::SimpleMath::Vector3(2.f, 2.f, 2.f), DirectX::SimpleMath::Vector3::Zero, DirectX::SimpleMath::Vector3::UnitY);
 
     // Hook values into the camera class variables for uniform view field when switching window size/fullscreen
-    const float viewPlaneNear = 0.001f;  
+    const float viewPlaneNear = 0.0001f;  
     const float viewPlaneFar = 9.0f;
     m_proj = DirectX::SimpleMath::Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), viewPlaneNear, viewPlaneFar);
 
@@ -2113,7 +2113,7 @@ void Game::DrawSwing()
 
         VertexPositionColor staticShoulderVert(shoulderPos, DirectX::Colors::Yellow);
         VertexPositionColor staticBaseVert(pGolf->GetShotStartPos(), DirectX::Colors::White);
-        m_batch->DrawLine(staticShoulderVert, staticBaseVert);
+        //m_batch->DrawLine(staticShoulderVert, staticBaseVert);
 
         DirectX::XMVECTORF32 preImpactShadowColor = DirectX::Colors::DarkSlateGray;
         DirectX::XMVECTORF32 postImpactShadowColor = DirectX::Colors::DarkSlateBlue;
@@ -2324,7 +2324,7 @@ void Game::DrawSwing()
                 DirectX::SimpleMath::Vector3 impactFaceNorm = pGolf->GetFaceImpact();
                 impactFaceNorm += toeGroove2;
                 VertexPositionColor faceNormVert(impactFaceNorm, DirectX::Colors::Orange);
-                //m_batch->DrawLine(toeGrooveVert2, faceNormVert);
+                m_batch->DrawLine(toeGrooveVert2, faceNormVert);
             }
         }
     }

@@ -817,7 +817,8 @@ void GolfBall::RollBall()
     double a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
 
     double decelFactor = a;
-    decelFactor = .99999;
+    decelFactor = .69999;
+
     //double stopTolerance = 0.05;
     double stopTolerance = .05;
     int overflowTolerance = 650;
@@ -929,11 +930,12 @@ void GolfBall::RollBall()
 
             DirectX::SimpleMath::Vector3 terrainAcceleration = terrainNorm;
             terrainAcceleration *= (m_ball.gravity * m_timeStep);
-            terrainAcceleration.y = 0.0f;
+            //terrainAcceleration.y = 0.0f;
             terrainAcceleration *= decelFactor;
             //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
 
             m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) - terrainAcceleration * decelFactor;
+            //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) * decelFactor;
             m_ball.q.position += m_ball.q.velocity * m_timeStep;
 
             // Temp while soriting out terrain following ball path
