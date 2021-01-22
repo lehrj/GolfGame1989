@@ -4,7 +4,6 @@
 #include <math.h>
 #include <memory>
 #include "GolfBall.h"
-#include "Vector4d.h"
 #include <vector>
 
 

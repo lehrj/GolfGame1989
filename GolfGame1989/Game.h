@@ -10,10 +10,7 @@
 #include "WICTextureLoader.h"
 #include "Camera.h"
 #include "sounds.h"
-#include "TerrainClass.h"
-#include "ZoneClass.h"
-#include "ShaderManagerClass.h"
-#include "TextureManagerClass.h"
+
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -105,9 +102,7 @@ private:
     Golf*                                           pGolf;
     GolfPlay*                                       pPlay;
     
-    ZoneClass*                                      pZone;
-    ShaderManagerClass*                             pShaderManager;
-    TextureManagerClass*                            pTextureManager;
+
 
     // Device resources.
     HWND                                            m_window;

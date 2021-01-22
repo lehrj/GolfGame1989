@@ -2,7 +2,6 @@
 #include <vector>
 #include "Environment.h"
 #include "Utility.h"
-#include "Vector4d.h"
 #include "GolfSwing.h"
 
 struct BallMotion

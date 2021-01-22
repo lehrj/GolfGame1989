@@ -1,9 +1,7 @@
 #pragma once
 #include <fstream>
 #include "Utility.h"
-#include "TerrainClass.h"
 
-/*
 typedef struct tagBITMAPINFOHEADER {
     DWORD biSize;
     LONG  biWidth;
@@ -27,7 +25,7 @@ typedef struct tagBITMAPFILEHEADER {
     DWORD bfOffBits;
 } BITMAPFILEHEADER, * LPBITMAPFILEHEADER, * PBITMAPFILEHEADER;
 #pragma pack() 
-*/
+
 
 struct Environ
 {
@@ -144,8 +142,7 @@ private:
     void CreateDataStrings();
     void LoadEnvironmentData();
     void LoadFixtureBucket();
-    void LoadFixtureBucket12th();
-    void LoadFixtureBucket12thOld();
+
     bool LoadHeightMap();
     void SetLandingHeight(double aLandingHeight);
     void SetLauchHeight(double aLaunchHeight);

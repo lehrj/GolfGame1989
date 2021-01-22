@@ -2,7 +2,6 @@
 #include "Environment.h"
 #include "GolfBag.h"
 #include "Utility.h"
-#include "Vector4d.h"
 #include "GolfCharacter.h"
 
 // Class to handle club functionality

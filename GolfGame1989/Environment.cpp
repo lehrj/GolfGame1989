@@ -17,7 +17,7 @@ Environment::Environment()
     BuildFlagVertex(m_environs[startEnviron].holePosition);
     BuildHoleVertex(m_environs[startEnviron].holePosition);
       
-    LoadFixtureBucket12th();
+    LoadFixtureBucket();
 }
 
 void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
@@ -1139,625 +1139,57 @@ void Environment::LoadEnvironmentData()
 
 void Environment::LoadFixtureBucket()
 {
-    m_fixtureBucket.clear();
-    
-
-    // add FlagStick   
-    Fixture flagStick;
-    flagStick.idNumber = 0;
-    flagStick.position = m_currentEnviron.holePosition;
-    flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
-    flagStick.animationVariation = 0.0;
-    flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(flagStick);
-    
-    // add Tee Box;
-    Fixture teeBox;
-    teeBox.idNumber = 1;
-    teeBox.position = m_currentEnviron.teePosition;
-    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
-    teeBox.animationVariation = 0.0;
-    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(teeBox);
-
-    // randomized fixtures
-    const float varMax = 10.0;
-    
-    const float posMin = -2.0;
-    const float posMax = 4.0;
-    const float xPosMin = 0.0;
-    const float xPosMax = 7.0;
-    const float yPos = m_landingHeight;
-    const float zPosMin = -2.0;
-    const float zPosMax = -1.6;
-
-    const int fixtureTypeNumMin = 1;
-    const int fixtureTypeNumMax = 6;
-    const int fixtureCount = 55;
-    int leftOrRightFairwayPlacement = 1;
-    for (int i = 2; i < fixtureCount; ++i)  // start at 2 due to 0 being flag/hole and 1 being the tee box
-    {
-        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (xPosMax))) - 1.0;
-        float y = yPos;
-        float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (zPosMax - zPosMin)) - 2.0;
-        z *= leftOrRightFairwayPlacement; // to alternate tree placement or right or left side of fairway
-        leftOrRightFairwayPlacement *= -1;
-        float aVar = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/ varMax);
-
-        Fixture fixt;
-
-        fixt.idNumber = i;
-        fixt.position = DirectX::SimpleMath::Vector3(x, y, z);
-
-        int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
-        if (fixtureNum == 1)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-        }
-        else if (fixtureNum == 2)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-        }
-        else if (fixtureNum == 3)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-        }
-        else if (fixtureNum == 4)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-        }
-        else if (fixtureNum == 5)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-        else
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-
-        fixt.animationVariation = aVar;
-        fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-        
-        m_fixtureBucket.push_back(fixt);
-    }
-
-    // FIXTURETYPE_TREE03  V yellow green
-    // FIXTURETYPE_TREE04  Circle Orange
-    // FIXTURETYPE_TREE06  Triangle dark sides
-    // FIXTURETYPE_TREE07  A tree
-    // FIXTURETYPE_TREE09  A outline
-
-    int i = 0;
-    i = fixtureCount;
-    Fixture fixt;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(5.9, 0.0, 0.1);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(5.5, 0.0, -1.4);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    fixt.position = DirectX::SimpleMath::Vector3(5.65, 0.0, -1.14);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(5.85, 0.0, -0.99);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(5.89, 0.0, -0.81);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(5.91, 0.0, -0.72);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(5.85, 0.0, -0.39);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    fixt.position = DirectX::SimpleMath::Vector3(5.76, 0.0, -0.17);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ///////////////////// start positive z locs
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(5.92, 0.0, 0.27);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(5.96, 0.0, 0.47);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    fixt.position = DirectX::SimpleMath::Vector3(5.82, 0.0, 0.66);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    fixt.position = DirectX::SimpleMath::Vector3(5.79, 0.0, 0.93);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(5.69, 0.0, 1.23);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    fixt.position = DirectX::SimpleMath::Vector3(5.539, 0.0, 1.45);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    // start trees to create dog leg
-    ////////////////////////////////////////////
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    fixt.position = DirectX::SimpleMath::Vector3(3.0, 0.0, .75);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    fixt.position = DirectX::SimpleMath::Vector3(2.7, 0.0, .97);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    fixt.position = DirectX::SimpleMath::Vector3(2.4, 0.0, 1.17);
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-}
-
-bool Environment::SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos)
-{
-    bool foundHeight = false;
-    int index = 0;
-
-    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
-    {
-        int index = i * 3;
-        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
-        ++index;
-        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
-        ++index;
-        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
-
-        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-
-        if (foundHeight)
-        {
-
-            return true;
-            //return aPos.y;
-        }
-    }
-
-    return false;
-}
-
-void Environment::SetPosToTerrain(DirectX::XMFLOAT3& aPos)
-{
-    bool foundHeight = false;
-    int index = 0;
-
-    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
-    {
-        if (foundHeight == false)
-        {
-            int index = i * 3;
-            DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
-            ++index;
-            DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
-            ++index;
-            DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
-
-            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
-        }
-    } 
-}
-
-void Environment::LoadFixtureBucket12thOld()
-{
     bool result;
     DirectX::XMFLOAT3 fixtPos;
+    Fixture fixt;
 
     m_fixtureBucket.clear();
-
+    int i = 0;
     // add FlagStick   
-    Fixture flagStick;
-    flagStick.idNumber = 0;
+    fixt.idNumber = i;
     // set position to allign with terrain height
     fixtPos = m_currentEnviron.holePosition;
     result = SetPosToTerrainWithCheck(fixtPos);
-    flagStick.position = fixtPos;
-    flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
-    flagStick.animationVariation = 0.0;
-    flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(flagStick);
-
-    // add Tee Box;
-    Fixture teeBox;
-    teeBox.idNumber = 1;
-    // set position to allign with terrain height
-    fixtPos = m_currentEnviron.teePosition;
-    result = SetPosToTerrainWithCheck(fixtPos);
-    teeBox.position = fixtPos;
-    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
-    teeBox.animationVariation = 0.0;
-    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(teeBox);
-
-    // randomized fixtures
-    const float varMax = 10.0;
-
-    const float posMin = -2.0;
-    const float posMax = 4.0;
-    const float xPosMin = 0.0;
-    const float xPosMax = 6.0;
-    const float yPos = m_landingHeight;
-    const float zPosMin = -2.0;
-    const float zPosMax = -1.6;
-
-    const int fixtureTypeNumMin = 1;
-    const int fixtureTypeNumMax = 6;
-    const int fixtureCount = 100;
-    int leftOrRightFairwayPlacement = 1;
-    for (int i = 2; i < fixtureCount; ++i)  // start at 2 due to 0 being flag/hole and 1 being the tee box
-    {
-        float x = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (xPosMax))) - 1.0;
-        float y = yPos;
-        float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (zPosMax - zPosMin)) - 2.0;
-        z *= leftOrRightFairwayPlacement; // to alternate tree placement or right or left side of fairway
-        leftOrRightFairwayPlacement *= -1;
-        float aVar = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / varMax);
-
-        Fixture fixt;
-
-        fixt.idNumber = i;
-
-        // set position to allign with terrain height
-        fixtPos = DirectX::XMFLOAT3(x, y, z);
-        result = SetPosToTerrainWithCheck(fixtPos);
-        fixt.position = fixtPos;
-
-        int fixtureNum = fixtureTypeNumMin + rand() / (RAND_MAX / (fixtureTypeNumMax - fixtureTypeNumMin));
-        if (fixtureNum == 1)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-        }
-        else if (fixtureNum == 2)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-        }
-        else if (fixtureNum == 3)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-        }
-        else if (fixtureNum == 4)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-        }
-        else if (fixtureNum == 5)
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-        else
-        {
-            fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-        }
-
-        fixt.animationVariation = aVar;
-        fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-
-        m_fixtureBucket.push_back(fixt);
-    }
-
-    int i = 0;
-    i = fixtureCount;
-    Fixture fixt;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.9, 0.0, 0.1);
-    result = SetPosToTerrainWithCheck(fixtPos);
     fixt.position = fixtPos;
+    fixt.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
+    fixt.animationVariation = 0.0; // flag stick uses the variable for rotation, keep at 0.0 to keep flag alligned with wind direction
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.5, 0.0, -1.4);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.65, 0.0, -1.14);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.85, 0.0, -0.99);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.89, 0.0, -0.81);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(3.91, 0.0, -0.72);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(3.85, 0.0, -0.39);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(3.76, 0.0, -0.17);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ///////////////////// start positive z locs
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE04;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(3.92, 0.0, -0.17);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE06;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.96, 0.0, 0.47);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.82, 0.0, 0.66);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE09;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.79, 0.0, 0.93);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE03;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.69, 0.0, 1.23);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 10.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_TREE07;
-    // set position to allign with terrain height
-    fixtPos = DirectX::XMFLOAT3(4.539, 0.0, 1.45);
-    result = SetPosToTerrainWithCheck(fixtPos);
-    fixt.position = fixtPos;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = Utility::ToRadians(45.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
-    // set position to allign with terrain height
-    //DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
-    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(0.966966, 0.0, -1.08);
-    result = SetPosToTerrainWithCheck(bridge1);
-    fixt.position = bridge1;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-
-    ++i;
-    fixt.idNumber = i;
-    fixt.animationVariation = Utility::ToRadians(45.0);
-    fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
-    // set position to allign with terrain height
-    DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
-    result = SetPosToTerrainWithCheck(bridge2);
-    fixt.position = bridge2;
-    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(fixt);
-}
-
-
-void Environment::LoadFixtureBucket12th()
-{
-    bool result;
-    DirectX::XMFLOAT3 fixtPos;
-
-    m_fixtureBucket.clear();
-    int i = 0;
-    // add FlagStick   
-    Fixture flagStick;
-    flagStick.idNumber = i;
-    // set position to allign with terrain height
-    fixtPos = m_currentEnviron.holePosition;
-    result = SetPosToTerrainWithCheck(fixtPos);
-    flagStick.position = fixtPos;
-    flagStick.fixtureType = FixtureType::FIXTURETYPE_FLAGSTICK;
-    flagStick.animationVariation = 0.0;
-    flagStick.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(flagStick.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(flagStick);
 
     // add Tee Box;
     ++i;
-    Fixture teeBox;
-    teeBox.idNumber = i;
+    fixt.idNumber = i;
     // set position to allign with terrain height
     fixtPos = m_currentEnviron.teePosition;
     result = SetPosToTerrainWithCheck(fixtPos);
-    teeBox.position = fixtPos;
-    teeBox.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
-    teeBox.animationVariation = 0.0;
-    teeBox.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(teeBox.position, m_currentEnviron.teePosition);
-    m_fixtureBucket.push_back(teeBox);
-
-
-    Fixture fixt;
-    
+    fixt.position = fixtPos;
+    fixt.fixtureType = FixtureType::FIXTURETYPE_TEEBOX;
+    fixt.animationVariation = 0.0; // tee box uses this variable for rotation alignment
+    fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
+    m_fixtureBucket.push_back(fixt);
+   
     // Bridges setup
     ++i;
     fixt.idNumber = i;
-    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.animationVariation = Utility::ToRadians(45.0); // bridge fixture uses this variable for rotation alignment
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
     // set position to allign with terrain height
-    //DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(1.225, 0.0, -.9);
-    DirectX::XMFLOAT3 bridge1 = DirectX::XMFLOAT3(0.966966, 0.0, -1.08);
-    result = SetPosToTerrainWithCheck(bridge1);
-    fixt.position = bridge1;
+    fixtPos = DirectX::XMFLOAT3(0.966966, 0.0, -1.08);
+    result = SetPosToTerrainWithCheck(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
 
     ++i;
     fixt.idNumber = i;
-    fixt.animationVariation = Utility::ToRadians(45.0);
+    fixt.animationVariation = Utility::ToRadians(45.0); // bridge fixture uses this variable for rotation alignment
     fixt.fixtureType = FixtureType::FIXTURETYPE_BRIDGE;
     // set position to allign with terrain height
-    DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
-    //DirectX::XMFLOAT3 bridge2 = DirectX::XMFLOAT3(3.4, 0.0, 1.2);
-    result = SetPosToTerrainWithCheck(bridge2);
-    fixt.position = bridge2;
+    fixtPos = DirectX::XMFLOAT3(3.6, 0.0, 1.5);
+    result = SetPosToTerrainWithCheck(fixtPos);
+    fixt.position = fixtPos;
     fixt.distanceToCamera = DirectX::SimpleMath::Vector3::Distance(fixt.position, m_currentEnviron.teePosition);
     m_fixtureBucket.push_back(fixt);
-
 
     ///////////////////////////////////////////////////////////////////
     // Start placing trees
@@ -1815,7 +1247,6 @@ void Environment::LoadFixtureBucket12th()
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.652420, 0.0, -2.145675), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.227628, 0.0, -2.629072), FixtureType::FIXTURETYPE_TREE09));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.833724, 0.0, -2.643342), FixtureType::FIXTURETYPE_TREE07));
-
 
     // hole side north of bridge 1 flowers
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(1.899832, 0.0, -1.347126), FixtureType::FIXTURETYPE_TREE04));
@@ -1891,8 +1322,6 @@ void Environment::LoadFixtureBucket12th()
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(2.142902, 0.0, 2.035940), FixtureType::FIXTURETYPE_TREE06));
 
 
-
-
     for (int j = 0; j < posList.size(); ++j)
     {
         ++i;
@@ -1911,9 +1340,7 @@ void Environment::LoadFixtureBucket12th()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    //char* filename = "heightmap12InP.bmp";
     char* filename = "heightmap12test2.bmp";
-    //char* filename = "heightmapFlat.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
@@ -1943,7 +1370,6 @@ bool Environment::LoadHeightMap()
     m_terrainHeight = bitmapInfoHeader.biHeight;
 
     // Calculate the size of the bitmap image data.
-    //int imageSize = m_terrainWidth * m_terrainHeight * 3;
     int imageSize = m_terrainWidth * m_terrainHeight * 3 + m_terrainWidth;
 
     // Allocate memory for the bitmap image data.
@@ -1965,7 +1391,6 @@ bool Environment::LoadHeightMap()
     }
 
     // Read in the bitmap image data.
-    //count = fread(bitmapImage, 1, imageSize, filePtr);
     count = fread(bitmapImage, 1, pitch * m_terrainHeight, filePtr);
     if (count != imageSize)
     {
@@ -1996,10 +1421,8 @@ bool Environment::LoadHeightMap()
     unsigned char height;
     
     // Read the image data into the height map.
-    //for (int i = 0; i < m_terrainHeight; i++)
     for (int j = 0; j < m_terrainWidth; j++)
     {
-        //for (int j = 0; j < m_terrainWidth; j++)
         for (int i = 0; i < m_terrainHeight; i++)
         {
             height = bitmapImage[k];
@@ -2014,7 +1437,6 @@ bool Environment::LoadHeightMap()
             k += 3;
         }
         k += excessPitch;
-        //k += 1;
     }
 
     // Release the bitmap image data.
@@ -2063,6 +1485,54 @@ void Environment::SetLandingHeight(double aLandingHeight)
 void Environment::SetLauchHeight(double aLaunchHeight)
 {
     m_launchHeight = aLaunchHeight;
+}
+
+bool Environment::SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos)
+{
+    bool foundHeight = false;
+    int index = 0;
+
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    {
+        int index = i * 3;
+        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+        ++index;
+        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+        foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+
+        if (foundHeight)
+        {
+
+            return true;
+            //return aPos.y;
+        }
+    }
+
+    return false;
+}
+
+void Environment::SetPosToTerrain(DirectX::XMFLOAT3& aPos)
+{
+    bool foundHeight = false;
+    int index = 0;
+
+    for (int i = 0; i < m_terrainModel.size() / 3; ++i)
+    {
+        if (foundHeight == false)
+        {
+            int index = i * 3;
+            DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
+            ++index;
+            DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
+            ++index;
+            DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
+
+            foundHeight = CheckTerrainTriangleHeight(aPos, vertex1, vertex2, vertex3);
+        }
+    }
 }
 
 void Environment::SortFixtureBucketByDistance()

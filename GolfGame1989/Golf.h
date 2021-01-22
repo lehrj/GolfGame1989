@@ -7,7 +7,6 @@
 #include "GolfBall.h"
 #include "Environment.h"
 #include "Utility.h"
-#include "Vector4d.h"
 
 // Class to manage interactions between game and golf physics engine
 class Golf

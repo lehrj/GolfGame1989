@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "GolfSwing.h"
 #include <math.h>
-#include "Vector4d.h"
 #include <iostream>
 #include <fstream>
 #include <vector>

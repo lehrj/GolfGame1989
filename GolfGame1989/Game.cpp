@@ -24,10 +24,6 @@ Game::Game() noexcept :
 
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
-   
-    pZone = new ZoneClass();
-    pShaderManager = new ShaderManagerClass();
-    pTextureManager = new TextureManagerClass();
 
     if (m_isInDebugMode == false)
     {
@@ -52,10 +48,6 @@ Game::~Game()
     delete pGolf;
     delete pPlay;
     delete pCamera;
-    
-    delete pZone;
-    delete pShaderManager;
-    delete pTextureManager;
 
     delete[] m_terrainVertexArray;
     m_terrainVertexArray = 0;
