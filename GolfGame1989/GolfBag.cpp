@@ -157,7 +157,7 @@ void GolfBag::BuildBag()
     m_bag[i].firstMoment = m_bag[i].mass * m_bag[i].lengthBase * m_bag[i].balancePoint;
     ++i;
     
-    m_bag[i].clubName = "Putter1";
+    m_bag[i].clubName = "Putter";
     m_bag[i].angle = 3.0;
     m_bag[i].balancePoint = 0.75;
     m_bag[i].coefficiantOfRestitution = 0.78;

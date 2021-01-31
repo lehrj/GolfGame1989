@@ -1340,7 +1340,8 @@ void Environment::LoadFixtureBucket()
 bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
-    char* filename = "heightmap12test2.bmp";
+    //char* filename = "heightmap12test2.bmp";
+    char* filename = "heightmapFlat.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");

@@ -817,10 +817,11 @@ void GolfBall::RollBall()
 
     double decelFactor = a;
     decelFactor = .69999;
-
+    //decelFactor = 0.000001;
+    decelFactor = 0.6;
     //double stopTolerance = 0.05;
-    double stopTolerance = .05;
-    int overflowTolerance = 650;
+    double stopTolerance = 0.5;
+    int overflowTolerance = 6650;
 
     //DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
     //directionVec.y = 0.0;
@@ -831,6 +832,8 @@ void GolfBall::RollBall()
     DirectX::SimpleMath::Vector3 posOnEnteringHoleRadius;
     double timeOnEnteringHoleRadius;
 
+    DirectX::SimpleMath::Vector3 startVelocity = m_ball.q.velocity;
+    m_ball.q.velocity.y = 0.0f;
     int i = 0;
     while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
     {      
@@ -930,7 +933,7 @@ void GolfBall::RollBall()
             DirectX::SimpleMath::Vector3 terrainAcceleration = terrainNorm;
             terrainAcceleration *= (m_ball.gravity * m_timeStep);
             //terrainAcceleration.y = 0.0f;
-            terrainAcceleration *= decelFactor;
+            //terrainAcceleration *= decelFactor;
             //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
 
             m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity) - terrainAcceleration * decelFactor;
@@ -941,6 +944,7 @@ void GolfBall::RollBall()
             //m_ball.q.position.y = GetBallFlightAltitude(m_ball.q.position);
             SetBallToTerrain(m_ball.q.position);
 
+            m_ball.q.velocity.y = 0.0;
 
             m_ball.q.time = m_ball.q.time + m_timeStep;
         }
@@ -953,6 +957,15 @@ void GolfBall::RollBall()
         PushFlightData();
         ++i;
     }
+
+    if (i > overflowTolerance - 2)
+    {
+        m_ball.q.position.y += 10.0f;
+        PushFlightData();
+    }
+
+    int testBreak = 0; 
+    testBreak++;
 }
 
 void GolfBall::RollBall2()
