@@ -33,6 +33,8 @@ Game::Game() noexcept :
     {
         m_currentGameState = GameState::GAMESTATE_GAMEPLAY;
     }
+
+    //m_currentGameState = GameState::GAMESTATE_INTROSCREEN;
     m_currentUiState = UiState::UISTATE_SWING;
 }
 
@@ -875,8 +877,10 @@ void Game::DrawHydraShot()
 
 void Game::DrawIntroScreen()
 {
-    float fadeDuration = 1.5f;
-    float logoDisplayDuration = 5.f;
+    //float fadeDuration = 1.5f;
+    //float logoDisplayDuration = 5.f;
+    float fadeDuration = 0.01f;
+    float logoDisplayDuration = 15.f;
     float logoDisplayGap = 1.f;
     float startDelay = 4.2f;
     float timeStamp = static_cast<float>(m_timer.GetTotalSeconds());
@@ -3856,7 +3860,9 @@ bool Game::InitializeTerrainArray()
     //DirectX::XMFLOAT4 lineColor(0.0, 0.501960814f, 0.0, 1.0);
     DirectX::XMFLOAT4 lineColor(.486274540f, .988235354f, 0.0, 1.0);
     DirectX::XMFLOAT4 baseColor(0.0, 0.0, 0.0, 1.0);
-    DirectX::XMFLOAT4 baseColor2(0.3, 0.3, 0.3, 1.0);
+    //DirectX::XMFLOAT4 baseColor2(0.3, 0.3, 0.3, 1.0);
+    //DirectX::XMFLOAT4 baseColor2(1.0, 1.0, 1.0, 1.0);
+    DirectX::XMFLOAT4 baseColor2(0.0, 0.0, 0.0, 1.0);
 
     DirectX::XMFLOAT4 sandColor1(0.956862807f, 0.643137276f, 0.376470625f, 1.0);
     DirectX::XMFLOAT4 sandColor2(0.960784376f, 0.960784376f, 0.862745166f, 1.0);

@@ -958,14 +958,15 @@ void GolfBall::RollBall()
         ++i;
     }
 
+    float testStop = stopTolerance;
+    float testSpeed = m_ball.q.velocity.Length();
+
     if (i > overflowTolerance - 2)
     {
         m_ball.q.position.y += 10.0f;
         PushFlightData();
     }
 
-    int testBreak = 0; 
-    testBreak++;
 }
 
 void GolfBall::RollBall2()

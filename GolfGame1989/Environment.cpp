@@ -1341,8 +1341,9 @@ bool Environment::LoadHeightMap()
 {
     FILE* filePtr;    
     //char* filename = "heightmap12test2.bmp";
-    char* filename = "heightmapFlat.bmp";
-
+    //char* filename = "heightmapFlat.bmp";
+    //char* filename = "heightmapTest.bmp";
+    char* filename = "../GolfGame1989/Heightmaps/HeightmapGoldenBell.bmp";
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
     if (error != 0)
@@ -1452,7 +1453,7 @@ void Environment::ScaleTerrain()
     const float scale = .2;
     //const float scale = 10.0;
     const float xTransform = -1.4f;
-    const float yTransform = 0.0f;
+    const float yTransform = 3.0f;
     const float zTransform = -3.2f;
 
     for (int i = 0; i < m_heightMap.size(); ++i)

@@ -71,7 +71,6 @@ public:
     std::vector<std::string> GetUISwingStrings() const { return m_uiSwingStrings; };
     double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
     
-
     void InputData();
     void LoadEnvironment(const int aIndex);
     bool InitializeEnvironmentTerrain();
