@@ -48,7 +48,6 @@ public:
 private:
     void AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX);
     void AudioPlaySFX(XACT_WAVEBANK_AUDIOBANK aSFX);
-
     void Clear();
     void CreateDevice();
     void CreateResources();
@@ -75,7 +74,6 @@ private:
     void DrawSwingUI();
     void DrawTeeBox();
     void DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
-
     void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
@@ -90,6 +88,7 @@ private:
     void DrawWorld();
     void DrawWorld12thHole();
 
+    bool InitializeTerrainArray();
     void OnDeviceLost();
     void Present();
     void Render();
@@ -102,8 +101,6 @@ private:
     Golf*                                           pGolf;
     GolfPlay*                                       pPlay;
     
-
-
     // Device resources.
     HWND                                            m_window;
     int                                             m_outputWidth;
@@ -117,38 +114,33 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
 
-    // Rendering loop timer.
+    // Rendering loop timers
     DX::StepTimer                                   m_timer;
     DX::StepTimer                                   m_flightStepTimer;
     double                                          m_projectileTimer = 0.0;
 
-    // WLJ add start
     using VertexType = DirectX::VertexPositionColor;
-
     std::unique_ptr<DirectX::CommonStates>          m_states;
     std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
     std::unique_ptr<DirectX::GeometricPrimitive>    m_shape;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_inputLayout;
-    // End
 
-    //world start 
     DirectX::SimpleMath::Matrix                     m_world;
     DirectX::SimpleMath::Matrix                     m_view;
     DirectX::SimpleMath::Matrix                     m_proj;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_raster; // WLJ anti-aliasing
-    //world end
 
-    // WLJ added for drawing projectile and swing  
+    // for drawing projectile and swing  
     int                                             m_swingPathStep = 0;
     int                                             m_projectilePathStep = 0;
 
-    // WLJ add for mouse and keybord interface
+    // Mouse and keybord interface
     std::unique_ptr<DirectX::Keyboard>              m_keyboard;
     std::unique_ptr<DirectX::Mouse>                 m_mouse;
     DirectX::Keyboard::KeyboardStateTracker         m_kbStateTracker;
 
-    // WLJ added for displaying text
+    // for displaying text
     std::unique_ptr<DirectX::SpriteFont>            m_font;
     std::unique_ptr<DirectX::SpriteFont>            m_titleFont;
     std::unique_ptr<DirectX::SpriteFont>            m_bitwiseFont;
@@ -192,7 +184,7 @@ private:
     DirectX::SimpleMath::Vector2                    m_environSelectAlienPos;
     DirectX::SimpleMath::Vector2                    m_environSelectAlienOrigin;
 
-    // WLJ swing power bar UI
+    // Swing power bar UI
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerFrameTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerMeterTexture;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_powerImpactTexture;
@@ -215,7 +207,7 @@ private:
     float                                           m_powerMeterImpactPoint;
     float                                           m_powerMeterBarScale;
 
-    // WLJ Intro screen logos
+    // Intro screen logos
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bmwLogoTexture;
     DirectX::SimpleMath::Vector2                    m_bmwLogoPos;
     DirectX::SimpleMath::Vector2                    m_bmwLogoOrigin;
@@ -224,7 +216,7 @@ private:
     DirectX::SimpleMath::Vector2                    m_jiLogoPos;
     DirectX::SimpleMath::Vector2                    m_jiLogoOrigin;
 
-    // WLJ variable to hold selected menu item
+    // Variable to hold selected menu item
     int                                             m_menuSelect = 0;
 
     enum class GameState
@@ -247,13 +239,11 @@ private:
     };
     UiState                                     m_currentUiState;
 
-    // audio 
+    // Audio 
     std::unique_ptr<DirectX::AudioEngine>       m_audioEngine;
     bool                                        m_retryAudio;
-    //float                                       m_musicVolume = 0.9f;
-    //float                                       m_sfxVolume = 0.5f;
-    float                                       m_musicVolume = 0.0f;
-    float                                       m_sfxVolume = 0.0f;
+    float                                       m_musicVolume = 0.9f;
+    float                                       m_sfxVolume = 0.5f;
     std::unique_ptr<DirectX::WaveBank>          m_audioBank;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioMusicStream;
     std::unique_ptr<DirectX::SoundStreamInstance> m_audioEffectStream;
@@ -265,7 +255,6 @@ private:
     DirectX::VertexPositionColor*               m_terrainVertexArray;
     DirectX::VertexPositionColor*               m_terrainVertexArrayBase;
     int                                         m_terrainVertexCount;
-    bool InitializeTerrainArray();
 
     float m_debugHeight = 0.0;
     float m_debugXpoint = 0.0;

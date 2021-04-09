@@ -928,7 +928,7 @@ void GolfBall::RollBall()
             testV3 *= .01;
 
             DirectX::SimpleMath::Vector3 testV4 = tragectoryNormilized * static_cast<float>(velocity) + testV3 * decelFactor;
-            DirectX::SimpleMath::Vector3 testV5 = tragectoryNormilized * static_cast<float>(velocity) + testV3 ;
+            DirectX::SimpleMath::Vector3 testV5 = tragectoryNormilized * static_cast<float>(velocity) + testV3;
 
             DirectX::SimpleMath::Vector3 terrainAcceleration = terrainNorm;
             terrainAcceleration *= (m_ball.gravity * m_timeStep);
