@@ -170,6 +170,7 @@
     <ClInclude Include="GolfCharacter.h" />
     <ClInclude Include="GolfPlay.h" />
     <ClInclude Include="GolfSwing.h" />
+    <ClInclude Include="Lighting.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="sounds.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfSwing.cpp" />
+    <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

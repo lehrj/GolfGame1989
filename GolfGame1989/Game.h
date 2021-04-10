@@ -4,6 +4,7 @@
 
 #pragma once
 #include "Golf.h"
+#include "Lighting.h"
 #include "Keyboard.h"
 #include "AnimatedTexture.h"
 #include "SpriteSheet.h"
@@ -119,13 +120,23 @@ private:
     DX::StepTimer                                   m_flightStepTimer;
     double                                          m_projectileTimer = 0.0;
 
+    // variables for lighting rendering
+    using VertexTypeLighting = DirectX::VertexPositionNormalColor;
+    //std::shared_ptr<DirectX::NormalMapEffect>       m_effectNormColorLighting;
+    std::shared_ptr<DirectX::BasicEffect>       m_effectNormColorLighting;
+    std::unique_ptr<DirectX::PrimitiveBatch<VertexTypeLighting>> m_batchNormColorLighting;
+
+    using VertexType2 = DirectX::VertexPositionNormalColor;
+    std::unique_ptr<DirectX::BasicEffect>           m_effect2;
+    std::unique_ptr<DirectX::PrimitiveBatch<VertexType2>> m_batch2;
+
     using VertexType = DirectX::VertexPositionColor;
     std::unique_ptr<DirectX::CommonStates>          m_states;
     std::unique_ptr<DirectX::BasicEffect>           m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType>> m_batch;
     std::unique_ptr<DirectX::GeometricPrimitive>    m_shape;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_inputLayout;
-
+    
     DirectX::SimpleMath::Matrix                     m_world;
     DirectX::SimpleMath::Matrix                     m_view;
     DirectX::SimpleMath::Matrix                     m_proj;

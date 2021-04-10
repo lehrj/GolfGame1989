@@ -23,6 +23,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="sounds.h" />
     <ClInclude Include="ReadData.h" />
+    <ClInclude Include="Lighting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="GolfPlay.cpp" />
     <ClCompile Include="GolfCharacter.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Lighting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

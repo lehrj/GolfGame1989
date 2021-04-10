@@ -159,6 +159,36 @@ void Game::CreateDevice()
     // TODO: Initialize device dependent objects here (independent of window size).
     m_world = DirectX::SimpleMath::Matrix::Identity;
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
+
+
+
+    /*
+    // Lighting effect and batch
+    m_effectNormColorLighting = std::make_unique<DirectX::BasicEffect>(m_d3dDevice.Get());
+    //m_effectNormColorLighting = std::make_unique<DirectX::NormalMapEffect>(m_d3dDevice.Get());
+    m_effectNormColorLighting->SetVertexColorEnabled(true);
+
+    void const* shaderByteCodeLighting;
+    size_t byteCodeLengthLighting;
+
+    m_effectNormColorLighting->GetVertexShaderBytecode(&shaderByteCodeLighting, &byteCodeLengthLighting);
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexTypeLighting::InputElements, VertexTypeLighting::InputElementCount, shaderByteCodeLighting, byteCodeLengthLighting, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batchNormColorLighting = std::make_unique<PrimitiveBatch<VertexTypeLighting>>(m_d3dContext.Get());
+    */
+
+    m_effect2 = std::make_unique<BasicEffect>(m_d3dDevice.Get());
+    m_effect2->SetVertexColorEnabled(true);
+    m_effect2->EnableDefaultLighting();
+    m_effect2->SetLightDiffuseColor(0, Colors::Gray);
+
+    void const* shaderByteCode2;
+    size_t byteCodeLength2;
+    m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+
+
+
     m_effect = std::make_unique<BasicEffect>(m_d3dDevice.Get());
     m_effect->SetVertexColorEnabled(true);
 
@@ -170,6 +200,13 @@ void Game::CreateDevice()
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
 
+
+    
+
+
+
+
+
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
         D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, FALSE, TRUE);
@@ -180,7 +217,6 @@ void Game::CreateDevice()
         D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, TRUE, TRUE); // Multisampling
     */
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rastDesc, m_raster.ReleaseAndGetAddressOf()));
-
 
     // Shape for skydome
     //m_shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get());
@@ -3974,6 +4010,13 @@ void Game::OnDeviceLost()
 
     m_shape.reset();
 
+    // lighting effect and batch
+    m_effectNormColorLighting.reset();
+    m_batchNormColorLighting.reset();
+    m_effect2.reset();
+    m_batch2.reset();
+
+
     m_inputLayout.Reset();
     m_font.reset();
     m_titleFont.reset();
@@ -4074,6 +4117,9 @@ void Game::Render()
     
     Clear();
     
+
+
+
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -4084,17 +4130,39 @@ void Game::Render()
     //10  m_d3dContext->OMSetDepthStencilState(m_states->DepthDefault(), 0);
     //11  m_d3dContext->RSSetState(m_states->CullCounterClockwise());
 
-    //world start
     m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
+
+
+    /*
+
+
+    void const* shaderByteCode2;
+    size_t byteCodeLength2;
+    m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+
+    //m_effect2->SetWorld(m_world);
+    m_effect2->Apply(m_d3dContext.Get());
+
+    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
+    m_batch2->Begin();
+    m_batch2->End();
+
+    */
+
+    auto sampler = m_states->LinearClamp();
+    m_d3dContext->PSSetSamplers(0, 1, &sampler);
+
+
+
     m_effect->SetWorld(m_world);
-    //world end
 
     m_effect->Apply(m_d3dContext.Get());
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
    
-    
-
     m_batch->Begin();
     
     //DrawDebugLines();
@@ -4124,6 +4192,23 @@ void Game::Render()
     
     m_batch->End();
     
+
+    /*
+    void const* shaderByteCodeLighting;
+    size_t byteCodeLengthLighting;
+    m_effectNormColorLighting->GetVertexShaderBytecode(&shaderByteCodeLighting, &byteCodeLengthLighting);
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(DirectX::VertexPositionNormalColor::InputElements, DirectX::VertexPositionNormalColor::InputElementCount, shaderByteCodeLighting, byteCodeLengthLighting, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batchNormColorLighting = std::make_unique<PrimitiveBatch<DirectX::VertexPositionNormalColor>>(m_d3dContext.Get());
+
+    m_effectNormColorLighting->Apply(m_d3dContext.Get());
+
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
+    m_batchNormColorLighting->Begin();
+    m_batchNormColorLighting->End();
+    */
+
+
+
     // Testing shapes for skydome
     //void XM_CALLCONV Draw(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color = Colors::White, _In_opt_ ID3D11ShaderResourceView * texture = nullptr, bool wireframe = false,
     //   _In_opt_ std::function<void __cdecl()> setCustomState = nullptr) const;
