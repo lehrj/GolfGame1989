@@ -109,8 +109,7 @@ void Game::CreateDevice()
         D3D_FEATURE_LEVEL_10_0,
         D3D_FEATURE_LEVEL_9_3,
         D3D_FEATURE_LEVEL_9_2,
-        D3D_FEATURE_LEVEL_9_1,
-        
+        D3D_FEATURE_LEVEL_9_1,       
     };
 
     // Create the DX11 API device object, and get a corresponding context.
@@ -160,8 +159,6 @@ void Game::CreateDevice()
     m_world = DirectX::SimpleMath::Matrix::Identity;
     m_states = std::make_unique<CommonStates>(m_d3dDevice.Get());
 
-
-
     /*
     // Lighting effect and batch
     m_effectNormColorLighting = std::make_unique<DirectX::BasicEffect>(m_d3dDevice.Get());
@@ -177,9 +174,15 @@ void Game::CreateDevice()
     */
 
     m_effect2 = std::make_unique<BasicEffect>(m_d3dDevice.Get());
+    //m_effect2 = std::make_unique<NormalMapEffect>(m_d3dDevice.Get());
+    m_effect2->SetLightingEnabled(true);
+    m_effect2->SetLightEnabled(0, true);
+    m_effect2->SetLightDiffuseColor(0, Colors::White);
+    m_effect2->SetLightDirection(0, -DirectX::SimpleMath::Vector3::UnitY);
     m_effect2->SetVertexColorEnabled(true);
     m_effect2->EnableDefaultLighting();
     m_effect2->SetLightDiffuseColor(0, Colors::Gray);
+
 
     void const* shaderByteCode2;
     size_t byteCodeLength2;
@@ -194,9 +197,7 @@ void Game::CreateDevice()
 
     void const* shaderByteCode;
     size_t byteCodeLength;
-
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
-
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
 
@@ -3765,7 +3766,11 @@ void Game::DrawWorld12thHole()
     VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, height, -0.75f), greenColor);
     m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
     */
+
+
     DrawWater();
+
+
     //DrawSand();
 
     //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos()); // disabled since not needed when deapth buffer is enabled
@@ -4133,38 +4138,43 @@ void Game::Render()
     m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
 
 
-    /*
-
-
-    void const* shaderByteCode2;
-    size_t byteCodeLength2;
-    m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
-    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
-    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
-
-    //m_effect2->SetWorld(m_world);
-    m_effect2->Apply(m_d3dContext.Get());
-
-    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
-    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-    m_batch2->Begin();
-    m_batch2->End();
-
-    */
-
     auto sampler = m_states->LinearClamp();
     m_d3dContext->PSSetSamplers(0, 1, &sampler);
 
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
+
+    
+
+    //auto sampler = m_states->LinearClamp();
+    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
+
+
+
+    void const* shaderByteCode;
+    size_t byteCodeLength;
+    m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+    int test = 0;
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_effect->SetWorld(m_world);
 
     m_effect->Apply(m_d3dContext.Get());
 
-    m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
+    //m_d3dContext->IASetInputLayout(m_inputLayout.Get());  
    
-    m_batch->Begin();
     
+    m_batch->Begin();
+    /*
+    VertexPositionColor v3(p0, color0);
+    VertexPositionColor v4(p1, color0);
+    VertexPositionColor v5(p2, color0);
+    m_batch->DrawTriangle(v3, v4, v5);
+    m_batch->DrawLine(v3, v5);
+    */
+
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
@@ -4192,6 +4202,40 @@ void Game::Render()
     
     m_batch->End();
     
+
+
+    /*
+    void const* shaderByteCode2;
+    size_t byteCodeLength2;
+    m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
+    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+
+    //m_effect2->SetWorld(m_world);
+    m_effect->EnableDefaultLighting();
+    m_effect->SetWorld(m_world);
+    m_effect2->Apply(m_d3dContext.Get());
+
+    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
+    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
+    m_batch2->Begin();
+
+    DirectX::SimpleMath::Vector3 testCamPos = pCamera->GetPos();
+    DirectX::SimpleMath::Vector3 testCamTarg = pCamera->GetTargetPos();
+
+    DirectX::SimpleMath::Vector3 p0(0.0, 3.3, 0.0);
+    DirectX::SimpleMath::Vector3 p1(0.0, 3.3, -5.0);
+    DirectX::SimpleMath::Vector3 p2(5.0, 3.3, 0.0);
+    //p0 = testCamPos;
+    //p2 = testCamTarg;
+    DirectX::XMVECTORF32 color0 = DirectX::Colors::White;
+    VertexPositionNormalColor v0(p0, -DirectX::SimpleMath::Vector3::UnitY, color0);
+    VertexPositionNormalColor v1(p1, -DirectX::SimpleMath::Vector3::UnitY, color0);
+    VertexPositionNormalColor v2(p2, -DirectX::SimpleMath::Vector3::UnitY, color0);
+    m_batch2->DrawTriangle(v0, v1, v2);
+    m_batch2->DrawLine(v0, v2);
+    m_batch2->End();
+    */
 
     /*
     void const* shaderByteCodeLighting;
