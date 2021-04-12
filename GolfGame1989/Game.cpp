@@ -451,6 +451,9 @@ void Game::CreateResources()
 
     m_effect->SetView(m_view);
     m_effect->SetProjection(m_proj);
+
+    m_effect2->SetView(m_view);
+    m_effect2->SetProjection(m_proj);
     // world end
 
     // UI font positions
@@ -4178,8 +4181,8 @@ void Game::Render()
     m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
 
     //m_effect2->SetWorld(m_world);
-    m_effect2->EnableDefaultLighting();
-    m_effect->SetWorld(m_world);
+    //m_effect2->EnableDefaultLighting();
+    //m_effect->SetWorld(m_world);
     m_effect2->Apply(m_d3dContext.Get());
 
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
@@ -4417,7 +4420,9 @@ void Game::Update(DX::StepTimer const& aTimer)
     }
 
     pCamera->UpdateCamera(aTimer);
-    m_effect->SetView(pCamera->GetViewMatrix());
+    DirectX::SimpleMath::Matrix viewMatrix = pCamera->GetViewMatrix();
+    m_effect->SetView(viewMatrix);
+    m_effect2->SetView(viewMatrix);
 
     UpdateInput(aTimer);
 }
