@@ -127,8 +127,8 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<VertexTypeLighting>> m_batchNormColorLighting;
 
     using VertexType2 = DirectX::VertexPositionNormalColor;
+    //using VertexType2 = DirectX::VertexPositionColor;
     std::unique_ptr<DirectX::BasicEffect>           m_effect2;
-    //std::unique_ptr<DirectX::NormalMapEffect>           m_effect2;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType2>> m_batch2;
 
     using VertexType = DirectX::VertexPositionColor;
