@@ -108,6 +108,7 @@ public:
 
     DirectX::SimpleMath::Vector3 GetTeePosition() const { return m_currentEnviron.teePosition; };
     std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
+    std::vector<DirectX::VertexPositionNormalColor> GetTerrainPositionNormalColorVertex();
     float GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const;
     float GetTerrainHeightAtPos2(DirectX::XMFLOAT3 aPos) const;
     DirectX::SimpleMath::Vector3 GetTerrainNormal(DirectX::SimpleMath::Vector3 aPos) const;

@@ -64,6 +64,7 @@ public:
     bool SetPosToTerrainHeight(DirectX::XMFLOAT3& aPos) { return pEnvironment->SetPosToTerrainWithCheck(aPos); };
     void SetPosToTerrain(DirectX::XMFLOAT3& aPos) { return pEnvironment->SetPosToTerrain(aPos); };
     std::vector<DirectX::VertexPositionColor> GetTerrainVertex() { return pEnvironment->GetTerrainColorVertex(); };
+    std::vector<DirectX::VertexPositionNormalColor> GetTerrainVertex2() { return pEnvironment->GetTerrainPositionNormalColorVertex(); };
     DirectX::SimpleMath::Vector3 GetTeePos() const { return pEnvironment->GetTeePosition(); };
     float GetTeeDirection() const { return pEnvironment->GetTeeDirectionDegrees(); };
     std::vector<std::string> GetUIShotStrings() const { return m_uiShotStrings; };

@@ -55,6 +55,11 @@ Game::~Game()
     m_terrainVertexArray = 0;
     delete[] m_terrainVertexArrayBase;
     m_terrainVertexArrayBase = 0;
+
+    delete[] m_terrainVertexArray2;
+    m_terrainVertexArray2 = 0;
+    delete[] m_terrainVertexArrayBase2;
+    m_terrainVertexArrayBase2 = 0;
 }
 
 void Game::AudioPlayMusic(XACT_WAVEBANK_AUDIOBANK aSFX)
@@ -3826,8 +3831,8 @@ void Game::DrawWorld12thHole()
         }
     }
 
-    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
-    m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
 }
 
 // Properties
@@ -3879,7 +3884,11 @@ void Game::Initialize(HWND window, int width, int height)
     {
         isInitSuccessTrue = false;
     }
-
+    result = InitializeTerrainArray2();
+    if (!result)
+    {
+        isInitSuccessTrue = false;
+    }
     if (!isInitSuccessTrue)
     {
         // add initialization failure testing  here;
@@ -3988,6 +3997,147 @@ bool Game::InitializeTerrainArray()
         else
         {
             m_terrainVertexArrayBase[i].color = baseColor2;     
+        }
+    }
+
+    return true;
+}
+
+bool Game::InitializeTerrainArray2()
+{
+    std::vector<DirectX::VertexPositionNormalColor> vertexPC = pGolf->GetTerrainVertex2();
+
+    m_terrainVertexCount2 = vertexPC.size();
+    m_terrainVertexArray2 = new DirectX::VertexPositionNormalColor[m_terrainVertexCount2];
+    m_terrainVertexArrayBase2 = new DirectX::VertexPositionNormalColor[m_terrainVertexCount2];
+
+    //lawngreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
+    //DirectX::XMFLOAT4 lineColor(0.0, 0.501960814f, 0.0, 1.0);
+    DirectX::XMFLOAT4 lineColor(.486274540f, .988235354f, 0.0, 1.0);
+    DirectX::XMFLOAT4 baseColor(0.0, 0.0, 0.0, 1.0);
+    //DirectX::XMFLOAT4 baseColor2(0.3, 0.3, 0.3, 1.0);
+    DirectX::XMFLOAT4 baseColor2(1.0, 1.0, 1.0, 1.0);
+    //DirectX::XMFLOAT4 baseColor2(0.0, 0.0, 0.0, 1.0);
+
+    DirectX::XMFLOAT4 sandColor1(0.956862807f, 0.643137276f, 0.376470625f, 1.0);
+    DirectX::XMFLOAT4 sandColor2(0.960784376f, 0.960784376f, 0.862745166f, 1.0);
+    DirectX::XMFLOAT4 greenColor1 = DirectX::XMFLOAT4(0.0, 0.501960814f, 0.0, 1.0);
+    DirectX::XMFLOAT4 greenColor2 = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.0, 1.0);
+
+    DirectX::XMFLOAT4 grassColor1 = DirectX::XMFLOAT4(0.133333340f, 0.545098066f, 0.133333340f, 1.0);
+    DirectX::XMFLOAT4 grassColor2 = DirectX::XMFLOAT4(0.000000000f, 0.392156899f, 0.0, 1.0);
+    DirectX::XMFLOAT4 testRed = DirectX::XMFLOAT4(1.000000000f, 0.000000000f, 0.0, 1.0);
+    DirectX::XMFLOAT4 testBlue = DirectX::XMFLOAT4(0.000000000f, 0.000000000f, 1.0, 1.0);
+    DirectX::XMFLOAT4 testGray = DirectX::XMFLOAT4(0.662745118f, 0.662745118f, 0.662745118f, 1.000000000f);
+    DirectX::XMFLOAT4 testWhite = DirectX::XMFLOAT4(1.0, 1.0, 1.0, 1.0);
+
+    //baseColor = DirectX::XMFLOAT4(0.0, 0.501960814f, 0.0, 1.0);
+    //baseColor2 = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.0, 1.0);
+    //XMGLOBALCONST XMVECTORF32 SandyBrown = { { { 0.956862807f, 0.643137276f, 0.376470625f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 Beige = { { { 0.960784376f, 0.960784376f, 0.862745166f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 Green = { { { 0.000000000f, 0.501960814f, 0.000000000f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 LawnGreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 ForestGreen          = { { { 0.133333340f, 0.545098066f, 0.133333340f, 1.000000000f } } };
+    //XMGLOBALCONST XMVECTORF32 DarkGreen            = { { { 0.000000000f, 0.392156899f, 0.000000000f, 1.000000000f } } };
+
+    baseColor = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f);
+    testGray = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f);
+    greenColor2 = greenColor1;
+    sandColor2 = sandColor1;
+
+    for (int i = 0; i < m_terrainVertexCount2; ++i)
+    {
+        m_terrainVertexArray2[i].position = vertexPC[i].position;
+        m_terrainVertexArray2[i].normal = vertexPC[i].normal;
+        m_terrainVertexArray2[i].color = lineColor;
+
+        m_terrainVertexArrayBase2[i].position = vertexPC[i].position;
+        m_terrainVertexArrayBase2[i].normal = vertexPC[i].normal;
+        if (i % 2 == 0)
+        {
+            m_terrainVertexArrayBase2[i].color = baseColor;
+        }
+        else
+        {
+            m_terrainVertexArrayBase2[i].color = baseColor;
+        }
+
+        if (i == i)
+            //if (i < 96)
+            //if (i % 96 == 0)
+        {
+            if ((i + 5) % 6 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = baseColor;
+            }
+            if ((i + 2) % 6 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = testGray;
+            }
+            if (i % 6 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = testGray;
+            }
+        }
+
+        //////////////////////////////////
+        // Testing bunker and green draws
+                // Green
+        //if (i > 1802 && i < 1818 || i > 1991 && i < 2007 || i > 2183 && i < 2190)
+        if (i > 1805 && i < 1818 || i > 1991 && i < 2007 || i > 2183 && i < 2190)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = greenColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase2[i].color = greenColor2;
+            }
+        }
+        // bunker 1
+        else if (i > 2195 && i < 2202 || i > 2381 && i < 2391)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor2;
+            }
+        }
+        // bunker 2
+        else if (i > 1613 && i < 1617 || i > 1424 && i < 1428)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor2;
+            }
+        }
+        // bunker 3
+        else if (i > 1796 && i < 1803)
+        {
+            if (i % 2 == 0)
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor1;
+            }
+            else
+            {
+                m_terrainVertexArrayBase2[i].color = sandColor2;
+            }
+        }
+        else if (i % 2 == 0)
+        {
+            m_terrainVertexArrayBase[i].color = baseColor;
+        }
+        else
+        {
+            m_terrainVertexArrayBase[i].color = baseColor2;
         }
     }
 
@@ -4181,7 +4331,7 @@ void Game::Render()
     m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
 
     //m_effect2->SetWorld(m_world);
-    //m_effect2->EnableDefaultLighting();
+    m_effect2->EnableDefaultLighting();
     //m_effect->SetWorld(m_world);
     m_effect2->Apply(m_d3dContext.Get());
 
@@ -4213,11 +4363,15 @@ void Game::Render()
     VertexPositionColor v2(p2, color0);
     VertexPositionColor v3(p3, color0);
     */
-    
+
+    /*
     m_batch2->DrawTriangle(v0, v1, v2);
     m_batch2->DrawTriangle(v0, v2, v3);
     m_batch2->DrawLine(v0, v2);
     m_batch2->DrawLine(v0, v3);
+    */
+    m_batch2->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase2, m_terrainVertexCount2);
+
     m_batch2->End();
     
     

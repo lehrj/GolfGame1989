@@ -90,6 +90,7 @@ private:
     void DrawWorld12thHole();
 
     bool InitializeTerrainArray();
+    bool InitializeTerrainArray2();
     void OnDeviceLost();
     void Present();
     void Render();
@@ -263,10 +264,14 @@ private:
     const bool                                  m_isInDebugMode = true;
 
     std::vector<DirectX::VertexPositionColor>   m_terrainVector;
-
     DirectX::VertexPositionColor*               m_terrainVertexArray;
     DirectX::VertexPositionColor*               m_terrainVertexArrayBase;
     int                                         m_terrainVertexCount;
+
+    std::vector<DirectX::VertexPositionNormalColor>   m_terrainVector2;
+    DirectX::VertexPositionNormalColor* m_terrainVertexArray2;
+    DirectX::VertexPositionNormalColor* m_terrainVertexArrayBase2;
+    int                                  m_terrainVertexCount2;
 
     float m_debugHeight = 0.0;
     float m_debugXpoint = 0.0;
