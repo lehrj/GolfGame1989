@@ -79,6 +79,8 @@ private:
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
+    void DrawTree06Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
+    void DrawTree06Test2(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
     void DrawTree07(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
     void DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert v
@@ -86,6 +88,7 @@ private:
     void DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawUI();
     void DrawWater();
+    void DrawWater2();
     void DrawWorld();
     void DrawWorld12thHole();
 

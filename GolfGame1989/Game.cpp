@@ -2902,6 +2902,230 @@ void Game::DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     }
 }
 
+void Game::DrawTree06Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)  // tri
+{
+    DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
+    double windDirection = pGolf->GetWindDirectionRad();
+    double windSpeed = windVector.Length();
+    DirectX::SimpleMath::Vector3 windNormalized = windVector;
+    windNormalized.Normalize();
+    const float scaleMod = .9;
+    float scale = pGolf->GetEnvironScale() * scaleMod;
+
+    DirectX::SimpleMath::Vector3 testNorm = DirectX::SimpleMath::Vector3::UnitY;
+    auto time = static_cast<float>(m_timer.GetTotalSeconds());
+    float yaw = time * 0.4f;
+    float pitch = time * 0.7f;
+    float roll = time * 1.1f;
+
+    auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
+    DirectX::SimpleMath::Vector3 light0 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat0);
+    testNorm = light0;
+
+    DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * (cosf(static_cast<float>((m_timer.GetTotalSeconds() + aVariation) * windSpeed * .1)));
+    swayVec += windVector * 0.001;
+
+    DirectX::SimpleMath::Vector3 swayBase = swayVec;
+    swayBase = swayBase * 0.05;
+
+    DirectX::SimpleMath::Vector3 baseTop = aTreePos;
+    baseTop.y += .06;
+
+    DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
+    viewLine.Normalize();
+
+    DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine);
+
+    VertexPositionColor treeRootBase(aTreePos, Colors::Gray);
+    VertexPositionColor treeRootTop(baseTop, Colors::Gray);
+
+    const float branchGap = .01;
+    const float halfBranchGap = branchGap * .5f;
+
+    VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::DarkGreen);
+    DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
+
+    DirectX::SimpleMath::Vector3 branchBase = baseTop;
+
+    ///////////////////////////////////////////
+
+    DirectX::SimpleMath::Vector3 trunkTopLeft = baseTop + (viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkTopRight = baseTop + (-viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkBottomRight = aTreePos + (-viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkBottomLeft = aTreePos + (viewHorizontal * .04f);
+
+    VertexPositionNormalColor trunkBackTL(trunkTopLeft, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackTR(trunkTopRight, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBR(trunkBottomRight, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBL(trunkBottomLeft, testNorm, Colors::Black);
+
+    m_batch2->DrawQuad(trunkBackTL, trunkBackBL, trunkBackBR, trunkBackTR);
+
+    VertexPositionNormalColor trunkTL(trunkTopLeft, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkTR(trunkTopRight, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBR(trunkBottomRight, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBL(trunkBottomLeft, testNorm, Colors::Gray);
+
+    m_batch2->DrawLine(trunkTL, trunkBL);
+    m_batch2->DrawLine(trunkTR, trunkBR);
+
+    DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Green;
+    DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::Black;
+    DirectX::XMVECTORF32 branchColor3 = DirectX::Colors::Black;
+    DirectX::XMVECTORF32 branchColor4 = DirectX::Colors::ForestGreen;
+    DirectX::XMVECTORF32 branchColor5 = DirectX::Colors::LawnGreen;
+    const int layerCount = 30;
+    for (int i = 1; i < layerCount; ++i)
+    {
+        swayBase *= 1.05;
+        branchBase += swayBase;
+        VertexPositionNormalColor branchBaseVertex(branchBase, testNorm, Colors::ForestGreen);
+        VertexPositionNormalColor branchBaseVertexLite(branchBase, testNorm, branchColor5);
+
+        branchBase.y += branchGap;
+
+        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
+        branchEndR.y += branchGap;
+        branchEndR += swayVec;
+        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
+        branchEndL.y += branchGap;
+        branchEndL += swayVec;
+        VertexPositionNormalColor leafR(branchEndR, testNorm, branchColor4);
+        VertexPositionNormalColor leafL(branchEndL, testNorm, branchColor4);
+
+        //
+        DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
+        branchEndLeftLower.y -= halfBranchGap;
+        DirectX::SimpleMath::Vector3 branchEndRightLower = branchEndR;
+        branchEndRightLower.y -= halfBranchGap;
+        DirectX::SimpleMath::Vector3 branchBaseLowerVert = branchBase;
+        branchBaseLowerVert.y -= halfBranchGap;
+
+        VertexPositionNormalColor leafLeftLower(branchEndLeftLower, testNorm, branchColor3);
+        VertexPositionNormalColor leafRightLower(branchEndRightLower, testNorm, branchColor3);
+        VertexPositionNormalColor branchBaseLower(branchBaseLowerVert, testNorm, branchColor2);
+        VertexPositionNormalColor branchBaseLowerLite(branchBaseLowerVert, testNorm, branchColor5);
+
+        m_batch2->DrawTriangle(leafL, branchBaseLower, branchBaseVertexLite);
+        m_batch2->DrawTriangle(leafRightLower, branchBaseVertex, branchBaseLower);
+    }
+}
+
+void Game::DrawTree06Test2(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)  // tri
+{
+    DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
+    double windDirection = pGolf->GetWindDirectionRad();
+    double windSpeed = windVector.Length();
+    DirectX::SimpleMath::Vector3 windNormalized = windVector;
+    windNormalized.Normalize();
+    const float scaleMod = .9;
+    float scale = pGolf->GetEnvironScale() * scaleMod;
+
+    DirectX::SimpleMath::Vector3 testNorm = DirectX::SimpleMath::Vector3::UnitY;
+    auto time = static_cast<float>(m_timer.GetTotalSeconds());
+    float yaw = time * 0.4f;
+    float pitch = time * 0.7f;
+    float roll = time * 1.1f;
+
+    auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
+    DirectX::SimpleMath::Vector3 light0 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat0);
+    testNorm = light0;
+
+    DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * (cosf(static_cast<float>((m_timer.GetTotalSeconds() + aVariation) * windSpeed * .1)));
+    swayVec += windVector * 0.001;
+
+    DirectX::SimpleMath::Vector3 swayBase = swayVec;
+    swayBase = swayBase * 0.05;
+
+    DirectX::SimpleMath::Vector3 baseTop = aTreePos;
+    baseTop.y += .06;
+
+    DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
+    viewLine.Normalize();
+
+    DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine);
+
+    DirectX::SimpleMath::Vector3 testLeafNorm = viewHorizontal;
+    DirectX::SimpleMath::Matrix testLeafMatrix = DirectX::SimpleMath::Matrix::CreateFromAxisAngle(viewLine, Utility::ToRadians(45.0));
+    testLeafNorm = DirectX::SimpleMath::Vector3::Transform(testLeafNorm, testLeafMatrix);
+    
+
+    VertexPositionColor treeRootBase(aTreePos, Colors::Gray);
+    VertexPositionColor treeRootTop(baseTop, Colors::Gray);
+
+    const float branchGap = .01;
+    const float halfBranchGap = branchGap * .5f;
+
+    VertexPositionColor treeRootTop2(baseTop, DirectX::Colors::DarkGreen);
+    DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
+
+    DirectX::SimpleMath::Vector3 branchBase = baseTop;
+
+    ///////////////////////////////////////////
+
+    DirectX::SimpleMath::Vector3 trunkTopLeft = baseTop + (viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkTopRight = baseTop + (-viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkBottomRight = aTreePos + (-viewHorizontal * .04f);
+    DirectX::SimpleMath::Vector3 trunkBottomLeft = aTreePos + (viewHorizontal * .04f);
+
+    VertexPositionNormalColor trunkBackTL(trunkTopLeft, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackTR(trunkTopRight, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBR(trunkBottomRight, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBL(trunkBottomLeft, testNorm, Colors::Black);
+
+    m_batch2->DrawQuad(trunkBackTL, trunkBackBL, trunkBackBR, trunkBackTR);
+
+    VertexPositionNormalColor trunkTL(trunkTopLeft, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkTR(trunkTopRight, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBR(trunkBottomRight, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBL(trunkBottomLeft, testNorm, Colors::Gray);
+
+    m_batch2->DrawLine(trunkTL, trunkBL);
+    m_batch2->DrawLine(trunkTR, trunkBR);
+
+    DirectX::XMVECTORF32 branchColor1 = DirectX::Colors::Green;
+    DirectX::XMVECTORF32 branchColor2 = DirectX::Colors::Black;
+    DirectX::XMVECTORF32 branchColor3 = DirectX::Colors::Black;
+    DirectX::XMVECTORF32 branchColor4 = DirectX::Colors::ForestGreen;
+    DirectX::XMVECTORF32 branchColor5 = DirectX::Colors::LawnGreen;
+    const int layerCount = 30;
+    for (int i = 1; i < layerCount; ++i)
+    {
+        swayBase *= 1.05;
+        branchBase += swayBase;
+        VertexPositionNormalColor branchBaseVertex(branchBase, testNorm, Colors::ForestGreen);
+        VertexPositionNormalColor branchBaseVertexLite(branchBase, testNorm, branchColor5);
+
+        branchBase.y += branchGap;
+
+        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal + baseTop;
+        branchEndR.y += branchGap;
+        branchEndR += swayVec;
+        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal + baseTop;
+        branchEndL.y += branchGap;
+        branchEndL += swayVec;
+        VertexPositionNormalColor leafR(branchEndR, testNorm, branchColor4);
+        VertexPositionNormalColor leafL(branchEndL, testNorm, branchColor4);
+
+        //
+        DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
+        branchEndLeftLower.y -= halfBranchGap;
+        DirectX::SimpleMath::Vector3 branchEndRightLower = branchEndR;
+        branchEndRightLower.y -= halfBranchGap;
+        DirectX::SimpleMath::Vector3 branchBaseLowerVert = branchBase;
+        branchBaseLowerVert.y -= halfBranchGap;
+
+        VertexPositionNormalColor leafLeftLower(branchEndLeftLower, testNorm, branchColor3);
+        VertexPositionNormalColor leafRightLower(branchEndRightLower, testNorm, branchColor3);
+        VertexPositionNormalColor branchBaseLower(branchBaseLowerVert, testNorm, branchColor2);
+        VertexPositionNormalColor branchBaseLowerLite(branchBaseLowerVert, testNorm, branchColor5);
+
+        m_batch2->DrawTriangle(leafL, branchBaseLower, branchBaseVertexLite);
+        m_batch2->DrawTriangle(leafRightLower, branchBaseVertex, branchBaseLower);
+    }
+}
+
+
 void Game::DrawTree07(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
@@ -3605,6 +3829,45 @@ void Game::DrawWater()
 
     m_batch->DrawLine(v7, v8);
     m_batch->DrawLine(v9, v10);
+}
+
+void Game::DrawWater2()
+{
+    DirectX::XMVECTORF32 waterColor = DirectX::Colors::Blue;
+    DirectX::XMVECTORF32 waterColorDeep = DirectX::Colors::Navy;
+    DirectX::XMVECTORF32 waterHighlight = DirectX::Colors::SkyBlue;
+
+    const float height = 0.09;
+    const float offset = 0.2;
+    
+    DirectX::SimpleMath::Vector3 waterNormal = DirectX::SimpleMath::Vector3::UnitY;
+
+    DirectX::SimpleMath::Vector3 nw(-0.077775 + offset, height, -3.184981);
+    DirectX::SimpleMath::Vector3 ne(5.378624, height, 2.250326 - offset);
+    DirectX::SimpleMath::Vector3 se(4.998624, height, 2.601 + offset);
+    DirectX::SimpleMath::Vector3 sw(-0.980228 - offset, height, -3.184981);
+
+    DirectX::SimpleMath::Vector3 e(4.998624, height, 2.425663);
+    DirectX::SimpleMath::Vector3 w(-0.7190015, height, -3.184981);
+
+    VertexPositionNormalColor v1(nw, waterNormal, waterColor);
+    VertexPositionNormalColor v2(ne, waterNormal, waterColor);
+    VertexPositionNormalColor v3(se, waterNormal, waterColor);
+    VertexPositionNormalColor v4(sw, waterNormal, waterColor);
+
+    VertexPositionNormalColor v5(e, waterNormal, waterColorDeep);
+    VertexPositionNormalColor v6(w, waterNormal, waterColorDeep);
+
+    m_batch2->DrawQuad(v1, v2, v5, v6);
+    m_batch2->DrawQuad(v6, v5, v3, v4);
+
+    VertexPositionNormalColor v7(nw, waterNormal, waterHighlight);
+    VertexPositionNormalColor v8(ne, waterNormal, waterHighlight);
+    VertexPositionNormalColor v9(se, waterNormal, waterHighlight);
+    VertexPositionNormalColor v10(sw, waterNormal, waterHighlight);
+
+    m_batch2->DrawLine(v7, v8);
+    m_batch2->DrawLine(v9, v10);
 }
 
 void Game::DrawWorld()
@@ -4372,6 +4635,11 @@ void Game::Render()
     */
     m_batch2->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase2, m_terrainVertexCount2);
 
+    DirectX::SimpleMath::Vector3 treePos1(0.0, 1.0, 0.0);
+    DrawTree06Test1(treePos1, 0.0);  // tri
+    DirectX::SimpleMath::Vector3 treePos2(0.0, 1.0, 0.5);
+    DrawTree06Test2(treePos2, 0.0);
+    DrawWater2();
     m_batch2->End();
     
     
