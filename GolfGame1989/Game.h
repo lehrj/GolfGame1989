@@ -54,6 +54,7 @@ private:
     void CreateResources();
 
     void DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
+    void DrawBridgeTest1(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawDebugLines();
     void DrawCameraFocus();
     void DrawFlagAndHole();
