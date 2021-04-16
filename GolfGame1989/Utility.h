@@ -8,6 +8,8 @@ class Utility
 {
 public:
     Utility();
+    static inline double GetAngle(DirectX::SimpleMath::Vector3 aRef, DirectX::SimpleMath::Vector3 aPointA, DirectX::SimpleMath::Vector3 aPointB) { return acos(aRef.Dot(aPointA + aPointB)); };
+    static inline double GetAngle1(DirectX::SimpleMath::Vector3 aRef, DirectX::SimpleMath::Vector3 aPointA) { return acos(aRef.Dot(aPointA)); };
     static inline int GetNumericalPrecisionForUI() { return 2; }; // For setting the numerical precison displayed by UI
     static inline double GetPi() { return 3.1415926535897931; };
     static inline double ToDegrees(double r) { return r * 180.0 / GetPi(); };

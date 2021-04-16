@@ -705,6 +705,23 @@ void Game::DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRota
 
 void Game::DrawBridgeTest1(const DirectX::SimpleMath::Vector3 aPos, const float aRotation)
 {
+    ////////// testing angle func
+
+    DirectX::SimpleMath::Vector3 tempNorm = - DirectX::SimpleMath::Vector3::UnitX;
+    DirectX::SimpleMath::Vector3 a = DirectX::SimpleMath::Vector3::UnitX;
+    DirectX::SimpleMath::Vector3 b = DirectX::SimpleMath::Vector3::UnitY;
+    DirectX::SimpleMath::Vector3 c = DirectX::SimpleMath::Vector3::UnitZ;
+    DirectX::SimpleMath::Vector3 d(1.0, 0.0, 1.0);
+    DirectX::SimpleMath::Vector3 e(1.1, 0.0, 1.1);
+    d.Normalize();
+    e.Normalize();
+    double testA = Utility::ToDegrees(Utility::GetAngle(tempNorm, a, b));
+    double testB = Utility::ToDegrees(Utility::GetAngle(a, a, c));
+    double testC = Utility::ToDegrees(Utility::GetAngle1(a, b + c));
+    double testD = Utility::ToDegrees(Utility::GetAngle1(d, c));
+    double testE = Utility::ToDegrees(Utility::GetAngle1(d, a));
+    double testF = Utility::ToDegrees(Utility::GetAngle1(d, e));
+
     DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation);
     DirectX::SimpleMath::Vector3 origin = aPos;
     origin.y -= .04;
@@ -768,8 +785,6 @@ void Game::DrawBridgeTest1(const DirectX::SimpleMath::Vector3 aPos, const float 
     backBaseLeft = DirectX::SimpleMath::Vector3::Transform(backBaseLeft, rotMat) + origin;
     DirectX::SimpleMath::Vector3 backBaseRight(backBaseLength, 0.0, width);
     backBaseRight = DirectX::SimpleMath::Vector3::Transform(backBaseRight, rotMat) + origin;
-
-    DirectX::SimpleMath::Vector3 tempNorm = DirectX::SimpleMath::Vector3::UnitY;
 
     VertexPositionNormalColor endLeft(nw, tempNorm, bridgeColor1);
     VertexPositionNormalColor endRight(ne, tempNorm, bridgeColor1);
