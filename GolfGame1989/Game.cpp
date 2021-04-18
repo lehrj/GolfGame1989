@@ -189,11 +189,13 @@ void Game::CreateDevice()
     m_effect2->SetLightDiffuseColor(0, Colors::Gray);
     
 
+
     void const* shaderByteCode2;
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+
 
 
 
@@ -205,12 +207,6 @@ void Game::CreateDevice()
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType::InputElements, VertexType::InputElementCount, shaderByteCode, byteCodeLength, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch = std::make_unique<PrimitiveBatch<VertexType>>(m_d3dContext.Get());
-
-
-    
-
-
-
 
 
     CD3D11_RASTERIZER_DESC rastDesc(D3D11_FILL_SOLID, D3D11_CULL_NONE, FALSE,
@@ -4588,15 +4584,20 @@ bool Game::InitializeTerrainArray2()
     testGray = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f);
     greenColor2 = greenColor1;
     sandColor2 = sandColor1;
-
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationX(Utility::GetPi());
+    DirectX::SimpleMath::Matrix rotMat2 = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::GetPi());
     for (int i = 0; i < m_terrainVertexCount2; ++i)
     {
         m_terrainVertexArray2[i].position = vertexPC[i].position;
         m_terrainVertexArray2[i].normal = vertexPC[i].normal;
+        m_terrainVertexArray2[i].normal = DirectX::SimpleMath::Vector3::Transform(m_terrainVertexArray2[i].normal, rotMat);
+        m_terrainVertexArray2[i].normal = DirectX::SimpleMath::Vector3::Transform(m_terrainVertexArray2[i].normal, rotMat2);
         m_terrainVertexArray2[i].color = lineColor;
 
         m_terrainVertexArrayBase2[i].position = vertexPC[i].position;
         m_terrainVertexArrayBase2[i].normal = vertexPC[i].normal;
+        m_terrainVertexArrayBase2[i].normal = DirectX::SimpleMath::Vector3::Transform(m_terrainVertexArrayBase2[i].normal, rotMat);
+        m_terrainVertexArrayBase2[i].normal = DirectX::SimpleMath::Vector3::Transform(m_terrainVertexArrayBase2[i].normal, rotMat2);
         if (i % 2 == 0)
         {
             m_terrainVertexArrayBase2[i].color = baseColor;
@@ -4850,7 +4851,7 @@ void Game::Render()
         ilights->SetLightEnabled(1, true);
         ilights->SetLightEnabled(2, true);
         auto time = static_cast<float>(m_timer.GetTotalSeconds());
-        time *= 0.2;
+        //time *= 0.2;
         float yaw = time * 0.4f;
         float pitch = time * 0.7f;
         float roll = time * 1.1f;
@@ -4863,7 +4864,7 @@ void Game::Render()
         DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
         DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
 
-        DirectX::SimpleMath::Vector3 testLightDir(0.0, 1.0, 0.0);
+        DirectX::SimpleMath::Vector3 testLightDir(1.0, 0.0, 0.0);
         testLightDir.Normalize();
         
         light0 = testLightDir;
@@ -4888,6 +4889,9 @@ void Game::Render()
 
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
+
+    
+
     m_batch2->Begin();
 
     DirectX::SimpleMath::Vector3 testCamPos = pCamera->GetPos();
@@ -4933,10 +4937,11 @@ void Game::Render()
     DrawBridgeTest1(bridgePos1, 0.0);
     DirectX::SimpleMath::Vector3 bridgePos2(2.6, 0.2, 0.3);
     DrawBridgeTest1(bridgePos2, 3.14);
-
+   
     m_batch2->End();
     
     
+
     DirectX::SimpleMath::Vector3 testCam = pCamera->GetPos();
     
     
@@ -4982,8 +4987,7 @@ void Game::Render()
     
     m_batch->End();
     
-    
-
+   
  
     
 
