@@ -4579,13 +4579,16 @@ bool Game::InitializeTerrainArray2()
     //XMGLOBALCONST XMVECTORF32 LawnGreen = { { { 0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f } } };
     //XMGLOBALCONST XMVECTORF32 ForestGreen          = { { { 0.133333340f, 0.545098066f, 0.133333340f, 1.000000000f } } };
     //XMGLOBALCONST XMVECTORF32 DarkGreen            = { { { 0.000000000f, 0.392156899f, 0.000000000f, 1.000000000f } } };
-
+   
+    
     baseColor = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f);
+    //baseColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.000000000f);
     testGray = DirectX::XMFLOAT4(0.486274540f, 0.988235354f, 0.000000000f, 1.000000000f);
     greenColor2 = greenColor1;
     sandColor2 = sandColor1;
-    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationX(Utility::GetPi());
-    DirectX::SimpleMath::Matrix rotMat2 = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::GetPi());
+
+    DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::GetPi());
+    DirectX::SimpleMath::Matrix rotMat2 = DirectX::SimpleMath::Matrix::CreateRotationX(Utility::GetPi());
     for (int i = 0; i < m_terrainVertexCount2; ++i)
     {
         m_terrainVertexArray2[i].position = vertexPC[i].position;
@@ -4839,7 +4842,6 @@ void Game::Render()
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
-
     //auto sampler = m_states->LinearClamp();
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
 
@@ -4864,7 +4866,7 @@ void Game::Render()
         DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
         DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
 
-        DirectX::SimpleMath::Vector3 testLightDir(1.0, 0.0, 0.0);
+        DirectX::SimpleMath::Vector3 testLightDir(0.0, -1.0, 0.0);
         testLightDir.Normalize();
         
         light0 = testLightDir;
