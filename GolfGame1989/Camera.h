@@ -105,7 +105,7 @@ private:
     DirectX::SimpleMath::Matrix     m_projectionMatrix;
     DirectX::SimpleMath::Matrix     m_orthogonalMatrix;
 
-    const float                     m_posTravelSpeed = .3f;
+    const float                     m_posTravelSpeed = .9f;
     const float                     m_rotationTravelSpeed = 1.3f;
     const float                     m_aimTurnRate = 0.1f;
 
@@ -139,7 +139,7 @@ private:
     DirectX::SimpleMath::Vector3    m_targetStartPos;
     DirectX::SimpleMath::Vector3    m_targetEndPos;
 
-    const float                     m_cameraTransitionSpeed = .9f;
+    const float                     m_cameraTransitionSpeed = 0.9f;
     DX::StepTimer                   m_cameraTimer;
 
     bool                            m_isFpYaxisInverted = true; // toggle of turning on/off inverting the firstperson camera y axis control, set to true because I am weirdo that likes an inverted y axis

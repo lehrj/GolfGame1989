@@ -55,6 +55,7 @@ private:
 
     void DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawBridgeTest1(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
+    void DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawDebugLines();
     void DrawCameraFocus();
     void DrawFlagAndHole();
@@ -128,7 +129,7 @@ private:
     // variables for lighting rendering
     using VertexTypeLighting = DirectX::VertexPositionNormalColor;
     //std::shared_ptr<DirectX::NormalMapEffect>       m_effectNormColorLighting;
-    std::shared_ptr<DirectX::BasicEffect>       m_effectNormColorLighting;
+    std::shared_ptr<DirectX::BasicEffect>           m_effectNormColorLighting;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexTypeLighting>> m_batchNormColorLighting;
 
     using VertexType2 = DirectX::VertexPositionNormalColor;
