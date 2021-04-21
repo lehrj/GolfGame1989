@@ -937,8 +937,8 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     DirectX::XMVECTORF32 bridgeColor2 = DirectX::Colors::DarkSlateGray;
     DirectX::XMVECTORF32 bridgeColor3 = DirectX::Colors::White;
     DirectX::XMVECTORF32 bridgeColor4 = DirectX::Colors::Black;
-    bridgeColor4 = DirectX::Colors::White;
     DirectX::XMVECTORF32 bridgeColor5 = DirectX::Colors::Red;
+    DirectX::XMVECTORF32 bridgeColorTop = DirectX::Colors::Green;
 
     const float width = .06;
     const float length = .6;
@@ -1002,10 +1002,6 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     normUndersideNeg = DirectX::SimpleMath::Vector3::Transform(normUndersideNeg, rotMat);
     DirectX::SimpleMath::Vector3 normUndersideDown = -DirectX::SimpleMath::Vector3::UnitY;
 
-
-    ///normUndersidePos = DirectX::SimpleMath::Vector3::UnitY;
-    //normUndersideNeg = DirectX::SimpleMath::Vector3::UnitY;
-
     DirectX::SimpleMath::Vector3 normSideLeft = -DirectX::SimpleMath::Vector3::UnitZ;
     normSideLeft = DirectX::SimpleMath::Vector3::Transform(normSideLeft, rotMat);
     DirectX::SimpleMath::Vector3 normSideRight = DirectX::SimpleMath::Vector3::UnitZ;
@@ -1023,32 +1019,43 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     DirectX::SimpleMath::Vector3 normQuarterNeg = DirectX::SimpleMath::Vector3::Transform(normQuarterPos, flipRotMat);
     DirectX::SimpleMath::Vector3 normHalfNeg = DirectX::SimpleMath::Vector3::Transform(normHalfPos, flipRotMat);
 
+    VertexPositionNormalColor endLeft(nw, normQuarterNeg, bridgeColorTop);
+    VertexPositionNormalColor endRight(ne, normQuarterNeg, bridgeColorTop);
+    VertexPositionNormalColor endLeftSide(nw, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor endRightSide(ne, normSideRight, bridgeColor1);
+    VertexPositionNormalColor lowerLeft(sw, normQuarterPos, bridgeColorTop);
+    VertexPositionNormalColor lowerRight(se, normQuarterPos, bridgeColorTop);
+    VertexPositionNormalColor lowerLeftSide(sw, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor lowerRightSide(se, normSideRight, bridgeColor1);
 
-    VertexPositionNormalColor endLeft(nw, normQuarterNeg, bridgeColor1);
-    VertexPositionNormalColor endRight(ne, normQuarterNeg, bridgeColor1);
-    VertexPositionNormalColor lowerRight(se, normQuarterPos, bridgeColor1);
-    VertexPositionNormalColor lowerLeft(sw, normQuarterPos, bridgeColor1);
-
-    VertexPositionNormalColor halfTopLeft(midLeftTop, normHalfPos, bridgeColor1);
-    VertexPositionNormalColor halfTopRight(midRightTop, normHalfPos, bridgeColor1);
+    VertexPositionNormalColor halfTopLeft(midLeftTop, normHalfPos, bridgeColorTop);
+    VertexPositionNormalColor halfTopRight(midRightTop, normHalfPos, bridgeColorTop);
+    VertexPositionNormalColor halfTopLeftSide(midLeftTop, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor halfTopRightSide(midRightTop, normSideRight, bridgeColor1);
     // under
     VertexPositionNormalColor underHalfTopLeft(midLeftTop, normUndersideDown, bridgeColor4);
     VertexPositionNormalColor underHalfTopRight(midRightTop, normUndersideDown, bridgeColor4);
 
-    VertexPositionNormalColor quarterTopLeft(quarterLeftTop, normQuarterPos, bridgeColor1);
-    VertexPositionNormalColor quarterTopRight(quarterRightTop, normQuarterPos, bridgeColor1);
+    VertexPositionNormalColor quarterTopLeft(quarterLeftTop, normQuarterPos, bridgeColorTop);
+    VertexPositionNormalColor quarterTopRight(quarterRightTop, normQuarterPos, bridgeColorTop);
+    VertexPositionNormalColor quarterTopLeftSide(quarterLeftTop, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor quarterTopRightSide(quarterRightTop, normSideRight, bridgeColor1);
     // under
     VertexPositionNormalColor underQuarterTopLeft(quarterLeftTop, normUndersideDown, bridgeColor4);
     VertexPositionNormalColor underQuarterTopRight(quarterRightTop, normUndersideDown, bridgeColor4);
 
-    VertexPositionNormalColor backQuarterTopLeft(backQuarterLeftTop, normHalfNeg, bridgeColor1);
-    VertexPositionNormalColor backQuarterTopRight(backQuarterRightTop, normHalfNeg, bridgeColor1);
+    VertexPositionNormalColor backQuarterTopLeft(backQuarterLeftTop, normHalfNeg, bridgeColorTop);
+    VertexPositionNormalColor backQuarterTopRight(backQuarterRightTop, normHalfNeg, bridgeColorTop);
+    VertexPositionNormalColor backQuarterTopLeftSide(backQuarterLeftTop, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor backQuarterTopRightSide(backQuarterRightTop, normSideRight, bridgeColor1);
     // under
     VertexPositionNormalColor underBackQuarterTopLeft(backQuarterLeftTop, normUndersideDown, bridgeColor4);
     VertexPositionNormalColor underBackQuarterTopRight(backQuarterRightTop, normUndersideDown, bridgeColor4);
 
-    VertexPositionNormalColor frontLeftBase(frontBaseLeft, tempNorm, bridgeColor1);
-    VertexPositionNormalColor frontRightBase(frontBaseRight, tempNorm, bridgeColor1);
+    VertexPositionNormalColor frontLeftBase(frontBaseLeft, tempNorm, bridgeColorTop);
+    VertexPositionNormalColor frontRightBase(frontBaseRight, tempNorm, bridgeColorTop);
+    VertexPositionNormalColor frontLeftBaseSide(frontBaseLeft, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor frontRightBaseSide(frontBaseRight, normSideRight, bridgeColor1);
     // under
     VertexPositionNormalColor underFrontLeftBase(frontBaseLeft, normUndersideNeg, bridgeColor2);
     VertexPositionNormalColor underFrontRightBase(frontBaseRight, normUndersideNeg, bridgeColor2);
@@ -1057,6 +1064,8 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
 
     VertexPositionNormalColor secondLeftBase(secondBaseLeft, normUndersidePos, bridgeColor1);
     VertexPositionNormalColor secondRightBase(secondBaseRight, normUndersidePos, bridgeColor1);
+    VertexPositionNormalColor secondLeftBaseSide(secondBaseLeft, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor secondRightBaseSide(secondBaseRight, normSideRight, bridgeColor1);
     //under
     VertexPositionNormalColor underSecondLeftBase(secondBaseLeft, normUndersidePos, bridgeColor2);
     VertexPositionNormalColor underSecondRightBase(secondBaseRight, normUndersidePos, bridgeColor2);
@@ -1065,6 +1074,8 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
 
     VertexPositionNormalColor thirdLeftBase(thirdBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor thirdRightBase(thirdBaseRight, tempNorm, bridgeColor1);
+    VertexPositionNormalColor thirdLeftBaseSide(thirdBaseLeft, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor thirdRightBaseSide(thirdBaseRight, normSideRight, bridgeColor1);
     //under
     VertexPositionNormalColor underThirdLeftBase(thirdBaseLeft, normUndersideNeg, bridgeColor2);
     VertexPositionNormalColor UnderThirdRightBase(thirdBaseRight, normUndersideNeg, bridgeColor2);
@@ -1074,22 +1085,44 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
 
     VertexPositionNormalColor backLeftBase(backBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor backRightBase(backBaseRight, tempNorm, bridgeColor1);
+    VertexPositionNormalColor backLeftBaseSide(backBaseLeft, normSideLeft, bridgeColor1);
+    VertexPositionNormalColor backRightBaseSide(backBaseRight, normSideRight, bridgeColor1);
     //under
     VertexPositionNormalColor underBackLeftBase(backBaseLeft, normUndersidePos, bridgeColor2);
     VertexPositionNormalColor underBackRightBase(backBaseRight, normUndersidePos, bridgeColor2);
 
     // railings
+    /*
     VertexPositionNormalColor leftRailing1(sw, normQuarterPos, bridgeColor3);
     VertexPositionNormalColor leftRailing2(quarterLeftTop, normQuarterPos, bridgeColor3);
     VertexPositionNormalColor leftRailing3(midLeftTop, normHalfPos, bridgeColor3);
     VertexPositionNormalColor leftRailing4(backQuarterLeftTop, normHalfNeg, bridgeColor3);
     VertexPositionNormalColor leftRailing5(nw, normQuarterNeg, bridgeColor3);
+    */
+    VertexPositionNormalColor leftRailing1(sw, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor leftRailing2(quarterLeftTop, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor leftRailing3(quarterLeftTop, normHalfPos, bridgeColor3);
+    VertexPositionNormalColor leftRailing4(midLeftTop, normHalfPos, bridgeColor3);
+    VertexPositionNormalColor leftRailing5(midLeftTop, normHalfNeg, bridgeColor3);
+    VertexPositionNormalColor leftRailing6(backQuarterLeftTop, normHalfNeg, bridgeColor3);
+    VertexPositionNormalColor leftRailing7(backQuarterLeftTop, normQuarterNeg, bridgeColor3);
+    VertexPositionNormalColor leftRailing8(nw, normQuarterNeg, bridgeColor3);
 
-    VertexPositionNormalColor rightRailing1(se, tempNorm, bridgeColor3);
-    VertexPositionNormalColor rightRailing2(quarterRightTop, tempNorm, bridgeColor3);
-    VertexPositionNormalColor rightRailing3(midRightTop, tempNorm, bridgeColor3);
-    VertexPositionNormalColor rightRailing4(backQuarterRightTop, tempNorm, bridgeColor3);
-    VertexPositionNormalColor rightRailing5(ne, tempNorm, bridgeColor3);
+    /*
+    VertexPositionNormalColor rightRailing1(se, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing2(quarterRightTop, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing3(midRightTop, normHalfPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing4(backQuarterRightTop, normHalfNeg, bridgeColor3);
+    VertexPositionNormalColor rightRailing5(ne, normQuarterNeg, bridgeColor3);
+    */
+    VertexPositionNormalColor rightRailing1(se, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing2(quarterRightTop, normQuarterPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing3(quarterRightTop, normHalfPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing4(midRightTop, normHalfPos, bridgeColor3);
+    VertexPositionNormalColor rightRailing5(midRightTop, normHalfNeg, bridgeColor3);
+    VertexPositionNormalColor rightRailing6(backQuarterRightTop, normHalfNeg, bridgeColor3);
+    VertexPositionNormalColor rightRailing7(backQuarterRightTop, normQuarterNeg, bridgeColor3);
+    VertexPositionNormalColor rightRailing8(ne, normQuarterNeg, bridgeColor3);
 
     // draw undersides
     m_batch2->DrawQuad(underFrontLeftBase, underFrontRightBase, underQuarterTopRight, underQuarterTopLeft);
@@ -1114,6 +1147,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
 
     // sides;
     //normSideLeft = - DirectX::SimpleMath::Vector3::UnitY;
+    /*
     lowerLeft.normal = normSideLeft;
     frontLeftBase.normal = normSideLeft;
     quarterTopLeft.normal = normSideLeft;
@@ -1133,32 +1167,48 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     backQuarterTopRight.normal = normSideRight;
     backRightBase.normal = normSideRight;
     endRight.normal = normSideRight;
+    */
+    m_batch2->DrawTriangle(lowerLeftSide, frontLeftBaseSide, quarterTopLeftSide);
+    m_batch2->DrawTriangle(lowerRightSide, frontRightBaseSide, quarterTopRightSide);
 
-    m_batch2->DrawTriangle(lowerLeft, frontLeftBase, quarterTopLeft);
-    m_batch2->DrawTriangle(lowerRight, frontRightBase, quarterTopRight);
+    m_batch2->DrawTriangle(secondLeftBaseSide, halfTopLeftSide, quarterTopLeftSide);
+    m_batch2->DrawTriangle(secondRightBaseSide, halfTopRightSide, quarterTopRightSide);
 
-    m_batch2->DrawTriangle(secondLeftBase, halfTopLeft, quarterTopLeft);
-    m_batch2->DrawTriangle(secondRightBase, halfTopRight, quarterTopRight);
+    m_batch2->DrawTriangle(thirdLeftBaseSide, halfTopLeftSide, backQuarterTopLeftSide);
+    m_batch2->DrawTriangle(thirdRightBaseSide, halfTopRightSide, backQuarterTopRightSide);
 
-    m_batch2->DrawTriangle(thirdLeftBase, halfTopLeft, backQuarterTopLeft);
-    m_batch2->DrawTriangle(thirdRightBase, halfTopRight, backQuarterTopRight);
-
-    m_batch2->DrawTriangle(backLeftBase, backQuarterTopLeft, endLeft);
-    m_batch2->DrawTriangle(backRightBase, backQuarterTopRight, endRight);
+    m_batch2->DrawTriangle(backLeftBaseSide, backQuarterTopLeftSide, endLeftSide);
+    m_batch2->DrawTriangle(backRightBaseSide, backQuarterTopRightSide, endRightSide);
 
     // railings
+    /*
     m_batch2->DrawLine(leftRailing1, leftRailing2);
     leftRailing2.normal = normHalfPos;
     m_batch2->DrawLine(leftRailing2, leftRailing3);
-    leftRailing2.normal = normHalfNeg;
+    leftRailing3.normal = normHalfNeg;
     m_batch2->DrawLine(leftRailing3, leftRailing4);
     leftRailing4.normal = normQuarterNeg;
     m_batch2->DrawLine(leftRailing4, leftRailing5);
+    */
+    m_batch2->DrawLine(leftRailing1, leftRailing2);
+    m_batch2->DrawLine(leftRailing3, leftRailing4);
+    m_batch2->DrawLine(leftRailing5, leftRailing6);
+    m_batch2->DrawLine(leftRailing7, leftRailing8);
 
+    /*
     m_batch2->DrawLine(rightRailing1, rightRailing2);
+    rightRailing2.normal = normHalfPos;
     m_batch2->DrawLine(rightRailing2, rightRailing3);
+    rightRailing3.normal = normHalfNeg;
     m_batch2->DrawLine(rightRailing3, rightRailing4);
+    rightRailing4.normal = normQuarterNeg;
     m_batch2->DrawLine(rightRailing4, rightRailing5);
+    */
+    m_batch2->DrawLine(rightRailing1, rightRailing2);
+    m_batch2->DrawLine(rightRailing3, rightRailing4);
+    m_batch2->DrawLine(rightRailing5, rightRailing6);
+    m_batch2->DrawLine(rightRailing7, rightRailing8);
+
 }
 
 void Game::DrawCameraFocus()
@@ -5105,7 +5155,7 @@ void Game::Render()
         DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
         DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
 
-        DirectX::SimpleMath::Vector3 testLightDir(1.0, 0.0, 0.0);
+        DirectX::SimpleMath::Vector3 testLightDir(0.0, -1.0, 1.0);
         testLightDir.Normalize();
         
         light0 = testLightDir;
