@@ -1002,6 +1002,10 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     normUndersideNeg = DirectX::SimpleMath::Vector3::Transform(normUndersideNeg, rotMat);
     DirectX::SimpleMath::Vector3 normUndersideDown = -DirectX::SimpleMath::Vector3::UnitY;
 
+
+    normUndersidePos = DirectX::SimpleMath::Vector3::UnitY;
+    //normUndersideNeg = DirectX::SimpleMath::Vector3::UnitY;
+
     DirectX::SimpleMath::Vector3 normSideLeft = -DirectX::SimpleMath::Vector3::UnitZ;
     normSideLeft = DirectX::SimpleMath::Vector3::Transform(normSideLeft, rotMat);
     DirectX::SimpleMath::Vector3 normSideRight = DirectX::SimpleMath::Vector3::UnitZ;
@@ -1056,14 +1060,17 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     //under
     VertexPositionNormalColor underSecondLeftBase(secondBaseLeft, normUndersideNeg, bridgeColor2);
     VertexPositionNormalColor underSecondRightBase(secondBaseRight, normUndersideNeg, bridgeColor2);
-    VertexPositionNormalColor underSecondLeftBaseNeg(secondBaseLeft, normUndersidePos, bridgeColor5);
-    VertexPositionNormalColor underSecondRightBaseNeg(secondBaseRight, normUndersidePos, bridgeColor5);
+    VertexPositionNormalColor underSecondLeftBaseNeg(secondBaseLeft, normUndersideNeg, bridgeColor5);
+    VertexPositionNormalColor underSecondRightBaseNeg(secondBaseRight, normUndersideNeg, bridgeColor5);
 
     VertexPositionNormalColor thirdLeftBase(thirdBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor thirdRightBase(thirdBaseRight, tempNorm, bridgeColor1);
     //under
     VertexPositionNormalColor underThirdLeftBase(thirdBaseLeft, normUndersideNeg, bridgeColor2);
     VertexPositionNormalColor UnderThirdRightBase(thirdBaseRight, normUndersideNeg, bridgeColor2);
+    VertexPositionNormalColor underThirdLeftBasePos(thirdBaseLeft, normUndersidePos, bridgeColor2);
+    VertexPositionNormalColor UnderThirdRightBasePos(thirdBaseRight, normUndersidePos, bridgeColor2);
+
 
     VertexPositionNormalColor backLeftBase(backBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor backRightBase(backBaseRight, tempNorm, bridgeColor1);
@@ -1089,7 +1096,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     
     m_batch2->DrawQuad(underSecondLeftBase, underSecondRightBase, underQuarterTopRight, underQuarterTopLeft);
     m_batch2->DrawQuad(underSecondLeftBase, underSecondRightBase, underHalfTopRight, underHalfTopLeft);
-    m_batch2->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underHalfTopRight, underHalfTopLeft);
+    m_batch2->DrawQuad(underThirdLeftBasePos, UnderThirdRightBasePos, underHalfTopRight, underHalfTopLeft);
     
     m_batch2->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
     m_batch2->DrawQuad(underBackLeftBase, underBackRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
