@@ -1003,7 +1003,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     DirectX::SimpleMath::Vector3 normUndersideDown = -DirectX::SimpleMath::Vector3::UnitY;
 
 
-    normUndersidePos = DirectX::SimpleMath::Vector3::UnitY;
+    ///normUndersidePos = DirectX::SimpleMath::Vector3::UnitY;
     //normUndersideNeg = DirectX::SimpleMath::Vector3::UnitY;
 
     DirectX::SimpleMath::Vector3 normSideLeft = -DirectX::SimpleMath::Vector3::UnitZ;
@@ -1058,10 +1058,10 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     VertexPositionNormalColor secondLeftBase(secondBaseLeft, normUndersidePos, bridgeColor1);
     VertexPositionNormalColor secondRightBase(secondBaseRight, normUndersidePos, bridgeColor1);
     //under
-    VertexPositionNormalColor underSecondLeftBase(secondBaseLeft, normUndersideNeg, bridgeColor2);
-    VertexPositionNormalColor underSecondRightBase(secondBaseRight, normUndersideNeg, bridgeColor2);
-    VertexPositionNormalColor underSecondLeftBaseNeg(secondBaseLeft, normUndersideNeg, bridgeColor5);
-    VertexPositionNormalColor underSecondRightBaseNeg(secondBaseRight, normUndersideNeg, bridgeColor5);
+    VertexPositionNormalColor underSecondLeftBase(secondBaseLeft, normUndersidePos, bridgeColor2);
+    VertexPositionNormalColor underSecondRightBase(secondBaseRight, normUndersidePos, bridgeColor2);
+    VertexPositionNormalColor underSecondLeftBaseNeg(secondBaseLeft, normUndersideNeg, bridgeColor2);
+    VertexPositionNormalColor underSecondRightBaseNeg(secondBaseRight, normUndersideNeg, bridgeColor2);
 
     VertexPositionNormalColor thirdLeftBase(thirdBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor thirdRightBase(thirdBaseRight, tempNorm, bridgeColor1);
@@ -1075,8 +1075,8 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     VertexPositionNormalColor backLeftBase(backBaseLeft, tempNorm, bridgeColor1);
     VertexPositionNormalColor backRightBase(backBaseRight, tempNorm, bridgeColor1);
     //under
-    VertexPositionNormalColor underBackLeftBase(backBaseLeft, normUndersideNeg, bridgeColor2);
-    VertexPositionNormalColor underBackRightBase(backBaseRight, normUndersideNeg, bridgeColor2);
+    VertexPositionNormalColor underBackLeftBase(backBaseLeft, normUndersidePos, bridgeColor2);
+    VertexPositionNormalColor underBackRightBase(backBaseRight, normUndersidePos, bridgeColor2);
 
     // railings
     VertexPositionNormalColor leftRailing1(sw, normQuarterPos, bridgeColor3);
@@ -1095,7 +1095,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     m_batch2->DrawQuad(underFrontLeftBase, underFrontRightBase, underQuarterTopRight, underQuarterTopLeft);
     
     m_batch2->DrawQuad(underSecondLeftBase, underSecondRightBase, underQuarterTopRight, underQuarterTopLeft);
-    m_batch2->DrawQuad(underSecondLeftBase, underSecondRightBase, underHalfTopRight, underHalfTopLeft);
+    m_batch2->DrawQuad(underSecondLeftBaseNeg, underSecondRightBaseNeg, underHalfTopRight, underHalfTopLeft);
     m_batch2->DrawQuad(underThirdLeftBasePos, UnderThirdRightBasePos, underHalfTopRight, underHalfTopLeft);
     
     m_batch2->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
@@ -5096,7 +5096,7 @@ void Game::Render()
         float yaw = time * 0.4f;
         float pitch = time * 0.7f;
         float roll = time * 1.1f;
-
+        
         auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
         auto quat1 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
         auto quat2 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
@@ -5116,7 +5116,7 @@ void Game::Render()
         ilights->SetLightDirection(1, light1);
         ilights->SetLightDirection(2, light2);
     }
-
+    
     void const* shaderByteCode2;
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
@@ -5135,37 +5135,6 @@ void Game::Render()
 
     m_batch2->Begin();
 
-    DirectX::SimpleMath::Vector3 testCamPos = pCamera->GetPos();
-    DirectX::SimpleMath::Vector3 testCamTarg = pCamera->GetTargetPos();
-
-    DirectX::SimpleMath::Vector3 p0(0.0, 0.3, 0.0);
-    DirectX::SimpleMath::Vector3 p1(0.0, 0.3, -5.0);
-    DirectX::SimpleMath::Vector3 p2(5.0, 0.3, 0.0);
-    DirectX::SimpleMath::Vector3 p3 = p0;
-    p3.y += 1.0;
-    //p0 = testCamPos;
-    //p2 = testCamTarg;
-
-    DirectX::XMVECTORF32 color0 = DirectX::Colors::Red;
-    
-    VertexPositionNormalColor v0(p0, -DirectX::SimpleMath::Vector3::UnitY, color0);
-    VertexPositionNormalColor v1(p1, -DirectX::SimpleMath::Vector3::UnitY, color0);
-    VertexPositionNormalColor v2(p2, -DirectX::SimpleMath::Vector3::UnitY, color0);
-    VertexPositionNormalColor v3(p3, -DirectX::SimpleMath::Vector3::UnitY, color0);
-    
-    /*
-    VertexPositionColor v0(p0, color0);
-    VertexPositionColor v1(p1, color0);
-    VertexPositionColor v2(p2, color0);
-    VertexPositionColor v3(p3, color0);
-    */
-
-    /*
-    m_batch2->DrawTriangle(v0, v1, v2);
-    m_batch2->DrawTriangle(v0, v2, v3);
-    m_batch2->DrawLine(v0, v2);
-    m_batch2->DrawLine(v0, v3);
-    */
     m_batch2->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase2, m_terrainVertexCount2);
 
     DirectX::SimpleMath::Vector3 treePos1(0.0, 1.0, 0.0);
@@ -5178,11 +5147,11 @@ void Game::Render()
     DrawBridgeTest2(bridgePos1, 0.0);
     DirectX::SimpleMath::Vector3 bridgePos2(2.6, 0.2, 0.3);
     DrawBridgeTest2(bridgePos2, 3.14);
-    DirectX::SimpleMath::Vector3 bridgePos3(2.6, 0.6, -0.3);
+    DirectX::SimpleMath::Vector3 bridgePos3(.6, 0.8, -0.3);
     DrawBridgeTest2(bridgePos3, 0.0);
-    DirectX::SimpleMath::Vector3 bridgePos4(2.6, 0.6, -0.6);
+    DirectX::SimpleMath::Vector3 bridgePos4(.6, 0.8, -0.6);
     DrawBridgeTest2(bridgePos4, 3.14);
-    DirectX::SimpleMath::Vector3 bridgePos5(2.6, 0.6, -0.9);
+    DirectX::SimpleMath::Vector3 bridgePos5(.6, 0.8, -0.9);
     DrawBridgeTest2(bridgePos5, 0.0);
 
     m_batch2->End();
