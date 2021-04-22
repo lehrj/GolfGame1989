@@ -8,13 +8,17 @@ public:
     {
         LIGHTINGSTATE_STARTSCREEN,
         LIGHTINGSTATE_GAMEPLAY,
+        LIGHTINGSTATE_MANUAL,
+        LIGHTINGSTATE_NULL,
+        LIGHTINGSTATE_TEST01,
+        LIGHTINGSTATE_,
     };
 
     Lighting();
 
     LightingState GetLightingState();
     void SetLighting(LightingState aLightState);
-    void UpdateLighting(std::shared_ptr<DirectX::NormalMapEffect> aEffect, const double aTimer);
+    void UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, const double aTimer);
 
 private:
 

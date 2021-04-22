@@ -24,6 +24,8 @@ Game::Game() noexcept :
 
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
+    pLighting = new Lighting();
+    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
 
     if (m_isInDebugMode == false)
     {
@@ -50,6 +52,7 @@ Game::~Game()
     delete pGolf;
     delete pPlay;
     delete pCamera;
+    delete pLighting;
 
     delete[] m_terrainVertexArray;
     m_terrainVertexArray = 0;
@@ -5134,6 +5137,7 @@ void Game::Render()
     //auto sampler = m_states->LinearClamp();
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
 
+    /*
     m_effect2->EnableDefaultLighting();
     auto ilights = dynamic_cast<DirectX::IEffectLights*>(m_effect2.get());
     if (ilights)
@@ -5155,7 +5159,7 @@ void Game::Render()
         DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
         DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
 
-        DirectX::SimpleMath::Vector3 testLightDir(0.0, -1.0, 1.0);
+        DirectX::SimpleMath::Vector3 testLightDir(-1.0, 0.0, 0.0);
         testLightDir.Normalize();
         
         light0 = testLightDir;
@@ -5166,7 +5170,8 @@ void Game::Render()
         ilights->SetLightDirection(1, light1);
         ilights->SetLightDirection(2, light2);
     }
-    
+    */
+
     void const* shaderByteCode2;
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
@@ -5405,6 +5410,7 @@ void Game::Update(DX::StepTimer const& aTimer)
         }
     }
 
+    pLighting->UpdateLighting(m_effect2, aTimer.GetTotalSeconds());
     pCamera->UpdateCamera(aTimer);
     DirectX::SimpleMath::Matrix viewMatrix = pCamera->GetViewMatrix();
     m_effect->SetView(viewMatrix);
