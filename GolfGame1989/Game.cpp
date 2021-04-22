@@ -934,6 +934,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     DirectX::SimpleMath::Vector3 tempNorm = DirectX::SimpleMath::Vector3::UnitY;
 
     DirectX::SimpleMath::Matrix rotMat = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation);
+    DirectX::SimpleMath::Matrix rotMat2 = DirectX::SimpleMath::Matrix::CreateRotationY(aRotation + Utility::ToRadians(180.0));
     DirectX::SimpleMath::Vector3 origin = aPos;
     origin.y -= .04;
     DirectX::XMVECTORF32 bridgeColor1 = DirectX::Colors::LightSlateGray;
@@ -1000,27 +1001,27 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
 
     // Setup normals
     DirectX::SimpleMath::Vector3 normUndersidePos = DirectX::SimpleMath::Vector3::UnitX;
-    normUndersidePos = DirectX::SimpleMath::Vector3::Transform(normUndersidePos, rotMat);
+    normUndersidePos = DirectX::SimpleMath::Vector3::Transform(normUndersidePos, rotMat2);
     DirectX::SimpleMath::Vector3 normUndersideNeg = -DirectX::SimpleMath::Vector3::UnitX;
-    normUndersideNeg = DirectX::SimpleMath::Vector3::Transform(normUndersideNeg, rotMat);
+    normUndersideNeg = DirectX::SimpleMath::Vector3::Transform(normUndersideNeg, rotMat2);
     DirectX::SimpleMath::Vector3 normUndersideDown = -DirectX::SimpleMath::Vector3::UnitY;
 
     DirectX::SimpleMath::Vector3 normSideLeft = -DirectX::SimpleMath::Vector3::UnitZ;
-    normSideLeft = DirectX::SimpleMath::Vector3::Transform(normSideLeft, rotMat);
+    normSideLeft = DirectX::SimpleMath::Vector3::Transform(normSideLeft, rotMat2);
     DirectX::SimpleMath::Vector3 normSideRight = DirectX::SimpleMath::Vector3::UnitZ;
-    normSideRight = DirectX::SimpleMath::Vector3::Transform(normSideRight, rotMat);
+    normSideRight = DirectX::SimpleMath::Vector3::Transform(normSideRight, rotMat2);
 
     //DirectX::SimpleMath::Vector3 normQuarterPos = DirectX::SimpleMath::Vector3::UnitX;
     DirectX::SimpleMath::Vector3 normQuarterPos(quarterlength, quarterHeight, 0.0);
-    normQuarterPos = DirectX::SimpleMath::Vector3::Transform(normQuarterPos, rotMat);
+    normQuarterPos = DirectX::SimpleMath::Vector3::Transform(normQuarterPos, rotMat2);
     normQuarterPos.Normalize();
     DirectX::SimpleMath::Vector3 normHalfPos(halfLength - quarterlength, height - quarterHeight, 0.0);
-    normHalfPos = DirectX::SimpleMath::Vector3::Transform(normHalfPos, rotMat);
+    normHalfPos = DirectX::SimpleMath::Vector3::Transform(normHalfPos, rotMat2);
     normHalfPos.Normalize();
 
     DirectX::SimpleMath::Matrix flipRotMat = DirectX::SimpleMath::Matrix::CreateRotationY(Utility::GetPi());
-    DirectX::SimpleMath::Vector3 normQuarterNeg = DirectX::SimpleMath::Vector3::Transform(normQuarterPos, flipRotMat);
-    DirectX::SimpleMath::Vector3 normHalfNeg = DirectX::SimpleMath::Vector3::Transform(normHalfPos, flipRotMat);
+    DirectX::SimpleMath::Vector3 normQuarterNeg = DirectX::SimpleMath::Vector3::Transform(normQuarterPos, rotMat);
+    DirectX::SimpleMath::Vector3 normHalfNeg = DirectX::SimpleMath::Vector3::Transform(normHalfPos, rotMat);
 
     VertexPositionNormalColor endLeft(nw, normQuarterNeg, bridgeColorTop);
     VertexPositionNormalColor endRight(ne, normQuarterNeg, bridgeColorTop);
@@ -1137,6 +1138,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     m_batch2->DrawQuad(underThirdLeftBase, UnderThirdRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
     m_batch2->DrawQuad(underBackLeftBase, underBackRightBase, underBackQuarterTopRight, underBackQuarterTopLeft);
 
+    
     m_batch2->DrawQuad(lowerLeft, lowerRight, quarterTopRight, quarterTopLeft);
     quarterTopLeft.normal = normHalfPos;
     quarterTopRight.normal = normHalfPos;
@@ -1147,6 +1149,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     backQuarterTopRight.normal = normQuarterNeg;
     backQuarterTopLeft.normal = normQuarterNeg;
     m_batch2->DrawQuad(endLeft, endRight, backQuarterTopRight, backQuarterTopLeft);
+    
 
     // sides;
     //normSideLeft = - DirectX::SimpleMath::Vector3::UnitY;
@@ -5137,56 +5140,15 @@ void Game::Render()
     //auto sampler = m_states->LinearClamp();
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
 
-    /*
-    m_effect2->EnableDefaultLighting();
-    auto ilights = dynamic_cast<DirectX::IEffectLights*>(m_effect2.get());
-    if (ilights)
-    {
-        ilights->SetLightEnabled(0, true);
-        ilights->SetLightEnabled(1, true);
-        ilights->SetLightEnabled(2, true);
-        auto time = static_cast<float>(m_timer.GetTotalSeconds());
-        //time *= 0.2;
-        float yaw = time * 0.4f;
-        float pitch = time * 0.7f;
-        float roll = time * 1.1f;
-        
-        auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
-        auto quat1 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
-        auto quat2 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
-
-        DirectX::SimpleMath::Vector3 light0 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat0);
-        DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
-        DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
-
-        DirectX::SimpleMath::Vector3 testLightDir(-1.0, 0.0, 0.0);
-        testLightDir.Normalize();
-        
-        light0 = testLightDir;
-        light1 = testLightDir;
-        light2 = testLightDir;
-        
-        ilights->SetLightDirection(0, light0);
-        ilights->SetLightDirection(1, light1);
-        ilights->SetLightDirection(2, light2);
-    }
-    */
-
     void const* shaderByteCode2;
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
     m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
-
-    //m_effect2->SetWorld(m_world);
-    //m_effect2->EnableDefaultLighting();
-    //m_effect->SetWorld(m_world);
     m_effect2->Apply(m_d3dContext.Get());
 
     //m_d3dContext->PSSetSamplers(0, 1, &sampler);
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-
-    
 
     m_batch2->Begin();
 
@@ -5208,14 +5170,12 @@ void Game::Render()
     DrawBridgeTest2(bridgePos4, 3.14);
     DirectX::SimpleMath::Vector3 bridgePos5(.6, 0.8, -0.9);
     DrawBridgeTest2(bridgePos5, 0.0);
-
+    DirectX::SimpleMath::Vector3 bridgePos6(.6, 0.8, -1.2);
+    DrawBridgeTest2(bridgePos6, Utility::ToRadians(90.0));
     m_batch2->End();
     
-    
-
     DirectX::SimpleMath::Vector3 testCam = pCamera->GetPos();
-    
-    
+     
     void const* shaderByteCode;
     size_t byteCodeLength;
     m_effect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
@@ -5703,7 +5663,31 @@ void Game::UpdateInput(DX::StepTimer const& aTimer)
     }
     if (m_kbStateTracker.pressed.U)
     {
-        pCamera->SetCameraState(CameraState::CAMERASTATE_TRANSITION);
+        pLighting->SetLightControlDirection( - DirectX::SimpleMath::Vector3::UnitY);
+    }
+    if (m_kbStateTracker.pressed.I)
+    {
+        pLighting->SetLightControlDirection(DirectX::SimpleMath::Vector3::UnitX);
+    }
+    if (m_kbStateTracker.pressed.O)
+    {
+        pLighting->SetLightControlDirection(DirectX::SimpleMath::Vector3::UnitY);
+    }
+    if (m_kbStateTracker.pressed.P)
+    {
+        
+    }
+    if (m_kbStateTracker.pressed.J)
+    {
+        pLighting->SetLightControlDirection( - DirectX::SimpleMath::Vector3::UnitZ);
+    }
+    if (m_kbStateTracker.pressed.K)
+    {
+        pLighting->SetLightControlDirection(- DirectX::SimpleMath::Vector3::UnitX);
+    }
+    if (m_kbStateTracker.pressed.L)
+    {
+        pLighting->SetLightControlDirection(DirectX::SimpleMath::Vector3::UnitZ);
     }
     if (m_kbStateTracker.pressed.F1)
     {

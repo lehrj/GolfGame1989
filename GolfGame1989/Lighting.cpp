@@ -12,6 +12,12 @@ Lighting::LightingState Lighting::GetLightingState()
     return m_currentLightingState;
 }
 
+void Lighting::SetLightControlDirection(DirectX::SimpleMath::Vector3 aDirection)
+{
+    aDirection.Normalize();
+    m_lightControlDirection = aDirection;
+}
+
 void Lighting::SetLighting(LightingState aLightState)
 {
     m_currentLightingState = aLightState;
@@ -92,8 +98,7 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             ilights->SetLightEnabled(1, true);
             ilights->SetLightEnabled(2, true);
 
-            DirectX::SimpleMath::Vector3 light(0.0, 0.0, 1.0);
-            light.Normalize();
+            DirectX::SimpleMath::Vector3 light = m_lightControlDirection;
             
             DirectX::SimpleMath::Vector3 light0 = light;
             DirectX::SimpleMath::Vector3 light1 = light;

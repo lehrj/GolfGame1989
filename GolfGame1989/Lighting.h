@@ -17,6 +17,7 @@ public:
     Lighting();
 
     LightingState GetLightingState();
+    void SetLightControlDirection(DirectX::SimpleMath::Vector3 aDirection);
     void SetLighting(LightingState aLightState);
     void UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, const double aTimer);
 
@@ -28,6 +29,7 @@ private:
     DirectX::SimpleMath::Vector3                m_lightPos0 = DirectX::SimpleMath::Vector3::UnitX;
     DirectX::SimpleMath::Vector3                m_lightPos1 = DirectX::SimpleMath::Vector3::UnitX;
     DirectX::SimpleMath::Vector3                m_lightPos2 = DirectX::SimpleMath::Vector3::UnitX;
+    DirectX::SimpleMath::Vector3                m_lightControlDirection = -DirectX::SimpleMath::Vector3::UnitY;
 
     // light pos for m_effect2
     DirectX::SimpleMath::Vector3                m_lightEffect2Pos0 = DirectX::SimpleMath::Vector3::UnitX;
