@@ -12,6 +12,7 @@ public:
         LIGHTINGSTATE_NULL,
         LIGHTINGSTATE_TEST01,
         LIGHTINGSTATE_,
+        LIGHTINGSTATE_TESTSUNMOVE,
     };
 
     Lighting();

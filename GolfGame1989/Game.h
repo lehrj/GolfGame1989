@@ -54,7 +54,6 @@ private:
     void CreateResources();
 
     void DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
-    void DrawBridgeTest1(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawDebugLines();
     void DrawCameraFocus();
@@ -93,6 +92,8 @@ private:
     void DrawWater2();
     void DrawWorld();
     void DrawWorld12thHole();
+
+    DirectX::SimpleMath::Vector3 GetSurfaceNormal(DirectX::SimpleMath::Vector3 aVecA, DirectX::SimpleMath::Vector3 aVecB, DirectX::SimpleMath::Vector3 aVecC);
 
     bool InitializeTerrainArray();
     bool InitializeTerrainArray2();

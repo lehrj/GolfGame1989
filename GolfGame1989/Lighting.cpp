@@ -201,5 +201,48 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             m_lightPos2 = light2;
         }
     }
+    else if (m_currentLightingState == LightingState::LIGHTINGSTATE_TESTSUNMOVE)
+    {
+        auto ilights = dynamic_cast<DirectX::IEffectLights*>(aEffect.get());
+        if (ilights)
+        {
+            ilights->SetLightEnabled(0, false);
+            ilights->SetLightEnabled(1, false);
+            ilights->SetLightEnabled(2, true);
+            auto time = static_cast<float>(aTimer);
+            float yaw = time * 0.4f;
+            float pitch = time * 0.7f;
+            float roll = time * 1.1f;
+            roll = cosf(-timeStamp * 1.2);
+            roll = -timeStamp * 1.0;
+            auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(-roll, 0.0, 0.0);
+            auto quat1 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(roll, 0.0, 0.0);
+            auto quat2 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
+            //auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
+            auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
+            //auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, roll, 0.0);
+            auto light0 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat0);
+            auto light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
+            auto light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
+            //auto light3 = XMVector3Rotate(-DirectX::SimpleMath::Vector3::UnitY, quat3);
+            DirectX::SimpleMath::Vector3 light3 = XMVector3Rotate(m_lightControlDirection, quat3);
+          
+            float roll2 = time * 3.1f;
+            auto quat = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, roll2, 0.0);
+            DirectX::SimpleMath::Vector3 axis = -DirectX::SimpleMath::Vector3::UnitZ;
+            DirectX::SimpleMath::Vector3 light = XMVector3Rotate(axis, quat);
 
+            light3.y -= 0.8;
+            light3.Normalize();
+            light0 = light3;
+            light1 = light3;
+            light2 = light3;
+            ilights->SetLightDirection(0, light0);
+            ilights->SetLightDirection(1, light1);
+            ilights->SetLightDirection(2, light2);
+            m_lightPos0 = light0;
+            m_lightPos1 = light1;
+            m_lightPos2 = light2;
+        }
+    }
 }

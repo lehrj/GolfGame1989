@@ -1361,6 +1361,7 @@ bool Environment::LoadHeightMap()
     //char* filename = "heightmapFlat.bmp";
     //char* filename = "heightmapTest.bmp";
     char* filename = "../GolfGame1989/Heightmaps/HeightmapGoldenBell.bmp";
+    //char* filename = "../GolfGame1989/Heightmaps/TestMap1.bmp";
 
     // Open the height map file 
     int error = fopen_s(&filePtr, filename, "rb");
