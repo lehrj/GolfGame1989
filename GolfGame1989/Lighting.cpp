@@ -99,7 +99,7 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             ilights->SetLightEnabled(2, true);
 
             DirectX::SimpleMath::Vector3 light = m_lightControlDirection;
-            
+
             DirectX::SimpleMath::Vector3 light0 = light;
             DirectX::SimpleMath::Vector3 light1 = light;
             DirectX::SimpleMath::Vector3 light2 = light;
