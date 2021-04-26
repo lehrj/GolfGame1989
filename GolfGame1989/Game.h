@@ -80,12 +80,15 @@ private:
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree04Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
+    void DrawTree05Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree06(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
     void DrawTree06Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
     void DrawTree06Test2(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // tri
     void DrawTree07(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
+    void DrawTree07Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
     void DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert v
+    void DrawTree09Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert v
     void DrawTree10(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawUI();
