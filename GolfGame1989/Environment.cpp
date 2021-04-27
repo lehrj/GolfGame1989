@@ -58,12 +58,14 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
 void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
 {
     m_holeVertex.clear();
+    m_holeVertexTest1.clear();
     const int vertexCount = m_holeResolution;
-    const float holeRadius= static_cast<float>(m_holeRadius * m_currentEnviron.scale);
+    const float holeRadius = static_cast<float>(m_holeRadius * m_currentEnviron.scale);
     for (int i = 0; i <= vertexCount; ++i)
     {
         double t = Utility::GetPi() * 2 * i / vertexCount;
         m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::Colors::Gray));
+        m_holeVertexTest1.push_back(DirectX::VertexPositionNormalColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::SimpleMath::Vector3::UnitY, DirectX::Colors::Gray));
     }
 }
 

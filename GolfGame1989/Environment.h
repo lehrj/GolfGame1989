@@ -98,6 +98,7 @@ public:
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return m_currentEnviron.holePosition; };
     double GetHoleRadius() const { return m_holeRadius * m_currentEnviron.scale; };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return m_holeVertex; };
+    std::vector<DirectX::VertexPositionNormalColor> GetHoleVertexTest1() const { return m_holeVertexTest1; };
     double GetLandingHeight() const { return m_landingHeight; };
     double GetLauchHeight() const { return m_launchHeight; };
     int GetNumerOfEnvirons() const { return m_environsAvailable; };
@@ -159,6 +160,7 @@ private:
     std::vector<DirectX::VertexPositionColor> m_flagVertex;
 
     std::vector<DirectX::VertexPositionColor> m_holeVertex;
+    std::vector<DirectX::VertexPositionNormalColor> m_holeVertexTest1;
     const int                           m_holeResolution = 30;          // number of vertices used to draw hole circle
     //const double                        m_holeRadius = 0.10795;       // Radius of the hole, future updates could include addition of "big cup" or "tiny cup" hole sizes
     const double                        m_holeRadius = .50795;

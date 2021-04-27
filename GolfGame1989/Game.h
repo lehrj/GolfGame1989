@@ -59,6 +59,7 @@ private:
     void DrawCameraFocus();
     void DrawFlagAndHole();
     void DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
+    void DrawFlagHoleFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
     void DrawHydraShot();
     void DrawIntroScreen();
     void DrawMenuCharacterSelect();
@@ -76,6 +77,7 @@ private:
     void DrawSwingUI();
     void DrawTeeBox();
     void DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
+    void DrawTeeBoxFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
     void DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // V column tree
     void DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
     void DrawTree04Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // circle tree
@@ -98,6 +100,7 @@ private:
     void DrawWater2();
     void DrawWorld();
     void DrawWorld12thHole();
+    void DrawWorldWithLighting();
 
     DirectX::SimpleMath::Vector3 GetSurfaceNormal(DirectX::SimpleMath::Vector3 aVecA, DirectX::SimpleMath::Vector3 aVecB, DirectX::SimpleMath::Vector3 aVecC);
 

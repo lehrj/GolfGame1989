@@ -1157,6 +1157,60 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     */
 }
 
+void Game::DrawFlagHoleFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
+{
+    const float poleHeight = 0.1;
+    const float flagWidth = .02;
+    const float flagHeight = .01;
+    const DirectX::XMVECTORF32 flagColor = DirectX::Colors::Red;
+    const DirectX::XMVECTORF32 poleColor = DirectX::Colors::White;
+
+    DirectX::SimpleMath::Vector3 poleBase = DirectX::SimpleMath::Vector3::Zero;
+    DirectX::SimpleMath::Vector3 poleTop = poleBase;
+    poleTop.y += poleHeight;
+    DirectX::SimpleMath::Vector3 flagTip = poleTop;
+    flagTip.y -= flagHeight;
+    flagTip.x -= flagWidth;
+    flagTip.z -= flagWidth;
+
+    float windDirection = pGolf->GetWindDirectionRad();
+    DirectX::SimpleMath::Vector3 windNormalized = pGolf->GetEnvironWindVector();
+    float windSpeed = windNormalized.Length() * .3;
+    windNormalized.Normalize();
+
+    const float scaleMod = 1.0;
+    const float scale = pGolf->GetEnvironScale() * scaleMod;
+    DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation));
+
+    DirectX::SimpleMath::Vector3 swayBase = swayVec;
+    swayBase = swayBase * 0.05;
+
+    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
+    flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
+
+    poleTop += swayBase;
+    DirectX::SimpleMath::Vector3 flagBottom = poleTop;
+    flagBottom.y -= flagHeight + flagHeight;
+
+    DirectX::VertexPositionNormalColor poleBaseVertex(poleBase + aPos, DirectX::SimpleMath::Vector3::UnitY, poleColor);
+    DirectX::VertexPositionNormalColor poleTopVertex(poleTop + aPos, DirectX::SimpleMath::Vector3::UnitY, poleColor);
+    DirectX::VertexPositionNormalColor flagTopVertex(poleTop + aPos, DirectX::SimpleMath::Vector3::UnitY, flagColor);
+    DirectX::VertexPositionNormalColor flagTipVertex(flagTip + aPos, DirectX::SimpleMath::Vector3::UnitY, flagColor);
+    DirectX::VertexPositionNormalColor flagBottomVertex(flagBottom + aPos, DirectX::SimpleMath::Vector3::UnitY, flagColor);
+
+    m_batch2->DrawLine(poleBaseVertex, poleTopVertex);
+    m_batch2->DrawTriangle(flagTopVertex, flagTipVertex, flagBottomVertex);
+
+    // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    std::vector<DirectX::VertexPositionNormalColor> holeVert = pGolf->GetHoleVertexTest1();
+
+    for (int i = 0; i < holeVert.size() - 1; ++i)
+    {
+        m_batch2->DrawLine(holeVert[i], holeVert[i + 1]);
+    }
+}
+
 void Game::DrawHydraShot()
 {
     std::vector<DirectX::XMVECTORF32> lineColor;
@@ -2743,6 +2797,28 @@ void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const floa
     m_batch->DrawLine(vt1, vt3);
     m_batch->DrawLine(vt3, vt4);
     m_batch->DrawLine(vt4, vt2);
+    // end tee box draw
+}
+
+void Game::DrawTeeBoxFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
+{
+    //draw tee box;
+    DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
+    teeBoxOrigin.y += 0.003;
+    const float teeBoxLengthScale = 0.05f;
+    const float teeBoxHorizontalScale = 0.1f;
+    DirectX::SimpleMath::Vector3 t1(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t2(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z - teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t3(teeBoxOrigin.x - teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    DirectX::SimpleMath::Vector3 t4(teeBoxOrigin.x + teeBoxLengthScale, teeBoxOrigin.y, teeBoxOrigin.z + teeBoxHorizontalScale);
+    VertexPositionNormalColor vt1(t1, DirectX::SimpleMath::Vector3::UnitY, Colors::White);
+    VertexPositionNormalColor vt2(t2, DirectX::SimpleMath::Vector3::UnitY, Colors::White);
+    VertexPositionNormalColor vt3(t3, DirectX::SimpleMath::Vector3::UnitY, Colors::White);
+    VertexPositionNormalColor vt4(t4, DirectX::SimpleMath::Vector3::UnitY, Colors::White);
+    m_batch2->DrawLine(vt1, vt2);
+    m_batch2->DrawLine(vt1, vt3);
+    m_batch2->DrawLine(vt3, vt4);
+    m_batch2->DrawLine(vt4, vt2);
     // end tee box draw
 }
 
@@ -5545,6 +5621,63 @@ void Game::DrawWorld12thHole()
     //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
 }
 
+void Game::DrawWorldWithLighting()
+{
+    DrawWater2();
+    //DrawSand();
+
+    //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos()); // disabled since not needed when deapth buffer is enabled
+
+    std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
+
+    for (int i = 0; i < fixtureList.size(); ++i)
+    {
+        if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_FLAGSTICK)
+        {
+            DrawFlagHoleFixtureTest1(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
+        {
+            DrawTeeBoxFixtureTest1(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_BRIDGE)
+        {
+            DrawBridgeTest2(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
+        {
+            //DrawTree03(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE04)
+        {
+            DrawTree04Test1(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE05)
+        {
+            DrawTree05Test1(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE06)
+        {
+            DrawTree06Test2(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE07)
+        {
+            DrawTree07Test3(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE08)
+        {
+            //DrawTree08(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+        else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE09)
+        {
+            DrawTree09Test1(fixtureList[i].position, fixtureList[i].animationVariation);
+        }
+    }
+
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase, m_terrainVertexCount);
+    //m_batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_terrainVertexArray, m_terrainVertexCount);
+}
+
 // Properties
 void Game::GetDefaultSize(int& width, int& height) const noexcept
 {
@@ -6102,7 +6235,7 @@ void Game::Render()
     DrawBridgeTest2(bridgePos10, - m_timer.GetTotalSeconds() * 0.5);
     */
 
-    
+    DrawWorldWithLighting();
 
     m_batch2->End();
     
@@ -6126,7 +6259,7 @@ void Game::Render()
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawWorld12thHole();
+        //DrawWorld12thHole();
         //DrawShotAimCone();
         DrawShotAimArrow();
 

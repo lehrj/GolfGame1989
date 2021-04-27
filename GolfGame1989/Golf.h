@@ -41,6 +41,7 @@ public:
     DirectX::SimpleMath::Vector3 GetFaceImpact() const { return pSwing->GetFaceNormal(); };
     std::vector<DirectX::VertexPositionColor> GetFlagVertex() const { return pEnvironment->GetFlagVertex(); };
     std::vector<DirectX::VertexPositionColor> GetHoleVertex() const { return pEnvironment->GetHoleVertex(); };
+    std::vector<DirectX::VertexPositionNormalColor> GetHoleVertexTest1() const { return pEnvironment->GetHoleVertexTest1(); };
     std::vector<std::vector<BallMotion>>& GetHydraShotPath() { return m_hydraData; };
     bool GetIsBallInHole() const { return pBall->GetIsInHole(); };
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
