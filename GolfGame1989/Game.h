@@ -87,6 +87,7 @@ private:
     void DrawTree07(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
     void DrawTree07Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
     void DrawTree07Test2(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
+    void DrawTree07Test3(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert V
     void DrawTree08(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);
     void DrawTree09(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert v
     void DrawTree09Test1(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation);  // invert v
