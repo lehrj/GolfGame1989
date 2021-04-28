@@ -55,8 +55,9 @@ private:
 
     void DrawBridge(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
     void DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float aRotation);
-    void DrawDebugLines();
     void DrawCameraFocus();
+    void DrawDebugLines();
+    void DrawDebugLightDirection();   
     void DrawFlagAndHole();
     void DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);
     void DrawFlagHoleFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, const float aVariation);

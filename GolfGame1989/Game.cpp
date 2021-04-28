@@ -26,7 +26,7 @@ Game::Game() noexcept :
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
     pLighting = new Lighting();
     //pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
-    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_TESTSUNMOVE);
+    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_TESTSUNMOVE2);
 
     if (m_isInDebugMode == false)
     {
@@ -1056,6 +1056,47 @@ void Game::DrawCameraFocus()
     m_batch->DrawLine(origin, zOffset);
     m_batch->DrawLine(origin, negZOffset);
     m_batch->DrawLine(origin, negXOffset);
+}
+
+void Game::DrawDebugLightDirection()
+{
+    DirectX::SimpleMath::Vector3 originPos(0.0, 1.5, 0.0);
+    DirectX::SimpleMath::Vector3 lightDirection = pLighting->GetLightingDirection();
+    VertexPositionColor originVertx(originPos, Colors::White);
+    VertexPositionColor directionVertx(originPos + lightDirection, Colors::Yellow);
+    
+
+    originPos = DirectX::SimpleMath::Vector3(0.0, 1.5, 0.0);
+    DirectX::SimpleMath::Vector4 lineColor = Colors::White;
+    const float halfLineLength = 1.0;
+    DirectX::SimpleMath::Vector3 xLineStart = originPos;
+    xLineStart.x -= halfLineLength;
+    VertexPositionColor xLineStartVertex(xLineStart, Colors::White);
+
+    DirectX::SimpleMath::Vector3 xLineEnd = originPos;
+    xLineEnd.x += halfLineLength;
+    VertexPositionColor xLineEndVertex(xLineEnd, Colors::White);
+
+    DirectX::SimpleMath::Vector3 yLineStart = originPos;
+    yLineStart.y -= halfLineLength;
+    VertexPositionColor yLineStartVertex(yLineStart, Colors::White);
+
+    DirectX::SimpleMath::Vector3 yLineEnd = originPos;
+    yLineEnd.y += halfLineLength;
+    VertexPositionColor yLineEndVertex(yLineEnd, Colors::White);
+
+    DirectX::SimpleMath::Vector3 zLineStart = originPos;
+    zLineStart.z -= halfLineLength;
+    VertexPositionColor zLineStartVertex(zLineStart, lineColor);
+
+    DirectX::SimpleMath::Vector3 zLineEnd = originPos;
+    zLineEnd.z += halfLineLength;
+    VertexPositionColor zLineEndVertex(zLineEnd, lineColor);
+
+    m_batch->DrawLine(xLineStartVertex, xLineEndVertex);
+    m_batch->DrawLine(yLineStartVertex, yLineEndVertex);
+    m_batch->DrawLine(zLineStartVertex, zLineEndVertex);
+    m_batch->DrawLine(originVertx, directionVertx);
 }
 
 void Game::DrawDebugLines()
@@ -6441,7 +6482,8 @@ void Game::Render()
     //m_d3dContext->IASetInputLayout(m_inputLayout.Get());   
     
     m_batch->Begin();
-    DrawTree07(DirectX::SimpleMath::Vector3(1.0, 1.0, 1.0), 0.0);
+
+    DrawDebugLightDirection();
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {

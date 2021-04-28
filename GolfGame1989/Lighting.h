@@ -13,10 +13,12 @@ public:
         LIGHTINGSTATE_TEST01,
         LIGHTINGSTATE_,
         LIGHTINGSTATE_TESTSUNMOVE,
+        LIGHTINGSTATE_TESTSUNMOVE2,
     };
 
     Lighting();
 
+    DirectX::SimpleMath::Vector3 GetLightingDirection() { return m_lightPos0; };
     LightingState GetLightingState();
     void SetLightControlDirection(DirectX::SimpleMath::Vector3 aDirection);
     void SetLighting(LightingState aLightState);

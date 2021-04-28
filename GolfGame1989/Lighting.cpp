@@ -245,4 +245,35 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             m_lightPos2 = light2;
         }
     }
+    else if (m_currentLightingState == LightingState::LIGHTINGSTATE_TESTSUNMOVE2)
+    {
+        auto ilights = dynamic_cast<DirectX::IEffectLights*>(aEffect.get());
+        if (ilights)
+        {
+            ilights->SetLightEnabled(0, true);
+            ilights->SetLightEnabled(1, true);
+            ilights->SetLightEnabled(2, true);
+            auto time = static_cast<float>(aTimer);
+            float pitch = time * 0.7f;
+            auto quat = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, pitch, 0.0);
+
+            DirectX::SimpleMath::Vector3 light0 = XMVector3Rotate( - DirectX::SimpleMath::Vector3::UnitZ, quat);
+            DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate( - DirectX::SimpleMath::Vector3::UnitZ, quat);
+            DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate( - DirectX::SimpleMath::Vector3::UnitZ, quat);
+            /*
+            light0.x += 1.0;
+            light0.Normalize();
+            light1.x += 1.0;
+            light1.Normalize();
+            light2.x += 1.0;
+            light2.Normalize();
+            */
+            ilights->SetLightDirection(0, light0);
+            ilights->SetLightDirection(1, light1);
+            ilights->SetLightDirection(2, light2);
+            m_lightPos0 = light0;
+            m_lightPos1 = light1;
+            m_lightPos2 = light2;
+        }
+    }
 }
