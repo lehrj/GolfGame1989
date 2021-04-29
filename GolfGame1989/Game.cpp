@@ -1063,9 +1063,8 @@ void Game::DrawDebugLightDirection()
     DirectX::SimpleMath::Vector3 originPos(0.0, 1.5, 0.0);
     DirectX::SimpleMath::Vector3 lightDirection = pLighting->GetLightingDirection();
     VertexPositionColor originVertx(originPos, Colors::White);
-    VertexPositionColor directionVertx(originPos + lightDirection, Colors::Yellow);
+    VertexPositionColor directionVertx(originPos - lightDirection, Colors::Yellow);
     
-
     originPos = DirectX::SimpleMath::Vector3(0.0, 1.5, 0.0);
     DirectX::SimpleMath::Vector4 lineColor = Colors::White;
     const float halfLineLength = 1.0;
@@ -3114,7 +3113,7 @@ void Game::DrawTree04Test1(const DirectX::SimpleMath::Vector3 aTreePos, const fl
 
     DirectX::SimpleMath::Vector3 testBaseTop = baseTop;
 
-    DirectX::SimpleMath::Vector3 trunkNorm = viewLine;
+    DirectX::SimpleMath::Vector3 trunkNorm = DirectX::SimpleMath::Vector3::UnitY;
     testBaseTop += swayBase;
     VertexPositionNormalColor treeRootBase(aTreePos, trunkNorm, Colors::Gray);
     VertexPositionNormalColor treeRootTop(testBaseTop, trunkNorm, Colors::Gray);
@@ -3361,7 +3360,7 @@ void Game::DrawTree05Test1(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     DirectX::SimpleMath::Vector3 viewLine = pCamera->GetTargetPos() - pCamera->GetPos();
     viewLine.Normalize();
 
-    DirectX::SimpleMath::Vector3 trunkNorm = viewLine;
+    DirectX::SimpleMath::Vector3 trunkNorm = DirectX::SimpleMath::Vector3::UnitY;
 
     //DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross(viewLine, (aTreePos + baseTop));
     DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine) * 1.1;
@@ -3963,7 +3962,7 @@ void Game::DrawTree06Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
 
     DirectX::SimpleMath::Vector3 branchBase = baseTop;
-
+    DirectX::SimpleMath::Vector3 trunkNorm = DirectX::SimpleMath::Vector3::UnitY;
     ///////////////////////////////////////////
 
     DirectX::SimpleMath::Vector3 trunkTopLeft = baseTop + (viewHorizontal * .04f);
@@ -3971,17 +3970,17 @@ void Game::DrawTree06Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     DirectX::SimpleMath::Vector3 trunkBottomRight = aTreePos + (-viewHorizontal * .04f);
     DirectX::SimpleMath::Vector3 trunkBottomLeft = aTreePos + (viewHorizontal * .04f);
 
-    VertexPositionNormalColor trunkBackTL(trunkTopLeft, testNorm, Colors::Black);
-    VertexPositionNormalColor trunkBackTR(trunkTopRight, testNorm, Colors::Black);
-    VertexPositionNormalColor trunkBackBR(trunkBottomRight, testNorm, Colors::Black);
-    VertexPositionNormalColor trunkBackBL(trunkBottomLeft, testNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackTL(trunkTopLeft, trunkNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackTR(trunkTopRight, trunkNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBR(trunkBottomRight, trunkNorm, Colors::Black);
+    VertexPositionNormalColor trunkBackBL(trunkBottomLeft, trunkNorm, Colors::Black);
 
     m_batch2->DrawQuad(trunkBackTL, trunkBackBL, trunkBackBR, trunkBackTR);
 
-    VertexPositionNormalColor trunkTL(trunkTopLeft, testNorm, Colors::Gray);
-    VertexPositionNormalColor trunkTR(trunkTopRight, testNorm, Colors::Gray);
-    VertexPositionNormalColor trunkBR(trunkBottomRight, testNorm, Colors::Gray);
-    VertexPositionNormalColor trunkBL(trunkBottomLeft, testNorm, Colors::Gray);
+    VertexPositionNormalColor trunkTL(trunkTopLeft, trunkNorm, Colors::Gray);
+    VertexPositionNormalColor trunkTR(trunkTopRight, trunkNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBR(trunkBottomRight, trunkNorm, Colors::Gray);
+    VertexPositionNormalColor trunkBL(trunkBottomLeft, trunkNorm, Colors::Gray);
 
     m_batch2->DrawLine(trunkTL, trunkBL);
     m_batch2->DrawLine(trunkTR, trunkBR);
@@ -4632,7 +4631,7 @@ void Game::DrawTree07Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     const float branchGap = .013;
     const float halfBranchGap = branchGap * .5;
 
-    DirectX::SimpleMath::Vector3 trunkNorm = viewLine;
+    DirectX::SimpleMath::Vector3 trunkNorm = DirectX::SimpleMath::Vector3::UnitY;
     VertexPositionNormalColor treeRootTop2(baseTop, trunkNorm, DirectX::Colors::DarkGreen);
     DirectX::XMVECTORF32 leafColor = DirectX::Colors::ForestGreen;
 
@@ -5085,7 +5084,7 @@ void Game::DrawTree09Test1(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     viewLine.Normalize();
 
     DirectX::SimpleMath::Vector3 viewHorizontal = DirectX::XMVector3Cross((aTreePos - baseTop), viewLine);
-    DirectX::SimpleMath::Vector3 trunkNormal = viewLine;
+    DirectX::SimpleMath::Vector3 trunkNormal = DirectX::SimpleMath::Vector3::UnitY;
     VertexPositionNormalColor treeRootBase(aTreePos, trunkNormal, Colors::Gray);
     VertexPositionNormalColor treeRootTop(baseTop, trunkNormal, Colors::Gray);
     //m_batch->DrawLine(treeRootBase, treeRootTop);
@@ -6461,7 +6460,12 @@ void Game::Render()
     DirectX::SimpleMath::Vector3 bridgePos10(1.3, 1.5, -0.8);
     DrawBridgeTest2(bridgePos10, - m_timer.GetTotalSeconds() * 0.5);
     */
-
+    DirectX::SimpleMath::Vector4 skyColor = Colors::Blue;
+    VertexPositionNormalColor topLeft(DirectX::SimpleMath::Vector3(6.0, 6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor topRight(DirectX::SimpleMath::Vector3(6.0, 6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor bottomRight(DirectX::SimpleMath::Vector3(6.0, -6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor bottomLeft(DirectX::SimpleMath::Vector3(6.0, -6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
+    m_batch2->DrawQuad(topLeft, topRight, bottomRight, bottomLeft);
     DrawWorldWithLighting();
 
     m_batch2->End();
@@ -6483,7 +6487,7 @@ void Game::Render()
     
     m_batch->Begin();
 
-    DrawDebugLightDirection();
+    //DrawDebugLightDirection();
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
