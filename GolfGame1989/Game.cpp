@@ -717,7 +717,7 @@ void Game::DrawBridgeTest2(const DirectX::SimpleMath::Vector3 aPos, const float 
     DirectX::XMVECTORF32 bridgeColor2 = DirectX::Colors::DarkSlateGray;
     DirectX::XMVECTORF32 bridgeColor3 = DirectX::Colors::White;
     DirectX::XMVECTORF32 bridgeColor4 = DirectX::Colors::Black;
-    bridgeColor4 = bridgeColor2;
+    //bridgeColor4 = bridgeColor2;
     DirectX::XMVECTORF32 bridgeColor5 = DirectX::Colors::Red;
     DirectX::XMVECTORF32 bridgeColorTop = DirectX::Colors::Green;
 
@@ -6438,54 +6438,8 @@ void Game::Render()
 
     m_batch2->Begin();
 
-    /*
-    m_batch2->Draw(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_terrainVertexArrayBase2, m_terrainVertexCount2);
-
-    DirectX::SimpleMath::Vector3 treePos1(0.0, 1.0, 0.0);
-    //DrawTree06Test1(treePos1, 0.0);  // tri
-    DirectX::SimpleMath::Vector3 treePos2(0.0, 1.0, 0.2);
-    DrawTree06Test2(treePos2, 0.0);
-    DirectX::SimpleMath::Vector3 treePos3(1.3, 1.0, -0.8);
-    //DrawTree04Test1(treePos3, 0.0);
-    DirectX::SimpleMath::Vector3 treePos4(1.3, 1.0, -0.1);
-    DrawTree07Test1(treePos4, 0.0);
-    DirectX::SimpleMath::Vector3 treePos5(1.3, 1.0, 0.2);
-    DrawTree07Test2(treePos5, 0.0);
-    DirectX::SimpleMath::Vector3 treePos6(0.9, 1.0, -0.7);
-    DrawTree09Test1(treePos6, 0.0);
-
-    DrawWater2();
-
-    DirectX::SimpleMath::Vector3 bridgePos1(2.0, 0.2, 0.0);
-    DrawBridgeTest2(bridgePos1, 0.0);
-    DirectX::SimpleMath::Vector3 bridgePos2(2.6, 0.2, 0.3);
-    DrawBridgeTest2(bridgePos2, 3.14);
-    */
-
-    /*
-    DirectX::SimpleMath::Vector3 bridgePos3(.6, 0.8, -0.3);
-    DrawBridgeTest2(bridgePos3, 0.0);
-    DirectX::SimpleMath::Vector3 bridgePos4(.6, 0.8, -0.6);
-    DrawBridgeTest2(bridgePos4, 3.14);
-    DirectX::SimpleMath::Vector3 bridgePos5(.6, 0.8, -0.9);
-    DrawBridgeTest2(bridgePos5, 0.0);
-    DirectX::SimpleMath::Vector3 bridgePos6(.6, 0.8, -1.2);
-    DrawBridgeTest2(bridgePos6, Utility::ToRadians(90.0));
-    DirectX::SimpleMath::Vector3 bridgePos7(.8, 0.8, -1.5);
-    DrawBridgeTest2(bridgePos7, Utility::ToRadians(45.0));
-    DirectX::SimpleMath::Vector3 bridgePos8(1.3, 0.8, -1.0);
-    DrawBridgeTest2(bridgePos8, Utility::ToRadians(135.0));
-
-    DirectX::SimpleMath::Vector3 bridgePos9(1.3, 1.5, -0.5);
-    //DrawBridgeTest2(bridgePos9, Utility::ToRadians(m_timer.GetTotalSeconds() * 6.0 ));
-    DrawBridgeTest2(bridgePos9, m_timer.GetTotalSeconds() * 0.5);
-
-    DirectX::SimpleMath::Vector3 bridgePos10(1.3, 1.5, -0.8);
-    DrawBridgeTest2(bridgePos10, - m_timer.GetTotalSeconds() * 0.5);
-    */
-
     float dimmer = static_cast<float>(m_timer.GetTotalSeconds());
-    if (dimmer >= 4.8)
+    if (dimmer >= 6.8)
     {
         DrawWorldWithLighting();
     }
@@ -6512,18 +6466,18 @@ void Game::Render()
 
     
     //if (dimmer < 4.0 || (dimmer > 4.2 && dimmer < 4.4) || (dimmer > 4.6 && dimmer < 4.8) || (dimmer > 5.0 && dimmer < 5.2))
-    if (dimmer < 4.0 || (dimmer > 4.1 && dimmer < 4.2) || (dimmer > 4.3 && dimmer < 4.4) || (dimmer > 4.5 && dimmer < 4.6) || (dimmer > 4.7 && dimmer < 4.8))
+    if ((dimmer < 6.0 ) || (dimmer > 6.1 && dimmer < 6.2) || (dimmer > 6.3 && dimmer < 6.4) || (dimmer > 6.5 && dimmer < 6.6) || (dimmer > 6.7 && dimmer < 6.8))
     {
         DrawWorld12thHole();
     }
 
-    //DrawDebugLightDirection();
+    DrawDebugLightDirection();
     //DrawDebugLines();
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
         //DrawWorld12thHole();
         //DrawShotAimCone();
-        DrawShotAimArrow();
+        //DrawShotAimArrow();
 
         if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {
@@ -6544,9 +6498,6 @@ void Game::Render()
     }
     
     m_batch->End();
-    
-   
- 
     
 
     /*
@@ -6598,9 +6549,9 @@ void Game::Render()
     }
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
-        DrawPowerBarUI();
+        //DrawPowerBarUI();
         //DrawSwingUI();
-        DrawUI();
+        //DrawUI();
     }
 
     m_spriteBatch->End();

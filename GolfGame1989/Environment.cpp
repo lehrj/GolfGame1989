@@ -1106,7 +1106,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f); 
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(7.0f, 0.0f, 0.0f);
 
     ++i;
     m_environs[i].name = "Breezy";    

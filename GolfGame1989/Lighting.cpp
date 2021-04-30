@@ -255,6 +255,7 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             ilights->SetLightEnabled(2, true);
             auto time = static_cast<float>(aTimer);
             float pitch = time * 0.7f;
+            pitch -= 3.0;
             auto quat = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, 0.0, 1.0);
 
             DirectX::SimpleMath::Vector3 axis = DirectX::SimpleMath::Vector3::UnitX;
@@ -278,15 +279,23 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             m_lightPos0 = light0;
             m_lightPos1 = light1;
             m_lightPos2 = light2;
-
+            
             DirectX::SimpleMath::Vector3 axis2 = DirectX::SimpleMath::Vector3::UnitY;
             DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::UnitY;
             DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0));
             axis2 = DirectX::SimpleMath::Vector3::Transform(axis2, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0)));
             point = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0)));
-            DirectX::SimpleMath::Vector3 testLight = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis2, pitch * .25));
-
-            testLight.y += .4;
+            DirectX::SimpleMath::Vector3 testLight = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis2, pitch * 0.2));
+            
+            /*
+            DirectX::SimpleMath::Vector3 axis2 = DirectX::SimpleMath::Vector3::UnitY;
+            DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::UnitY;
+            DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0));
+            axis2 = DirectX::SimpleMath::Vector3::Transform(axis2, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0)));
+            point = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0)));
+            DirectX::SimpleMath::Vector3 testLight = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis2, -pitch * .25));
+            */
+            //testLight.y += .4;
             testLight.Normalize();
             //testLight = light0;
             /*
