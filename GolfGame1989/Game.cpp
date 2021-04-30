@@ -25,7 +25,7 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
     pLighting = new Lighting();
-    //pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
+    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
     pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_TESTSUNMOVE2);
 
     if (m_isInDebugMode == false)
@@ -3995,6 +3995,10 @@ void Game::DrawTree06Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     DirectX::XMVECTORF32 branchColor3 = DirectX::Colors::Black;
     DirectX::XMVECTORF32 branchColor4 = DirectX::Colors::ForestGreen;
     DirectX::XMVECTORF32 branchColor5 = DirectX::Colors::LawnGreen;
+    branchColor1 = branchColor4;
+    branchColor5 = branchColor4;
+    //branchColor2 = branchColor4;
+    //branchColor3 = branchColor4;
     const int layerCount = 30;
     for (int i = 1; i < layerCount; ++i)
     {
@@ -4037,8 +4041,11 @@ void Game::DrawTree06Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
         VertexPositionNormalColor branchBaseLowerR(branchBaseLowerVert, testNormR, branchColor2);
         VertexPositionNormalColor branchBaseLowerLiteR(branchBaseLowerVert, testNormR, branchColor5);
 
+        //m_batch2->DrawTriangle(leafL, branchBaseLowerL, branchBaseVertexLiteL);
+        //m_batch2->DrawTriangle(leafRightLower, branchBaseVertexR, branchBaseLowerR);
+
         m_batch2->DrawTriangle(leafL, branchBaseLowerL, branchBaseVertexLiteL);
-        m_batch2->DrawTriangle(leafRightLower, branchBaseVertexR, branchBaseLowerR);
+        m_batch2->DrawTriangle(leafR, branchBaseVertexR, branchBaseLowerR);
 
         if (i > 28)
         {
@@ -4740,7 +4747,6 @@ void Game::DrawTree07Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
     DirectX::SimpleMath::Vector3 testLeafL;
     DirectX::SimpleMath::Vector3 testLeafR;
 
-
     float widthMod = 1.2f;
     const int layerCount = 25;
     for (int i = 1; i < layerCount; ++i)
@@ -4773,18 +4779,25 @@ void Game::DrawTree07Test3(const DirectX::SimpleMath::Vector3 aTreePos, const fl
         branchBaseLowerVert.y -= halfBranchGap;
 
         VertexPositionNormalColor leafLeftLower(branchEndLeftLower, leafNormLeft, branchColor1);
-        VertexPositionNormalColor leafRightLower(branchEndRightLower, leafNormRight, branchColor2);
+        VertexPositionNormalColor leafRightLower(branchEndRightLower, leafNormRight, branchColor1);
         VertexPositionNormalColor leafRightLowerTest(branchEndRightLower, leafNormRight, branchColor2);
         VertexPositionNormalColor branchBaseLower(branchBaseLowerVert, DirectX::SimpleMath::Vector3::UnitY, branchColor1);
         VertexPositionNormalColor branchBaseLowerRight(branchBaseLowerVert, leafNormRight, branchColor2);
 
+        /*
         //m_batch->DrawQuad(leafL, leafLeftLower, branchBaseLower, branchBaseVertex);
         m_batch2->DrawQuad(leafLeftLower, leafL, branchBaseLower, branchBaseVertex);
         //m_batch->DrawQuad(leafR, branchBaseVertex, branchBaseLower, leafRightLower);
         //m_batch->DrawQuad(leafRightLower, leafR, branchBaseVertex, leafRightLower);
         m_batch2->DrawQuad(leafRightLower, leafRTest, branchBaseLowerRight, branchBaseVertex);
+        */
 
-        m_batch2->DrawLine(branchBaseVertex, leafRightLower);
+
+        m_batch2->DrawQuad(leafLeftLower, leafL, branchBaseLower, branchBaseVertex);
+
+        m_batch2->DrawQuad(leafRightLower, leafR, branchBaseLower, branchBaseVertex);
+
+        ////////////////m_batch2->DrawLine(branchBaseVertex, leafRightLower);
         //m_batch->DrawLine(branchBaseVertex, leafL);
 
         // Test verts
@@ -5191,7 +5204,7 @@ void Game::DrawTree09Test1(const DirectX::SimpleMath::Vector3 aTreePos, const fl
         //VertexPositionColor prevBranchBaseBackground = prevBranchBaseVertex;
         VertexPositionNormalColor prevBranchBaseBackground(branchBase, DirectX::SimpleMath::Vector3::UnitY, Colors::Black);
 
-        VertexPositionNormalColor leafRBackground(branchEndR, leafNormRight, Colors::PaleGreen);
+        VertexPositionNormalColor leafRBackground(branchEndR, leafNormRight, Colors::SpringGreen);
         VertexPositionNormalColor leafLBackground(branchEndL, leafNormLeft, Colors::SpringGreen);
 
         //prevBranchBaseVertex = branchBaseVertex;
@@ -5848,6 +5861,14 @@ void Game::DrawWorld12thHole()
 
 void Game::DrawWorldWithLighting()
 {
+    // draw background sky
+    DirectX::SimpleMath::Vector4 skyColor = Colors::Blue;
+    VertexPositionNormalColor topLeft(DirectX::SimpleMath::Vector3(6.0, 6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor topRight(DirectX::SimpleMath::Vector3(6.0, 6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor bottomRight(DirectX::SimpleMath::Vector3(6.0, -6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
+    VertexPositionNormalColor bottomLeft(DirectX::SimpleMath::Vector3(6.0, -6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
+    m_batch2->DrawQuad(topLeft, topRight, bottomRight, bottomLeft);
+
     DrawWater2();
     //DrawSand();
 
@@ -5959,7 +5980,7 @@ void Game::Initialize(HWND window, int width, int height)
     m_retryAudio = false;
     m_audioBank = std::make_unique<WaveBank>(m_audioEngine.get(), L"audioBank.xwb");
 
-    bool result;
+    bool result = true;
     bool isInitSuccessTrue = true;
 
     result = InitializeTerrainArray();
@@ -6238,11 +6259,11 @@ bool Game::InitializeTerrainArray2()
         }
         else if (i % 2 == 0)
         {
-            m_terrainVertexArrayBase[i].color = baseColor;
+            m_terrainVertexArrayBase2[i].color = baseColor;
         }
         else
         {
-            m_terrainVertexArrayBase[i].color = baseColor2;
+            m_terrainVertexArrayBase2[i].color = baseColor2;
         }
         
     }
@@ -6380,8 +6401,10 @@ void Game::Render()
     }
     
     Clear();
-   
-
+    
+    pCamera->SetPos(DirectX::SimpleMath::Vector3(0.1, 0.45, -0.8));
+    pCamera->SetTargetPos(DirectX::SimpleMath::Vector3(3.0, 0.3, -0.6));
+    
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -6460,13 +6483,13 @@ void Game::Render()
     DirectX::SimpleMath::Vector3 bridgePos10(1.3, 1.5, -0.8);
     DrawBridgeTest2(bridgePos10, - m_timer.GetTotalSeconds() * 0.5);
     */
-    DirectX::SimpleMath::Vector4 skyColor = Colors::Blue;
-    VertexPositionNormalColor topLeft(DirectX::SimpleMath::Vector3(6.0, 6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor topRight(DirectX::SimpleMath::Vector3(6.0, 6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor bottomRight(DirectX::SimpleMath::Vector3(6.0, -6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor bottomLeft(DirectX::SimpleMath::Vector3(6.0, -6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
-    m_batch2->DrawQuad(topLeft, topRight, bottomRight, bottomLeft);
-    DrawWorldWithLighting();
+
+    float dimmer = static_cast<float>(m_timer.GetTotalSeconds());
+    if (dimmer >= 4.8)
+    {
+        DrawWorldWithLighting();
+    }
+    //DrawWorldWithLighting();
 
     m_batch2->End();
     
@@ -6486,6 +6509,13 @@ void Game::Render()
     //m_d3dContext->IASetInputLayout(m_inputLayout.Get());   
     
     m_batch->Begin();
+
+    
+    //if (dimmer < 4.0 || (dimmer > 4.2 && dimmer < 4.4) || (dimmer > 4.6 && dimmer < 4.8) || (dimmer > 5.0 && dimmer < 5.2))
+    if (dimmer < 4.0 || (dimmer > 4.1 && dimmer < 4.2) || (dimmer > 4.3 && dimmer < 4.4) || (dimmer > 4.5 && dimmer < 4.6) || (dimmer > 4.7 && dimmer < 4.8))
+    {
+        DrawWorld12thHole();
+    }
 
     //DrawDebugLightDirection();
     //DrawDebugLines();

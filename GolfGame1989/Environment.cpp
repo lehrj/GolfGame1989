@@ -1103,12 +1103,9 @@ void Environment::LoadEnvironmentData()
     m_environs[i].par = 3;
     m_environs[i].scale = 0.02;
     m_environs[i].teeDirection = 0.0f;
-    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-2.0f, 0.0f, -2.0f); 
-    //m_environs[i].teePosition = DirectX::SimpleMath::Vector3(0.1f, 0.0f, 0.0f);
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f); 
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    //m_environs[i].wind = DirectX::SimpleMath::Vector3(-0.4f, 0.0f, -0.9f);
     m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     ++i;
@@ -1224,7 +1221,8 @@ void Environment::LoadFixtureBucket()
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(0.424795, 0.0, 0.470628), FixtureType::FIXTURETYPE_TREE07));
     // tee side of river trees on the left
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.754723, 0.0, -1.338842), FixtureType::FIXTURETYPE_TREE06));
-    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.610597, 0.0, -1.201794), FixtureType::FIXTURETYPE_TREE07));
+    //posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.610597, 0.0, -1.201794), FixtureType::FIXTURETYPE_TREE07));
+    posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.510597, 0.0, -1.601794), FixtureType::FIXTURETYPE_TREE07));
     posList.push_back(std::pair(DirectX::SimpleMath::Vector3(.565788, 0.0, -1.387254), FixtureType::FIXTURETYPE_TREE09));
 
     // hole side north of bridge 1
