@@ -6401,10 +6401,10 @@ void Game::Render()
     }
     
     Clear();
-    
+    /*
     pCamera->SetPos(DirectX::SimpleMath::Vector3(0.1, 0.45, -0.8));
     pCamera->SetTargetPos(DirectX::SimpleMath::Vector3(3.0, 0.3, -0.6));
-    
+    */
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -6477,7 +6477,7 @@ void Game::Render()
     {
         //DrawWorld12thHole();
         //DrawShotAimCone();
-        //DrawShotAimArrow();
+        DrawShotAimArrow();
 
         if (pCamera->GetCameraState() == CameraState::CAMERASTATE_SWINGVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_PROJECTILEFLIGHTVIEW || pCamera->GetCameraState() == CameraState::CAMERASTATE_FIRSTPERSON)
         {
@@ -6549,9 +6549,9 @@ void Game::Render()
     }
     if (m_currentGameState == GameState::GAMESTATE_GAMEPLAY)
     {
-        //DrawPowerBarUI();
+        DrawPowerBarUI();
         //DrawSwingUI();
-        //DrawUI();
+        DrawUI();
     }
 
     m_spriteBatch->End();

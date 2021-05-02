@@ -253,70 +253,22 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             ilights->SetLightEnabled(0, true);
             ilights->SetLightEnabled(1, true);
             ilights->SetLightEnabled(2, true);
-            auto time = static_cast<float>(aTimer);
-            float pitch = time * 0.7f;
-            pitch -= 3.0;
-            auto quat = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(pitch, 0.0, 1.0);
 
-            DirectX::SimpleMath::Vector3 axis = DirectX::SimpleMath::Vector3::UnitX;
-            DirectX::SimpleMath::Vector3 light0 = XMVector3Rotate(axis, quat);
-            DirectX::SimpleMath::Vector3 light1 = XMVector3Rotate(axis, quat);
-            DirectX::SimpleMath::Vector3 light2 = XMVector3Rotate(axis, quat);
-            /*
-            light0.x += 1.0;
-            //light0.y -= 1.0;
-            light0.Normalize();
-            light1.x += 1.0;
-            //light1.y -= 1.0;
-            light1.Normalize();
-            light2.x += 1.0;
-            //light2.y -= 1.0;
-            light2.Normalize();
-            */
-            ilights->SetLightDirection(0, light0);
-            ilights->SetLightDirection(1, light1);
-            ilights->SetLightDirection(2, light2);
-            m_lightPos0 = light0;
-            m_lightPos1 = light1;
-            m_lightPos2 = light2;
+            float pointAngle = Utility::ToRadians(45.0);
+            float axisAngle = pointAngle - Utility::ToRadians(90.0);
+            DirectX::SimpleMath::Vector3 axis = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3::UnitY, DirectX::SimpleMath::Matrix::CreateRotationZ(axisAngle));
+            DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3::UnitY, DirectX::SimpleMath::Matrix::CreateRotationZ(pointAngle));
+            float pitch = (static_cast<float>(aTimer) * 0.2) - 1.0;
+            DirectX::SimpleMath::Vector3 lightDirection = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis, pitch));
             
-            DirectX::SimpleMath::Vector3 axis2 = DirectX::SimpleMath::Vector3::UnitY;
-            DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::UnitY;
-            DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0));
-            axis2 = DirectX::SimpleMath::Vector3::Transform(axis2, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0)));
-            point = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0)));
-            DirectX::SimpleMath::Vector3 testLight = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis2, pitch * 0.2));
-            
-            /*
-            DirectX::SimpleMath::Vector3 axis2 = DirectX::SimpleMath::Vector3::UnitY;
-            DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::UnitY;
-            DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0));
-            axis2 = DirectX::SimpleMath::Vector3::Transform(axis2, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(45.0)));
-            point = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateRotationZ(Utility::ToRadians(-45.0)));
-            DirectX::SimpleMath::Vector3 testLight = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis2, -pitch * .25));
-            */
-            //testLight.y += .4;
-            testLight.Normalize();
-            //testLight = light0;
-            /*
-            if (testLight.y < 0.0)
-            {
-                float mod = testLight.y;
-                //testLight *= mod;
-            }
-            else
-            {
-                float mod = abs(testLight.y);
-                testLight *= mod;
-                //testLight = DirectX::SimpleMath::Vector3::Zero;
-            }
-            */
-            ilights->SetLightDirection(0, testLight);
-            ilights->SetLightDirection(1, testLight);
-            ilights->SetLightDirection(2, testLight);
-            m_lightPos0 = testLight;
-            m_lightPos1 = testLight;
-            m_lightPos2 = testLight;
+            lightDirection.Normalize();
+
+            ilights->SetLightDirection(0, lightDirection);
+            ilights->SetLightDirection(1, lightDirection);
+            ilights->SetLightDirection(2, lightDirection);
+            m_lightPos0 = lightDirection;
+            m_lightPos1 = lightDirection;
+            m_lightPos2 = lightDirection;
         }
     }
 }

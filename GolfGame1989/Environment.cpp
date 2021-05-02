@@ -282,43 +282,14 @@ std::vector<DirectX::VertexPositionNormalColor> Environment::GetTerrainPositionN
 
 float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
 {
-    /*
-    DirectX::SimpleMath::Vector3 vZero = m_terrainModel[0].position;
-    DirectX::SimpleMath::Vector3 vOne = m_terrainModel[1].position;
-    DirectX::SimpleMath::Vector3 vTwo = m_terrainModel[2].position;
-    vZero.y = 0.0;
-    vOne.y = 0.0;
-    vTwo.y = 0.0;
-    float maxDistance0 = DirectX::SimpleMath::Vector3::Distance(vZero, vOne);
-    float maxDistance1 = DirectX::SimpleMath::Vector3::Distance(vOne, vTwo);
-    float maxDistance2 = DirectX::SimpleMath::Vector3::Distance(vTwo, vZero);
-    */
     DirectX::SimpleMath::Vector3 prePos = aPos;
     bool foundHeightBarry = false;
     bool foundHeight = false;
-    int index = 0;
     
     int i = 0;
     
-    if (aPos.z >= 0.0)
-    {
-        //i = m_terrainModel.size() / 2;
-        //i -= 3;
-        i == 2001;
-    }
-    //for (int i = 0; i < m_terrainModel.size() / 3; ++i)
-    //for (int i = 0; i < m_terrainModel.size(); ++i)
     for (i; i < m_terrainModel.size(); ++i)
     {
-        /*
-        int index = i * 3;
-        DirectX::XMFLOAT3 vertex1 = m_terrainModel[index].position;
-        ++index;
-        DirectX::XMFLOAT3 vertex2 = m_terrainModel[index].position;
-        ++index;
-        DirectX::XMFLOAT3 vertex3 = m_terrainModel[index].position;
-        */
-        
         DirectX::XMFLOAT3 vertex1 = m_terrainModel[i].position;
         ++i;
         DirectX::XMFLOAT3 vertex2 = m_terrainModel[i].position;
@@ -333,7 +304,6 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
         float g = prePos.z;
         DirectX::SimpleMath::Vector3 baryPos = DirectX::SimpleMath::Vector3::Barycentric(vertex1, vertex2, vertex3, f, g);
 
-        //if (baryPos.x <= 1.0f && baryPos.y <= 1.0f && baryPos.z <= 1.0f)
         if (baryPos.x <= 1.0f && baryPos.x >= 0.0f && baryPos.y <= 1.0f && baryPos.y >= 0.0f && baryPos.z <= 1.0f && baryPos.z >= 0.0f)
         {
             foundHeightBarry = true;
@@ -374,7 +344,6 @@ float Environment::GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const
             return aPos.y;
         }
     }
-    //float errorHeight = -2.0;
     float errorHeight = aPos.y;
     return errorHeight;
 }
@@ -1106,7 +1075,7 @@ void Environment::LoadEnvironmentData()
     m_environs[i].teePosition = DirectX::SimpleMath::Vector3(-0.3f, 0.0f, -0.3f); 
     SetPosToTerrain(m_environs[i].teePosition);
     m_environs[i].terrainColor = DirectX::Colors::Green;
-    m_environs[i].wind = DirectX::SimpleMath::Vector3(7.0f, 0.0f, 0.0f);
+    m_environs[i].wind = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
 
     ++i;
     m_environs[i].name = "Breezy";    

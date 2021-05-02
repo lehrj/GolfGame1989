@@ -33,7 +33,6 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     float traversalDistance = (aEnterRadiusPos - aExitRadiusPos).Length();
     double traversalTime = aExitRadiusTime - aEnterRadiusTime;
 
-    float verticalDropNeeded;
     float verticalDrop = .5 * m_ball.gravity * (traversalTime * traversalTime);
     bool isInHole = false;
     if (abs(verticalDrop) >= m_ball.radius)
@@ -958,15 +957,11 @@ void GolfBall::RollBall()
         ++i;
     }
 
-    float testStop = stopTolerance;
-    float testSpeed = m_ball.q.velocity.Length();
-
     if (i > overflowTolerance - 2)
     {
         m_ball.q.position.y += 10.0f;
         PushFlightData();
     }
-
 }
 
 void GolfBall::RollBall2()
