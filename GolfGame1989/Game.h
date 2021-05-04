@@ -141,13 +141,10 @@ private:
 
     // variables for lighting rendering
     using VertexTypeLighting = DirectX::VertexPositionNormalColor;
-    //std::shared_ptr<DirectX::NormalMapEffect>       m_effectNormColorLighting;
     std::shared_ptr<DirectX::BasicEffect>           m_effectNormColorLighting;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexTypeLighting>> m_batchNormColorLighting;
 
     using VertexType2 = DirectX::VertexPositionNormalColor;
-    //using VertexType2 = DirectX::VertexPositionColor;
-    //std::unique_ptr<DirectX::BasicEffect>           m_effect2;
     std::shared_ptr<DirectX::BasicEffect>           m_effect2;
     std::unique_ptr<DirectX::PrimitiveBatch<VertexType2>> m_batch2;
 
@@ -288,9 +285,9 @@ private:
     int                                         m_terrainVertexCount;
 
     std::vector<DirectX::VertexPositionNormalColor>   m_terrainVector2;
-    DirectX::VertexPositionNormalColor* m_terrainVertexArray2;
-    DirectX::VertexPositionNormalColor* m_terrainVertexArrayBase2;
-    int                                  m_terrainVertexCount2;
+    DirectX::VertexPositionNormalColor*         m_terrainVertexArray2;
+    DirectX::VertexPositionNormalColor*         m_terrainVertexArrayBase2;
+    int                                         m_terrainVertexCount2;
 
     float m_debugHeight = 0.0;
     float m_debugXpoint = 0.0;

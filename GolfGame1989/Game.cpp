@@ -6401,10 +6401,6 @@ void Game::Render()
     }
     
     Clear();
-    /*
-    pCamera->SetPos(DirectX::SimpleMath::Vector3(0.1, 0.45, -0.8));
-    pCamera->SetTargetPos(DirectX::SimpleMath::Vector3(3.0, 0.3, -0.6));
-    */
     // TODO: Add your rendering code here.
     // WLJ start
     m_d3dContext->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -6417,14 +6413,7 @@ void Game::Render()
 
     m_d3dContext->RSSetState(m_raster.Get()); // WLJ anti-aliasing  RenderTesting
 
-
-    //auto sampler = m_states->LinearClamp();
-    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
-
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-
-    //auto sampler = m_states->LinearClamp();
-    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
 
     void const* shaderByteCode2;
     size_t byteCodeLength2;
@@ -6433,17 +6422,11 @@ void Game::Render()
     m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
     m_effect2->Apply(m_d3dContext.Get());
 
-    //m_d3dContext->PSSetSamplers(0, 1, &sampler);
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
     m_batch2->Begin();
 
-    float dimmer = static_cast<float>(m_timer.GetTotalSeconds());
-    if (dimmer >= 6.8)
-    {
-        DrawWorldWithLighting();
-    }
-    //DrawWorldWithLighting();
+    DrawWorldWithLighting();
 
     m_batch2->End();
     
@@ -6460,16 +6443,7 @@ void Game::Render()
 
     m_effect->Apply(m_d3dContext.Get());
 
-    //m_d3dContext->IASetInputLayout(m_inputLayout.Get());   
-    
     m_batch->Begin();
-
-    
-    //if (dimmer < 4.0 || (dimmer > 4.2 && dimmer < 4.4) || (dimmer > 4.6 && dimmer < 4.8) || (dimmer > 5.0 && dimmer < 5.2))
-    if ((dimmer < 6.0 ) || (dimmer > 6.1 && dimmer < 6.2) || (dimmer > 6.3 && dimmer < 6.4) || (dimmer > 6.5 && dimmer < 6.6) || (dimmer > 6.7 && dimmer < 6.8))
-    {
-        DrawWorld12thHole();
-    }
 
     DrawDebugLightDirection();
     //DrawDebugLines();
@@ -6498,30 +6472,6 @@ void Game::Render()
     }
     
     m_batch->End();
-    
-
-    /*
-    void const* shaderByteCodeLighting;
-    size_t byteCodeLengthLighting;
-    m_effectNormColorLighting->GetVertexShaderBytecode(&shaderByteCodeLighting, &byteCodeLengthLighting);
-    DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(DirectX::VertexPositionNormalColor::InputElements, DirectX::VertexPositionNormalColor::InputElementCount, shaderByteCodeLighting, byteCodeLengthLighting, m_inputLayout.ReleaseAndGetAddressOf()));
-    m_batchNormColorLighting = std::make_unique<PrimitiveBatch<DirectX::VertexPositionNormalColor>>(m_d3dContext.Get());
-
-    m_effectNormColorLighting->Apply(m_d3dContext.Get());
-
-    m_d3dContext->IASetInputLayout(m_inputLayout.Get());
-    m_batchNormColorLighting->Begin();
-    m_batchNormColorLighting->End();
-    */
-
-
-
-    // Testing shapes for skydome
-    //void XM_CALLCONV Draw(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection, FXMVECTOR color = Colors::White, _In_opt_ ID3D11ShaderResourceView * texture = nullptr, bool wireframe = false,
-    //   _In_opt_ std::function<void __cdecl()> setCustomState = nullptr) const;
-    //m_shape->Draw(m_world, m_view, m_proj);
-    //m_shape->Draw(m_world, m_view, m_proj);
-    //m_shape->Draw(m_world, m_view, m_proj, DirectX::Colors::SkyBlue, nullptr, false);
 
     m_spriteBatch->Begin();
     

@@ -218,13 +218,10 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             auto quat0 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(-roll, 0.0, 0.0);
             auto quat1 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(roll, 0.0, 0.0);
             auto quat2 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
-            //auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
             auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, 0.0, roll);
-            //auto quat3 = DirectX::SimpleMath::Quaternion::CreateFromYawPitchRoll(0.0, roll, 0.0);
             auto light0 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat0);
             auto light1 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat1);
             auto light2 = XMVector3Rotate(DirectX::SimpleMath::Vector3::UnitX, quat2);
-            //auto light3 = XMVector3Rotate(-DirectX::SimpleMath::Vector3::UnitY, quat3);
             DirectX::SimpleMath::Vector3 light3 = XMVector3Rotate(m_lightControlDirection, quat3);
           
             float roll2 = time * 3.1f;
@@ -258,7 +255,8 @@ void Lighting::UpdateLighting(std::shared_ptr<DirectX::BasicEffect> aEffect, con
             float axisAngle = pointAngle - Utility::ToRadians(90.0);
             DirectX::SimpleMath::Vector3 axis = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3::UnitY, DirectX::SimpleMath::Matrix::CreateRotationZ(axisAngle));
             DirectX::SimpleMath::Vector3 point = DirectX::SimpleMath::Vector3::Transform(DirectX::SimpleMath::Vector3::UnitY, DirectX::SimpleMath::Matrix::CreateRotationZ(pointAngle));
-            float pitch = (static_cast<float>(aTimer) * 0.2) - 1.0;
+            float pitch = (static_cast<float>(aTimer) * 0.2) - 5.0;
+            pitch = Utility::ToRadians(175.0);
             DirectX::SimpleMath::Vector3 lightDirection = DirectX::SimpleMath::Vector3::Transform(point, DirectX::SimpleMath::Matrix::CreateFromAxisAngle(axis, pitch));
             
             lightDirection.Normalize();
