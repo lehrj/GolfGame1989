@@ -25,8 +25,6 @@ public:
     CameraState GetCameraState() const { return m_cameraState; };
     float GetAimTurnRate() const { return m_aimTurnRate; };
 
-    DirectX::SimpleMath::Vector3 GetHomePos() const { return m_homePosition; };
-    double GetPitch() const { return m_pitch; };
     DirectX::SimpleMath::Vector3 GetPos() const { return m_position; };
     DirectX::SimpleMath::Vector3 GetPreSwingCamPos(DirectX::SimpleMath::Vector3 aPosition, float aDirection);
     DirectX::SimpleMath::Vector3 GetPreSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
@@ -35,19 +33,11 @@ public:
     DirectX::SimpleMath::Vector3 GetSwingTargPos(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     DirectX::SimpleMath::Matrix GetViewMatrix() const { return m_viewMatrix; };
     DirectX::SimpleMath::Vector3 GetTargetPos() const { return m_target; };
-    DirectX::SimpleMath::Vector3 GetUp() const { return m_up; };
-    double GetYaw() const { return m_yaw; };
+
     void InintializePreSwingCamera(DirectX::SimpleMath::Vector3 aPosition, float aDirectionDegrees);
     bool IsCameraAtDestination();
     void OnResize(uint32_t aWidth, uint32_t aHeight);
     void Reset();
-    void ResetCameraTransition(DX::StepTimer const& aTimer);
-    void ResetIsCameraAtDestination() { m_isCameraAtDestination = false; };
-    void ReverseTransitionDirection();
-    void Rotate(DirectX::SimpleMath::Vector3 aAxis, float aDegrees); //Pavel
-    void RotateAtSpeed(float aDx, float aDy);  //Chili
-    void RotateCounterClockWise();
-    void RotateClockWise();
     
     void SetCameraState(const CameraState aCameraState);
     void SetDestinationPos(const DirectX::SimpleMath::Vector3 aDestPos);
@@ -61,8 +51,6 @@ public:
     void SetTargetEndPos(DirectX::SimpleMath::Vector3 aEndPos);
     void SetTargetStartPos(DirectX::SimpleMath::Vector3 aStartPos);
 
-    void TranslateAtSpeed(DirectX::SimpleMath::Vector3 aTranslation); //Chili
-
     void UpdateCamera(DX::StepTimer const& aTimer);
     void UpdateFirstPersonCamera();
     void UpdatePitchYaw(const float aPitch, const float aYaw);
@@ -70,17 +58,14 @@ public:
     void UpdateTransitionCamera(DX::StepTimer const& aTimer);
     
     void UpdateTimer(DX::StepTimer const& aTimer) { m_cameraTimer = aTimer; };
-    DX::StepTimer GetCameraTimer() { return m_cameraTimer; };
 
-    void YawSpin(float aTurn);
     void TurnAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
     void TurnEndPosAroundPoint(float aTurn, DirectX::SimpleMath::Vector3 aCenterPoint);
 
-
 private:
-    void InitializeOrthoganalMatrix(); //Pavel
-    void InitializeProjectionMatrix(); //Pavel
-    void InitializeViewMatrix(); //Pavel
+    void InitializeOrthoganalMatrix();
+    void InitializeProjectionMatrix();
+    void InitializeViewMatrix();
     void UpdateProjectionMatrix();
     void UpdateOrthoganalMatrix();
     void UpdateViewMatrix();
@@ -95,7 +80,7 @@ private:
     float                           m_pitch;
     float                           m_homeYaw;
     float                           m_yaw;
-    //float                           m_frustumAngle;
+    
     int                             m_clientWidth;
     int                             m_clientHeight;
     float                           m_nearPlane = 0.0001f;
@@ -123,12 +108,7 @@ private:
     float                           m_moveBackForward = 0.0f;
     float                           m_moveLeftRight = 0.0f;
     float                           m_moveUpDown = 0.0f;
-    /*
-    const DirectX::SimpleMath::Vector3 m_preSwingCamPosOffset = DirectX::SimpleMath::Vector3(-0.25f, 0.07f, 0.0f);
-    const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.5f, 0.11f, 0.0f);
-    const DirectX::SimpleMath::Vector3 m_swingCamPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.02f, 0.2f);
-    const DirectX::SimpleMath::Vector3 m_swingTargetPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
-    */
+
     const DirectX::SimpleMath::Vector3 m_preSwingCamPosOffset = DirectX::SimpleMath::Vector3(-0.25f, 0.07f, 0.0f);
     const DirectX::SimpleMath::Vector3 m_preSwingTargetPosOffset = DirectX::SimpleMath::Vector3(0.5f, 0.11f, 0.0f);
     const DirectX::SimpleMath::Vector3 m_swingCamPosOffset = DirectX::SimpleMath::Vector3(0.0f, 0.03f, 0.1f);
