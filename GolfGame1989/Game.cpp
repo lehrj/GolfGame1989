@@ -25,8 +25,8 @@ Game::Game() noexcept :
     pCamera = new Camera(m_outputWidth, m_outputHeight);
     pCamera->InintializePreSwingCamera(pGolf->GetTeePos(), pGolf->GetTeeDirection());
     pLighting = new Lighting();
-    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
-    //pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_TESTSUNMOVE2);
+    //pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_NULL);
+    pLighting->SetLighting(Lighting::LightingState::LIGHTINGSTATE_TESTSUNMOVE2);
 
     if (m_isInDebugMode == false)
     {
@@ -4997,14 +4997,6 @@ void Game::DrawWorld12thHole()
 
 void Game::DrawWorldWithLighting()
 {
-    // draw background sky
-    DirectX::SimpleMath::Vector4 skyColor = Colors::Blue;
-    VertexPositionNormalColor topLeft(DirectX::SimpleMath::Vector3(6.0, 6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor topRight(DirectX::SimpleMath::Vector3(6.0, 6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor bottomRight(DirectX::SimpleMath::Vector3(6.0, -6.0, 6.0), SimpleMath::Vector3::UnitY, skyColor);
-    VertexPositionNormalColor bottomLeft(DirectX::SimpleMath::Vector3(6.0, -6.0, -6.0), SimpleMath::Vector3::UnitY, skyColor);
-    m_batch2->DrawQuad(topLeft, topRight, bottomRight, bottomLeft);
-
     DrawWater2();
     //DrawSand();
 
