@@ -24,17 +24,17 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     m_launchAngle = 0.0;
     m_launchVelocity = 0.0;
 
-    double Vc = 0.0;
+    float Vc = 0.0;
     double time = 0.0;
-    double dt = m_timeDelta; // Time delta between frames in seconds
-    double a, at; // stores previous time steps results for alpha and its first derivative
-    double b, bt; // stores previous time steps results for beta and its first derivative
-    double phi; // stores value of theta + beta
-    double Vc2; // square of club head velocity 
-    double ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
-    double bk1, bk2, bk3, bk4; // stores intermediate results of Runge-Kutta integration scheme
-    double velocityCapture = 0;
-    double launchAngle = 0.0;
+    float dt = static_cast<float>(m_timeDelta); // Time delta between frames in seconds
+    float a, at; // stores previous time steps results for alpha and its first derivative
+    float b, bt; // stores previous time steps results for beta and its first derivative
+    float phi; // stores value of theta + beta
+    float Vc2; // square of club head velocity 
+    float ak1, ak2, ak3, ak4; // stores intermediate results of Runge-Kutta integration scheme
+    float bk1, bk2, bk3, bk4; // stores intermediate results of Runge-Kutta integration scheme
+    float velocityCapture = 0;
+    float launchAngle = 0.0;
     bool isVcFound = false;
 
     for (int i = 0; i < m_swingStepIncrementCount; i++)
@@ -154,24 +154,24 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
     return m_impactData;
 }
 
-double GolfSwing::ComputeAlphaDotDot(void) const
+float GolfSwing::ComputeAlphaDotDot(void) const
 {
-    double A = (m_armMassMoI + m_club.massMoI + m_club.mass * m_armLength * m_armLength + 2 * m_armLength * m_club.firstMoment * cos(m_beta));
-    double B = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
-    double F = m_Qalpha - (m_beta_dot * m_beta_dot - 2 * m_alpha_dot * m_beta_dot) * m_armLength * m_club.firstMoment * sin(m_beta) + m_club.firstMoment
+    float A = (m_armMassMoI + m_club.massMoI + m_club.mass * m_armLength * m_armLength + 2 * m_armLength * m_club.firstMoment * cos(m_beta));
+    float B = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
+    float F = m_Qalpha - (m_beta_dot * m_beta_dot - 2 * m_alpha_dot * m_beta_dot) * m_armLength * m_club.firstMoment * sin(m_beta) + m_club.firstMoment
         * (m_gravity * sin(m_theta + m_beta) - m_shoulderHorizAccel * cos(m_theta + m_beta)) + (m_armFirstMoment + m_club.mass * m_armLength)
         * (m_gravity * sin(m_theta) - m_shoulderHorizAccel * cos(m_theta));
-    double D = m_club.massMoI;
-    double G = m_Qbeta - m_alpha_dot * m_alpha_dot * m_armLength * m_club.firstMoment * sin(m_beta) - m_club.firstMoment
+    float D = m_club.massMoI;
+    float G = m_Qbeta - m_alpha_dot * m_alpha_dot * m_armLength * m_club.firstMoment * sin(m_beta) - m_club.firstMoment
         * (m_gravity * sin(m_theta + m_beta) - m_shoulderHorizAccel * cos(m_theta + m_beta));
     return (F - (B * G / D)) / (A - (B * B / D));
 }
 
-double GolfSwing::ComputeBetaDotDot(void) const
+float GolfSwing::ComputeBetaDotDot(void) const
 {
-    double C = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
-    double D = m_club.massMoI;
-    double G = m_Qbeta - m_alpha_dot * m_alpha_dot * m_armLength * m_club.firstMoment * sin(m_beta) - m_club.firstMoment
+    float C = -(m_club.massMoI + m_armLength * m_club.firstMoment * cos(m_beta));
+    float D = m_club.massMoI;
+    float G = m_Qbeta - m_alpha_dot * m_alpha_dot * m_armLength * m_club.firstMoment * sin(m_beta) - m_club.firstMoment
         * (m_gravity * sin(m_theta + m_beta) - m_shoulderHorizAccel * cos(m_theta + m_beta));
     return (G - C * m_alpha_dotdot) / D;
 }
@@ -224,7 +224,7 @@ DirectX::SimpleMath::Vector3 GolfSwing::GetShoulderPos()
 
         DirectX::SimpleMath::Vector3 shoulderPos = club + arm;
 
-        float halfClubHeadWidth = (GetClubLength() * 0.11) * .5; // 0.11 is the ratio of club length to club head width as measured, use half that so ball impacts center of club head
+        float halfClubHeadWidth = (GetClubLength() * 0.11f) * .5f; // 0.11 is the ratio of club length to club head width as measured, use half that so ball impacts center of club head
         shoulderPos.z -= halfClubHeadWidth;  //use += for lefties once that functionality is implemented
         return shoulderPos;
     }
@@ -265,74 +265,74 @@ void GolfSwing::ResetAlphaBeta()
     // dependant variables 
     m_armFirstMoment = (m_armMass * m_armLength * m_armBalancePoint); // First moment of the arm rod about the shoulder axis kg m
     m_club.firstMoment = (m_club.mass * m_club.length * m_club.balancePoint); // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    m_shoulderHorizAccel = 0.1 * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
+    m_shoulderHorizAccel = 0.1f * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
     m_gamma = Utility::ToRadians(135.0);
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
-void GolfSwing::SetArmBalancePoint(double aBalancePoint)
+void GolfSwing::SetArmBalancePoint(float aBalancePoint)
 {
     m_armBalancePoint = aBalancePoint;
 }
 
-void GolfSwing::SetArmLength(double aLength)
+void GolfSwing::SetArmLength(float aLength)
 {
     m_armLength = aLength;
 }
 
-void GolfSwing::SetArmMass(double aArmMass)
+void GolfSwing::SetArmMass(float aArmMass)
 {
     m_armMass = aArmMass;
 }
 
-void GolfSwing::SetArmMassMoI(double aArmMassMoi)
+void GolfSwing::SetArmMassMoI(float aArmMassMoi)
 {
     m_armMassMoI = aArmMassMoi;
 }
 
-void GolfSwing::SetBackSwingPercentage(double aPercentage)
+void GolfSwing::SetBackSwingPercentage(float aPercentage)
 {
     m_backSwingPercentage = aPercentage;
     m_impactData.power = aPercentage;
 }
 
-void GolfSwing::SetBallPlacementAngle(double aAngle)
+void GolfSwing::SetBallPlacementAngle(float aAngle)
 {
     m_ballPlacementAngle = aAngle;
 }
 
-void GolfSwing::SetBeta(double aBeta)
+void GolfSwing::SetBeta(float aBeta)
 {
     m_beta = aBeta;
 }
 
-void GolfSwing::SetClubAngle(double aAngle)
+void GolfSwing::SetClubAngle(float aAngle)
 {
     m_club.angle = aAngle;
 }
 
-void GolfSwing::SetClubCoR(double aCoR)
+void GolfSwing::SetClubCoR(float aCoR)
 {
     m_club.coefficiantOfRestitution = aCoR;
 }
 
-void GolfSwing::SetClubLength(double aLength)
+void GolfSwing::SetClubLength(float aLength)
 {
     m_club.length = aLength;
 }
 
-void GolfSwing::SetClubLengthModifier(double aLengthModifier)
+void GolfSwing::SetClubLengthModifier(float aLengthModifier)
 {
     m_clubLengthModifier = aLengthModifier;
     m_club.length = m_club.lengthBase * m_clubLengthModifier;
 }
 
-void GolfSwing::SetClubMass(double aMass)
+void GolfSwing::SetClubMass(float aMass)
 {
     m_club.mass = aMass;
 }
 
-void GolfSwing::SetDefaultSwingValues(double aGravity)
+void GolfSwing::SetDefaultSwingValues(float aGravity)
 {
     Utility::ZeroImpactData(m_impactData);
 
@@ -357,27 +357,27 @@ void GolfSwing::SetDefaultSwingValues(double aGravity)
     // dependant variables 
     m_armFirstMoment = (m_armMass * m_armLength * m_armBalancePoint); // First moment of the arm rod about the shoulder axis kg m
     m_club.firstMoment = (m_club.mass * m_club.length * m_club.balancePoint); // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    m_shoulderHorizAccel = 0.1 * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
+    m_shoulderHorizAccel = 0.1f * VerifySwingGravityDirection(m_gravity); // Horizontal acceleration of the shoulder in  m/s^2
     m_gamma = Utility::ToRadians(135.0);
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians  
 }
 
-void GolfSwing::SetImpactDirectionDegrees(const double aDirectionDegrees)
+void GolfSwing::SetImpactDirectionDegrees(const float aDirectionDegrees)
 {
     m_impactData.directionDegrees = aDirectionDegrees;
 }
 
-void GolfSwing::SetShoulderAccel(double aShouldAcell)
+void GolfSwing::SetShoulderAccel(float aShouldAcell)
 {
     m_shoulderHorizAccel = aShouldAcell * VerifySwingGravityDirection(m_gravity);
 }
 
-void GolfSwing::SetQalpha(double aQalpha)
+void GolfSwing::SetQalpha(float aQalpha)
 {
     m_Qalpha = aQalpha;
 }
 
-void GolfSwing::SetQbeta(double aQbeta)
+void GolfSwing::SetQbeta(float aQbeta)
 {
     m_Qbeta = aQbeta;
 }
@@ -392,17 +392,17 @@ void GolfSwing::UpdateGolfSwingValues()
 {
     m_club.firstMoment = m_club.mass * m_club.length * m_club.balancePoint; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
     m_armFirstMoment = m_armMass * m_armLength * m_armBalancePoint; // First moment of the arm rod about the shoulder axis kg m
-    double swingFactor = m_impactData.power * 0.01;
+    float swingFactor = m_impactData.power * 0.01f;
     m_beta = m_beta * swingFactor;
     m_gamma = m_gamma * swingFactor;
     m_theta = m_gamma - m_alpha;  // Angle between arm rod and vertical axis in radians
 }
 
-void GolfSwing::UpdateGravityDependants(const double aGravity)
+void GolfSwing::UpdateGravityDependants(const float aGravity)
 {
     m_gravity = VerifySwingGravityDirection(aGravity);
 
-    m_shoulderHorizAccel = 0.1 * m_gravity;
+    m_shoulderHorizAccel = 0.1f * m_gravity;
 }
 
 void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
@@ -416,18 +416,18 @@ void GolfSwing::UpdateImpactData(Utility::ImpactData aImpactData)
     UpdateGolfSwingValues();
 }
 
-void GolfSwing::UpdateImpactDataAxis(const double aAxisAngle)
+void GolfSwing::UpdateImpactDataAxis(const float aAxisAngle)
 {
     m_impactData.ballAxisTilt += aAxisAngle;
 }
 
-void GolfSwing::UpdateImpactDataPlane(const double aPlaneAngle)
+void GolfSwing::UpdateImpactDataPlane(const float aPlaneAngle)
 {
     m_impactData.swingPlaneAngle += aPlaneAngle;
 }
 
 // Verify gravity direction is pointing in the right positive/negative direction for the swing equations
-double GolfSwing::VerifySwingGravityDirection(double aGravity) const
+float GolfSwing::VerifySwingGravityDirection(float aGravity) const
 {
     if (aGravity < 0.0) 
     {

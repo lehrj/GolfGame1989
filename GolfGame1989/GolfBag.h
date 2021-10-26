@@ -5,14 +5,14 @@
 struct GolfClub
 {
     std::string clubName;
-    double      angle;         // in degrees
-    double      balancePoint;  // center of balance along the length of club between 0 and 1
-    double      coefficiantOfRestitution; // club face coefficiant of restitution, aka club face spring, current USGA rules limit this to .830 in tournemnt play
-    double      firstMoment; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
-    double      length; // length of club in m
-    double      lengthBase; // Unmodified  club length
-    double      mass; // mass in kg
-    double      massMoI; // Mass moment of inertia of the rod representing the club in kg m^2
+    float      angle;         // in degrees
+    float      balancePoint;  // center of balance along the length of club between 0 and 1
+    float      coefficiantOfRestitution; // club face coefficiant of restitution, aka club face spring, current USGA rules limit this to .830 in tournemnt play
+    float      firstMoment; // First moment of the rod representing the club about the wrist axis (where the club rod connects to the arm rod) in kg m
+    float      length; // length of club in m
+    float      lengthBase; // Unmodified  club length
+    float      mass; // mass in kg
+    float      massMoI; // Mass moment of inertia of the rod representing the club in kg m^2
     float       difficultyFactor;
 };
 

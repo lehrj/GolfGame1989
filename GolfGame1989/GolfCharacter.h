@@ -8,15 +8,15 @@ struct Character
     std::string bioLine1;
     std::string bioLine2;
     std::string bioLine3;
-    double armBalancePoint;
+    float armBalancePoint;
     std::string armBalancePointStr;
-    double armLength;
+    float armLength;
     std::string armLengthStr;
-    double armMass;
+    float armMass;
     std::string armMassStr;
-    double armMassMoI;   
+    float armMassMoI;   
     std::string armMassMoIStr;
-    double clubLengthModifier;
+    float clubLengthModifier;
     std::string clubLengthModifierStr;
 };
 
@@ -25,16 +25,16 @@ class GolfCharacter
 public:
     GolfCharacter();
 
-    double GetArmBalancePoint(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armBalancePoint; };
+    float GetArmBalancePoint(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armBalancePoint; };
     std::string GetArmBalancePointString(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armBalancePointStr; };
-    double GetArmLength(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armLength; };
+    float GetArmLength(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armLength; };
     std::string GetArmLengthString(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armLengthStr; };
-    double GetArmMass(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMass; };
+    float GetArmMass(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMass; };
     std::string GetArmMassString(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMassStr; };
-    double GetArmMassMoI(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMassMoI; };
+    float GetArmMassMoI(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMassMoI; };
     std::string GetArmMassMoIString(const int aCharacterIndex) const { return m_characters[aCharacterIndex].armMassMoIStr; };
     int GetCharacterCount() const { return m_charactersAvailable; };
-    double GetClubLenghtModifier(const int aCharacterIndex) const { return m_characters[aCharacterIndex].clubLengthModifier; };
+    float GetClubLenghtModifier(const int aCharacterIndex) const { return m_characters[aCharacterIndex].clubLengthModifier; };
     std::string GetClubLenghtModifierString(const int aCharacterIndex) const { return m_characters[aCharacterIndex].clubLengthModifierStr; };
     std::string GetName(const int aCharacterIndex) const { return m_characters[aCharacterIndex].name; };
     std::string GetBioLine0(const int aCharacterIndex) const { return m_characters[aCharacterIndex].bioLine0; };

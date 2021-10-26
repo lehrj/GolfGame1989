@@ -80,12 +80,12 @@ void Golf::BuildEnvironSelectStrings()
     m_environSelectStrings.push_back(strVec);
 }
 
-void Golf::BuildHyrdraShotData(const double aDirectionDeg)
+void Golf::BuildHyrdraShotData(const float aDirectionDeg)
 {  
     pSwing->SetImpactDirectionDegrees(aDirectionDeg);
 
-    const double hydraAxisTilt = Utility::ToRadians(25.0);
-    const double hydraPlaneTurn = Utility::ToRadians(7.0);
+    const float hydraAxisTilt = Utility::ToRadians(25.0);
+    const float hydraPlaneTurn = Utility::ToRadians(7.0);
 
     m_hydraData.clear();
 
@@ -385,7 +385,8 @@ float Golf::GetDirectionToHoleInRads() const
 float Golf::GetShotDistance() const
 {
     float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
-    distance = distance * 1.09361;
+    const float metersToYards = 1.09361f;
+    distance = distance * metersToYards;
     distance = distance / pEnvironment->GetScale();
     return distance;
 }
@@ -393,7 +394,8 @@ float Golf::GetShotDistance() const
 std::string Golf::GetShotDistanceString() const
 {
     float distance = DirectX::SimpleMath::Vector3(m_shotStartPos - m_ballPos).Length();
-    distance = distance * 1.09361; // convert to yards
+    const float metersToYards = 1.09361f;
+    distance = distance * metersToYards; // convert to yards
     distance = distance / pEnvironment->GetScale();
     std::stringstream inVal;
     inVal.precision(Utility::GetNumericalPrecisionForUI());
@@ -507,9 +509,9 @@ void Golf::SetEnvironment(const int aEnvironmentIndex)
 
 void Golf::SetShotCordMax()
 {
-    double maxX = 0.0;
-    double maxY = 0.0;
-    double maxZ = 0.0;
+    float maxX = 0.0;
+    float maxY = 0.0;
+    float maxZ = 0.0;
     for (int i = 0; i < m_shotPath.size(); ++i)
     {
         if (maxX < m_shotPath[i].position.x)

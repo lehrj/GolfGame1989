@@ -9,7 +9,7 @@ public:
 
     void DebugShot();
     void CalculateScoreString(const int aPar);
-    double GetBackswingSet() const { return m_impactData.power; };
+    float GetBackswingSet() const { return m_impactData.power; };
     std::vector<std::string> GetDebugData();
     Utility::ImpactData GetImpactData() const { return m_impactData; };
     float GetImpact() const { return m_swingImpactProcessed; };
@@ -19,7 +19,7 @@ public:
     float GetSwingPower() const { return m_swingPower; };
     float GetMeterLength() const { return abs(m_swingPowerMax) + abs(m_swingOverImpact); };
     float GetMeterImpactPoint() const { return GetMeterLength() - m_swingPowerMax; };   
-    double GetShotDirection() const { return m_impactData.directionDegrees; };
+    float GetShotDirection() const { return m_impactData.directionDegrees; };
     int GetSwingCount() const { return m_swingCount; };
     std::string GetUIScoreString() const { return m_scoreString; };
     void IncrementSwingCount();
@@ -34,7 +34,7 @@ public:
     void SetPower();
     void StartSwing();
     void Swing();
-    void TurnShotAim(double aTurn, float aTurnRate);
+    void TurnShotAim(float aTurn, float aTurnRate);
     bool UpdateSwing();
     void UpdateSwingState();
 
@@ -64,7 +64,7 @@ private:
     const float                     m_swingPowerBunnyMax = 20.0;
     const float                     m_swingPowerTurtleMax = -20.0;
     const float                     m_swingPowerMax = 100.0;
-    const double                    m_turnRate = 10.0;
+    const float                    m_turnRate = 10.0;
 
     std::vector<std::string>        m_debugData;
 

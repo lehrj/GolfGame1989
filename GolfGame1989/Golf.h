@@ -16,15 +16,15 @@ public:
     ~Golf();
     
     void BuildEnvironSelectStrings();
-    void BuildHyrdraShotData(const double aDirectionDeg);
+    void BuildHyrdraShotData(const float aDirectionDeg);
     void BuildUIShotStrings();
     void BuildUISwingStrings();
     void CycleNextClub(const bool aIsCycleClubUp);
 
     std::vector<std::pair< DirectX::VertexPositionColor, DirectX::VertexPositionColor>> GetBallDebugLines() const { return pBall->GetDebugLines(); };
-    double GetBallPlacementAngleForSwing() const { return pSwing->GetBallPlacementAngle(); };
+    float GetBallPlacementAngleForSwing() const { return pSwing->GetBallPlacementAngle(); };
     DirectX::SimpleMath::Vector3 GetBallPosition() const { return m_ballPos; };
-    double GetBallRadius() { return pBall->GetBallRadius(); };
+    float GetBallRadius() { return pBall->GetBallRadius(); };
     std::string GetCharacterArmBalancePoint(const int aCharacterIndex) const;
     std::string GetCharacterArmLength(const int aCharacterIndex) const;
     std::string GetCharacterArmMass(const int aCharacterIndex) const;
@@ -45,9 +45,9 @@ public:
     std::vector<std::vector<BallMotion>>& GetHydraShotPath() { return m_hydraData; };
     bool GetIsBallInHole() const { return pBall->GetIsInHole(); };
     int GetImpactStep() const { return pSwing->GetSwingImpactStep(); };
-    double GetArmLength() { return pSwing->GetArmLength(); };
-    double GetClubLength() { return pSwing->GetClubLength(); };
-    double GetClubFaceAngle() { return pSwing->GetClubAngle(); };
+    float GetArmLength() { return pSwing->GetArmLength(); };
+    float GetClubLength() { return pSwing->GetClubLength(); };
+    float GetClubFaceAngle() { return pSwing->GetClubAngle(); };
     float GetDirectionToHoleInRads() const;   
     std::vector<Fixture> GetEnvironFixtureBucket() { return pEnvironment->GetFixtureBucket(); };
     DirectX::SimpleMath::Vector3 GetHolePosition() const { return pEnvironment->GetHolePosition(); };
@@ -71,7 +71,7 @@ public:
     std::vector<std::string> GetUIShotStrings() const { return m_uiShotStrings; };
     std::vector<std::string> GetUIStrings() const { return m_uiStrings; };
     std::vector<std::string> GetUISwingStrings() const { return m_uiSwingStrings; };
-    double GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
+    float GetWindDirectionRad() const { return pEnvironment->GetWindDirection(); };
     
     void InputData();
     void LoadEnvironment(const int aIndex);
@@ -105,12 +105,12 @@ private:
     DirectX::SimpleMath::Vector3                m_ballPos;
     DirectX::SimpleMath::Vector3                m_shotStartPos;
 
-    double                                      m_maxX;
-    double                                      m_maxY;
-    double                                      m_maxZ;
-    double                                      m_xWindow;
-    double                                      m_yWindow;
-    double                                      m_zWindow;
+    float                                      m_maxX;
+    float                                      m_maxY;
+    float                                      m_maxZ;
+    float                                      m_xWindow;
+    float                                      m_yWindow;
+    float                                      m_zWindow;
 
     int                                         m_selectedCharacter;
     int                                         m_selectedEnvironment;

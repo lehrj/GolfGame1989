@@ -181,7 +181,7 @@ void GolfPlay::SetAim(DirectX::SimpleMath::Vector3 aShotPos, DirectX::SimpleMath
     lineToHole.Normalize();
     DirectX::SimpleMath::Vector3 unitX = DirectX::SimpleMath::Vector3::UnitX;
 
-    double angle = acos(lineToHole.Dot(unitX));
+    float angle = acos(lineToHole.Dot(unitX));
     angle = Utility::WrapAngle(angle);
        
     if (aShotPos.z < aTargetPos.z)
@@ -189,7 +189,7 @@ void GolfPlay::SetAim(DirectX::SimpleMath::Vector3 aShotPos, DirectX::SimpleMath
         angle = -angle;
     }
 
-    double angleDegrees = Utility::ToDegrees(angle);
+    float angleDegrees = Utility::ToDegrees(angle);
     m_impactData.directionRads = angle;
     m_impactData.directionDegrees = angleDegrees;
 }
@@ -222,9 +222,9 @@ void GolfPlay::StartSwing()
     m_isSwingStart = true;
 }
 
-void GolfPlay::TurnShotAim(double aTurn, float aTurnRate)
+void GolfPlay::TurnShotAim(float aTurn, float aTurnRate)
 {
-    double turnInRadians = Utility::ToRadians(aTurn) * (aTurnRate * 57.2958);
+    float turnInRadians = Utility::ToRadians(aTurn) * (aTurnRate * 57.2958);
     m_impactData.directionDegrees += Utility::ToDegrees(turnInRadians);
     
     // wrap angle

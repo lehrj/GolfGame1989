@@ -10,6 +10,10 @@
 Environment::Environment()
 {
     bool result = InitializeTerrain();
+    if (result == false)
+    {
+        // ToDo: add error checking 
+    }
     LoadEnvironmentData();
     CreateDataStrings();
     const int startEnviron = 0;  // ToDo: add error checking 
@@ -35,7 +39,7 @@ void Environment::BuildFlagVertex(DirectX::SimpleMath::Vector3 aPos)
     flagTip.y -= flagHeight;
     flagTip.x -= flagWidth;
     flagTip.z -= flagWidth;
-    double windDirection = GetWindDirection();
+    float windDirection = GetWindDirection();
     flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
 
     DirectX::SimpleMath::Vector3 flagBottom = poleTop;
@@ -63,7 +67,7 @@ void Environment::BuildHoleVertex(DirectX::SimpleMath::Vector3 aPos)
     const float holeRadius = static_cast<float>(m_holeRadius * m_currentEnviron.scale);
     for (int i = 0; i <= vertexCount; ++i)
     {
-        double t = Utility::GetPi() * 2 * i / vertexCount;
+        float t = Utility::GetPi() * 2 * i / vertexCount;
         m_holeVertex.push_back(DirectX::VertexPositionColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::Colors::Gray));
         m_holeVertexTest1.push_back(DirectX::VertexPositionNormalColor(DirectX::SimpleMath::Vector3(static_cast<float>((holeRadius * cos(t))), static_cast<float>(m_landingHeight), static_cast<float>((holeRadius * -sin(t)))) + aPos, DirectX::SimpleMath::Vector3::UnitY, DirectX::Colors::Gray));
     }
@@ -392,7 +396,7 @@ DirectX::SimpleMath::Vector3 Environment::GetTerrainNormal(DirectX::SimpleMath::
     {
         //i = m_terrainModel.size() / 2;
         //i -= 3;
-        i == 2001;
+        i = 2001;
     }
 
     for (i; i < m_terrainModel.size(); ++i)
@@ -1017,11 +1021,11 @@ bool Environment::CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::X
 }
 
 // While this could be done once per environment update, future updates could have moment to moment wind changes
-double Environment::GetWindDirection() const
+float Environment::GetWindDirection() const
 { 
     DirectX::SimpleMath::Vector3 windVec = m_currentEnviron.wind;
     DirectX::SimpleMath::Vector3 zeroDirection(-1.0, 0.0, -1.0);
-    double direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(windVec), DirectX::XMVector3Normalize(zeroDirection)));
+    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(windVec), DirectX::XMVector3Normalize(zeroDirection)));
     if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(windVec, zeroDirection)) > 0.0f)
     {
         direction = -direction;
@@ -1374,7 +1378,7 @@ bool Environment::LoadHeightMap()
     
     UINT pitch = m_terrainWidth * 3;
     UINT excessPitch = 0;
-    while (double(pitch / 4) != double(pitch) / 4.0)
+    while (float(pitch / 4) != float(pitch) / 4.0)
     {
         pitch++;
         excessPitch++;
@@ -1467,12 +1471,12 @@ void Environment::ScaleTerrain()
     }
 }
 
-void Environment::SetLandingHeight(double aLandingHeight)
+void Environment::SetLandingHeight(float aLandingHeight)
 {
     m_landingHeight = aLandingHeight;
 }
 
-void Environment::SetLauchHeight(double aLaunchHeight)
+void Environment::SetLauchHeight(float aLaunchHeight)
 {
     m_launchHeight = aLaunchHeight;
 }
@@ -1480,7 +1484,6 @@ void Environment::SetLauchHeight(double aLaunchHeight)
 bool Environment::SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos)
 {
     bool foundHeight = false;
-    int index = 0;
 
     for (int i = 0; i < m_terrainModel.size() / 3; ++i)
     {
