@@ -17,10 +17,10 @@ void GolfBall::AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, Direct
 
 double GolfBall::CalculateImpactTime(double aTime1, double aTime2, float aHeight1, float aHeight2)
 {
-    float m = (aHeight2 - aHeight1) / (aTime2 - aTime1);
-    float b = aHeight1 - (m * aTime1);
+    float m = (aHeight2 - aHeight1) / (static_cast<float>(aTime2 - aTime1));
+    float b = aHeight1 - (m * static_cast<float>(aTime1));
     float impactTime = -b / m;
-    float dt = aTime2 - impactTime;
+    float dt = static_cast<float>(aTime2) - impactTime;
 
     return dt;
 }
@@ -30,10 +30,9 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
     // s = (1/2) a t^2
     // s = Vit (1/2) a t^2 // with initial velocity
 
-    float traversalDistance = (aEnterRadiusPos - aExitRadiusPos).Length();
     double traversalTime = aExitRadiusTime - aEnterRadiusTime;
 
-    float verticalDrop = .5 * m_ball.gravity * (traversalTime * traversalTime);
+    float verticalDrop = .5f * m_ball.gravity * static_cast<float>((traversalTime * traversalTime));
     bool isInHole = false;
     if (abs(verticalDrop) >= m_ball.radius)
     {
@@ -98,7 +97,7 @@ float GolfBall::GetDistanceToHole() const
     return (pBallEnvironment->GetHolePosition() - scaledBallPos).Length();
 }
 
-float GolfBall::GetImpactAngle() const
+float GolfBall::GetImpactAngleDeg() const
 {
     DirectX::SimpleMath::Plane impactPlane = GetImpactPlane();
     DirectX::SimpleMath::Vector3 impactVector(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
@@ -108,7 +107,7 @@ float GolfBall::GetImpactAngle() const
     float angle = acos(impactVector.Dot(planeNormal));
 
     angle = Utility::ToDegrees(angle);
-    angle = 180.0 - angle;
+    angle = 180.0f - angle;
 
     return angle;
 }
@@ -116,46 +115,6 @@ float GolfBall::GetImpactAngle() const
 float GolfBall::GetImpactDirection() const
 {
     DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
-    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
-
-    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
-
-    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
-    {
-        direction = -direction;
-    }
-
-    return direction;
-}
-
-float GolfBall::GetImpactDirection2() const
-{
-    DirectX::SimpleMath::Vector3 scalledPos = GetBallPosInEnviron(m_ball.q.position);
-    DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(scalledPos);
-
-    DirectX::SimpleMath::Vector3 testZeroD = terrainNorm;
-    //DirectX::SimpleMath::Vector3 testZeroD = DirectX::SimpleMath::Vector3::UnitY;
-    //DirectX::SimpleMath::Vector3::Transform(m_ball.q.velocity, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(-direction)));
-    testZeroD = DirectX::SimpleMath::Vector3::Transform(testZeroD, DirectX::SimpleMath::Matrix::CreateRotationZ(static_cast<float>(- Utility::GetPi() * 0.5)));
-
-    DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
-    //DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, m_ball.q.velocity.y, m_ball.q.velocity.z);
-    DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
-    zeroDirection = testZeroD;
-    float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
-
-    if (DirectX::XMVectorGetY(DirectX::XMVector3Cross(ballVec, zeroDirection)) < 0.0f)
-    {
-        direction = -direction;
-    }
-    
-    return direction;
-}
-
-float GolfBall::GetImpactDirection3(DirectX::SimpleMath::Vector3 aNorm) const
-{
-    //DirectX::SimpleMath::Vector3 ballVec(m_ball.q.velocity.x, 0.0, m_ball.q.velocity.z);
-    DirectX::SimpleMath::Vector3 ballVec(aNorm.x, 0.0, aNorm.z);
     DirectX::SimpleMath::Vector3 zeroDirection(1.0, 0.0, 0.0);
 
     float direction = DirectX::XMVectorGetX(DirectX::XMVector3AngleBetweenNormals(DirectX::XMVector3Normalize(ballVec), DirectX::XMVector3Normalize(zeroDirection)));
@@ -193,14 +152,10 @@ float GolfBall::GetLandingHeight() const
 
 float GolfBall::GetShotDistance() const
 {
-    //DirectX::SimpleMath::Vector3 origin = m_shotOrigin;
     DirectX::SimpleMath::Vector3 origin = GetBallPosInEnviron(m_shotOrigin);
-    //DirectX::SimpleMath::Vector3 landingPos = GetLandingCordinates();
     DirectX::SimpleMath::Vector3 landingPos = GetBallPosInEnviron(GetLandingCordinates());
     float distance = sqrt(((landingPos.x - origin.x) * (landingPos.x - origin.x)) + ((landingPos.y - origin.y)
         * (landingPos.y - origin.y) + ((landingPos.z - origin.z) * (landingPos.z - origin.z))));
-
-    float distance2 = DirectX::SimpleMath::Vector3(origin - landingPos).Length();
 
     return distance;
 }
@@ -259,8 +214,7 @@ DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::S
 void GolfBall::LandProjectile()
 {
     float direction = GetImpactDirection();
-    float impactAngle = GetImpactAngle();
-    float directionDeg = Utility::ToDegrees(direction);
+    float impactAngle = GetImpactAngleDeg();
 
     impactAngle = Utility::ToRadians(impactAngle);
     float impactSpinRate = m_ball.omega; // conversion from rad per s to rpm
@@ -320,17 +274,17 @@ void GolfBall::LandProjectile()
    // if (absViyPrime <= 20.0)
     if (impactSpeed <= 20.0)
     {
-        e = 0.510 - 0.0375 * absViyPrime + 0.000903 * absViyPrime * absViyPrime;
+        e = 0.510f - 0.0375f * absViyPrime + 0.000903f * absViyPrime * absViyPrime;
     }
     else
     {
-        e = 0.120;
+        e = 0.120f;
     }
 
-    float muMin = (2.0 * (vix + m_ball.radius * impactSpinRate)) / (7.0 * (1.0 + e) * viy);
+    float muMin = (2.0f * (vix + m_ball.radius * impactSpinRate)) / (7.0f * (1.0f + e) * viy);
     float mu = 0.43; // (greek u symbol) from Danish equation from green impact, WLJ will need to tweek as its based off type of terrain
     //float muC = (2 * (vixPrime + (m_ball.radius * m_ball.omega))) / (7 * (1.0 + e) * absViyPrime);
-    float muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0 + e) * absViyPrime);
+    float muC = (2 * (vixPrime + (m_ball.radius * impactSpinRate))) / (7 * (1.0f + e) * absViyPrime);
 
     float vrxPrime, vryPrime, omegaR;
 
@@ -338,15 +292,15 @@ void GolfBall::LandProjectile()
     // If mu is great than muC the ball will roll out of the collision
     if (mu < muC)
     {
-        vrxPrime = vixPrime - mu * absViyPrime * (1.0 + e);
+        vrxPrime = vixPrime - mu * absViyPrime * (1.0f + e);
         vryPrime = e * absViyPrime;
         //omegaR = m_ball.omega - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
-        omegaR = impactSpinRate - ((5.0 * mu) / (2.0 * m_ball.radius)) * absViyPrime * (1.0 + e);
+        omegaR = impactSpinRate - ((5.0f * mu) / (2.0f * m_ball.radius)) * absViyPrime * (1.0f + e);
     }
     else
     {
         //vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * m_ball.omega;
-        vrxPrime = (5.0 / 7.0) * vixPrime - (2.0 / 7.0) * m_ball.radius * impactSpinRate;
+        vrxPrime = (5.0f / 7.0f) * vixPrime - (2.0f / 7.0f) * m_ball.radius * impactSpinRate;
         vryPrime = e * absViyPrime;
         omegaR = -vrxPrime / m_ball.radius;
     }
@@ -366,7 +320,7 @@ void GolfBall::LandProjectile()
     //float preZ = m_ball.q.velocity.z;
     //float vrz = m_ball.q.velocity.z * ratioZ;
 
-    float backwardsBounceCheck = (impactSpeed / (2. * m_ball.radius)) * (5. * sin(impactAngle - thetaC) - 7. * e * tan(thetaC) * cos(impactAngle - thetaC));
+    float backwardsBounceCheck = (impactSpeed / (2.f * m_ball.radius)) * (5.f * sin(impactAngle - thetaC) - 7.f * e * tan(thetaC) * cos(impactAngle - thetaC));
     backwardsBounceCheck = backwardsBounceCheck * -1;
     
     if (impactSpinRate > backwardsBounceCheck)
@@ -463,7 +417,7 @@ void GolfBall::LaunchProjectile()
 
             if (m_ballPath.size() > 1)
             {
-                float rollBackTime = CalculateImpactTime(previousTime, m_ball.q.time, prevFlightAlt, currentAlt);
+                double rollBackTime = CalculateImpactTime(previousTime, m_ball.q.time, prevFlightAlt, currentAlt);
                 ProjectileRungeKutta4(&m_ball, -rollBackTime);
                 m_ballPath[m_ballPath.size() - 1] = m_ball.q;
             }
@@ -631,10 +585,10 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     //  Compute the apparent velocity magnitude. The 1.0e-8 term
     //  ensures there won't be a divide bz yero later on
     //  if all of the velocity components are zero.
-    float va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8;
+    float va = sqrt(vax * vax + vay * vay + vaz * vaz) + 1.0e-8f;
 
     //  Compute the total drag force.
-    float Fd = 0.5 * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
+    float Fd = 0.5f * pBall->airDensity * pBall->area * pBall->dragCoefficient * va * va;
     float Fdx = -Fd * vax / va;
     float Fdy = -Fd * vay / va;
     float Fdz = -Fd * vaz / va;
@@ -643,7 +597,7 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     DirectX::SimpleMath::Vector3 absVball = DirectX::XMVectorAbs(newQ.velocity);
     DirectX::SimpleMath::Vector3 vBallNorm = newQ.velocity;
     vBallNorm.Normalize();   
-    DirectX::SimpleMath::Vector3 Fd3D = -(0.5 * pBall->airDensity * pBall->area * m_ball.dragCoefficient * (absVball * absVball)) * vBallNorm;
+    DirectX::SimpleMath::Vector3 Fd3D = -(0.5f * pBall->airDensity * pBall->area * m_ball.dragCoefficient * (absVball * absVball)) * vBallNorm;
     float Fdx1 = Fd3D.x;
     float Fdy1 = Fd3D.y;
     float Fdz1 = Fd3D.z;
@@ -657,10 +611,10 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     //Fdz = Fdz2;
 
     //  Compute the velocity magnitude
-    float v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8;
+    float v = sqrt(vx * vx + vy * vy + vz * vz) + 1.0e-8f;
 
     //  Evaluate the Magnus force terms.
-    float Cl = -0.05 + sqrt(0.0025 + 0.36 * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
+    float Cl = -0.05f + sqrt(0.0025f + 0.36f * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
     float Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
     float Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
     float Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
@@ -810,9 +764,9 @@ void GolfBall::ResetIsInHole()
 
 void GolfBall::RollBall()
 {
-    float pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
+    float pg = 0.131f; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
     float g = m_ball.gravity;
-    float a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
+    float a = -(5.0f / 7.0f) * pg * g; // a = 0.916999996	float
 
     float decelFactor = a;
     decelFactor = .69999;
@@ -916,7 +870,6 @@ void GolfBall::RollBall()
             DirectX::SimpleMath::Vector3 preVelocity = m_ball.q.velocity;
             DirectX::SimpleMath::Vector3 gravity(0.0, 9.8, 0.0);
             DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
-            float terrainLength = terrainNorm.Length();
             DirectX::SimpleMath::Vector3 terrainNormTest = terrainNorm;
             terrainNormTest.Normalize();
 
@@ -964,236 +917,6 @@ void GolfBall::RollBall()
     }
 }
 
-void GolfBall::RollBall2()
-{
-    float pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
-    float g = m_ball.gravity;
-    float a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
-
-    float decelFactor = a;
-    float stopTolerance = 0.05;
-    int overflowTolerance = 650;
-
-    DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
-    directionVec.y = 0.0;
-    directionVec.Normalize();
-
-    bool isBallInHoleRadius = false;
-    bool isBallInHole = false;
-    DirectX::SimpleMath::Vector3 posOnEnteringHoleRadius;
-    double timeOnEnteringHoleRadius;
-
-    int i = 0;
-    while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
-    {
-        if (isBallInHoleRadius == false)
-        {
-            if (GetDistanceToHole() < pBallEnvironment->GetHoleRadius())
-            {
-                isBallInHoleRadius = true;
-                posOnEnteringHoleRadius = m_ball.q.position;
-                timeOnEnteringHoleRadius = m_ball.q.time;
-            }
-        }
-        if (isBallInHoleRadius == true)
-        {
-            if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
-            {
-                isBallInHoleRadius = false;
-                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.q.time);
-                if (isBallInHole == false)
-                {
-                    posOnEnteringHoleRadius = m_ball.q.position;
-                    timeOnEnteringHoleRadius = m_ball.q.time;
-                }
-            }
-            else if (m_ball.q.velocity.Length() < 0.1)
-            {
-                isBallInHole = true;
-            }
-        }
-
-        if (isBallInHole == false)
-        {
-            float velocity = m_ball.q.velocity.Length();
-            velocity -= decelFactor * velocity * m_timeStep;
-
-            DirectX::SimpleMath::Vector3 tragectoryNormilized = m_ball.q.velocity;
-            tragectoryNormilized.Normalize();
-
-
-            //////////////////////////////////////
-            /// Testing  terrain velocity effects
-            //////////////////////////////////////
-            DirectX::SimpleMath::Vector3 gravity(0.0, 9.8, 0.0);
-            DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
-
-            //inline Vector3D Project(const Vector3D & a, const Vector3D & b)
-               // return (b * (Dot(a, b) / Dot(b, b)));
-                //Vector3f slopeAcceleration = gravity.subtract(gravity.project(slopeNormal));
-                //velocity = velocity.add(slopeAcceleration.mult(secondsSinceLastFrame));
-            DirectX::SimpleMath::Vector3 projection = (terrainNorm * (gravity.Dot(terrainNorm) / terrainNorm.Dot(terrainNorm)));
-            DirectX::SimpleMath::Vector3 slopeAcceleration = gravity - projection;
-            //DirectX::SimpleMath::Vector3 xVelocity = m_ball.q.velocity + (slopeAcceleration * m_timeStep);
-            DirectX::SimpleMath::Vector3 xVelocity = m_ball.q.velocity + (slopeAcceleration);
-            //xVelocity *= .2;
-
-
-            float frictionFactor = -0.05;
-            //float frictionFactor = 1.0;
-            DirectX::SimpleMath::Vector3 friction = frictionFactor * m_ball.q.velocity;
-            DirectX::SimpleMath::Vector3 accelerationTerrain = terrainNorm * 0.1f;
-            DirectX::SimpleMath::Vector3 acceleration = accelerationTerrain + friction;
-            DirectX::SimpleMath::Vector3 speed = m_ball.q.velocity + m_timeStep * acceleration;
-
-            m_ball.q.velocity = speed;
-
-            //////////////////////////////////////
-            //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity);
-            m_ball.q.position += m_ball.q.velocity * m_timeStep;
-
-            // Temp while soriting out terrain following ball path
-            //m_ball.q.position.y = GetBallFlightAltitude(m_ball.q.position);
-            SetBallToTerrain(m_ball.q.position);
-
-
-            m_ball.q.time = m_ball.q.time + m_timeStep;
-        }
-        else //stop the ball motion if its in the hole
-        {
-            m_isBallInHole = true;
-            m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
-        }
-
-        PushFlightData();
-        ++i;
-    }
-}
-
-void GolfBall::RollBall3()
-{
-    float pg = 0.131; //0.131 is from A. Raymond Penner "The Run of a Golf Ball" doc
-    float g = m_ball.gravity;
-    float a = -(5.0 / 7.0) * pg * g; // a = 0.916999996	float
-
-    float decelFactor = a;
-    float stopTolerance = 0.05;
-    int overflowTolerance = 650;
-
-    //DirectX::SimpleMath::Vector3 directionVec = m_ball.q.velocity;
-    //directionVec.y = 0.0;
-    //directionVec.Normalize();
-
-    bool isBallInHoleRadius = false;
-    bool isBallInHole = false;
-    DirectX::SimpleMath::Vector3 posOnEnteringHoleRadius;
-    double timeOnEnteringHoleRadius;
-
-    int i = 0;
-    while (m_ball.q.velocity.Length() > stopTolerance && i < overflowTolerance)
-    {
-        if (isBallInHoleRadius == false)
-        {
-            if (GetDistanceToHole() < pBallEnvironment->GetHoleRadius())
-            {
-                isBallInHoleRadius = true;
-                posOnEnteringHoleRadius = m_ball.q.position;
-                timeOnEnteringHoleRadius = m_ball.q.time;
-            }
-        }
-        if (isBallInHoleRadius == true)
-        {
-            if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
-            {
-                isBallInHoleRadius = false;
-                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.q.time);
-                if (isBallInHole == false)
-                {
-                    posOnEnteringHoleRadius = m_ball.q.position;
-                    timeOnEnteringHoleRadius = m_ball.q.time;
-                }
-            }
-            else if (m_ball.q.velocity.Length() < 0.1)
-            {
-                isBallInHole = true;
-            }
-        }
-
-        if (isBallInHole == false)
-        {
-            float velocity = m_ball.q.velocity.Length();
-            velocity -= decelFactor * velocity * m_timeStep;
-
-            DirectX::SimpleMath::Vector3 tragectoryNormilized = m_ball.q.velocity;
-            tragectoryNormilized.Normalize();
-
-
-            //////////////////////////////////////
-            /// Testing  terrain velocity effects
-            //////////////////////////////////////
-            DirectX::SimpleMath::Vector3 gravity(0.0, 9.8, 0.0);
-            DirectX::SimpleMath::Vector3 terrainNorm = pBallEnvironment->GetTerrainNormal(GetBallPosInEnviron(m_ball.q.position));
-
-            //inline Vector3D Project(const Vector3D & a, const Vector3D & b)
-               // return (b * (Dot(a, b) / Dot(b, b)));
-                //Vector3f slopeAcceleration = gravity.subtract(gravity.project(slopeNormal));
-                //velocity = velocity.add(slopeAcceleration.mult(secondsSinceLastFrame));
-            DirectX::SimpleMath::Vector3 projection = (terrainNorm * (gravity.Dot(terrainNorm) / terrainNorm.Dot(terrainNorm)));
-            DirectX::SimpleMath::Vector3 slopeAcceleration = gravity - projection;
-            //DirectX::SimpleMath::Vector3 xVelocity = m_ball.q.velocity + (slopeAcceleration * m_timeStep);
-            DirectX::SimpleMath::Vector3 xVelocity = m_ball.q.velocity + (slopeAcceleration);
-            //xVelocity *= .2;
-
-
-            float frictionFactor = -0.05;
-            //float frictionFactor = -1.0;
-            DirectX::SimpleMath::Vector3 friction = frictionFactor * m_ball.q.velocity;
-            if (m_ball.q.velocity.Length() < 1.0)
-            {
-                //friction = DirectX::SimpleMath::Vector3::Zero;
-            }
-
-            DirectX::SimpleMath::Vector3 accelerationTerrain = terrainNorm * 0.1f;
-            //DirectX::SimpleMath::Vector3 accelerationTerrain = terrainNorm;
-            DirectX::SimpleMath::Vector3 acceleration = accelerationTerrain + friction;
-            //DirectX::SimpleMath::Vector3 speed = m_ball.q.velocity + m_timeStep * acceleration;
-            //DirectX::SimpleMath::Vector3 speed = m_ball.q.velocity + m_timeStep * acceleration * decelFactor;
-            DirectX::SimpleMath::Vector3 speed = m_ball.q.velocity + m_timeStep * acceleration * .5;
-            DirectX::SimpleMath::Vector3 speed2 = m_ball.q.velocity * acceleration;
-            DirectX::SimpleMath::Vector3 speed3 = m_ball.q.velocity + m_timeStep * acceleration * .9;
-
-            //speed *= decelFactor;
-
-            m_ball.q.velocity = speed;
-
-            //////////////////////////////////////
-            //m_ball.q.velocity = tragectoryNormilized * static_cast<float>(velocity);
-            m_ball.q.position += m_ball.q.velocity * m_timeStep;
-
-            // Temp while soriting out terrain following ball path
-            //m_ball.q.position.y = GetBallFlightAltitude(m_ball.q.position);
-            SetBallToTerrain(m_ball.q.position);
-
-
-            m_ball.q.time = m_ball.q.time + m_timeStep;
-
-            if (i == overflowTolerance - 1)
-            {
-                m_ball.q.position.y += 1.0;
-                PushFlightData();
-            }
-        }
-        else //stop the ball motion if its in the hole
-        {
-            m_isBallInHole = true;
-            m_ball.q.velocity = DirectX::SimpleMath::Vector3::Zero;
-        }
-
-        PushFlightData();
-        ++i;
-    }
-}
-
 void GolfBall::SetBallToTerrain(DirectX::XMFLOAT3& aPos)
 {
     DirectX::XMFLOAT3 testPos = aPos;
@@ -1204,7 +927,6 @@ void GolfBall::SetBallToTerrain(DirectX::XMFLOAT3& aPos)
     DirectX::SimpleMath::Vector3 delta = environPos - m_shotOrigin;
     float terrainHeight = pBallEnvironment->GetTerrainHeightAtPos(environPos);
     //float terrainHeight = pBallEnvironment->GetTerrainHeightAtPos(delta);
-    float height = environPos.y - terrainHeight;
 
     terrainHeight = terrainHeight / pBallEnvironment->GetScale();
 
@@ -1277,11 +999,11 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     // Slow speed to approch zero for eithe positive or negative spin rates
     if (m_ball.omega < 0.0)
     {
-        m_ball.omega *= 1.0 - (aTimeDelta * m_spinRateDecay);
+        m_ball.omega *= 1.0f - (aTimeDelta * m_spinRateDecay);
     }
     else
     {
-        m_ball.omega *= 1.0 + (aTimeDelta * m_spinRateDecay);
+        m_ball.omega *= 1.0f + (aTimeDelta * m_spinRateDecay);
     }
 }
 

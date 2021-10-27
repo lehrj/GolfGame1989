@@ -111,15 +111,11 @@ public:
     std::vector<DirectX::VertexPositionColor> GetTerrainColorVertex();
     std::vector<DirectX::VertexPositionNormalColor> GetTerrainPositionNormalColorVertex();
     float GetTerrainHeightAtPos(DirectX::XMFLOAT3 aPos) const;
-    float GetTerrainHeightAtPos2(DirectX::XMFLOAT3 aPos) const;
     DirectX::SimpleMath::Vector3 GetTerrainNormal(DirectX::SimpleMath::Vector3 aPos) const;
     DirectX::XMFLOAT3 GetTerrainPosition(DirectX::XMFLOAT3 aPos);
     bool SetPosToTerrainWithCheck(DirectX::XMFLOAT3& aPos);
     void SetPosToTerrain(DirectX::XMFLOAT3& aPos);
     bool CheckTerrainTriangleHeight(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const;
-    bool CheckTerrainTriangleHeight2(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const;
-    bool CheckTerrainTriangleHeight3(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const;
-    bool CheckTerrainTriangleHeight4(DirectX::XMFLOAT3& aPos, DirectX::XMFLOAT3 v0, DirectX::XMFLOAT3 v1, DirectX::XMFLOAT3 v2) const;
     float GetWindDirection() const;
     DirectX::SimpleMath::Vector3 GetWindVector() const { return m_currentEnviron.wind; };
     float GetWindX() const { return m_currentEnviron.wind.x; };

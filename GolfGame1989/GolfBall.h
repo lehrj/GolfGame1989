@@ -46,10 +46,8 @@ public:
     float GetDebugValue03() const { return m_debugValue03; };
     float GetDebugValue04() const { return m_debugValue04; };
     float GetDistanceToHole() const;
-    float GetImpactAngle() const;
+    float GetImpactAngleDeg() const;
     float GetImpactDirection() const;
-    float GetImpactDirection2() const;
-    float GetImpactDirection3(DirectX::SimpleMath::Vector3 aNorm) const;
     DirectX::SimpleMath::Plane GetImpactPlane() const;
     float GetInitialSpinRate() const { return m_initialSpinRate; };
     bool GetIsInHole() const { return m_isBallInHole; };
@@ -85,8 +83,6 @@ private:
     void SetMaxHeight(const float aMaxHeight) { m_maxHeight = aMaxHeight; };
     void SetSpinAxis(DirectX::SimpleMath::Vector3 aAxis);
     void RollBall();
-    void RollBall2();
-    void RollBall3();
     void ProjectileRightHandSide(struct SpinProjectile* projectile, BallMotion* q, BallMotion* deltaQ, double aTimeDelta, float aQScale, BallMotion* dq);
     void ProjectileRungeKutta4(struct SpinProjectile* projectile, double aTimeDelta);
     void ProjectileRungeKutta4wPointers(struct SpinProjectile* projectile, double aTimeDelta);
