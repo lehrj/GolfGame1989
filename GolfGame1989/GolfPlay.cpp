@@ -224,7 +224,7 @@ void GolfPlay::StartSwing()
 
 void GolfPlay::TurnShotAim(float aTurn, float aTurnRate)
 {
-    float turnInRadians = Utility::ToRadians(aTurn) * (aTurnRate * 57.2958);
+    float turnInRadians = Utility::ToRadians(aTurn) * (aTurnRate * 57.2958f);
     m_impactData.directionDegrees += Utility::ToDegrees(turnInRadians);
     
     // wrap angle
