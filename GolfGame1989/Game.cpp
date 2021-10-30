@@ -1042,7 +1042,7 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
 
     float windDirection = pGolf->GetWindDirectionRad();
     DirectX::SimpleMath::Vector3 windNormalized = pGolf->GetEnvironWindVector();
-    float windSpeed = windNormalized.Length() * .3;
+    float windSpeed = windNormalized.Length() * .3f;
     windNormalized.Normalize();
 
     const float scaleMod = 1.0;
@@ -1052,7 +1052,7 @@ void Game::DrawFlagHoleFixture(const DirectX::SimpleMath::Vector3 aPos, const fl
     DirectX::SimpleMath::Vector3 swayBase = swayVec;
     swayBase = swayBase * 0.05;
 
-    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
+    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1f);
     flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
 
     poleTop += swayBase;
@@ -1109,7 +1109,7 @@ void Game::DrawFlagHoleFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, con
 
     float windDirection = pGolf->GetWindDirectionRad();
     DirectX::SimpleMath::Vector3 windNormalized = pGolf->GetEnvironWindVector();
-    float windSpeed = windNormalized.Length() * .3;
+    float windSpeed = windNormalized.Length() * .3f;
     windNormalized.Normalize();
 
     const float scaleMod = 1.0;
@@ -1119,7 +1119,7 @@ void Game::DrawFlagHoleFixtureTest1(const DirectX::SimpleMath::Vector3 aPos, con
     DirectX::SimpleMath::Vector3 swayBase = swayVec;
     swayBase = swayBase * 0.05;
 
-    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1);
+    windDirection = windDirection + (cosf(static_cast<float>(m_timer.GetTotalSeconds() * windSpeed)) * 0.1f);
     flagTip = DirectX::SimpleMath::Vector3::Transform(flagTip, DirectX::SimpleMath::Matrix::CreateRotationY(static_cast<float>(windDirection)));
 
     poleTop += swayBase;
@@ -2504,7 +2504,7 @@ void Game::DrawSwing()
             }
             DirectX::XMVECTORF32 testColor1 = DirectX::Colors::White;
             int testVar = (m_swingPathStep - 1) - i;
-            float testDelta = testVar * .03;
+            float testDelta = testVar * .03f;
             testColor1.f[0] -= testDelta;
             testColor1.f[1] -= testDelta;
             testColor1.f[2] -= testDelta;
@@ -2715,8 +2715,6 @@ void Game::DrawTeeBoxFixtureLit(const DirectX::SimpleMath::Vector3 aPos, const f
 void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
-    float windDirection = pGolf->GetWindDirectionRad();
-    float windSpeed = windVector.Length();
     DirectX::SimpleMath::Vector3 windNormalized = windVector;
     windNormalized.Normalize();
     const float scaleMod = 1.0;
@@ -2809,8 +2807,6 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
-    float windDirection = pGolf->GetWindDirectionRad();
-    float windSpeed = windVector.Length();
     DirectX::SimpleMath::Vector3 windNormalized = windVector;
     windNormalized.Normalize();
     const float scaleMod = 1.0;
@@ -2936,8 +2932,6 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
 void Game::DrawTree04Lit(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
-    float windDirection = pGolf->GetWindDirectionRad();
-    float windSpeed = windVector.Length();
     DirectX::SimpleMath::Vector3 windNormalized = windVector;
     windNormalized.Normalize();
     const float scaleMod = 1.0;
@@ -3065,8 +3059,6 @@ void Game::DrawTree04Lit(const DirectX::SimpleMath::Vector3 aTreePos, const floa
 void Game::DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float aVariation)
 {
     DirectX::SimpleMath::Vector3 windVector = pGolf->GetEnvironWindVector();
-    float windDirection = pGolf->GetWindDirectionRad();
-    float windSpeed = windVector.Length();
     DirectX::SimpleMath::Vector3 windNormalized = windVector;
     windNormalized.Normalize();
     const float scaleMod = 1.0;
