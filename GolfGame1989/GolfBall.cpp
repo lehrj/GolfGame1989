@@ -598,13 +598,13 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
     DirectX::SimpleMath::Vector3 vBallNorm = newQ.velocity;
     vBallNorm.Normalize();   
     DirectX::SimpleMath::Vector3 Fd3D = -(0.5f * pBall->airDensity * pBall->area * m_ball.dragCoefficient * (absVball * absVball)) * vBallNorm;
-    float Fdx1 = Fd3D.x;
-    float Fdy1 = Fd3D.y;
-    float Fdz1 = Fd3D.z;
+    //float Fdx1 = Fd3D.x;
+    //float Fdy1 = Fd3D.y;
+    //float Fdz1 = Fd3D.z;
 
-    float Fdx2 = Fd3D.x * vax / va;
-    float Fdy2 = Fd3D.y * vay / va;
-    float Fdz2 = Fd3D.z * vaz / va;
+    //float Fdx2 = Fd3D.x * vax / va;
+    //float Fdy2 = Fd3D.y * vay / va;
+    //float Fdz2 = Fd3D.z * vaz / va;
 
     //Fdx = Fdx2;
     //Fdy = Fdy2;
@@ -615,7 +615,7 @@ void GolfBall::ProjectileRightHandSide(struct SpinProjectile* pBall, BallMotion*
 
     //  Evaluate the Magnus force terms.
     float Cl = -0.05f + sqrt(0.0025f + 0.36f * fabs(pBall->radius * pBall->omega / v));  // this equation gives a more accurate representation to fit experimental data than Cl = (radius * omega)/v
-    float Fm = 0.5 * pBall->airDensity * pBall->area * Cl * v * v;
+    float Fm = 0.5f * pBall->airDensity * pBall->area * Cl * v * v;
     float Fmx = (vz * pBall->rotationAxis.y - pBall->rotationAxis.z * vy) * Fm / v;
     float Fmy = (vx * pBall->rotationAxis.z - pBall->rotationAxis.x * vz) * Fm / v;
     float Fmz = -(vx * pBall->rotationAxis.y - pBall->rotationAxis.x * vy) * Fm / v;
@@ -999,11 +999,11 @@ void GolfBall::UpdateSpinRate(double aTimeDelta)
     // Slow speed to approch zero for eithe positive or negative spin rates
     if (m_ball.omega < 0.0)
     {
-        m_ball.omega *= 1.0f - (aTimeDelta * m_spinRateDecay);
+        m_ball.omega *= 1.0f - (static_cast<float>(aTimeDelta) * m_spinRateDecay);
     }
     else
     {
-        m_ball.omega *= 1.0f + (aTimeDelta * m_spinRateDecay);
+        m_ball.omega *= 1.0f + (static_cast<float>(aTimeDelta) * m_spinRateDecay);
     }
 }
 

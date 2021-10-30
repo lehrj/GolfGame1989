@@ -2668,7 +2668,7 @@ void Game::DrawTeeBox()
     // end tee box draw
 }
 
-void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
+void Game::DrawTeeBoxFixture()
 {
     //draw tee box;
     DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
@@ -2690,7 +2690,7 @@ void Game::DrawTeeBoxFixture(const DirectX::SimpleMath::Vector3 aPos, const floa
     // end tee box draw
 }
 
-void Game::DrawTeeBoxFixtureLit(const DirectX::SimpleMath::Vector3 aPos, const float aVariation)
+void Game::DrawTeeBoxFixtureLit()
 {
     //draw tee box;
     DirectX::SimpleMath::Vector3 teeBoxOrigin = pGolf->GetTeePos();
@@ -2720,7 +2720,6 @@ void Game::DrawTree03(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     const float scaleMod = 1.0;
     const float scale = pGolf->GetEnvironScale() * scaleMod;
 
-    //DirectX::SimpleMath::Vector3 swayVec = windVector * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds()));
     DirectX::SimpleMath::Vector3 swayVec = windNormalized * scale * cosf(static_cast<float>(m_timer.GetTotalSeconds() + aVariation));
 
     DirectX::SimpleMath::Vector3 swayBase = swayVec;
@@ -2890,14 +2889,15 @@ void Game::DrawTree04(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     int layerHeight = 6;
     for (int i = 0; i < layerHeight * 3; ++i)
     {
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal * widthMod + branchBase;
-
+        branchEndR = viewHorizontal * widthMod + branchBase;
         branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal * widthMod + branchBase;
-
+        branchEndL = -viewHorizontal * widthMod + branchBase;
         branchEndL += swayVec;
-        VertexPositionColor leafR(branchEndR, branchColor1);
-        VertexPositionColor leafL(branchEndL, branchColor3);
+
+        leafR = VertexPositionColor(branchEndR, branchColor1);
+        leafL = VertexPositionColor(branchEndL, branchColor3);
+        //VertexPositionColor leafR(branchEndR, branchColor1);
+        //VertexPositionColor leafL(branchEndL, branchColor3);
         VertexPositionColor branchRoot(branchBase, branchColor1);
 
         DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
@@ -3017,14 +3017,12 @@ void Game::DrawTree04Lit(const DirectX::SimpleMath::Vector3 aTreePos, const floa
     int layerHeight = 6;
     for (int i = 0; i < layerHeight * 3; ++i)
     {
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal * widthMod + branchBase;
-
+        branchEndR = viewHorizontal * widthMod + branchBase;
         branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal * widthMod + branchBase;
-
+        branchEndL = -viewHorizontal * widthMod + branchBase;
         branchEndL += swayVec;
-        VertexPositionNormalColor leafR(branchEndR, upNorm, branchColor1);
-        VertexPositionNormalColor leafL(branchEndL, upNorm, branchColor3);
+        leafR = VertexPositionNormalColor(branchEndR, upNorm, branchColor1);
+        leafL = VertexPositionNormalColor(branchEndL, upNorm, branchColor3);
         VertexPositionNormalColor branchRoot(branchBase, upNorm, branchColor1);
 
         DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
@@ -3142,14 +3140,12 @@ void Game::DrawTree05(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     int layerHeight = 6;
     for (int i = 0; i < layerHeight * 3; ++i)
     {
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal * widthMod + branchBase;
-
+        branchEndR = viewHorizontal * widthMod + branchBase;
         branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal * widthMod + branchBase;
-
+        branchEndL = -viewHorizontal * widthMod + branchBase;
         branchEndL += swayVec;
-        VertexPositionColor leafR(branchEndR, branchColor1);
-        VertexPositionColor leafL(branchEndL, branchColor3);
+        leafR = VertexPositionColor(branchEndR, branchColor1);
+        leafL = VertexPositionColor(branchEndL, branchColor3);
         VertexPositionColor branchRoot(branchBase, branchColor1);
 
         DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
@@ -3272,14 +3268,12 @@ void Game::DrawTree05Lit(const DirectX::SimpleMath::Vector3 aTreePos, const floa
     int layerHeight = 6;
     for (int i = 0; i < layerHeight * 3; ++i)
     {
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal * widthMod + branchBase;
-
+        branchEndR = viewHorizontal * widthMod + branchBase;
         branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal * widthMod + branchBase;
-
+        branchEndL = -viewHorizontal * widthMod + branchBase;
         branchEndL += swayVec;
-        VertexPositionNormalColor leafR(branchEndR, upNorm, branchColor1);
-        VertexPositionNormalColor leafL(branchEndL, upNorm, branchColor3);
+        leafR = VertexPositionNormalColor(branchEndR, upNorm, branchColor1);
+        leafL = VertexPositionNormalColor(branchEndL, upNorm, branchColor3);
         VertexPositionNormalColor branchRoot(branchBase, upNorm, branchColor1);
 
         DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
@@ -4549,14 +4543,12 @@ void Game::DrawTree11(const DirectX::SimpleMath::Vector3 aTreePos, const float a
     int layerHeight = 6;
     for (int i = 0; i < layerHeight * 3; ++i)
     {
-        DirectX::SimpleMath::Vector3 branchEndR = viewHorizontal * widthMod + branchBase;
-
+        branchEndR = viewHorizontal * widthMod + branchBase;
         branchEndR += swayVec;
-        DirectX::SimpleMath::Vector3 branchEndL = -viewHorizontal * widthMod + branchBase;
-
+        branchEndL = -viewHorizontal * widthMod + branchBase;
         branchEndL += swayVec;
-        VertexPositionColor leafR(branchEndR, branchColor1);
-        VertexPositionColor leafL(branchEndL, branchColor3);
+        leafR = VertexPositionColor(branchEndR, branchColor1);
+        leafL = VertexPositionColor(branchEndL, branchColor3);
         VertexPositionColor branchRoot(branchBase, branchColor1);
 
         DirectX::SimpleMath::Vector3 branchEndLeftLower = branchEndL;
@@ -4813,7 +4805,7 @@ void Game::DrawWorld()
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
         {
-            DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+            DrawTeeBoxFixture();
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
         {
@@ -4848,77 +4840,7 @@ void Game::DrawWorld()
 
 void Game::DrawWorld12thHole()
 {
-    /*
-    // draw world grid
-    DirectX::SimpleMath::Vector3 xAxis(2.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 xFarAxis(5.f, 0.f, 0.f);
-    DirectX::SimpleMath::Vector3 zAxis(0.f, 0.f, 2.f);
-    DirectX::SimpleMath::Vector3 origin = DirectX::SimpleMath::Vector3::Zero;
-    size_t divisions = 50;
-    size_t extention = 37;
-
-    DirectX::XMVECTORF32 gridColor = pGolf->GetTerrainColor();
-
-    for (size_t i = 0; i <= divisions + extention; ++i)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-        DirectX::SimpleMath::Vector3 scale = xAxis * fPercent + origin;
-        if (scale.x == 0.0f)
-        {
-            VertexPositionColor v1(scale - zAxis, gridColor);
-            VertexPositionColor v2(scale + zAxis, gridColor);
-            //VertexPositionColor v1(scale - zAxis, DirectX::Colors::LawnGreen); // Center line
-            //VertexPositionColor v2(scale + zAxis, DirectX::Colors::LawnGreen); // Center line
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - zAxis, gridColor);
-            VertexPositionColor v2(scale + zAxis, gridColor);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-    for (size_t i = 0; i <= divisions; i++)
-    {
-        float fPercent = float(i) / float(divisions);
-        fPercent = (fPercent * 2.0f) - 1.0f;
-
-        DirectX::SimpleMath::Vector3 scale = zAxis * fPercent + origin;
-
-        if (scale.z == 0.0f)
-        {
-            VertexPositionColor v1(scale - xAxis, gridColor); // Center line
-            VertexPositionColor v2(scale + xFarAxis, gridColor); // Center line
-            //VertexPositionColor v1(scale - xAxis, DirectX::Colors::LawnGreen); // Center line
-            //VertexPositionColor v2(scale + xFarAxis, DirectX::Colors::LawnGreen); // Center line
-            m_batch->DrawLine(v1, v2);
-        }
-        else
-        {
-            VertexPositionColor v1(scale - xAxis, gridColor);
-            VertexPositionColor v2(scale + xFarAxis, gridColor);
-            m_batch->DrawLine(v1, v2);
-        }
-    }
-
-    // green
-    const float height = 0.0;
-    DirectX::XMVECTORF32 greenColor = DirectX::Colors::Green;
-    VertexPositionColor bLeft(DirectX::SimpleMath::Vector3(2.5f, height, -0.7f), greenColor);
-    VertexPositionColor bRight(DirectX::SimpleMath::Vector3(3.1f, height, -0.05f), greenColor);
-    VertexPositionColor tRight(DirectX::SimpleMath::Vector3(3.5f, height, -0.1f), greenColor);
-    VertexPositionColor tLeft(DirectX::SimpleMath::Vector3(3.0f, height, -0.75f), greenColor);
-    m_batch->DrawQuad(bLeft, tLeft, tRight, bRight);
-    */
-
-
     DrawWater();
-
-
-    //DrawSand();
-
-    //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos()); // disabled since not needed when deapth buffer is enabled
 
     std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
 
@@ -4930,14 +4852,12 @@ void Game::DrawWorld12thHole()
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
         {
-            DrawTeeBoxFixture(fixtureList[i].position, fixtureList[i].animationVariation);
+            DrawTeeBoxFixture();
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_BRIDGE)
         {
             DrawBridge(fixtureList[i].position, fixtureList[i].animationVariation);
         }
-
-
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TREE03)
         {
             DrawTree03(fixtureList[i].position, fixtureList[i].animationVariation);
@@ -4975,9 +4895,6 @@ void Game::DrawWorld12thHole()
 void Game::DrawWorldWithLighting()
 {
     DrawWater2();
-    //DrawSand();
-
-    //pGolf->UpdateEnvironmentSortingForDraw(pCamera->GetPos()); // disabled since not needed when deapth buffer is enabled
 
     std::vector<Fixture> fixtureList = pGolf->GetEnvironFixtureBucket();
 
@@ -4989,7 +4906,7 @@ void Game::DrawWorldWithLighting()
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_TEEBOX)
         {
-            DrawTeeBoxFixtureLit(fixtureList[i].position, fixtureList[i].animationVariation);
+            DrawTeeBoxFixtureLit();
         }
         else if (fixtureList[i].fixtureType == FixtureType::FIXTURETYPE_BRIDGE)
         {
