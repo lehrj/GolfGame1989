@@ -8,7 +8,7 @@ struct BallMotion
 {
     DirectX::SimpleMath::Vector3 position;
     DirectX::SimpleMath::Vector3 velocity;
-    double time;
+    double time{};
 };
 
 struct SpinProjectile
@@ -71,8 +71,9 @@ public:
 
 private:
     void AddDebugDrawLines(DirectX::SimpleMath::Vector3 aOriginPos, DirectX::SimpleMath::Vector3 aLine, DirectX::XMVECTORF32 aColor);
-    bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime);
-    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop);
+    //bool DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime);
+    bool DoesBallRollInHole(const double aEnterRadiusTime, const double aExitRadiusTime);
+    DirectX::SimpleMath::Vector3 GetPostCollisionVelocity(const float aHeightDrop);
     float GetBallFlightAltitude(DirectX::SimpleMath::Vector3 aPos);
     void LandProjectile();
     void LaunchProjectile();

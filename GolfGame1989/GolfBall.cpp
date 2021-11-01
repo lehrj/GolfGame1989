@@ -25,7 +25,8 @@ double GolfBall::CalculateImpactTime(double aTime1, double aTime2, float aHeight
     return dt;
 }
 
-bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime)
+//bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiusPos, const double aEnterRadiusTime, const DirectX::SimpleMath::Vector3 aExitRadiusPos, const double aExitRadiusTime)
+bool GolfBall::DoesBallRollInHole(const double aEnterRadiusTime, const double aExitRadiusTime)
 {
     // s = (1/2) a t^2
     // s = Vit (1/2) a t^2 // with initial velocity
@@ -45,7 +46,8 @@ bool GolfBall::DoesBallRollInHole(const DirectX::SimpleMath::Vector3 aEnterRadiu
 
     if (isInHole == false)
     {
-        DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
+        //DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(aEnterRadiusPos, aExitRadiusPos, pBallEnvironment->GetHolePosition(), verticalDrop);
+        DirectX::SimpleMath::Vector3 updatedVelocity = GetPostCollisionVelocity(verticalDrop);
         m_ball.q.velocity = updatedVelocity;
     }
     else
@@ -171,7 +173,8 @@ float GolfBall::GetShotFlightDistance() const
 }
 
 // Prototype hole rim collisions to redirect ball path if it interacts but doesn't go in the hole
-DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop)
+//DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const DirectX::SimpleMath::Vector3 aVec1, const DirectX::SimpleMath::Vector3 aVec2, const DirectX::SimpleMath::Vector3 aVec3, const float aHeightDrop)
+DirectX::SimpleMath::Vector3 GolfBall::GetPostCollisionVelocity(const float aHeightDrop)
 {
     DirectX::SimpleMath::Vector3 preTravelNorm = m_ball.q.velocity;
     preTravelNorm.Normalize();
@@ -433,15 +436,9 @@ void GolfBall::LaunchProjectile()
             isBallFlyOrBounce = false;
         }
         bounceHeight = m_ball.landingHeight;
-        SetBallToTerrain(m_ball.q.position - m_shotOrigin);
-        //isBallFlyOrBounce = false;
     }
 
     SetMaxHeight(maxHeight);
-
-    //m_ball.q.velocity.y = 0.0;
-    //SetBallToTerrain(m_ball.q.position - m_shotOrigin);
-    //PushFlightData();
 
     RollBall();
     SetLandingCordinates(m_ball.q.position);
@@ -804,7 +801,9 @@ void GolfBall::RollBall()
             if (GetDistanceToHole() >= pBallEnvironment->GetHoleRadius())
             {
                 isBallInHoleRadius = false;
-                isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.q.time);
+                timeOnEnteringHoleRadius = timeOnEnteringHoleRadius = m_ball.q.time;
+                //isBallInHole = DoesBallRollInHole(posOnEnteringHoleRadius, timeOnEnteringHoleRadius, m_ball.q.position, m_ball.q.time);
+                isBallInHole = DoesBallRollInHole(timeOnEnteringHoleRadius, m_ball.q.time);
                 if (isBallInHole == false)
                 {
                     posOnEnteringHoleRadius = m_ball.q.position;
