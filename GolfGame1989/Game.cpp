@@ -18,7 +18,7 @@ Game::Game() noexcept :
     m_outputHeight(600),
     m_featureLevel(D3D_FEATURE_LEVEL_9_1)
 {
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     pGolf = new Golf;
     pPlay = new GolfPlay;
 
@@ -5031,7 +5031,7 @@ void Game::Initialize(HWND window, int width, int height)
 bool Game::InitializeTerrainArray()
 {
     std::vector<DirectX::VertexPositionColor> vertexPC = pGolf->GetTerrainVertex();
-    m_terrainVertexCount = vertexPC.size();
+    m_terrainVertexCount = static_cast<int>(vertexPC.size());
     m_terrainVertexArray = new DirectX::VertexPositionColor[m_terrainVertexCount];
     m_terrainVertexArrayBase = new DirectX::VertexPositionColor[m_terrainVertexCount];
 
@@ -5133,7 +5133,7 @@ bool Game::InitializeTerrainArray2()
 {
     std::vector<DirectX::VertexPositionNormalColor> vertexPC = pGolf->GetTerrainVertex2();
 
-    m_terrainVertexCount2 = vertexPC.size();
+    m_terrainVertexCount2 = static_cast<int>(vertexPC.size());
     m_terrainVertexArray2 = new DirectX::VertexPositionNormalColor[m_terrainVertexCount2];
     m_terrainVertexArrayBase2 = new DirectX::VertexPositionNormalColor[m_terrainVertexCount2];
 

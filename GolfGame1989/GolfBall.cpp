@@ -917,6 +917,7 @@ void GolfBall::RollBall()
     }
 }
 
+
 void GolfBall::SetBallToTerrain(DirectX::XMFLOAT3& aPos)
 {
     DirectX::XMFLOAT3 testPos = aPos;
