@@ -75,7 +75,7 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
         m_alpha_dot = at + ak3;
         m_beta_dot = bt + bk3;
 
-        // The K3 Step:
+        // The K4 Step:
         m_alpha_dotdot = ComputeAlphaDotDot();
         m_beta_dotdot = ComputeBetaDotDot();
         ak4 = m_alpha_dotdot * dt;
@@ -148,8 +148,6 @@ Utility::ImpactData GolfSwing::CalculateLaunchVector()
 
     m_impactData.vHeadNormal = m_impactData.vHead.Dot(m_impactData.vFaceNormal) * m_impactData.vFaceNormal;
     m_impactData.vHeadParallel = m_impactData.vHead - m_impactData.vHeadNormal;
-
-
 
     return m_impactData;
 }
