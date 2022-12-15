@@ -181,7 +181,9 @@ void Game::CreateDevice()
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
-    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+    const int maxVertices = 8192;
+    const int maxIndices = maxVertices * 3;
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get(), maxIndices, maxVertices);
 
     m_effect = std::make_unique<BasicEffect>(m_d3dDevice.Get());
     m_effect->SetVertexColorEnabled(true);
@@ -5441,7 +5443,9 @@ void Game::Render()
     size_t byteCodeLength2;
     m_effect2->GetVertexShaderBytecode(&shaderByteCode2, &byteCodeLength2);
     DX::ThrowIfFailed(m_d3dDevice->CreateInputLayout(VertexType2::InputElements, VertexType2::InputElementCount, shaderByteCode2, byteCodeLength2, m_inputLayout.ReleaseAndGetAddressOf()));
-    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get());
+    const int maxVertices = 8192;
+    const int maxIndices = maxVertices * 3;
+    m_batch2 = std::make_unique<PrimitiveBatch<VertexType2>>(m_d3dContext.Get(), maxIndices, maxVertices);
     m_effect2->Apply(m_d3dContext.Get());
 
     m_d3dContext->IASetInputLayout(m_inputLayout.Get());
