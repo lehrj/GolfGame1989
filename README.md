@@ -1,11 +1,7 @@
 # GolfGame1989
 
-Demo Videos on YouTube - https://www.youtube.com/channel/UCGI09aGt2juMQRwlK00GkFA
-
-https://youtu.be/WcTgDSk82q4
-
-
-                       
+Demo Videos on YouTube @BaltimoreMagicWerks or https://youtube.com/playlist?list=PLKMR2Ppf1A4isMBmE-N7GfiFSbZO6MvAO&si=d9OBP47MBRVGr2Xy
+           
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/3DTerrain.png">
 </p>
@@ -18,15 +14,10 @@ A retro themed golf game based on the double pendulum physics model in professor
 
 Updating the course with directional lighting
 
+### Gameplay:
+Currently the game play includes a 3 click power bar swing. The first click starts the swing, the second click sets the backswing percentage to control power, and the third click sets the impact. The closer the impact is set to the position indicated on the UI the more square the club face will be at impact. Setting the impact point early or late will cause the club face to be more closed or open at impact. This will result in the ball flight to hook or slice in the respected direction
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
-</p>
-
-### Character Select Features: 
-Arm length, arm mass, arm balance point, arm mass moment of inertia, and club length modification for each character
-
-<p align="center">
-  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/CharacterSelect.png">
 </p>
 
 ### Environment Select Features:
@@ -43,8 +34,12 @@ Angle, balance point, coefficient of restitution, length, mass, and mass moment 
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/SwingView.png">
 </p>
 
-### Gameplay:
-Currently the game play includes a 3 click power bar swing. The first click starts the swing, the second click sets the backswing percentage to control power, and the third click sets the impact. The closer the impact is set to the position indicated on the UI the more square the club face will be at impact. Setting the impact point early or late will cause the club face to be more closed or open at impact. This will result in the ball flight to hook or slice in the respected direction
+### Character Select Features: 
+Arm length, arm mass, arm balance point, arm mass moment of inertia, and club length modification for each character
+
+<p align="center">
+  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/CharacterSelect.png">
+</p>
 
 ### Future mechanics:
 Currently the ball placement angle respective to the player is hard coded, future update will include the ability to position the player forward or back along the swing plane which will result an adjustment in the vertical club face angle at impact.
