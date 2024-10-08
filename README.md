@@ -1,23 +1,30 @@
 # GolfGame1989
 
-Demo Videos on YouTube @BaltimoreMagicWerks or https://youtube.com/playlist?list=PLKMR2Ppf1A4isMBmE-N7GfiFSbZO6MvAO&si=d9OBP47MBRVGr2Xy
-           
+Demo Videos on YouTube @[BaltimoreMagicWerks](https://youtube.com/playlist?list=PLKMR2Ppf1A4isMBmE-N7GfiFSbZO6MvAO&si=d9OBP47MBRVGr2Xy)
+
+A physics-based retro themed golf game utilizing a double pendulum swing model to calculate club impact forces and ball flight based on environmental conditions, magnus effect, and landing impact conditions along with a full 14 club set modeled off of Ping's G25 series
+       
+<p align="center">
+  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
+</p>
+
+### Gameplay:
+Currently the game play includes a 3 click power bar swing. The first click starts the swing, the second click sets the backswing percentage to control power, and the third click sets the impact. The closer the impact is set to the position indicated on the UI the more square the club face will be at impact. Setting the impact point early or late will cause the club face to be more closed or open at impact. This will result in the ball flight to hook or slice in the respected direction
+
+<p align="center">
+  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/SwingView.png">
+</p>
+
+### Golden Bell, Hole 12 at Augusta:
+
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/3DTerrain.png">
 </p>
 
-A retro themed golf game based on the double pendulum physics model in professor Theodore P. Jorgensen’s book “The Physics of Golf”. Game features that have been implemented include character select, environment select, and a full golf bag with 14 clubs to select
+Updating the course with directional lighting
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/LightingUpdate.png">
-</p>
-
-Updating the course with directional lighting
-
-### Gameplay:
-Currently the game play includes a 3 click power bar swing. The first click starts the swing, the second click sets the backswing percentage to control power, and the third click sets the impact. The closer the impact is set to the position indicated on the UI the more square the club face will be at impact. Setting the impact point early or late will cause the club face to be more closed or open at impact. This will result in the ball flight to hook or slice in the respected direction
-<p align="center">
-  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
 </p>
 
 ### Environment Select Features:
@@ -25,13 +32,6 @@ Air density, gravity, wind values and terrain color. An alien near Venus like en
 
 <p align="center">
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/EnvironmentSelect.png">
-</p>
-
-### Club Features:
-Angle, balance point, coefficient of restitution, length, mass, and mass moment of inertia
-
-<p align="center">
-  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/SwingView.png">
 </p>
 
 ### Character Select Features: 
@@ -45,8 +45,6 @@ Arm length, arm mass, arm balance point, arm mass moment of inertia, and club le
 Currently the ball placement angle respective to the player is hard coded, future update will include the ability to position the player forward or back along the swing plane which will result an adjustment in the vertical club face angle at impact.
 Future update will allow the adjustment of the direction of travel of the club’s swing plan to be from out to in, in to in, and in to out which will result in adjustments to the ball flight path. This combined with the impact face angle will result in all 9 traditional golf flight paths to be simulated (complete).
 Power bar tolerance update will penalize very early or late impacts with “skull” and “duff” ball flight. This will be modeled on the bottom of the club impacting the ball or turf dug up by a divot impacting the ball. 3D terrain implementation is currently in progress
-
-
 
 ### Controls:
 
@@ -91,8 +89,6 @@ C : First person camera move down
 Mouse Button 1, hold : While in first person camera turn camera
 
 
-
-
 ### Works Cited:
 
 Bourg and Baywalec. (2013). Physics for Game Developers. CA USA. O’Reilly
@@ -119,4 +115,3 @@ Music02 = Snabish Tunes 8 Bit Version by Snabisch. https://opengameart.org/conte
 Music03 = In Summer, NES Version by Snabisch. https://opengameart.org/content/in-summer-nes-version
 
 Music04 = Retroracing Beach by Bogart VGM. https://opengameart.org/content/retroracing-beach
-
