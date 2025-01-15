@@ -8,6 +8,8 @@ A physics-based retro themed golf game utilizing a double pendulum swing model t
   <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/BallFlight.png">
 </p>
 
+The double pendulum physics model of a golf club swing is based on the works of T.P. Jorgensen. He was an atomic physicist on the Manhattan Project and professor of physics and astronomy at the University of Nebraska that picked up golf after retiring. Dismayed by the lack of scientific based books and research on the subject he wrote The Physics of Golf to mathematically capture the physics motion of a golf swing in the double pendulum model
+
 ### Gameplay:
 Currently the game play includes a 3 click power bar swing. The first click starts the swing, the second click sets the backswing percentage to control power, and the third click sets the impact. The closer the impact is set to the position indicated on the UI the more square the club face will be at impact. Setting the impact point early or late will cause the club face to be more closed or open at impact. This will result in the ball flight to hook or slice in the respected direction
 
