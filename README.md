@@ -2,6 +2,10 @@
 
 Demo Videos on YouTube @[BaltimoreMagicWerks](https://youtube.com/playlist?list=PLKMR2Ppf1A4isMBmE-N7GfiFSbZO6MvAO&si=d9OBP47MBRVGr2Xy)
 
+<p align="center">
+  <img width="600" src="https://github.com/lehrj/GolfGame1989/blob/master/Images/GolfGameAugusta.gif">
+</p>
+
 A physics-based retro themed golf game utilizing a double pendulum swing model to calculate club impact forces and ball flight based on environmental conditions, magnus effect, and landing impact conditions along with a full 14 club set modeled off of Ping's G25 series
        
 <p align="center">
